@@ -543,9 +543,10 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 ${opts.noChrome ? body : `
 <div id="age-gate">
   <div class="age-video-wrap" aria-hidden="true">
-    <video id="age-bg-video" class="age-bg-video" autoplay muted loop playsinline preload="auto">
+    <video id="age-bg-video" class="age-bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="/uploads/rose_bloom_target.jpg">
       <source src="/uploads/rose_pingpong.mp4" type="video/mp4">
       <source src="/uploads/rose_user_original.mp4" type="video/mp4">
+      <source src="/uploads/dark_rose_loop.mp4" type="video/mp4">
     </video>
     <div class="age-video-overlay"></div>
   </div>
@@ -1064,6 +1065,36 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
 
   fs.stat(p, (serr, st) => {
     if (serr) { return sendSvgFallback(); }
+    
+    // Support HTTP Range requests for video/media playback (Essential for iOS Safari & Chrome)
+    if (ext === '.mp4' || req.headers.range) {
+      const range = req.headers.range;
+      const fileSize = st.size;
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunkSize = (end - start) + 1;
+        const stream = fs.createReadStream(p, { start, end });
+        res.writeHead(206, {
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunkSize,
+          'Content-Type': type,
+          'Cache-Control': 'public, max-age=86400'
+        });
+        return stream.pipe(res);
+      } else {
+        res.writeHead(200, {
+          'Content-Length': fileSize,
+          'Content-Type': type,
+          'Accept-Ranges': 'bytes',
+          'Cache-Control': 'public, max-age=86400'
+        });
+        return fs.createReadStream(p).pipe(res);
+      }
+    }
+
     fs.readFile(p, (err, buf) => {
       if (err) { return sendSvgFallback(); }
       res.writeHead(200, {

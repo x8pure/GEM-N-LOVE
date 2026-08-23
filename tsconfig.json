@@ -25,6 +25,7 @@
   },
   "include": [
     "server.ts",
+    "api/**/*.ts",
     "lib/**/*.ts"
   ],
   "exclude": [

@@ -229,9 +229,33 @@
   const ageVideo = $(`#age-bg-video`);
 
   const playAgeVideo = () => {
-    if (ageVideo && ageVideo.paused) {
-      ageVideo.play().catch(() => {});
-    }
+    if (!ageVideo) return;
+    try {
+      ageVideo.muted = true;
+      ageVideo.defaultMuted = true;
+      ageVideo.setAttribute('muted', '');
+      ageVideo.setAttribute('playsinline', '');
+      ageVideo.setAttribute('webkit-playsinline', '');
+      
+      const playPromise = ageVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Browser policy blocked unprompted autoplay, trigger on first user touch/pointer interaction
+          const unlockAutoplay = () => {
+            if (ageVideo && !gate?.classList.contains('hidden')) {
+              ageVideo.muted = true;
+              ageVideo.play().catch(() => {});
+            }
+            window.removeEventListener('pointerdown', unlockAutoplay);
+            window.removeEventListener('touchstart', unlockAutoplay);
+            window.removeEventListener('click', unlockAutoplay);
+          };
+          window.addEventListener('pointerdown', unlockAutoplay, { once: true, passive: true });
+          window.addEventListener('touchstart', unlockAutoplay, { once: true, passive: true });
+          window.addEventListener('click', unlockAutoplay, { once: true, passive: true });
+        });
+      }
+    } catch (e) {}
   };
 
   const showGate = () => {
