@@ -3,8 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
-import { load, save, uid, nextId, hashPassword } from './lib/db.js';
+import { load, save, uid, nextId, hashPassword, setMemoryDb } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
+import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase } from './lib/firebase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,14 +16,29 @@ const PUB = path.join(ROOT, 'public');
 const DATA = path.join(ROOT, 'data');
 const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
-// Ensure db and seed data exist with studio art-directed assets
-try { seed(false); } catch (e) {}
 let db = load();
-if (!db.products || !db.products.length) {
-  try { seed(true); } catch (e) {}
-  db = load();
-}
-if (!db.contact) db.contact = [];
+
+// Initialize Firebase and restore cloud state synchronously before accepting requests
+await (async () => {
+  try {
+    initFirebase();
+    const cloudState = await loadFromCloudFirestore();
+    if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+      setMemoryDb(cloudState);
+      db = load();
+      console.log(`[Server] Synced and restored ${db.products.length} products and ${db.orders?.length || 0} orders from Firebase Cloud.`);
+    } else {
+      // If cloud is empty, seed and save
+      if (!db.products || !db.products.length) {
+        try { seed(true); } catch (e) {}
+        db = load();
+      }
+      save();
+    }
+  } catch (err) {
+    console.error('[Server] Cloud sync initial load error:', err);
+  }
+})();
 
 let sessions: Record<string, any> = {};
 try { sessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')); } catch { sessions = {}; }
@@ -50,7 +66,7 @@ function readBody(req: http.IncomingMessage): Promise<any> {
     let size = 0; const chunks: Buffer[] = [];
     req.on('data', (c) => {
       size += c.length;
-      if (size > 4 * 1024 * 1024) { reject(new Error('BODY_TOO_LARGE')); req.destroy(); return; }
+      if (size > 35 * 1024 * 1024) { reject(new Error('BODY_TOO_LARGE')); req.destroy(); return; }
       chunks.push(c);
     });
     req.on('end', () => {
@@ -542,14 +558,6 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <body>
 ${opts.noChrome ? body : `
 <div id="age-gate">
-  <div class="age-video-wrap" aria-hidden="true">
-    <video id="age-bg-video" class="age-bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="/uploads/rose_bloom_target.jpg">
-      <source src="/uploads/rose_pingpong.mp4" type="video/mp4">
-      <source src="/uploads/rose_user_original.mp4" type="video/mp4">
-      <source src="/uploads/dark_rose_loop.mp4" type="video/mp4">
-    </video>
-    <div class="age-video-overlay"></div>
-  </div>
   <div class="age-content">
     <h2 class="brand age-brand">LOVE<span class="dot">.</span></h2>
     <h1 class="age-title">${tr('age.title')}</h1>
@@ -642,7 +650,9 @@ const productCardSSR = (p: any, tr: any) => `
     <div class="prod-badges">${p.isNew ? `<span class="badge new">${tr('badge.new')}</span>` : ''}${p.bestSeller ? `<span class="badge hot">${tr('badge.hot')}</span>` : ''}${p.oldPrice ? `<span class="badge sale">${tr('badge.sale')}</span>` : ''}</div>
   </a>
   <div class="prod-actions">
-    <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${tr('quickadd')}" aria-label="${tr('quickadd')}">＋</button>
+    <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${tr('quickadd')}" aria-label="${tr('quickadd')}">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
   </div>
   <div class="prod-info">
     <div class="prod-cat">${esc(p.categoryName)}</div>
@@ -665,8 +675,8 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   const top = [...allCats].sort((a, b) => b.count - a.count).slice(0, 4);
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
-  const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
-  const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
+  const featured = db.products.filter((p: any) => p.featured).slice(0, 8);
+  const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
   const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 6);
   const html = `
 <section class="hero">
@@ -1049,8 +1059,29 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   const type = MIME[ext] || 'application/octet-stream';
   const isScriptOrStyle = ext === '.css' || ext === '.js' || ext === '.json' || ext === '.html';
 
-  const sendSvgFallback = () => {
+  const sendSvgFallback = async () => {
     if (pathname.startsWith('/uploads/') || pathname.includes('/uploads/')) {
+      const fileName = path.basename(pathname);
+      try {
+        const cloudBase64 = await getImageFromCloud(fileName);
+        if (cloudBase64) {
+          const m = cloudBase64.match(/^data:image\/([a-zA-Z0-9\+\-\.]+);base64,(.+)$/);
+          if (m) {
+            const buf = Buffer.from(m[2], 'base64');
+            // Write back to local cache so next requests are instant
+            try {
+              fs.mkdirSync(path.join(PUB, 'uploads'), { recursive: true });
+              fs.writeFileSync(p, buf);
+            } catch (e) {}
+            res.writeHead(200, {
+              'Content-Type': `image/${m[1]}`,
+              'Cache-Control': 'public, max-age=86400'
+            });
+            return res.end(buf);
+          }
+        }
+      } catch (e) {}
+
       const slug = path.basename(pathname, path.extname(pathname));
       const svg = getSvgForSlug(slug);
       res.writeHead(200, {
@@ -1106,16 +1137,41 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   });
 }
 
-function saveUpload(dataUrl: string) {
-  const m = dataUrl.match(/^data:image\/(svg\+xml|png|jpe?g|webp);base64,(.+)$/);
-  if (!m) return '/uploads/aurora-wand.svg';
-  const ext = { 'svg+xml': 'svg', png: 'png', jpeg: 'jpg', jpg: 'jpg', webp: 'webp' }[m[1]] || 'png';
-  const buf = Buffer.from(m[2], 'base64');
-  if (buf.length > 2 * 1024 * 1024) return '/uploads/aurora-wand.svg';
-  const name = uid('img') + '.' + ext;
-  fs.mkdirSync(path.join(PUB, 'uploads'), { recursive: true });
-  fs.writeFileSync(path.join(PUB, 'uploads', name), buf);
-  return '/uploads/' + name;
+function saveUpload(dataUrl: string): string {
+  if (!dataUrl || typeof dataUrl !== 'string') return '/uploads/aurora-wand.svg';
+  const trimmed = dataUrl.trim();
+  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  const base64Index = trimmed.indexOf(';base64,');
+  if (trimmed.startsWith('data:image/') && base64Index !== -1) {
+    const header = trimmed.substring(5, base64Index);
+    const rawType = header.replace(/^image\//, '').split(';')[0].trim().toLowerCase();
+    const rawBase64 = trimmed.substring(base64Index + 8);
+    const extMap: Record<string, string> = {
+      'svg+xml': 'svg', 'svg': 'svg',
+      'png': 'png', 'x-png': 'png',
+      'jpeg': 'jpg', 'jpg': 'jpg', 'pjpeg': 'jpg',
+      'webp': 'webp', 'avif': 'avif', 'gif': 'gif'
+    };
+    const ext = extMap[rawType] || 'jpg';
+    try {
+      const cleanBase64 = rawBase64.replace(/[\s\r\n]+/g, '');
+      const buf = Buffer.from(cleanBase64, 'base64');
+      if (buf.length > 0) {
+        const name = uid('img') + '.' + ext;
+        const uploadDir = path.join(PUB, 'uploads');
+        fs.mkdirSync(uploadDir, { recursive: true });
+        fs.writeFileSync(path.join(uploadDir, name), buf);
+        // Persist to Cloud Firestore in background so container rebuilds never lose the photo
+        saveImageToCloud(name, trimmed).catch(() => {});
+        return '/uploads/' + name;
+      }
+    } catch (err) {
+      console.error('saveUpload error:', err);
+    }
+  }
+  return trimmed.startsWith('data:') ? '/uploads/aurora-wand.svg' : trimmed;
 }
 
 /* ---------------- API ---------------- */
@@ -1435,9 +1491,23 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (!b.name || !b.price) return sendError(res, 400, E('err.needName'));
       let slug = String(b.slug || b.name).toLowerCase().replace(/[çğıöşü]/g, (c) => ({ 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' }[c] || c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('p');
       if (db.products.some((p: any) => p.slug === slug)) slug += '-' + Date.now().toString(36);
-      let image = '/uploads/aurora-wand.svg';
+      
+      let gallery: string[] = [];
+      const rawGallery = Array.isArray(b.gallery) ? b.gallery : (Array.isArray(b.images) ? b.images : []);
+      for (const item of rawGallery) {
+        if (!item) continue;
+        if (String(item).startsWith('data:image/')) gallery.push(saveUpload(item));
+        else if (String(item).startsWith('/uploads/')) gallery.push(item);
+        else gallery.push(item);
+      }
+
+      let image = gallery[0] || '/uploads/aurora-wand.svg';
       if (b.image && String(b.image).startsWith('data:image/')) image = saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
+      
+      if (image && !gallery.includes(image)) gallery.unshift(image);
+      if (!gallery.length) gallery = [image];
+
       const p = {
         id: uid('p'), slug, name: String(b.name).trim(),
         category: b.category || 'ciftler', categoryName: b.categoryName || 'Genel',
@@ -1445,7 +1515,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         price: Math.max(0, Number(b.price)), oldPrice: b.oldPrice ? Number(b.oldPrice) : null,
         stock: Math.max(0, parseInt(b.stock, 10) || 0), rating: Number(b.rating) || 0, reviewCount: 0,
         featured: !!b.featured, isNew: !!b.isNew, bestSeller: !!b.bestSeller,
-        image, gallery: [image], tags: [], variants: ['standart'], createdAt: new Date().toISOString()
+        image, gallery, tags: [], variants: ['standart'], createdAt: new Date().toISOString()
       };
       db.products.push(p); save();
       return json(res, 200, { ok: true, product: p });
@@ -1458,8 +1528,32 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const f = ['name', 'category', 'categoryName', 'description', 'longDescription', 'price', 'oldPrice', 'stock', 'rating', 'featured', 'isNew', 'bestSeller', 'slug'];
       for (const k of f) if (b[k] !== undefined) p[k] = k === 'featured' || k === 'isNew' || k === 'bestSeller' ? !!b[k] : b[k];
       if (b.oldPrice === null || b.oldPrice === '') p.oldPrice = null;
-      if (b.image && String(b.image).startsWith('data:image/')) p.image = saveUpload(b.image);
-      else if (b.image && String(b.image).startsWith('/uploads/')) p.image = b.image;
+      
+      if (b.gallery !== undefined || b.images !== undefined) {
+        const rawGallery = Array.isArray(b.gallery) ? b.gallery : (Array.isArray(b.images) ? b.images : []);
+        const newGallery: string[] = [];
+        for (const item of rawGallery) {
+          if (!item) continue;
+          if (String(item).startsWith('data:image/')) newGallery.push(saveUpload(item));
+          else if (String(item).startsWith('/uploads/')) newGallery.push(item);
+          else newGallery.push(item);
+        }
+        if (newGallery.length) p.gallery = newGallery;
+      }
+
+      if (b.image) {
+        if (String(b.image).startsWith('data:image/')) p.image = saveUpload(b.image);
+        else if (String(b.image).startsWith('/uploads/')) p.image = b.image;
+        else p.image = b.image;
+      }
+      
+      if (!Array.isArray(p.gallery) || !p.gallery.length) {
+        p.gallery = [p.image || '/uploads/aurora-wand.svg'];
+      }
+      if (p.gallery && p.gallery.length && (!p.image || !p.gallery.includes(p.image))) {
+        p.image = p.gallery[0];
+      }
+
       save();
       return json(res, 200, { ok: true, product: p });
     }

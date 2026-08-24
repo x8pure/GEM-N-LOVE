@@ -53,6 +53,58 @@
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 2600);
   }
 
+  function optimizeImage(file, maxDim = 1600, quality = 0.88) {
+    return new Promise((resolve, reject) => {
+      if (!file) return reject(new Error('Dosya seçilmedi'));
+      if (file.type === 'image/svg+xml') {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+        return;
+      }
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        let w = img.width || 800;
+        let h = img.height || 800;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result);
+          r.onerror = reject;
+          r.readAsDataURL(file);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, w, h);
+        const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        const dataUrl = canvas.toDataURL(outType, quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      };
+      img.src = objectUrl;
+    });
+  }
+
   function exportCSV(filename, rows) {
     const processRow = (row) => row.map((val) => {
       let v = val === null || val === undefined ? '' : String(val);
@@ -511,13 +563,27 @@
         </dl>
       </div>
       <div class="modal-foot">
-        <button class="btn btn-ghost modal-close">Kapat</button>
-        <button class="btn btn-primary" id="om-save-track">Kargo Bilgisini Kaydet</button>
+        <button type="button" class="btn btn-ghost" data-cancel="true">Kapat</button>
+        <button type="button" class="btn btn-primary" id="om-save-track">Kargo Bilgisini Kaydet</button>
       </div>
     </div>`;
     document.body.appendChild(m);
-    $$('.modal-close', m).forEach((b) => b.addEventListener('click', () => m.remove()));
-    m.addEventListener('click', (e) => { if (e.target === m) m.remove(); });
+
+    const closeModal = () => {
+      window.removeEventListener('keydown', handleKey);
+      m.remove();
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', handleKey);
+
+    $$('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    }));
+    m.addEventListener('click', (e) => { if (e.target === m) closeModal(); });
 
     $('#ord-print-btn', m).addEventListener('click', () => window.print());
 
@@ -530,7 +596,7 @@
           body: { carrier, trackingNumber, status: trackingNumber && o.status === 'processing' ? 'shipped' : o.status }
         });
         toast('Kargo takip bilgileri kaydedildi 🚚');
-        m.remove();
+        closeModal();
         viewOrders();
       } catch (e) { toast(e.message, true); }
     });
@@ -660,7 +726,7 @@
           <h3>🎡 3D Çark Ürünlerini Yönet</h3>
           <span class="muted" style="font-size:12px">Maksimum 8 ürün sırayla ana sayfada döner</span>
         </div>
-        <button class="modal-close">✕</button>
+        <button type="button" class="modal-close" aria-label="Kapat">✕</button>
       </div>
       <div class="modal-body">
         <div id="wm-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px"></div>
@@ -668,13 +734,27 @@
         <div id="wm-results" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto"></div>
       </div>
       <div class="modal-foot">
-        <button class="btn btn-ghost modal-close">Vazgeç</button>
-        <button class="btn btn-primary" id="wm-save">Çarkı Kaydet</button>
+        <button type="button" class="btn btn-ghost" data-cancel="true">Vazgeç</button>
+        <button type="button" class="btn btn-primary" id="wm-save">Çarkı Kaydet</button>
       </div>
     </div>`;
     document.body.appendChild(m);
-    $$('.modal-close', m).forEach((b) => b.addEventListener('click', () => m.remove()));
-    m.addEventListener('click', (e) => { if (e.target === m) m.remove(); });
+    
+    const closeModal = () => {
+      window.removeEventListener('keydown', handleKey);
+      m.remove();
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', handleKey);
+
+    $$('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    }));
+    m.addEventListener('click', (e) => { if (e.target === m) closeModal(); });
 
     function drawList() {
       $('#wm-list', m).innerHTML = sel.length ? sel.map((id, i) => {
@@ -720,11 +800,25 @@
   async function openProductModal(p) {
     const cats = await ensureCats();
     const isEdit = !!p;
-    const v = p || { name: '', category: cats[0] ? cats[0].slug : 'ciftler', categoryName: cats[0] ? cats[0].name : '', description: '', longDescription: '', price: '', oldPrice: '', stock: 10, rating: 4.5, featured: false, isNew: true, bestSeller: false, image: '' };
+    const v = p || { name: '', category: cats[0] ? cats[0].slug : 'ciftler', categoryName: cats[0] ? cats[0].name : '', description: '', longDescription: '', price: '', oldPrice: '', stock: 10, rating: 4.5, featured: false, isNew: true, bestSeller: false, image: '', gallery: [] };
+    
+    // Maintain gallery array and primary cover image
+    let gallery = Array.isArray(v.gallery) && v.gallery.length ? [...v.gallery] : (v.image ? [v.image] : []);
+    let coverImage = v.image || (gallery.length ? gallery[0] : '');
+    if (coverImage && !gallery.includes(coverImage)) {
+      gallery.unshift(coverImage);
+    }
+
     const m = document.createElement('div');
     m.className = 'modal-back open';
-    m.innerHTML = `<div class="modal">
-      <div class="modal-head"><h3>${isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Oluştur'}</h3><button class="modal-close">✕</button></div>
+    m.innerHTML = `<div class="modal" style="max-width:760px">
+      <div class="modal-head">
+        <div>
+          <h3>${isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Oluştur'}</h3>
+          <span class="muted" style="font-size:12px">${isEdit ? esc(v.name) : 'Kataloğa yeni ürün ve görseller ekleyin'}</span>
+        </div>
+        <button type="button" class="modal-close" id="pm-close-x" aria-label="Kapat">✕</button>
+      </div>
       <div class="modal-body">
         <div class="grid-2">
           <div class="field"><label>Ürün Adı *</label><input id="pm-name" value="${esc(v.name)}"></div>
@@ -739,62 +833,191 @@
         </div>
         <div class="field"><label>Kısa Tanıtım / Vurgu</label><input id="pm-desc" value="${esc(v.description)}"></div>
         <div class="field"><label>Detaylı Ürün Açıklaması</label><textarea id="pm-long">${esc(v.longDescription)}</textarea></div>
-        <div class="field"><label>Ürün Fotoğrafı / Görsel</label>
-          <input type="file" id="pm-file" accept="image/*" style="display:none">
-          <div class="img-drop" id="pm-drop">📤 Görsel seçin veya buraya sürükleyin (SVG/PNG/JPG, max 2MB)<div class="hint">Görsel yüklenmezse şık vektör ikonu atanır</div></div>
-          <div class="img-preview" id="pm-prev">${v.image ? `<img src="${esc(v.image)}">` : ''}</div>
-          <input type="hidden" id="pm-image" value="${esc(v.image || '')}">
+        
+        <!-- Multi-photo management section -->
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label style="margin-bottom:0">Ürün Fotoğrafları & Galeri (<span id="pm-photo-count">0</span> Fotoğraf)</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="pm-add-photo-btn" style="font-size:11.5px">＋ Fotoğraf Ekle</button>
+          </div>
+          <input type="file" id="pm-file" accept="image/*" multiple style="display:none">
+          <div class="img-drop" id="pm-drop">
+            <div style="font-size:18px;margin-bottom:4px">📤</div>
+            <b>Fotoğrafları seçin veya buraya sürükleyip bırakın</b>
+            <div class="hint">Aynı anda birden fazla fotoğraf seçebilirsiniz (SVG, PNG, JPG, WebP - max 2MB / adet)</div>
+          </div>
+          <div class="gallery-grid" id="pm-gallery-grid"></div>
         </div>
-        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:10px">
+
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
           <label class="checkbox-row"><input type="checkbox" id="pm-featured" ${v.featured ? 'checked' : ''}> ✨ Öne Çıkanlar vitrinine ekle</label>
           <label class="checkbox-row"><input type="checkbox" id="pm-new" ${v.isNew ? 'checked' : ''}> 🆕 "YENİ" rozeti göster</label>
           <label class="checkbox-row"><input type="checkbox" id="pm-best" ${v.bestSeller ? 'checked' : ''}> 🔥 "ÇOK SATAN" rozeti göster</label>
         </div>
       </div>
       <div class="modal-foot">
-        <button class="btn btn-ghost modal-close">Vazgeç</button>
-        <button class="btn btn-primary" id="pm-save">${isEdit ? 'Değişiklikleri Kaydet' : 'Ürünü Yayınla'}</button>
+        <button type="button" class="btn btn-ghost" id="pm-cancel" data-cancel="true">Vazgeç</button>
+        <button type="button" class="btn btn-primary" id="pm-save">${isEdit ? 'Değişiklikleri Kaydet' : 'Ürünü Yayınla'}</button>
       </div>
     </div>`;
     document.body.appendChild(m);
-    $$('.modal-close', m).forEach((b) => b.addEventListener('click', () => m.remove()));
-    m.addEventListener('click', (e) => { if (e.target === m) m.remove(); });
 
-    const drop = $('#pm-drop', m), fileIn = $('#pm-file', m), prev = $('#pm-prev', m), hidden = $('#pm-image', m);
+    // Reliable modal closure helper
+    const closeModal = () => {
+      window.removeEventListener('keydown', handleKey);
+      m.remove();
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', handleKey);
+
+    $$('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    }));
+    m.addEventListener('click', (e) => {
+      if (e.target === m) closeModal();
+    });
+
+    const drop = $('#pm-drop', m), fileIn = $('#pm-file', m), addPhotoBtn = $('#pm-add-photo-btn', m), grid = $('#pm-gallery-grid', m), countEl = $('#pm-photo-count', m);
+    
+    addPhotoBtn.addEventListener('click', () => fileIn.click());
     drop.addEventListener('click', () => fileIn.click());
     drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drag'); });
     drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-    drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('drag'); if (e.dataTransfer.files[0]) readImg(e.dataTransfer.files[0]); });
-    fileIn.addEventListener('change', () => { if (fileIn.files[0]) readImg(fileIn.files[0]); });
-    function readImg(file) {
-      if (file.size > 2 * 1024 * 1024) return toast('Görsel boyutu 2MB sınırını aşıyor', true);
-      const r = new FileReader();
-      r.onload = () => { hidden.value = r.result; prev.innerHTML = `<img src="${r.result}">`; toast('Görsel hazırlandı'); };
-      r.readAsDataURL(file);
+    drop.addEventListener('drop', (e) => {
+      e.preventDefault();
+      drop.classList.remove('drag');
+      if (e.dataTransfer.files && e.dataTransfer.files.length) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
+    fileIn.addEventListener('change', () => {
+      if (fileIn.files && fileIn.files.length) {
+        handleFiles(fileIn.files);
+        fileIn.value = '';
+      }
+    });
+
+    async function handleFiles(files) {
+      const fileArr = Array.from(files).filter((f) => f.type.startsWith('image/'));
+      if (!fileArr.length) return toast('Lütfen geçerli resim dosyaları seçin', true);
+      
+      toast(`${fileArr.length} fotoğraf işleniyor... ⏳`);
+      for (const file of fileArr) {
+        try {
+          const optimizedDataUrl = await optimizeImage(file, 1600, 0.88);
+          gallery.push(optimizedDataUrl);
+          if (!coverImage) coverImage = optimizedDataUrl;
+          renderGallery();
+        } catch (err) {
+          console.error('Image processing failed:', err);
+          toast(`"${file.name}" işlenirken sorun oluştu`, true);
+        }
+      }
+      toast(`Fotoğraflar hazırlandı (${gallery.length} adet) ✨`);
     }
 
-    $('#pm-save', m).addEventListener('click', async () => {
+    function renderGallery() {
+      if (countEl) countEl.textContent = gallery.length;
+      if (!gallery.length) {
+        grid.innerHTML = '<div class="muted" style="grid-column:1/-1;text-align:center;padding:16px;font-size:12.5px">Henüz fotoğraf eklenmedi. (Kayıtta varsayılan vektör atanır)</div>';
+        return;
+      }
+      if (!coverImage || !gallery.includes(coverImage)) {
+        coverImage = gallery[0];
+      }
+
+      grid.innerHTML = gallery.map((img, idx) => {
+        const isCover = img === coverImage;
+        return `
+        <div class="photo-tile ${isCover ? 'is-cover' : ''}">
+          <div class="photo-tile-img-wrap">
+            <img src="${esc(img)}" alt="Fotoğraf ${idx + 1}">
+            ${isCover ? '<span class="photo-tile-cover-badge">👑 Kapak</span>' : ''}
+            <button type="button" class="photo-tile-del-btn" data-del-idx="${idx}" title="Bu Fotoğrafı Kaldır">✕</button>
+          </div>
+          <div class="photo-tile-actions">
+            ${isCover
+              ? '<span class="muted" style="font-size:10.5px;font-weight:600">Ana Görsel</span>'
+              : `<button type="button" class="btn btn-ghost btn-sm" data-cover-idx="${idx}">⭐ Kapak Yap</button>`
+            }
+          </div>
+        </div>`;
+      }).join('');
+
+      // Attach gallery tile event handlers
+      $$('[data-del-idx]', grid).forEach((b) => b.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const delIdx = parseInt(b.dataset.delIdx, 10);
+        const removed = gallery.splice(delIdx, 1)[0];
+        if (removed === coverImage) {
+          coverImage = gallery[0] || '';
+        }
+        renderGallery();
+        toast('Fotoğraf kaldırıldı');
+      }));
+
+      $$('[data-cover-idx]', grid).forEach((b) => b.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const covIdx = parseInt(b.dataset.coverIdx, 10);
+        coverImage = gallery[covIdx];
+        renderGallery();
+        toast('Kapak fotoğrafı güncellendi ⭐');
+      }));
+    }
+
+    renderGallery();
+
+    const saveBtn = $('#pm-save', m);
+    saveBtn.addEventListener('click', async () => {
       const catSlug = $('#pm-cat', m).value;
       const catObj = cats.find((c) => c.slug === catSlug);
+      const name = $('#pm-name', m).value.trim();
+      const price = Number($('#pm-price', m).value);
+
+      if (!name) return toast('Ürün adı zorunludur', true);
+      if (!price || price <= 0) return toast('Geçerli bir fiyat belirleyin', true);
+
+      // Ensure cover photo is at the beginning of the gallery array
+      if (coverImage) {
+        const remaining = gallery.filter((img) => img !== coverImage);
+        gallery = [coverImage, ...remaining];
+      }
+
       const body = {
-        name: $('#pm-name', m).value.trim(),
+        name,
         category: catSlug, categoryName: catObj ? catObj.name : catSlug,
-        price: Number($('#pm-price', m).value),
+        price,
         oldPrice: $('#pm-old', m).value === '' ? null : Number($('#pm-old', m).value),
         stock: Number($('#pm-stock', m).value),
         description: $('#pm-desc', m).value.trim(),
         longDescription: $('#pm-long', m).value.trim(),
-        image: hidden.value,
+        image: coverImage || gallery[0] || '',
+        gallery: gallery.length ? gallery : undefined,
+        images: gallery.length ? gallery : undefined,
         featured: $('#pm-featured', m).checked, isNew: $('#pm-new', m).checked, bestSeller: $('#pm-best', m).checked
       };
-      if (!body.name) return toast('Ürün adı zorunludur', true);
-      if (!body.price || body.price <= 0) return toast('Geçerli bir fiyat belirleyin', true);
+
+      const originalBtnText = saveBtn.innerHTML;
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = 'Kaydediliyor... ⏳';
+
       try {
         if (isEdit) await api('/api/admin/products/' + p.id, { method: 'POST', body });
         else await api('/api/admin/products', { method: 'POST', body });
         toast(isEdit ? 'Ürün başarıyla güncellendi' : 'Yeni ürün kataloğa eklendi');
-        m.remove(); viewProducts();
-      } catch (e) { toast(e.message, true); }
+        closeModal();
+        viewProducts();
+      } catch (e) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalBtnText;
+        toast(e.message || 'Ürün kaydedilirken hata oluştu', true);
+      }
     });
   }
 
@@ -842,7 +1065,10 @@
     const m = document.createElement('div');
     m.className = 'modal-back open';
     m.innerHTML = `<div class="modal" style="max-width:540px">
-      <div class="modal-head"><h3>${isEdit ? 'Kategoriyi Düzenle' : 'Yeni Kategori Ekle'}</h3><button class="modal-close">✕</button></div>
+      <div class="modal-head">
+        <h3>${isEdit ? 'Kategoriyi Düzenle' : 'Yeni Kategori Ekle'}</h3>
+        <button type="button" class="modal-close" aria-label="Kapat">✕</button>
+      </div>
       <div class="modal-body">
         <div class="field"><label>Kategori Adı *</label><input id="ct-name" value="${esc(v.name)}"></div>
         ${isEdit ? '' : '<div class="field"><label>URL Slug (boş bırakılırsa otomatik)</label><input id="ct-slug" placeholder="örn: ciftler"><div class="hint">Filtreleme linklerinde kullanılır</div></div>'}
@@ -855,13 +1081,27 @@
         ${isEdit ? '<label class="checkbox-row" style="margin-top:10px"><input type="checkbox" id="ct-auto"> Bu kategorideki ilk ürünün görselini kapak yap</label>' : ''}
       </div>
       <div class="modal-foot">
-        <button class="btn btn-ghost modal-close">Vazgeç</button>
-        <button class="btn btn-primary" id="ct-save">${isEdit ? 'Değişiklikleri Kaydet' : 'Kategoriyi Oluştur'}</button>
+        <button type="button" class="btn btn-ghost" id="ct-cancel" data-cancel="true">Vazgeç</button>
+        <button type="button" class="btn btn-primary" id="ct-save">${isEdit ? 'Değişiklikleri Kaydet' : 'Kategoriyi Oluştur'}</button>
       </div>
     </div>`;
     document.body.appendChild(m);
-    $$('.modal-close', m).forEach((b) => b.addEventListener('click', () => m.remove()));
-    m.addEventListener('click', (e) => { if (e.target === m) m.remove(); });
+    
+    const closeModal = () => {
+      window.removeEventListener('keydown', handleKey);
+      m.remove();
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', handleKey);
+
+    $$('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    }));
+    m.addEventListener('click', (e) => { if (e.target === m) closeModal(); });
 
     const drop = $('#ct-drop', m), fileIn = $('#ct-file', m), prev = $('#ct-prev', m), hidden = $('#ct-image', m);
     drop.addEventListener('click', () => fileIn.click());
@@ -869,24 +1109,39 @@
     drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
     drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('drag'); if (e.dataTransfer.files[0]) readImg(e.dataTransfer.files[0]); });
     fileIn.addEventListener('change', () => { if (fileIn.files[0]) readImg(fileIn.files[0]); });
-    function readImg(file) {
-      if (file.size > 2 * 1024 * 1024) return toast('Görsel 2MB sınırını aşıyor', true);
-      const r = new FileReader();
-      r.onload = () => { hidden.value = r.result; prev.innerHTML = `<img src="${r.result}">`; };
-      r.readAsDataURL(file);
+    async function readImg(file) {
+      if (!file) return;
+      try {
+        toast('Kapak görseli işleniyor... ⏳');
+        const optimized = await optimizeImage(file, 1600, 0.88);
+        hidden.value = optimized;
+        prev.innerHTML = `<img src="${optimized}">`;
+        toast('Kapak görseli hazırlandı');
+      } catch (err) {
+        toast('Görsel yüklenirken hata oluştu', true);
+      }
     }
 
-    $('#ct-save', m).addEventListener('click', async () => {
+    const catSaveBtn = $('#ct-save', m);
+    catSaveBtn.addEventListener('click', async () => {
       const name = $('#ct-name', m).value.trim();
       if (!name) return toast('Kategori adı zorunludur', true);
       const autoCb = isEdit ? $('#ct-auto', m) : null;
       const body = { name, image: hidden.value, slug: isEdit ? undefined : ($('#ct-slug', m).value || undefined), useAutoCover: autoCb ? autoCb.checked : undefined };
+      const origText = catSaveBtn.innerHTML;
+      catSaveBtn.disabled = true;
+      catSaveBtn.innerHTML = 'Kaydediliyor... ⏳';
       try {
         if (isEdit) await api('/api/admin/categories/' + cat.id, { method: 'POST', body });
         else await api('/api/admin/categories', { method: 'POST', body });
         toast(isEdit ? 'Kategori güncellendi' : 'Yeni kategori eklendi');
-        m.remove(); viewCategories();
-      } catch (e) { toast(e.message, true); }
+        closeModal();
+        viewCategories();
+      } catch (e) {
+        catSaveBtn.disabled = false;
+        catSaveBtn.innerHTML = origText;
+        toast(e.message || 'Hata oluştu', true);
+      }
     });
   }
 

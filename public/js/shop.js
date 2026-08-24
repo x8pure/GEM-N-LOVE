@@ -3,6 +3,13 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
   const LANG = window.__LS_LANG__ || 'tr';
+  const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const imgSrc = (s) => {
+    if (!s) return '/uploads/aurora-wand.svg';
+    const str = String(s);
+    if (str.startsWith('data:') || str.startsWith('http://') || str.startsWith('https://') || str.includes('?')) return str;
+    return str + '?v=transparent2';
+  };
   const fmt = (n) => new Intl.NumberFormat(LANG === 'en' ? 'en-US' : 'tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
   const stars = (r) => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
   const dateFmt = (s) => new Date(s).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'tr-TR');
@@ -226,44 +233,12 @@
 
   /* ---------- age gate ---------- */
   const gate = $(`#age-gate`);
-  const ageVideo = $(`#age-bg-video`);
-
-  const playAgeVideo = () => {
-    if (!ageVideo) return;
-    try {
-      ageVideo.muted = true;
-      ageVideo.defaultMuted = true;
-      ageVideo.setAttribute('muted', '');
-      ageVideo.setAttribute('playsinline', '');
-      ageVideo.setAttribute('webkit-playsinline', '');
-      
-      const playPromise = ageVideo.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Browser policy blocked unprompted autoplay, trigger on first user touch/pointer interaction
-          const unlockAutoplay = () => {
-            if (ageVideo && !gate?.classList.contains('hidden')) {
-              ageVideo.muted = true;
-              ageVideo.play().catch(() => {});
-            }
-            window.removeEventListener('pointerdown', unlockAutoplay);
-            window.removeEventListener('touchstart', unlockAutoplay);
-            window.removeEventListener('click', unlockAutoplay);
-          };
-          window.addEventListener('pointerdown', unlockAutoplay, { once: true, passive: true });
-          window.addEventListener('touchstart', unlockAutoplay, { once: true, passive: true });
-          window.addEventListener('click', unlockAutoplay, { once: true, passive: true });
-        });
-      }
-    } catch (e) {}
-  };
 
   const showGate = () => {
     if (!gate) return;
     gate.classList.remove(`hidden`, `passing`);
     document.body.classList.add(`gate-active`);
     document.documentElement.classList.add(`gate-active-init`);
-    playAgeVideo();
   };
   const hideGate = () => {
     if (!gate) return;
@@ -272,7 +247,6 @@
     document.documentElement.classList.remove(`gate-active-init`);
     setTimeout(() => {
       gate.classList.add(`hidden`);
-      if (ageVideo) ageVideo.pause();
     }, 800);
   };
 
@@ -487,12 +461,14 @@
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
-        <img src="${p.image}?v=transparent2" alt="${p.name}" loading="lazy">
+        <img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy">
         <div class="card-sheen"></div>
         <div class="prod-badges">${badges.join('')}</div>
       </a>
       <div class="prod-actions">
-        <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${t('quickadd')}" aria-label="${t('quickadd')}">＋</button>
+        <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${t('quickadd')}" aria-label="${t('quickadd')}">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
       </div>
       <div class="prod-info">
         <div class="prod-cat">${catName(p.category, p.categoryName)}</div>
@@ -547,18 +523,30 @@
         ? `<span class="stock-pill in-stock">● ${LANG === 'en' ? 'In stock · Ships in 24h' : 'Stokta · 24 Saatte Kargoda'}</span>`
         : `<span class="stock-pill out-stock">● ${LANG === 'en' ? 'Out of stock' : 'Tükendi'}</span>`;
 
+      const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
+      const hasMultipleImages = productGallery.length > 1;
+
       stage.innerHTML = `
         <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
         <div class="spatial-grid">
           <div class="spatial-visual-hero">
-            <img src="${p.image}?v=transparent2" alt="${p.name}" loading="lazy">
+            <img id="spatial-main-image" src="${imgSrc(p.image)}" alt="${p.name}">
             <div class="spatial-badge-cluster">
               ${p.bestSeller ? `<span>${t('badge.hot')}</span>` : ''}
               ${p.isNew ? `<span>${t('badge.new')}</span>` : ''}
               ${p.oldPrice ? `<span>${t('badge.sale')}</span>` : ''}
             </div>
+            ${hasMultipleImages ? `
+              <div class="spatial-thumbs">
+                ${productGallery.map((img, idx) => `
+                  <button type="button" class="spatial-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" aria-label="${p.name} ${idx + 1}">
+                    <img src="${imgSrc(img)}" alt="${p.name} - ${idx + 1}">
+                  </button>
+                `).join('')}
+              </div>
+            ` : ''}
           </div>
 
           <div class="spatial-content-pane">
@@ -630,6 +618,21 @@
           </div>
         </div>
       `;
+
+      // Spatial gallery thumbnail switcher
+      const spatialMain = $('#spatial-main-image', stage);
+      $$('.spatial-thumb-btn', stage).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const targetSrc = btn.dataset.thumbSrc;
+          if (spatialMain && targetSrc) {
+            spatialMain.src = imgSrc(targetSrc);
+            $$('.spatial-thumb-btn', stage).forEach((b) => {
+              b.classList.toggle('active', b === btn);
+              b.style.borderColor = (b === btn) ? 'var(--rose)' : 'var(--line)';
+            });
+          }
+        });
+      });
 
       let currentQty = 1;
       const qtyVal = $('#spatial-qty-val');
@@ -736,16 +739,16 @@
     refreshRevealObservers();
     const featured = $('#featured-grid');
     if (featured) {
-      const data = await api('/api/products?featured=1&limit=10').catch(() => ({ products: [] }));
-      featured.innerHTML = data.products.map(productCard).join('');
+      const data = await api('/api/products?featured=1&limit=8').catch(() => ({ products: [] }));
+      featured.innerHTML = data.products.slice(0, 8).map(productCard).join('');
       refreshRevealObservers();
     }
     const wheel = $('#cf-stage');
     if (wheel) initCoverflow(wheel);
     const best = $('#new-grid');
     if (best) {
-      const data = await api('/api/products?sort=new&limit=5').catch(() => ({ products: [] }));
-      best.innerHTML = data.products.map(productCard).join('');
+      const data = await api('/api/products?sort=new&limit=4').catch(() => ({ products: [] }));
+      best.innerHTML = data.products.slice(0, 4).map(productCard).join('');
       refreshRevealObservers();
     }
     const nlForm = $('#nl-form');
@@ -845,10 +848,24 @@
       return;
     }
     document.title = p.name + ' — LOVE SHOP';
+    const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
+    const hasMultipleImages = productGallery.length > 1;
+
     root.innerHTML = `
     <div class="page-head" style="padding-bottom:0"><div class="crumbs"><a href="/">${t('pd.crumb.home')}</a> / <a href="/magaza">${t('pd.crumb.shop')}</a> / <a href="/magaza?kat=${p.category}">${catName(p.category, p.categoryName)}</a></div></div>
     <div class="pd-layout">
-      <div class="pd-gallery"><div class="pd-media"><img src="${p.image}?v=transparent2" alt="${p.name}"></div></div>
+      <div class="pd-gallery">
+        <div class="pd-media"><img id="pd-main-image" src="${imgSrc(p.image)}" alt="${p.name}"></div>
+        ${hasMultipleImages ? `
+          <div class="pd-thumbs" style="display:flex;gap:10px;margin-top:14px;overflow-x:auto;padding-bottom:6px">
+            ${productGallery.map((img, idx) => `
+              <button type="button" class="pd-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" style="border-radius:10px;border:2px solid ${img === p.image ? 'var(--rose)' : 'var(--line)'};padding:2px;background:var(--card-2);cursor:pointer;width:58px;height:58px;flex-shrink:0;overflow:hidden;transition:all .18s ease">
+                <img src="${imgSrc(img)}" alt="${p.name} - ${idx + 1}" style="width:100%;height:100%;object-fit:contain">
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
       <div class="pd-info">
         <div class="prod-cat">${catName(p.category, p.categoryName)}</div>
         <h1>${p.name}</h1>
@@ -881,6 +898,21 @@
     </div>
     <div class="tab-panel" id="tab-panel"></div>
     <section class="block"><div class="section-head"><div><h2>${t('pd.similar')}</h2></div><a href="/magaza?kat=${p.category}" class="link-more">${t('pd.all')}</a></div><div class="prod-grid" id="related-grid"></div></section>`;
+
+    // Gallery thumbnail switcher handler
+    const mainImg = $('#pd-main-image');
+    $$('.pd-thumb-btn', root).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetSrc = btn.dataset.thumbSrc;
+        if (mainImg && targetSrc) {
+          mainImg.src = imgSrc(targetSrc);
+          $$('.pd-thumb-btn', root).forEach((b) => {
+            b.classList.toggle('active', b === btn);
+            b.style.borderColor = (b === btn) ? 'var(--rose)' : 'var(--line)';
+          });
+        }
+      });
+    });
 
     let qty = 1;
     const qv = $('#q-val');
