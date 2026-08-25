@@ -1,0 +1,915 @@
+{
+  "users": [
+    {
+      "id": "ub27d671f172a",
+      "email": "admin@loveshop.com.tr",
+      "passwordHash": "9986abca34f4654f2d3cf9ed9c7d19f1730ee04109451b1ce1b54dd95db7d631",
+      "name": "Mağaza Yönetimi",
+      "role": "admin",
+      "createdAt": "2026-08-24T08:06:31.125Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 caddesi 52/2",
+          "city": "TEPEBAŞI",
+          "zip": "",
+          "phone": "05436331325",
+          "discreet": true
+        }
+      ]
+    },
+    {
+      "id": "u5b947964c1ae",
+      "email": "demo@loveshop.com.tr",
+      "passwordHash": "a928a75120e800047cc4bc3f3b79b4ae52cf0b67cf90af9c4e0631bf5f2feab1",
+      "name": "Demo Müşteri",
+      "role": "customer",
+      "createdAt": "2026-08-24T08:06:31.125Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "Örnek Mah. Aşk Cad. No:7 D:3",
+          "city": "İstanbul",
+          "zip": "34700",
+          "phone": "0532 000 00 00",
+          "discreet": true
+        }
+      ]
+    },
+    {
+      "id": "u71fed1928e01",
+      "email": "cemal.ulas@gmail.com",
+      "passwordHash": "51a53d5dc1be744302d534e2ce86c1c5eae3453fad56f22ec1950265185bba19",
+      "name": "cemal ulaş",
+      "role": "customer",
+      "createdAt": "2026-08-24T17:15:56.477Z",
+      "addresses": []
+    },
+    {
+      "id": "ua2a7706555ef",
+      "email": "x8pure@gmail.com",
+      "passwordHash": "9e8ed3d68a273b8cc40a1d64610e40fe47c477e67c3b64ccb1f7b89dafd1ab32",
+      "name": "x8pure",
+      "role": "customer",
+      "googleAuth": true,
+      "avatar": "",
+      "createdAt": "2026-08-25T11:02:32.310Z",
+      "addresses": []
+    }
+  ],
+  "products": [
+    {
+      "id": "p63177d082126",
+      "slug": "aurora-wand",
+      "name": "Aura Wand",
+      "category": "vibratori",
+      "categoryName": "Vibratörler",
+      "description": "Sessiz motor, 10 mod, su geçirmez silikon wand. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Sessiz motor, 10 mod, su geçirmez silikon wand. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 1299,
+      "oldPrice": null,
+      "stock": 89,
+      "rating": 4.5,
+      "reviewCount": 17,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/aurora-wand.svg",
+      "gallery": [
+        "/uploads/aurora-wand.svg"
+      ],
+      "tags": [
+        "vibratori"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-24T08:06:31.117Z"
+    },
+    {
+      "id": "pdec12179c962",
+      "slug": "nova-point",
+      "name": "Nova Point",
+      "category": "vibratori",
+      "categoryName": "Vibratörler",
+      "description": "Kompakt g-nokta tasarımı, USB-C şarjlı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Kompakt g-nokta tasarımı, USB-C şarjlı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 849,
+      "oldPrice": 1100,
+      "stock": 64,
+      "rating": 5,
+      "reviewCount": 36,
+      "featured": true,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/nova-point.svg",
+      "gallery": [
+        "/uploads/nova-point.svg"
+      ],
+      "tags": [
+        "vibratori"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-23T08:06:31.118Z"
+    },
+    {
+      "id": "p2d0e82522720",
+      "slug": "lumen-duo",
+      "name": "Lumen Duo",
+      "category": "vibratori",
+      "categoryName": "Vibratörler",
+      "description": "Çift motorlu, aplikasyon kontrollü. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Çift motorlu, aplikasyon kontrollü. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 1749,
+      "oldPrice": null,
+      "stock": 47,
+      "rating": 4.6,
+      "reviewCount": 18,
+      "featured": true,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/lumen-duo.svg",
+      "gallery": [
+        "/uploads/lumen-duo.svg"
+      ],
+      "tags": [
+        "vibratori"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-22T08:06:31.118Z"
+    },
+    {
+      "id": "p6404d4871462",
+      "slug": "puls-rabbit",
+      "name": "Puls Rabbit",
+      "category": "vibratori",
+      "categoryName": "Vibratörler",
+      "description": "Klasik rabbit formu, 12 ritim. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Klasik rabbit formu, 12 ritim. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 1099,
+      "oldPrice": 1430,
+      "stock": 72,
+      "rating": 4.8,
+      "reviewCount": 36,
+      "featured": true,
+      "isNew": false,
+      "bestSeller": true,
+      "image": "/uploads/puls-rabbit.svg",
+      "gallery": [
+        "/uploads/puls-rabbit.svg"
+      ],
+      "tags": [
+        "vibratori"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-21T08:06:31.119Z"
+    },
+    {
+      "id": "pb0ff71c9b051",
+      "slug": "we-vibe-stil",
+      "name": "Duo Ring",
+      "category": "ciftler",
+      "categoryName": "Çiftler İçin",
+      "description": "Çiftler için titreşim halkası, sessiz mod. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Çiftler için titreşim halkası, sessiz mod. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 999,
+      "oldPrice": null,
+      "stock": 58,
+      "rating": 4.5,
+      "reviewCount": 11,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": false,
+      "image": "/uploads/we-vibe-stil.svg",
+      "gallery": [
+        "/uploads/we-vibe-stil.svg"
+      ],
+      "tags": [
+        "ciftler"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-20T08:06:31.119Z"
+    },
+    {
+      "id": "p401445299a88",
+      "slug": "remote-love",
+      "name": "Remote Love",
+      "category": "ciftler",
+      "categoryName": "Çiftler İçin",
+      "description": "Uzaktan kumandalı, 8 metre çekim. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Uzaktan kumandalı, 8 metre çekim. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 1399,
+      "oldPrice": 1820,
+      "stock": 36,
+      "rating": 4.7,
+      "reviewCount": 20,
+      "featured": true,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/remote-love.svg",
+      "gallery": [
+        "/uploads/remote-love.svg"
+      ],
+      "tags": [
+        "ciftler"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-19T08:06:31.119Z"
+    },
+    {
+      "id": "p6cd01b38f81f",
+      "slug": "silk-bondage-set",
+      "name": "Silk Set",
+      "category": "ciftler",
+      "categoryName": "Çiftler İçin",
+      "description": "Başlangıç için 4 parça ipek set. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Başlangıç için 4 parça ipek set. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 649,
+      "oldPrice": null,
+      "stock": 81,
+      "rating": 4.5,
+      "reviewCount": 30,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img2929930da730.png",
+      "gallery": [
+        "/uploads/img2929930da730.png"
+      ],
+      "tags": [
+        "ciftler"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-18T08:06:31.120Z"
+    },
+    {
+      "id": "p6636d75d9885",
+      "slug": "heat-couple",
+      "name": "Heat Couple",
+      "category": "ciftler",
+      "categoryName": "Çiftler İçin",
+      "description": "Isıtma özellikli çift aksesuarı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Isıtma özellikli çift aksesuarı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 1199,
+      "oldPrice": 1560,
+      "stock": 29,
+      "rating": 4.4,
+      "reviewCount": 25,
+      "featured": true,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/heat-couple.svg",
+      "gallery": [
+        "/uploads/heat-couple.svg"
+      ],
+      "tags": [
+        "ciftler"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-17T08:06:31.120Z"
+    },
+    {
+      "id": "pbda0b7f7700e",
+      "slug": "silk-touch-oil",
+      "name": "Silk Touch Yağ",
+      "category": "kozmetik",
+      "categoryName": "Kozmetik & Bakım",
+      "description": "Vücut masaj yağı, vanilya notalı, 100ml. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Vücut masaj yağı, vanilya notalı, 100ml. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 349,
+      "oldPrice": null,
+      "stock": 92,
+      "rating": 4.9,
+      "reviewCount": 30,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "image": "/uploads/silk-touch-oil.svg",
+      "gallery": [
+        "/uploads/silk-touch-oil.svg"
+      ],
+      "tags": [
+        "kozmetik"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-16T08:06:31.121Z"
+    },
+    {
+      "id": "p4e00327c5d49",
+      "slug": "rose-mist",
+      "name": "Rose Mist",
+      "category": "kozmetik",
+      "categoryName": "Kozmetik & Bakım",
+      "description": "Ferahlatıcı vücut spreyi, 50ml. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Ferahlatıcı vücut spreyi, 50ml. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 259,
+      "oldPrice": 340,
+      "stock": 67,
+      "rating": 4.9,
+      "reviewCount": 8,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": true,
+      "image": "/uploads/rose-mist.svg",
+      "gallery": [
+        "/uploads/rose-mist.svg"
+      ],
+      "tags": [
+        "kozmetik"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-15T08:06:31.121Z"
+    },
+    {
+      "id": "p4adb42bae6b6",
+      "slug": "velvet-balm",
+      "name": "Velvet Balm",
+      "category": "kozmetik",
+      "categoryName": "Kozmetik & Bakım",
+      "description": "Nemlendirici bakım balmları. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Nemlendirici bakım balmları. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 299,
+      "oldPrice": null,
+      "stock": 54,
+      "rating": 4.9,
+      "reviewCount": 38,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/velvet-balm.svg",
+      "gallery": [
+        "/uploads/velvet-balm.svg"
+      ],
+      "tags": [
+        "kozmetik"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-14T08:06:31.121Z"
+    },
+    {
+      "id": "pe745df15fa77",
+      "slug": "glow-serum",
+      "name": "Glow Serum",
+      "category": "kozmetik",
+      "categoryName": "Kozmetik & Bakım",
+      "description": "Parlatıcı vücut serumu. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Parlatıcı vücut serumu. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 419,
+      "oldPrice": 540,
+      "stock": 42,
+      "rating": 4.9,
+      "reviewCount": 21,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img570eb28bca0d.png",
+      "gallery": [
+        "/uploads/img570eb28bca0d.png"
+      ],
+      "tags": [
+        "kozmetik"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-13T08:06:31.122Z"
+    },
+    {
+      "id": "p4196086893dd",
+      "slug": "noir-mask",
+      "name": "Noir Maske",
+      "category": "fantasy",
+      "categoryName": "Fantasy & Kostüm",
+      "description": "El yapımı dantel göz maskesi. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "El yapımı dantel göz maskesi. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 229,
+      "oldPrice": null,
+      "stock": 76,
+      "rating": 4.9,
+      "reviewCount": 39,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/noir-mask.svg",
+      "gallery": [
+        "/uploads/noir-mask.svg"
+      ],
+      "tags": [
+        "fantasy"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-12T08:06:31.122Z"
+    },
+    {
+      "id": "pabbba16fe409",
+      "slug": "lace-robe",
+      "name": "Lace Robe",
+      "category": "fantasy",
+      "categoryName": "Fantasy & Kostüm",
+      "description": "Fransız danteli sabahlık, S-XL. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Fransız danteli sabahlık, S-XL. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 749,
+      "oldPrice": 970,
+      "stock": 61,
+      "rating": 4.8,
+      "reviewCount": 25,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img9aa1bc76f15c.png",
+      "gallery": [
+        "/uploads/img9aa1bc76f15c.png"
+      ],
+      "tags": [
+        "fantasy"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-11T08:06:31.122Z"
+    },
+    {
+      "id": "peeb69193d44f",
+      "slug": "feather-tickle",
+      "name": "Feather Tickle",
+      "category": "fantasy",
+      "categoryName": "Fantasy & Kostüm",
+      "description": "Kuş tüyü gıdı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Kuş tüyü gıdı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 149,
+      "oldPrice": null,
+      "stock": 88,
+      "rating": 4.9,
+      "reviewCount": 11,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/feather-tickle.svg",
+      "gallery": [
+        "/uploads/feather-tickle.svg"
+      ],
+      "tags": [
+        "fantasy"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-10T08:06:31.122Z"
+    },
+    {
+      "id": "p2f71dace10a6",
+      "slug": "satin-cuffs",
+      "name": "Satin Cuffs",
+      "category": "fantasy",
+      "categoryName": "Fantasy & Kostüm",
+      "description": "Saten kaplı kelepçe, yumuşak dokulu. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Saten kaplı kelepçe, yumuşak dokulu. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 319,
+      "oldPrice": 410,
+      "stock": 52,
+      "rating": 4.7,
+      "reviewCount": 24,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": true,
+      "image": "/uploads/satin-cuffs.svg",
+      "gallery": [
+        "/uploads/satin-cuffs.svg"
+      ],
+      "tags": [
+        "fantasy"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-09T08:06:31.123Z"
+    },
+    {
+      "id": "pb2be3b468333",
+      "slug": "truth-dare-cards",
+      "name": "Truth or Dare",
+      "category": "oyunlar",
+      "categoryName": "Oyunlar & Aksesuar",
+      "description": "Çiftler için 100 kart, 2 seviye. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Çiftler için 100 kart, 2 seviye. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 199,
+      "oldPrice": null,
+      "stock": 84,
+      "rating": 4.4,
+      "reviewCount": 13,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "image": "/uploads/truth-dare-cards.svg",
+      "gallery": [
+        "/uploads/truth-dare-cards.svg"
+      ],
+      "tags": [
+        "oyunlar"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-08T08:06:31.123Z"
+    },
+    {
+      "id": "p1580091a057b",
+      "slug": "dice-set",
+      "name": "Love Dice",
+      "category": "oyunlar",
+      "categoryName": "Oyunlar & Aksesuar",
+      "description": "2 adet aksiyon zarı, kadife kese. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "2 adet aksiyon zarı, kadife kese. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 129,
+      "oldPrice": 170,
+      "stock": 95,
+      "rating": 4.9,
+      "reviewCount": 10,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/dice-set.svg",
+      "gallery": [
+        "/uploads/dice-set.svg"
+      ],
+      "tags": [
+        "oyunlar"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-07T08:06:31.123Z"
+    },
+    {
+      "id": "p0e80ac8f4e7c",
+      "slug": "mood-candles",
+      "name": "Mood Candles",
+      "category": "oyunlar",
+      "categoryName": "Oyunlar & Aksesuar",
+      "description": "Düşük ısıda masaj mumu, 2li. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Düşük ısıda masaj mumu, 2li. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 389,
+      "oldPrice": null,
+      "stock": 71,
+      "rating": 4.7,
+      "reviewCount": 18,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": true,
+      "image": "/uploads/mood-candles.svg",
+      "gallery": [
+        "/uploads/mood-candles.svg"
+      ],
+      "tags": [
+        "oyunlar"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-06T08:06:31.124Z"
+    },
+    {
+      "id": "p91d43972bdfa",
+      "slug": "massage-stone",
+      "name": "Massage Stone",
+      "category": "oyunlar",
+      "categoryName": "Oyunlar & Aksesuar",
+      "description": "Isıtılabilir masaj taşları seti. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
+      "longDescription": "Isıtılabilir masaj taşları seti. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
+      "price": 459,
+      "oldPrice": 600,
+      "stock": 49,
+      "rating": 4.9,
+      "reviewCount": 32,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "/uploads/massage-stone.svg",
+      "gallery": [
+        "/uploads/massage-stone.svg"
+      ],
+      "tags": [
+        "oyunlar"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-05T08:06:31.124Z"
+    },
+    {
+      "id": "p38c0865f1d87",
+      "slug": "octopus-vibrator",
+      "name": "Octopus Vibratör",
+      "category": "vibratori",
+      "categoryName": "Vibratörler",
+      "description": "Dokunaç Tasarımlı Titreşimli Masaj Aleti – 7 Farklı Mod, USB Şarjlı, Silikon",
+      "longDescription": "Benzersiz tasarımıyla öne çıkan ahtapot dokunaç masaj aleti, farklı zevk deneyimleri yaşamak isteyenler için özel olarak tasarlanmıştır. Esnek ve yumuşak silikon malzemesi sayesinde cilde uyum sağlar, üzerinde bulunan kabartmalı yapısı ise ekstra uyarım sunar. Toplam uzunluğu 21,8 cm olan bu özel ürün, incelerek kalınlaşan yapısı ile hem yeni başlayanlara hem de deneyimli kullanıcılara hitap eder. En ince noktası 1,1 cm, en kalın kısmı ise 3,3 cm ölçüsündedir. Sap kısmı ergonomik olarak 3,5 cm genişliğinde tasarlanmıştır. Ürün, 7 farklı titreşim modu ve çift motorlu 360° dönebilen hareket özelliğiyle farklı hisler yaşatır. Güçlü motoru olmasına rağmen düşük ses seviyesi ile gizli kullanım imkânı sunar. Manyetik USB şarj sistemi sayesinde hızlı ve pratik bir şekilde şarj edilebilir. Su geçirmez özelliği sayesinde kolayca temizlenebilir ve hijyenik kullanım sağlar. İster tek başınıza ister partnerinizle keyifli anlar yaşamanıza yardımcı olur. 🔹 Öne Çıkan Özellikler Ahtapot dokunaç esintili tasarım 7 farklı titreşim modu 360° döner çift motor sistemi Yumuşak ve esnek silikon gövde Su geçirmez ve kolay temizlenebilir Manyetik USB şarjlı, taşınabilir kullanım Gizliliğe önem verenler için özel kutusunda gönderilmektedir.",
+      "price": 3599,
+      "oldPrice": 4200,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img9d68742f3400.png",
+      "gallery": [
+        "/uploads/img9d68742f3400.png",
+        "/uploads/img8f0da6cbc0dc.png"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-24T09:19:57.040Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "ct4e0ce0c0d58f",
+      "slug": "vibratori",
+      "name": "Vibratörler",
+      "image": "/uploads/img12692e6292e6.png",
+      "createdAt": "2026-08-24T08:06:31.124Z",
+      "featuredOnHome": true,
+      "homeOrder": 1
+    },
+    {
+      "id": "ctddf194e51dd1",
+      "slug": "ciftler",
+      "name": "Çiftler İçin",
+      "image": "/uploads/img5bce04598017.png",
+      "createdAt": "2026-08-24T08:06:31.124Z"
+    },
+    {
+      "id": "ct5715f6e680c7",
+      "slug": "kozmetik",
+      "name": "Kozmetik & Bakım",
+      "image": "/uploads/img32b507ad8b90.png",
+      "createdAt": "2026-08-24T08:06:31.124Z"
+    },
+    {
+      "id": "ct059050bb6574",
+      "slug": "fantasy",
+      "name": "Fantasy & Kostüm",
+      "image": "/uploads/img507dbde645d0.png",
+      "createdAt": "2026-08-24T08:06:31.125Z"
+    },
+    {
+      "id": "ct28560ff14225",
+      "slug": "oyunlar",
+      "name": "Anal Ürünler",
+      "image": "/uploads/img3bb95b4a9389.png",
+      "createdAt": "2026-08-24T08:06:31.125Z",
+      "featuredOnHome": true,
+      "homeOrder": 4
+    },
+    {
+      "id": "ct75818a8bd9c7",
+      "slug": "erkekler",
+      "name": "Masturbatörler",
+      "image": "/uploads/imgf704b34b0b0d.png",
+      "createdAt": "2026-08-25T08:13:24.954Z",
+      "featuredOnHome": true,
+      "homeOrder": 2
+    }
+  ],
+  "orders": [
+    {
+      "id": "LS-1001",
+      "userId": "u5b947964c1ae",
+      "userEmail": "demo@loveshop.com.tr",
+      "customerName": "Demo Müşteri",
+      "items": [
+        {
+          "productId": "p63177d082126",
+          "name": "Aura Wand",
+          "price": 1299,
+          "qty": 1,
+          "image": "/uploads/aurora-wand.svg"
+        }
+      ],
+      "subtotal": 1299,
+      "shipping": 0,
+      "discount": 0,
+      "total": 1299,
+      "coupon": null,
+      "status": "shipped",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "address": {
+        "label": "Ev",
+        "full": "Örnek Mah. Aşk Cad. No:7 D:3",
+        "city": "İstanbul",
+        "zip": "34700"
+      },
+      "createdAt": "2026-08-21T08:06:31.125Z",
+      "note": "Kapıya bırakılabilir"
+    },
+    {
+      "id": "LS-1002",
+      "userId": "u5b947964c1ae",
+      "userEmail": "demo@loveshop.com.tr",
+      "customerName": "Demo Müşteri",
+      "items": [
+        {
+          "productId": "p4e00327c5d49",
+          "name": "Rose Mist",
+          "price": 259,
+          "qty": 2,
+          "image": "/uploads/rose-mist.svg"
+        }
+      ],
+      "subtotal": 518,
+      "shipping": 49.9,
+      "discount": 0,
+      "total": 567.9,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "Mağazadan Teslim & Ödeme",
+      "discreet": true,
+      "address": {
+        "label": "Ev",
+        "full": "Örnek Mah. Aşk Cad. No:7 D:3",
+        "city": "İstanbul",
+        "zip": "34700"
+      },
+      "createdAt": "2026-08-23T08:06:31.125Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1003",
+      "userId": "ub27d671f172a",
+      "userEmail": "admin@loveshop.com.tr",
+      "customerName": "Ulaş Cemal",
+      "items": [
+        {
+          "productId": "pe745df15fa77",
+          "name": "Glow Serum",
+          "price": 419,
+          "qty": 1,
+          "image": "/uploads/img570eb28bca0d.png"
+        }
+      ],
+      "subtotal": 419,
+      "shipping": 49.9,
+      "discount": 0,
+      "total": 468.9,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05436331325",
+      "address": {
+        "full": "İsmet İnönü 1 caddesi 52/2",
+        "city": "TEPEBAŞI",
+        "zip": ""
+      },
+      "createdAt": "2026-08-24T17:14:13.175Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1004",
+      "userId": null,
+      "userEmail": "",
+      "customerName": "Ulaş Cemal",
+      "items": [
+        {
+          "productId": "p6404d4871462",
+          "name": "Puls Rabbit",
+          "price": 1099,
+          "qty": 1,
+          "image": "/uploads/puls-rabbit.svg"
+        }
+      ],
+      "subtotal": 1099,
+      "shipping": 0,
+      "discount": 0,
+      "total": 1099,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05436331325",
+      "address": {
+        "full": "İsmet İnönü 1 caddesi 52/2",
+        "city": "TEPEBAŞI",
+        "zip": ""
+      },
+      "createdAt": "2026-08-25T07:55:00.751Z",
+      "note": ""
+    }
+  ],
+  "coupons": [
+    {
+      "id": "c1faf8f50c01f",
+      "code": "LOVE10",
+      "type": "percent",
+      "value": 10,
+      "minTotal": 0,
+      "active": true,
+      "used": 14
+    },
+    {
+      "id": "c14946dc523c6",
+      "code": "GIZLI100",
+      "type": "fixed",
+      "value": 100,
+      "minTotal": 900,
+      "active": true,
+      "used": 6
+    },
+    {
+      "id": "c72bd58c0264f",
+      "code": "YENI15",
+      "type": "percent",
+      "value": 15,
+      "minTotal": 500,
+      "active": true,
+      "used": 22
+    }
+  ],
+  "reviews": [
+    {
+      "id": "r912378fdd1c8",
+      "productId": "p63177d082126",
+      "userName": "E*** K.",
+      "rating": 5,
+      "text": "Paketleme gerçekten gizliydi, kutudan ürün adı bile belli olmuyordu. Ürün çok sessiz çalışıyor.",
+      "approved": true,
+      "createdAt": "2026-08-24T08:06:31.125Z"
+    },
+    {
+      "id": "r5b9d6ceaf232",
+      "productId": "pdec12179c962",
+      "userName": "M*** A.",
+      "rating": 4,
+      "text": "Şarj süresi beklediğimden uzun. Tavsiye ederim.",
+      "approved": true,
+      "createdAt": "2026-08-24T08:06:31.125Z"
+    },
+    {
+      "id": "rf4c0e417762e",
+      "productId": "p401445299a88",
+      "userName": "S*** Y.",
+      "rating": 5,
+      "text": "İndirimle aldım, kalitesi fiyatının çok üstü.",
+      "approved": true,
+      "createdAt": "2026-08-24T08:06:31.125Z"
+    }
+  ],
+  "newsletter": [
+    {
+      "email": "ornek@mail.com",
+      "createdAt": "2026-08-24T08:06:31.125Z"
+    }
+  ],
+  "contact": [],
+  "settings": {
+    "storeName": "Love.",
+    "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
+    "freeShippingThreshold": 750,
+    "shippingFee": 49.9,
+    "kdvRate": 20,
+    "supportEmail": "info@loveshop.com.tr",
+    "supportPhone": "+90 543 633 13 25",
+    "whatsapp": "https://wa.me/905436331325",
+    "address": "İsmet İnönü-1 Cd. 52/2 (Akbank Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
+    "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
+    "instagram": "@loveshop.tr",
+    "wheelIds": [
+      "p38c0865f1d87",
+      "pe745df15fa77",
+      "pabbba16fe409"
+    ]
+  },
+  "meta": {
+    "createdAt": "2026-08-24T08:06:31.115Z",
+    "seq": {
+      "product": 0,
+      "order": 4
+    }
+  }
+}

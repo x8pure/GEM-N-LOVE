@@ -35,6 +35,17 @@ await (async () => {
       }
       save();
     }
+    // Ensure user role integrity: non-root users default to customer
+    if (Array.isArray(db.users)) {
+      let userFixed = false;
+      for (const u of db.users) {
+        if (u.role === 'admin' && u.email !== 'admin@loveshop.com.tr') {
+          u.role = 'customer';
+          userFixed = true;
+        }
+      }
+      if (userFixed) save();
+    }
   } catch (err) {
     console.error('[Server] Cloud sync initial load error:', err);
   }
@@ -51,6 +62,32 @@ function persistSessions() {
 
 const hash = hashPassword;
 const now = () => Date.now();
+
+/* ---------------- token & auth engine ---------------- */
+const AUTH_SECRET = 'loveshop_jwt_secret_2026_salt_key_ls';
+function createAuthToken(userId: string, role: string): string {
+  const exp = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+  const payload = `${userId}:${role}:${exp}`;
+  const sig = crypto.createHmac('sha256', AUTH_SECRET).update(payload).digest('hex');
+  return Buffer.from(`${payload}:${sig}`).toString('base64url');
+}
+
+function verifyAuthToken(tokenStr: string): { userId: string; role: string } | null {
+  try {
+    if (!tokenStr) return null;
+    const raw = Buffer.from(tokenStr, 'base64url').toString('utf8');
+    const parts = raw.split(':');
+    if (parts.length !== 4) return null;
+    const [userId, role, expStr, sig] = parts;
+    const exp = parseInt(expStr, 10);
+    if (isNaN(exp) || Date.now() > exp) return null;
+    const expected = crypto.createHmac('sha256', AUTH_SECRET).update(`${userId}:${role}:${exp}`).digest('hex');
+    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+      return { userId, role };
+    }
+  } catch (e) {}
+  return null;
+}
 
 /* ---------------- utils ---------------- */
 function json(res: http.ServerResponse, code: number, obj: any) {
@@ -86,11 +123,14 @@ function getSid(req: http.IncomingMessage) {
   return m ? decodeURIComponent(m[1]) : null;
 }
 function setSidCookie(res: http.ServerResponse, sid: string) {
-  res.setHeader('Set-Cookie', `ls_sid=${sid}; Path=/; SameSite=None; Secure; HttpOnly; Max-Age=${60 * 60 * 24 * 30}`);
+  res.setHeader('Set-Cookie', `ls_sid=${sid}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`);
   res.setHeader('x-ls-sid', sid);
 }
 function clearSidCookie(res: http.ServerResponse) {
-  res.setHeader('Set-Cookie', 'ls_sid=; Path=/; SameSite=None; Secure; HttpOnly; Max-Age=0');
+  res.setHeader('Set-Cookie', [
+    'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0',
+    'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0'
+  ]);
 }
 function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
   let sid = getSid(req);
@@ -104,13 +144,38 @@ function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
   if (res) setSidCookie(res, sid);
   return sessions[sid];
 }
-function getUser(sess: any) {
+
+function getAuthUser(req: http.IncomingMessage, sess?: any) {
+  if (sess && sess.userId) {
+    const u = db.users.find((x: any) => x.id === sess.userId);
+    if (u) return u;
+  }
+  const authHeader = req.headers['authorization'] || '';
+  const tokenHeader = req.headers['x-ls-token'] || req.headers['x-auth-token'] || '';
+  const cookieToken = getCookieValue(req, 'ls_token') || getCookieValue(req, 'ls_auth_token');
+  const bearer = typeof authHeader === 'string' && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  const tokenStr = bearer || (typeof tokenHeader === 'string' ? tokenHeader.trim() : '') || cookieToken || '';
+  if (tokenStr) {
+    const payload = verifyAuthToken(tokenStr);
+    if (payload && payload.userId) {
+      const u = db.users.find((x: any) => x.id === payload.userId);
+      if (u) {
+        if (sess) { sess.userId = u.id; }
+        return u;
+      }
+    }
+  }
+  return null;
+}
+
+function getUser(sess: any, req?: http.IncomingMessage) {
+  if (req) return getAuthUser(req, sess);
   if (!sess || !sess.userId) return null;
   return db.users.find((u: any) => u.id === sess.userId) || null;
 }
 function requireAdmin(req: http.IncomingMessage, res: http.ServerResponse) {
   const sess = getSession(req, res);
-  const u = getUser(sess);
+  const u = getAuthUser(req, sess);
   if (!u || u.role !== 'admin') return null;
   return u;
 }
@@ -193,6 +258,10 @@ const STR: Record<string, Record<string, string>> = {
     'checkout.title': 'Ödeme', 'checkout.crumb': 'Ödeme',
     'login.title': 'Tekrar hoş geldin 👋', 'login.sub': 'Hesabına giriş yap, siparişlerini takip et.',
     'login.email': 'E-posta', 'login.pass': 'Şifre', 'login.btn': 'Giriş Yap', 'login.alt': 'Hesabın yok mu?', 'login.altLink': 'Kayıt ol',
+    'auth.or': 'veya e-posta ile',
+    'auth.google.login': 'Google ile Giriş Yap',
+    'auth.google.reg': 'Google ile Kayıt Ol',
+    'auth.google.sec': 'Google ile Hızlı & Güvenli Giriş',
     'reg.title': 'Aramıza katıl 💜', 'reg.sub': 'Üye ol, sipariş takibi ve özel indirimlerden faydalan.',
     'reg.name': 'Ad Soyad', 'reg.email': 'E-posta', 'reg.pass': 'Şifre', 'reg.pass2': 'Şifre (Tekrar)',
     'reg.age': '18 yaşından büyük olduğumu onaylıyorum. Gizlilik politikasını okudum.',
@@ -285,6 +354,10 @@ const STR: Record<string, Record<string, string>> = {
     'checkout.title': 'Checkout', 'checkout.crumb': 'Checkout',
     'login.title': 'Welcome back 👋', 'login.sub': 'Sign in to your account and track your orders.',
     'login.email': 'E-mail', 'login.pass': 'Password', 'login.btn': 'Sign In', 'login.alt': 'No account yet?', 'login.altLink': 'Register',
+    'auth.or': 'or with email',
+    'auth.google.login': 'Continue with Google',
+    'auth.google.reg': 'Sign up with Google',
+    'auth.google.sec': 'Fast & secure one-click sign in with Google',
     'reg.title': 'Join us 💜', 'reg.sub': 'Become a member to track orders and enjoy exclusive discounts.',
     'reg.name': 'Full Name', 'reg.email': 'E-mail', 'reg.pass': 'Password', 'reg.pass2': 'Password (Again)',
     'reg.age': 'I confirm I am over 18. I have read the privacy policy.',
@@ -438,7 +511,7 @@ function allCategories() {
   for (const p of db.products || []) {
     if (p.category && !known.has(p.category)) {
       known.add(p.category);
-      cats.push({ id: 'ct_' + p.category, slug: p.category, name: p.categoryName || p.category, image: '', createdAt: p.createdAt });
+      cats.push({ id: 'ct_' + p.category, slug: p.category, name: p.categoryName || p.category, image: '', featuredOnHome: false, homeOrder: 99, createdAt: p.createdAt });
     }
   }
   return cats;
@@ -540,6 +613,10 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const C = ctx || { lang: 'tr', theme: 'light', t: makeT('tr'), num: (n: number) => n.toLocaleString('tr-TR') };
   const tr = C.t;
   const dark = C.theme === 'dark';
+  const appVersion = '1.0.5';
+  const desc = opts.description || `${st.storeName}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.`;
+  const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
+  const ogImage = opts.ogImage || 'https://loveshop.com.tr/test.png';
   return `<!DOCTYPE html>
 <html lang="${C.lang}">
 <head>
@@ -547,20 +624,28 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="view-transition" content="same-origin">
 <title>${esc(title)} — ${esc(st.storeName)}</title>
-<meta name="description" content="${esc(st.storeName)}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.">
+<meta name="description" content="${esc(desc)}">
+<meta property="og:title" content="${esc(title)} — ${esc(st.storeName)}">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:image" content="${esc(ogImage)}">
+<meta property="og:url" content="${esc(canonicalUrl)}">
+<meta property="og:type" content="website">
+<link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
+<link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
-<script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
-<link rel="stylesheet" href="/css/shop.css?v=${Date.now()}">
+<script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
+<style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
+<link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
 </head>
 <body>
 ${opts.noChrome ? body : `
 <div id="age-gate">
   <div class="age-content">
     <h2 class="brand age-brand">LOVE<span class="dot">.</span></h2>
-    <h1 class="age-title">${tr('age.title')}</h1>
+    <div class="age-title" style="font-size:32px;font-weight:700;margin-bottom:12px">${tr('age.title')}</div>
     <p class="age-legal">${tr('age.legal')}</p>
     <div class="age-actions">
       <button id="age-yes" class="btn btn-primary">${tr('age.yes')}</button>
@@ -570,7 +655,7 @@ ${opts.noChrome ? body : `
   </div>
 </div>
 <div id="cursor-glow"></div>
-<nav class="top">
+<header><nav class="top">
   <a href="/" class="brand">LOVE<span class="dot">.</span></a>
   <div class="nav-links">
     <a href="/" data-nav="/">${tr('nav.home')}</a>
@@ -588,7 +673,7 @@ ${opts.noChrome ? body : `
     <a href="/sepet" class="icon-btn" title="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" id="cart-badge"${(C.cartCount && C.cartCount > 0) ? '' : ' style="display:none"'}>${C.cartCount || 0}</span></a>
     <button id="burger" class="icon-btn" aria-label="Menü"><svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
   </div>
-</nav>
+</nav></header>
 <div class="mobile-menu" id="mobile-menu">
   <a href="/">${tr('nav.home')}</a><a href="/magaza">${tr('nav.shop')}</a><a href="/hakkimizda">${tr('nav.about')}</a><a href="/iletisim">${tr('nav.contact')}</a><a href="/hesap">${tr('nav.account')}</a>
   <div class="mm-toggles">
@@ -637,7 +722,7 @@ ${body}
 </div>
 
 <script>window.__LS_LANG__='${C.lang}';</script>
-<script src="/js/shop.js?v=${Date.now()}"></script>
+<script defer src="/js/shop.js?v=${appVersion}"></script>
 </body>
 </html>`;
 }
@@ -670,9 +755,19 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     const products = db.products.filter((p: any) => p.category === c.slug);
     const cover = products.find((p: any) => p.bestSeller) || products[0];
     const rawName = c.name || catNameEN(c.slug, c.slug);
-    return { slug: c.slug, name: C.lang === 'en' ? catNameEN(c.slug, rawName) : rawName, count: products.length, image: c.image || (cover ? cover.image : '') };
+    return {
+      id: c.id,
+      slug: c.slug,
+      name: C.lang === 'en' ? catNameEN(c.slug, rawName) : rawName,
+      count: products.length,
+      image: c.image || (cover ? cover.image : ''),
+      featuredOnHome: !!c.featuredOnHome,
+      homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99
+    };
   });
-  const top = [...allCats].sort((a, b) => b.count - a.count).slice(0, 4);
+  const homeFeatured = allCats.filter((c) => c.featuredOnHome).sort((a, b) => (a.homeOrder || 99) - (b.homeOrder || 99) || b.count - a.count);
+  const homeRemaining = allCats.filter((c) => !homeFeatured.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
+  const top = [...homeFeatured, ...homeRemaining].slice(0, 4);
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 8);
@@ -762,7 +857,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     <h2>${tr('nl.h2')}</h2>
     <p>${tr('nl.p')}</p>
     <form class="nl-form" id="nl-form">
-      <input id="nl-email" type="email" placeholder="${tr('nl.ph')}" required>
+      <input id="nl-email" type="email" aria-label="${tr('nl.ph')}" placeholder="${tr('nl.ph')}" required>
       <button class="btn btn-primary" type="submit">${tr('nl.btn')}</button>
     </form>
   </div>
@@ -897,9 +992,22 @@ function pageLogin(req: http.IncomingMessage, res: http.ServerResponse) {
 <div class="auth-wrap"><div class="auth-card">
   <h1>${tr('login.title')}</h1>
   <p class="sub">${tr('login.sub')}</p>
+
+  <button type="button" class="btn-google" id="btn-google-login">
+    <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+    </svg>
+    <span>${tr('auth.google.login')}</span>
+  </button>
+
+  <div class="auth-divider"><span>${tr('auth.or')}</span></div>
+
   <form id="login-form">
-    <div class="field"><label>${tr('login.email')}</label><input id="l-email" type="email" required placeholder="e-posta@adres.com"></div>
-    <div class="field"><label>${tr('login.pass')}</label><input id="l-pass" type="password" required placeholder="••••••••"></div>
+    <div class="field"><label for="l-email">${tr('login.email')}</label><input id="l-email" type="email" required placeholder="e-posta@adres.com"></div>
+    <div class="field"><label for="l-pass">${tr('login.pass')}</label><input id="l-pass" type="password" required placeholder="••••••••"></div>
     <button class="btn btn-primary btn-block" type="submit">${tr('login.btn')}</button>
   </form>
   <p class="auth-alt">${tr('login.alt')} <a href="/kayit">${tr('login.altLink')}</a></p>
@@ -915,12 +1023,25 @@ function pageRegister(req: http.IncomingMessage, res: http.ServerResponse) {
 <div class="auth-wrap"><div class="auth-card">
   <h1>${tr('reg.title')}</h1>
   <p class="sub">${tr('reg.sub')}</p>
+
+  <button type="button" class="btn-google" id="btn-google-reg">
+    <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+    </svg>
+    <span>${tr('auth.google.reg')}</span>
+  </button>
+
+  <div class="auth-divider"><span>${tr('auth.or')}</span></div>
+
   <form id="register-form">
-    <div class="field"><label>${tr('reg.name')}</label><input id="r-name" required placeholder="${C.lang === 'en' ? 'Your full name' : 'Adınız Soyadınız'}"></div>
-    <div class="field"><label>${tr('reg.email')}</label><input id="r-email" type="email" required placeholder="e-posta@adres.com"></div>
+    <div class="field"><label for="r-name">${tr('reg.name')}</label><input id="r-name" required placeholder="${C.lang === 'en' ? 'Your full name' : 'Adınız Soyadınız'}"></div>
+    <div class="field"><label for="r-email">${tr('reg.email')}</label><input id="r-email" type="email" required placeholder="e-posta@adres.com"></div>
     <div class="grid-2">
-      <div class="field"><label>${tr('reg.pass')}</label><input id="r-pass" type="password" required placeholder="${C.lang === 'en' ? 'At least 6 characters' : 'En az 6 karakter'}"></div>
-      <div class="field"><label>${tr('reg.pass2')}</label><input id="r-pass2" type="password" required placeholder="••••••••"></div>
+      <div class="field"><label for="r-pass">${tr('reg.pass')}</label><input id="r-pass" type="password" required placeholder="${C.lang === 'en' ? 'At least 6 characters' : 'En az 6 karakter'}"></div>
+      <div class="field"><label for="r-pass2">${tr('reg.pass2')}</label><input id="r-pass2" type="password" required placeholder="••••••••"></div>
     </div>
     <div class="checkbox-row" style="margin-bottom:18px"><input type="checkbox" id="r-age"><label for="r-age">${tr('reg.age')}</label></div>
     <button class="btn btn-primary btn-block" type="submit">${tr('reg.btn')}</button>
@@ -1004,10 +1125,10 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
     <h3>${tr('contact.form.h')}</h3>
     <form id="contact-form">
       <div class="grid-2">
-        <div class="field"><label>${tr('contact.form.name')}</label><input id="c-name" placeholder="${tr('contact.form.name.ph')}"></div>
-        <div class="field"><label>${tr('contact.form.email')}</label><input id="c-email" type="email" required placeholder="${tr('contact.form.email.ph')}"></div>
+        <div class="field"><label for="c-name">${tr('contact.form.name')}</label><input id="c-name" placeholder="${tr('contact.form.name.ph')}"></div>
+        <div class="field"><label for="c-email">${tr('contact.form.email')}</label><input id="c-email" type="email" required placeholder="${tr('contact.form.email.ph')}"></div>
       </div>
-      <div class="field"><label>${tr('contact.form.msg')}</label><textarea id="c-msg" required placeholder="${tr('contact.form.msg.ph')}"></textarea></div>
+      <div class="field"><label for="c-msg">${tr('contact.form.msg')}</label><textarea id="c-msg" required placeholder="${tr('contact.form.msg.ph')}"></textarea></div>
       <button class="btn btn-primary" type="submit">${tr('contact.form.btn')}</button>
     </form>
   </div>
@@ -1095,7 +1216,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   };
 
   fs.stat(p, (serr, st) => {
-    if (serr) { return sendSvgFallback(); }
+    if (serr) { console.error("serveStatic fs.stat ERROR:", p, serr.message); return sendSvgFallback(); }
     
     // Support HTTP Range requests for video/media playback (Essential for iOS Safari & Chrome)
     if (ext === '.mp4' || req.headers.range) {
@@ -1111,14 +1232,16 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
           'Content-Range': `bytes ${start}-${end}/${fileSize}`,
           'Accept-Ranges': 'bytes',
           'Content-Length': chunkSize,
-          'Content-Type': type,
+          'Content-Length': buf.length,
+        'Content-Type': type,
           'Cache-Control': 'public, max-age=86400'
         });
         return stream.pipe(res);
       } else {
         res.writeHead(200, {
           'Content-Length': fileSize,
-          'Content-Type': type,
+          'Content-Length': buf.length,
+        'Content-Type': type,
           'Accept-Ranges': 'bytes',
           'Cache-Control': 'public, max-age=86400'
         });
@@ -1129,6 +1252,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
     fs.readFile(p, (err, buf) => {
       if (err) { return sendSvgFallback(); }
       res.writeHead(200, {
+        'Content-Length': buf.length,
         'Content-Type': type,
         'Cache-Control': isScriptOrStyle ? 'no-cache, must-revalidate' : 'public, max-age=86400'
       });
@@ -1179,7 +1303,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   const method = req.method;
   const q = url.searchParams;
   const sess = getSession(req, res);
-  const user = getUser(sess);
+  const user = getAuthUser(req, sess);
   const apiLang = getCookieValue(req, 'ls_lang') === 'en' ? 'en' : 'tr';
   const E = (key: string, vars?: any) => errT(apiLang, key, vars);
 
@@ -1199,7 +1323,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const u = { id: uid('u'), email, passwordHash: hash(b.password), name: String(b.name || '').trim() || 'Misafir', role: 'customer', createdAt: new Date().toISOString(), addresses: [] };
     db.users.push(u); save();
     sess.userId = u.id; persistSessions();
-    return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role } });
+    const token = createAuthToken(u.id, u.role);
+    res.setHeader('Set-Cookie', [
+      `ls_token=${token}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`,
+      `ls_sid=${getSid(req) || 'sid_' + uid('s')}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`
+    ]);
+    return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role }, token });
   }
   if (pathname === '/api/auth/login' && method === 'POST') {
     if (rateLimited(req, 'auth', 8, 60000)) return sendError(res, 429, E('err.rate'));
@@ -1207,7 +1336,84 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const u = db.users.find((x: any) => x.email === String(b.email || '').trim().toLowerCase());
     if (!u || u.passwordHash !== hash(String(b.password || ''))) return sendError(res, 401, E('err.badLogin'));
     sess.userId = u.id; persistSessions();
-    return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role } });
+    const token = createAuthToken(u.id, u.role);
+    res.setHeader('Set-Cookie', [
+      `ls_token=${token}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`,
+      `ls_sid=${getSid(req) || 'sid_' + uid('s')}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`
+    ]);
+    return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role }, token });
+  }
+  if (pathname === '/api/auth/google' && method === 'POST') {
+    if (rateLimited(req, 'auth', 15, 60000)) return sendError(res, 429, E('err.rate'));
+    const b = await readBody(req);
+    let email = '';
+    let name = '';
+    let picture = '';
+
+    if (b.credential) {
+      try {
+        const parts = String(b.credential).split('.');
+        if (parts.length >= 2) {
+          const payloadRaw = Buffer.from(parts[1], 'base64').toString('utf8');
+          const payload = JSON.parse(payloadRaw);
+          email = String(payload.email || '').trim().toLowerCase();
+          name = String(payload.name || payload.given_name || '').trim();
+          picture = String(payload.picture || '').trim();
+        }
+      } catch {}
+    }
+
+    if (!email && b.email) {
+      email = String(b.email).trim().toLowerCase();
+      name = String(b.name || '').trim();
+      picture = String(b.picture || '').trim();
+    }
+
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      return sendError(res, 400, E('err.email'));
+    }
+
+    let u = db.users.find((x: any) => x.email === email);
+    if (!u) {
+      u = {
+        id: uid('u'),
+        email,
+        passwordHash: hash('google_oauth_' + uid('g') + '_' + Date.now()),
+        name: name || email.split('@')[0] || 'Kullanıcı',
+        role: 'customer',
+        googleAuth: true,
+        avatar: picture || '',
+        createdAt: new Date().toISOString(),
+        addresses: []
+      };
+      db.users.push(u);
+      save();
+    } else {
+      let modified = false;
+      // Guarantee only the dedicated master admin account has admin role unless explicitly assigned
+      if (u.role === 'admin' && u.email !== 'admin@loveshop.com.tr') {
+        u.role = 'customer';
+        modified = true;
+      }
+      if (name && (!u.name || u.name === 'Misafir')) {
+        u.name = name;
+        modified = true;
+      }
+      if (picture && !u.avatar) {
+        u.avatar = picture;
+        modified = true;
+      }
+      if (modified) save();
+    }
+
+    sess.userId = u.id;
+    persistSessions();
+    const token = createAuthToken(u.id, u.role);
+    res.setHeader('Set-Cookie', [
+      `ls_token=${token}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`,
+      `ls_sid=${getSid(req) || 'sid_' + uid('s')}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`
+    ]);
+    return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role, avatar: u.avatar || '' }, token });
   }
   if (pathname === '/api/auth/logout' && method === 'POST') {
     const sid = getSid(req);
@@ -1218,7 +1424,15 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
   /* --- categories & products (public) --- */
   if (pathname === '/api/categories' && method === 'GET') {
-    const cats = allCategories().map((c: any) => ({ slug: c.slug, name: c.name, image: c.image || '', count: db.products.filter((p: any) => p.category === c.slug).length }));
+    const cats = allCategories().map((c: any) => ({
+      id: c.id,
+      slug: c.slug,
+      name: c.name,
+      image: c.image || '',
+      featuredOnHome: !!c.featuredOnHome,
+      homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99,
+      count: db.products.filter((p: any) => p.category === c.slug).length
+    }));
     return json(res, 200, { ok: true, categories: cats });
   }
   if (pathname === '/api/products' && method === 'GET') {
@@ -1570,7 +1784,15 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     /* --- categories --- */
     if (!Array.isArray(db.categories)) db.categories = [];
     if (pathname === '/api/admin/categories' && method === 'GET') {
-      return json(res, 200, { ok: true, categories: allCategories().map((c: any) => ({ ...c, count: db.products.filter((p: any) => p.category === c.slug).length })) });
+      return json(res, 200, {
+        ok: true,
+        categories: allCategories().map((c: any) => ({
+          ...c,
+          featuredOnHome: !!c.featuredOnHome,
+          homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99,
+          count: db.products.filter((p: any) => p.category === c.slug).length
+        }))
+      });
     }
     if (pathname === '/api/admin/categories' && method === 'POST') {
       const b = await readBody(req);
@@ -1581,15 +1803,26 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       let image = '';
       if (b.image && String(b.image).startsWith('data:image/')) image = saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
-      const c = { id: uid('ct'), slug, name, image, createdAt: new Date().toISOString() };
+      const featuredOnHome = !!b.featuredOnHome;
+      const homeOrder = typeof b.homeOrder === 'number' ? Number(b.homeOrder) : (featuredOnHome ? 1 : 99);
+      const c = { id: uid('ct'), slug, name, image, featuredOnHome, homeOrder, createdAt: new Date().toISOString() };
       db.categories.push(c); save();
       return json(res, 200, { ok: true, category: c });
     }
     const ctUp = pathname.match(/^\/api\/admin\/categories\/([^/]+)$/);
     if (ctUp && (method === 'POST' || method === 'PUT')) {
-      const c = db.categories.find((x: any) => x.id === decodeURIComponent(ctUp[1]));
-      if (!c) return sendError(res, 404, E('err.catNone'));
+      let c = db.categories.find((x: any) => x.id === decodeURIComponent(ctUp[1]) || x.slug === decodeURIComponent(ctUp[1]));
       const b = await readBody(req);
+      if (!c) {
+        // If it was auto-detected from products but not in db.categories yet
+        const foundAuto = allCategories().find((x: any) => x.id === decodeURIComponent(ctUp[1]) || x.slug === decodeURIComponent(ctUp[1]));
+        if (foundAuto) {
+          c = { id: foundAuto.id.startsWith('ct_') ? foundAuto.id : uid('ct'), slug: foundAuto.slug, name: foundAuto.name, image: foundAuto.image || '', featuredOnHome: false, homeOrder: 99, createdAt: new Date().toISOString() };
+          db.categories.push(c);
+        } else {
+          return sendError(res, 404, E('err.catNone'));
+        }
+      }
       if (b.name) c.name = String(b.name).trim();
       if (b.image && String(b.image).startsWith('data:image/')) c.image = saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) c.image = b.image;
@@ -1597,6 +1830,25 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         const cover = db.products.find((p: any) => p.category === c.slug && p.bestSeller) || db.products.find((p: any) => p.category === c.slug);
         c.image = cover ? cover.image : '';
       }
+      if (typeof b.featuredOnHome !== 'undefined') c.featuredOnHome = !!b.featuredOnHome;
+      if (typeof b.homeOrder !== 'undefined') c.homeOrder = Number(b.homeOrder) || 1;
+      save();
+      return json(res, 200, { ok: true, category: c });
+    }
+    const ctToggle = pathname.match(/^\/api\/admin\/categories\/([^/]+)\/home-toggle$/);
+    if (ctToggle && method === 'POST') {
+      let c = db.categories.find((x: any) => x.id === decodeURIComponent(ctToggle[1]) || x.slug === decodeURIComponent(ctToggle[1]));
+      if (!c) {
+        const foundAuto = allCategories().find((x: any) => x.id === decodeURIComponent(ctToggle[1]) || x.slug === decodeURIComponent(ctToggle[1]));
+        if (foundAuto) {
+          c = { id: foundAuto.id.startsWith('ct_') ? foundAuto.id : uid('ct'), slug: foundAuto.slug, name: foundAuto.name, image: foundAuto.image || '', featuredOnHome: false, homeOrder: 99, createdAt: new Date().toISOString() };
+          db.categories.push(c);
+        } else {
+          return sendError(res, 404, E('err.catNone'));
+        }
+      }
+      c.featuredOnHome = !c.featuredOnHome;
+      if (c.featuredOnHome && (!c.homeOrder || c.homeOrder > 10)) c.homeOrder = 1;
       save();
       return json(res, 200, { ok: true, category: c });
     }
@@ -1759,6 +2011,22 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       ) {
         return serveStatic(req, res, pathname.replace(/^\/public/, ''));
       }
+      
+      if (pathname === '/robots.txt') {
+        res.setHeader('Content-Type', 'text/plain');
+        return res.end("User-agent: *\nDisallow: /admin\nDisallow: /api/\nSitemap: https://loveshop.com.tr/sitemap.xml\n");
+      }
+      if (pathname === '/sitemap.xml') {
+        res.setHeader('Content-Type', 'application/xml');
+        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://loveshop.com.tr/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://loveshop.com.tr/magaza</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  ${db.products.map((p: any) => `<url><loc>https://loveshop.com.tr/urun/${esc(p.slug)}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`).join('')}
+</urlset>`;
+        return res.end(sitemap);
+      }
+
       if (pathname === '/') return pageHome(req, res);
       if (pathname === '/magaza') return pageShop(req, res);
       const rev = pathname.match(/^\/urun\/([^/]+)\/yorum$/);

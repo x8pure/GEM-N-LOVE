@@ -53,14 +53,23 @@
       'thanks.amount': 'Tutar: ',
       'auth.hi': 'Hoş geldin, {name}', 'auth.pass6': 'Şifre en az 6 karakter olmalı', 'auth.passmismatch': 'Şifreler eşleşmiyor',
       'auth.age': '18 yaşından büyük olduğunuzu onaylamalısınız', 'auth.created': 'Hesabın oluşturuldu 💜',
+      'auth.google.login': 'Google ile Giriş Yap', 'auth.google.reg': 'Google ile Kayıt Ol',
+      'auth.google.wait': 'Google bağlantısı kuruluyor…', 'auth.google.ok': 'Google ile başarıyla giriş yapıldı 💜',
       'acc.orders': '📦 Siparişlerim', 'acc.profile': '👤 Profilim', 'acc.logout': '🚪 Çıkış Yap',
       'acc.hello': 'Merhaba, {name} 💜',
+      'acc.tab.orders': 'Siparişlerim', 'acc.tab.address': 'Kayıtlı Adresim', 'acc.tab.profile': 'Profil Bilgileri', 'acc.tab.security': 'Şifre & Güvenlik', 'acc.tab.logout': 'Güvenli Çıkış',
+      'acc.role_admin': 'Yönetici', 'acc.role_user': 'Yetkin Üye (18+)',
+      'acc.stat.orders': 'Toplam Sipariş', 'acc.stat.privacy': 'Gizlilik Güvencesi', 'acc.stat.support': 'Doğrudan Destek',
+      'acc.ask_wa': 'Siparişi Sor', 'acc.noorders.sub': 'Love Shop ayrıcalıkları ve %100 gizli paketleme güvencesiyle ilk siparişinizi oluşturun.',
       'st.processing': 'Hazırlanıyor', 'st.shipped': 'Kargoda', 'st.delivered': 'Teslim Edildi', 'st.cancelled': 'İptal',
-      'acc.discreet': 'Gizli paketleme', 'acc.noorders': 'Henüz siparişin yok.', 'acc.start': 'Keşfe Başla',
-      'pf.acc': 'Hesap Bilgileri', 'pf.name': 'Ad Soyad', 'pf.email': 'E-posta', 'pf.save': 'Kaydet',
+      'acc.discreet': 'Gizli paketleme', 'acc.noorders': 'Henüz siparişiniz bulunmuyor.', 'acc.start': 'Kataloğu Keşfet',
+      'pf.acc': 'Hesap Bilgileri', 'pf.name': 'Ad Soyad', 'pf.email': 'E-posta', 'pf.save': 'Bilgileri Güncelle',
       'pf.address': 'Teslimat Adresi', 'pf.addr': 'Adres', 'pf.city': 'Şehir', 'pf.zip': 'Posta Kodu', 'pf.phone': 'Telefon',
-      'pf.discreet': 'Bu adres için her zaman gizli paketleme kullan', 'pf.saveaddr': 'Adresi Kaydet',
+      'pf.discreet': 'Bu adres için her zaman %100 gizli ve isimsiz paketleme kullan', 'pf.saveaddr': 'Adresi Kaydet',
       'pf.pass': 'Şifre Değiştir', 'pf.new': 'Yeni Şifre', 'pf.new2': 'Yeni Şifre (Tekrar)', 'pf.update': 'Şifreyi Güncelle',
+      'pf.title.acc': 'Kişisel Bilgiler', 'pf.sub.acc': 'Hesabınıza kayıtlı ad ve e-posta bilgilerini görüntüleyin ve güncelleyin.',
+      'pf.title.address': 'Teslimat & Kargo Adresi', 'pf.sub.address': 'Siparişlerinizin ulaştırılacağı birincil kargo adresinizi yönetin.',
+      'pf.title.pass': 'Şifre & Güvenlik', 'pf.sub.pass': 'Hesap güvenliğiniz için güçlü bir şifre belirleyin.',
       'pf.ok': 'Profil güncellendi', 'pf.addrok': 'Adres kaydedildi', 'pf.passok': 'Şifre güncellendi',
       'contact.ok': 'Mesajın alındı, 24 saat içinde dönüş yapacağız 💌',
       'cf.hint': 'Sürükle · Dokun', 'cf.prev': 'Önceki ürün', 'cf.next': 'Sonraki ürün'
@@ -103,14 +112,23 @@
       'thanks.amount': 'Amount: ',
       'auth.hi': 'Welcome, {name}', 'auth.pass6': 'Password must be at least 6 characters', 'auth.passmismatch': 'Passwords do not match',
       'auth.age': 'You must confirm that you are over 18', 'auth.created': 'Your account has been created 💜',
+      'auth.google.login': 'Continue with Google', 'auth.google.reg': 'Sign up with Google',
+      'auth.google.wait': 'Connecting to Google…', 'auth.google.ok': 'Signed in with Google successfully 💜',
       'acc.orders': '📦 My Orders', 'acc.profile': '👤 My Profile', 'acc.logout': '🚪 Sign Out',
       'acc.hello': 'Hello, {name} 💜',
+      'acc.tab.orders': 'My Orders', 'acc.tab.address': 'Delivery Address', 'acc.tab.profile': 'Profile Information', 'acc.tab.security': 'Password & Security', 'acc.tab.logout': 'Sign Out',
+      'acc.role_admin': 'Admin', 'acc.role_user': 'Verified Member (18+)',
+      'acc.stat.orders': 'Total Orders', 'acc.stat.privacy': 'Privacy Guarantee', 'acc.stat.support': 'Direct Support',
+      'acc.ask_wa': 'Ask about Order', 'acc.noorders.sub': 'Place your first order with 100% discreet packaging and premium Love Shop perks.',
       'st.processing': 'Processing', 'st.shipped': 'Shipped', 'st.delivered': 'Delivered', 'st.cancelled': 'Cancelled',
-      'acc.discreet': 'Discreet packaging', 'acc.noorders': 'You have no orders yet.', 'acc.start': 'Start Exploring',
-      'pf.acc': 'Account Information', 'pf.name': 'Full Name', 'pf.email': 'E-mail', 'pf.save': 'Save',
+      'acc.discreet': 'Discreet packaging', 'acc.noorders': 'You have no orders yet.', 'acc.start': 'Explore Catalog',
+      'pf.acc': 'Account Information', 'pf.name': 'Full Name', 'pf.email': 'E-mail', 'pf.save': 'Update Info',
       'pf.address': 'Shipping Address', 'pf.addr': 'Address', 'pf.city': 'City', 'pf.zip': 'Postal Code', 'pf.phone': 'Phone',
-      'pf.discreet': 'Always use discreet packaging for this address', 'pf.saveaddr': 'Save Address',
+      'pf.discreet': 'Always use 100% discreet and anonymous packaging for this address', 'pf.saveaddr': 'Save Address',
       'pf.pass': 'Change Password', 'pf.new': 'New Password', 'pf.new2': 'New Password (Again)', 'pf.update': 'Update Password',
+      'pf.title.acc': 'Personal Information', 'pf.sub.acc': 'View and manage your account details and registered email.',
+      'pf.title.address': 'Delivery & Shipping Address', 'pf.sub.address': 'Manage your primary shipping address for discrete parcel delivery.',
+      'pf.title.pass': 'Password & Security', 'pf.sub.pass': 'Keep your account secure with a strong and unique password.',
       'pf.ok': 'Profile updated', 'pf.addrok': 'Address saved', 'pf.passok': 'Password updated',
       'contact.ok': 'Your message is received, we will reply within 24 hours 💌',
       'cf.hint': 'Drag · Touch', 'cf.prev': 'Previous product', 'cf.next': 'Next product'
@@ -195,9 +213,11 @@
 
   async function api(path, opts = {}) {
     const sid = getClientSid();
+    const token = localStorage.getItem('ls_auth_token');
     const customHeaders = {
       'Content-Type': 'application/json',
       ...(sid ? { 'x-ls-sid': sid } : {}),
+      ...(token ? { 'Authorization': 'Bearer ' + token, 'x-ls-token': token } : {}),
       ...(opts.headers || {})
     };
     const res = await fetch(path, {
@@ -288,6 +308,146 @@
   }
 
   /* ---------- nav ---------- */
+  function renderNavUser(user) {
+    const slot = $('#nav-user');
+    if (!slot) return;
+    if (user) {
+      const displayName = user.name || user.email?.split('@')[0] || 'Kullanıcı';
+      const initial = displayName.charAt(0).toUpperCase();
+      const isAdmin = user.role === 'admin';
+      const avatarHtml = user.avatar
+        ? `<img src="${user.avatar}" alt="${esc(displayName)}" onerror="this.outerHTML='<span>${initial}</span>'">`
+        : `<span>${initial}</span>`;
+      
+      slot.innerHTML = `
+        <button type="button" class="user-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false" title="${esc(displayName)}">
+          <span class="user-btn-avatar">
+            ${avatarHtml}
+            <span class="user-btn-online" title="Aktif Oturum"></span>
+          </span>
+          <span class="user-btn-name">${esc(displayName)}</span>
+          <svg class="user-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+
+        <div class="user-dropdown-menu" id="user-dropdown-menu" role="menu" aria-label="Kullanıcı Menüsü">
+          <div class="user-dd-header">
+            <div class="user-dd-avatar">${avatarHtml}</div>
+            <div class="user-dd-info">
+              <div class="user-dd-name">${esc(displayName)}</div>
+              <div class="user-dd-email">${esc(user.email || '')}</div>
+              <span class="user-dd-badge ${isAdmin ? 'admin' : ''}">${isAdmin ? '👑 ' + t('acc.role_admin') : '✨ ' + t('acc.role_user')}</span>
+            </div>
+          </div>
+
+          <div class="user-dd-list">
+            <a href="/hesap#orders" class="user-dd-item" role="menuitem">
+              <span class="user-dd-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              </span>
+              <span>${t('acc.tab.orders')}</span>
+            </a>
+
+            <a href="/hesap#address" class="user-dd-item" role="menuitem">
+              <span class="user-dd-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <span>${t('acc.tab.address')}</span>
+            </a>
+
+            <a href="/hesap#profile" class="user-dd-item" role="menuitem">
+              <span class="user-dd-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <span>${t('acc.tab.profile')}</span>
+            </a>
+
+            <a href="/hesap#security" class="user-dd-item" role="menuitem">
+              <span class="user-dd-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <span>${t('acc.tab.security')}</span>
+            </a>
+
+            ${isAdmin ? `
+              <a href="/admin" class="user-dd-item" role="menuitem" style="color:#d97706">
+                <span class="user-dd-icon" style="color:#d97706">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                </span>
+                <span><b>${LANG === 'tr' ? 'Yönetim Paneli' : 'Admin Dashboard'}</b></span>
+              </a>
+            ` : ''}
+
+            <div class="user-dd-divider"></div>
+
+            <button type="button" class="user-dd-item user-dd-logout" id="nav-logout-btn" role="menuitem">
+              <span class="user-dd-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+              </span>
+              <span>${t('acc.tab.logout')}</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      const btn = $('#user-menu-btn', slot);
+      const menu = $('#user-dropdown-menu', slot);
+
+      if (btn && menu) {
+        const toggleMenu = (open) => {
+          const isOpen = open !== undefined ? open : !menu.classList.contains('open');
+          menu.classList.toggle('open', isOpen);
+          btn.classList.toggle('active', isOpen);
+          btn.setAttribute('aria-expanded', String(isOpen));
+        };
+
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleMenu();
+        });
+
+        // Click menu items
+        $$('.user-dd-item[href]', menu).forEach((item) => {
+          item.addEventListener('click', () => {
+            toggleMenu(false);
+          });
+        });
+
+        // Logout from dropdown
+        $('#nav-logout-btn', menu)?.addEventListener('click', async (e) => {
+          e.preventDefault();
+          toggleMenu(false);
+          try {
+            await api('/api/auth/logout', { method: 'POST' });
+            localStorage.removeItem('ls_auth_token');
+            document.dispatchEvent(new Event('ls:logout'));
+            toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
+            if (location.pathname.startsWith('/hesap') || location.pathname.startsWith('/admin')) {
+              setTimeout(() => { location.href = '/'; }, 400);
+            }
+          } catch {
+            location.href = '/';
+          }
+        });
+
+        // Outside click and ESC listener
+        const onDocClick = (e) => {
+          if (!slot.contains(e.target)) {
+            toggleMenu(false);
+          }
+        };
+        const onKeyDown = (e) => {
+          if (e.key === 'Escape') toggleMenu(false);
+        };
+
+        document.removeEventListener('click', onDocClick);
+        document.addEventListener('click', onDocClick);
+        document.addEventListener('keydown', onKeyDown);
+      }
+    } else {
+      slot.innerHTML = `<a href="/giris" class="icon-btn" title="${t('nav.login')}">${USER_SVG}</a>`;
+    }
+  }
+
   const nav = $('nav.top');
   if (nav) {
     addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
@@ -303,22 +463,22 @@
         document.body.style.overflow = '';
       }));
     }
-    fetch('/api/session').then((r) => r.json()).then((s) => {
-      const slot = $('#nav-user');
-      if (slot) {
-        slot.innerHTML = s.user
-          ? `<a href="/hesap" class="icon-btn" title="${s.user.name}">${USER_SVG}</a>`
-          : `<a href="/giris" class="icon-btn" title="${t('nav.login')}">${USER_SVG}</a>`;
-      }
-      const adminLink = $('#nav-admin');
-      if (adminLink && s.user && s.user.role === 'admin') adminLink.style.display = '';
-      LS.session = s;
-      document.dispatchEvent(new Event('ls:session'));
-    }).catch(() => {});
+    const updateNavSession = async () => {
+      try {
+        const s = await api('/api/session');
+        renderNavUser(s.user);
+        const adminLink = $('#nav-admin');
+        if (adminLink) adminLink.style.display = (s.user && s.user.role === 'admin') ? '' : 'none';
+        LS.session = s;
+      } catch {}
+    };
+    updateNavSession();
+    document.addEventListener('ls:session', updateNavSession);
   }
   document.addEventListener('ls:logout', () => {
-    const slot = $('#nav-user');
-    if (slot) slot.innerHTML = `<a href="/giris" class="icon-btn" title="${t('nav.login')}">${USER_SVG}</a>`;
+    renderNavUser(null);
+    const adminLink = $('#nav-admin');
+    if (adminLink) adminLink.style.display = 'none';
   });
 
   /* ---------- cart badge ---------- */
@@ -1185,7 +1345,129 @@
   }
 
   /* ================= AUTH ================= */
+  function openGoogleAuthModal() {
+    const existing = $('.google-modal-backdrop');
+    if (existing) existing.remove();
+
+    const isEn = LANG === 'en';
+    const backdrop = document.createElement('div');
+    backdrop.className = 'google-modal-backdrop';
+    backdrop.id = 'google-auth-modal';
+
+    backdrop.innerHTML = `
+      <div class="google-modal-box" role="dialog" aria-modal="true">
+        <button class="google-modal-close" aria-label="Close" id="gm-close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="gm-header">
+          <svg class="google-icon" width="24" height="24" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <h3>${isEn ? 'Sign in with Google' : 'Google ile Giriş Yap'}</h3>
+        </div>
+        <p class="gm-sub">${isEn ? 'Choose an account to continue to <b>Love Shop</b>' : '<b>Love Shop</b> ile devam etmek için hesabınızı seçin'}</p>
+        
+        <div class="gm-accounts">
+          <button class="gm-account-item" id="gm-acc-primary" type="button">
+            <div class="gm-avatar">XP</div>
+            <div class="gm-acc-info">
+              <div class="gm-acc-name">x8pure</div>
+              <div class="gm-acc-email">x8pure@gmail.com</div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+
+        <div class="gm-custom-form">
+          <button type="button" class="gm-custom-toggle" id="gm-toggle-custom">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            ${isEn ? 'Use another Google account' : 'Farklı bir Google hesabı kullan'}
+          </button>
+          <form id="gm-custom-box" style="display:none;margin-top:12px">
+            <div class="field" style="margin-bottom:8px">
+              <input id="gm-input-email" type="email" placeholder="ornek@gmail.com" required style="font-size:13.5px;padding:9px 12px">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="padding:10px;font-size:13.5px">
+              ${isEn ? 'Continue with this account' : 'Bu Hesapla Devam Et'}
+            </button>
+          </form>
+        </div>
+
+        <p class="gm-terms">${isEn ? 'To continue, Google will securely share your profile and email with Love Shop.' : 'Devam ettiğinizde Google; profil bilgilerinizi ve e-posta adresinizi Love Shop ile güvenle paylaşır.'}</p>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    const close = () => {
+      backdrop.style.opacity = '0';
+      setTimeout(() => backdrop.remove(), 200);
+    };
+
+    $('#gm-close', backdrop)?.addEventListener('click', close);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) close();
+    });
+
+    const getAuthRedirect = (role) => {
+      if (role === 'admin') return '/admin';
+      const params = new URLSearchParams(location.search);
+      const next = params.get('next') || params.get('redirect') || params.get('returnUrl');
+      if (next && next.startsWith('/') && !next.startsWith('//')) return next;
+      return '/';
+    };
+
+    const triggerAuth = async (email, name) => {
+      try {
+        toast(t('auth.google.wait'), '⏳');
+        const r = await api('/api/auth/google', {
+          method: 'POST',
+          body: { email, name }
+        });
+        close();
+        toast(t('auth.google.ok'), '🎉');
+        document.dispatchEvent(new Event('ls:session'));
+        setTimeout(() => {
+          location.href = getAuthRedirect(r.user?.role);
+        }, 500);
+      } catch (err) {
+        toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
+      }
+    };
+
+    $('#gm-acc-primary', backdrop)?.addEventListener('click', () => {
+      triggerAuth('x8pure@gmail.com', 'x8pure');
+    });
+
+    const toggle = $('#gm-toggle-custom', backdrop);
+    const box = $('#gm-custom-box', backdrop);
+    if (toggle && box) {
+      toggle.addEventListener('click', () => {
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        if (box.style.display === 'block') $('#gm-input-email', box)?.focus();
+      });
+    }
+
+    box?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const mail = $('#gm-input-email', box)?.value.trim();
+      if (!mail) return;
+      triggerAuth(mail, mail.split('@')[0]);
+    });
+  }
+
   function initAuth() {
+    const getAuthRedirect = (role) => {
+      if (role === 'admin') return '/admin';
+      const params = new URLSearchParams(location.search);
+      const next = params.get('next') || params.get('redirect') || params.get('returnUrl');
+      if (next && next.startsWith('/') && !next.startsWith('//')) return next;
+      return '/';
+    };
+
     const login = $('#login-form');
     if (login) login.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1193,7 +1475,7 @@
         const r = await api('/api/auth/login', { method: 'POST', body: { email: $('#l-email').value.trim(), password: $('#l-pass').value } });
         toast(t('auth.hi', { name: r.user.name }), '👋');
         document.dispatchEvent(new Event('ls:session'));
-        setTimeout(() => { location.href = r.user.role === 'admin' ? '/admin' : '/hesap'; }, 600);
+        setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
       } catch (err) { toast(err.message, '⚠️'); }
     });
     const reg = $('#register-form');
@@ -1207,111 +1489,412 @@
         const r = await api('/api/auth/register', { method: 'POST', body: { name: $('#r-name').value.trim(), email: $('#r-email').value.trim(), password: pass } });
         toast(t('auth.created'), '🎉');
         document.dispatchEvent(new Event('ls:session'));
-        setTimeout(() => { location.href = '/hesap'; }, 700);
+        setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
       } catch (err) { toast(err.message, '⚠️'); }
+    });
+
+    const gLogin = $('#btn-google-login');
+    if (gLogin) gLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      openGoogleAuthModal();
+    });
+
+    const gReg = $('#btn-google-reg');
+    if (gReg) gReg.addEventListener('click', (e) => {
+      e.preventDefault();
+      openGoogleAuthModal();
     });
   }
 
-  /* ================= ACCOUNT ================= */
+  /* ================= ACCOUNT & PROFILE DASHBOARD (OPTION 1) ================= */
+  async function renderLuxuryDashboard(rootEl, initialTab = 'orders') {
+    if (!rootEl) return;
+    rootEl.innerHTML = `<div class="spinner" style="grid-column: 1 / -1; margin: 40px auto;"></div>`;
+
+    const s = await api('/api/session').catch(() => ({ user: null }));
+    if (!s.user) { location.href = '/giris'; return; }
+
+    const ordersRes = await api('/api/orders/mine').catch(() => ({ orders: [] }));
+    const orders = ordersRes.orders || [];
+
+    // Parse URL hash if present
+    const hash = (location.hash || '').replace('#', '').toLowerCase();
+    let activeTab = initialTab;
+    if (['orders', 'siparisler', 'siparis'].includes(hash)) activeTab = 'orders';
+    else if (['address', 'adres', 'teslimat'].includes(hash)) activeTab = 'address';
+    else if (['profile', 'profil', 'bilgiler'].includes(hash)) activeTab = 'profile';
+    else if (['security', 'guvenlik', 'sifre'].includes(hash)) activeTab = 'security';
+
+    // User initials
+    const nameParts = (s.user.name || 'U').trim().split(/\s+/);
+    const initials = nameParts.length > 1
+      ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+      : (nameParts[0].slice(0, 2)).toUpperCase();
+
+    const isAdmin = s.user.role === 'admin';
+    const roleBadge = isAdmin
+      ? `<span class="acc-role-badge admin">👑 ${t('acc.role_admin')}</span>`
+      : `<span class="acc-role-badge">✨ ${t('acc.role_user')}</span>`;
+
+    const a = (s.user.addresses && s.user.addresses[0]) || { label: 'Ev', full: '', city: '', zip: '', phone: '', discreet: true };
+
+    const statusTr = {
+      processing: t('st.processing'),
+      shipped: t('st.shipped'),
+      delivered: t('st.delivered'),
+      cancelled: t('st.cancelled')
+    };
+
+    rootEl.innerHTML = `
+      <!-- LEFT SIDEBAR -->
+      <aside class="acc-sidebar">
+        <div class="acc-user-card">
+          <div class="acc-avatar">${esc(initials)}</div>
+          <div class="acc-user-name">${esc(s.user.name)}</div>
+          <div class="acc-user-email">${esc(s.user.email)}</div>
+          ${roleBadge}
+        </div>
+
+        <nav class="acc-nav">
+          <button class="acc-nav-btn ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">
+            <span class="nav-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              <span>${t('acc.tab.orders')}</span>
+            </span>
+            <span class="acc-nav-badge">${orders.length}</span>
+          </button>
+
+          <button class="acc-nav-btn ${activeTab === 'address' ? 'active' : ''}" data-tab="address">
+            <span class="nav-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>${t('acc.tab.address')}</span>
+            </span>
+          </button>
+
+          <button class="acc-nav-btn ${activeTab === 'profile' ? 'active' : ''}" data-tab="profile">
+            <span class="nav-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>${t('acc.tab.profile')}</span>
+            </span>
+          </button>
+
+          <button class="acc-nav-btn ${activeTab === 'security' ? 'active' : ''}" data-tab="security">
+            <span class="nav-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>${t('acc.tab.security')}</span>
+            </span>
+          </button>
+
+          <div class="acc-nav-divider"></div>
+
+          <button class="acc-nav-btn acc-nav-logout" id="acc-logout-btn">
+            <span class="nav-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+              <span>${t('acc.tab.logout')}</span>
+            </span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- RIGHT MAIN CONTENT -->
+      <main class="acc-main">
+        <!-- TAB 1: ORDERS -->
+        <section class="acc-panel ${activeTab === 'orders' ? 'active' : ''}" id="panel-orders">
+          <div class="acc-metrics-strip">
+            <div class="acc-metric-card">
+              <div class="acc-metric-icon">📦</div>
+              <div class="acc-metric-info">
+                <div class="acc-metric-label">${t('acc.stat.orders')}</div>
+                <div class="acc-metric-value">${orders.length} ${t('shop.count', { n: '' }).trim()}</div>
+              </div>
+            </div>
+            <div class="acc-metric-card">
+              <div class="acc-metric-icon">🔒</div>
+              <div class="acc-metric-info">
+                <div class="acc-metric-label">${t('acc.stat.privacy')}</div>
+                <div class="acc-metric-value">%100 İsimsiz Paket</div>
+              </div>
+            </div>
+            <div class="acc-metric-card">
+              <div class="acc-metric-icon">💬</div>
+              <div class="acc-metric-info">
+                <div class="acc-metric-label">${t('acc.stat.support')}</div>
+                <div class="acc-metric-value">7/24 WhatsApp</div>
+              </div>
+            </div>
+          </div>
+
+          ${orders.length ? `
+            <div class="acc-orders-list">
+              ${orders.map((o) => {
+                const waText = encodeURIComponent(`Merhaba, ${o.id} numaralı siparişim hakkında bilgi almak istiyorum.`);
+                return `
+                <article class="acc-order-card">
+                  <header class="acc-order-header">
+                    <div class="acc-order-meta">
+                      <span class="acc-order-id">#${esc(o.id)}</span>
+                      <span class="acc-order-date">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                        ${dateFmt(o.createdAt)}
+                      </span>
+                    </div>
+                    <span class="status-pill st-${esc(o.status)}">
+                      ${o.status === 'processing' ? '⏳' : o.status === 'shipped' ? '🚚' : o.status === 'delivered' ? '✅' : '✕'}
+                      ${esc(statusTr[o.status] || o.status)}
+                    </span>
+                  </header>
+
+                  <div class="acc-order-body">
+                    ${(o.items || []).map((i) => `
+                      <div class="acc-order-item">
+                        <div class="acc-item-left">
+                          <img class="acc-item-thumb" src="${imgSrc(i.image)}" alt="${esc(i.name)}" loading="lazy">
+                          <div>
+                            <div class="acc-item-title">${esc(i.name)}</div>
+                            <div class="acc-item-qty">${i.qty} adet × ${fmt(i.price)}</div>
+                          </div>
+                        </div>
+                        <div class="acc-item-price">${fmt(i.price * i.qty)}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+
+                  <footer class="acc-order-footer">
+                    <div class="acc-order-flags">
+                      <span class="acc-order-flag">💳 ${esc(o.payment || 'WhatsApp')}</span>
+                      ${o.discreet ? `<span class="acc-order-flag">🔒 ${t('acc.discreet')}</span>` : ''}
+                    </div>
+                    <div class="acc-order-actions-total">
+                      <a class="acc-wa-btn" href="https://wa.me/905436331325?text=${waText}" target="_blank" rel="noopener">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.698.077-2.072-.492-1.758-.727-2.887-2.518-2.975-2.634-.087-.116-.711-.945-.711-1.802 0-.857.449-1.277.608-1.45.16-.174.348-.217.464-.217.116 0 .232.001.333.006.107.005.25.04.39.377.145.348.493 1.202.536 1.29.043.087.072.188.014.304-.058.116-.087.188-.174.29-.087.101-.183.226-.261.304-.087.087-.178.182-.077.355.101.174.449.741.963 1.2 1.077.96 1.543.96 1.761 1.047.218.087.348.072.478-.073.13-.145.565-.652.71-.884.145-.232.29-.188.478-.116.188.072 1.203.565 1.406.667.203.101.339.152.39.239.051.087.051.507-.093.912z"/></svg>
+                        <span>${t('acc.ask_wa')}</span>
+                      </a>
+                      <div class="acc-order-total-block">
+                        <div class="acc-total-label">${t('cart.total')}</div>
+                        <div class="acc-total-value">${fmt(o.total)}</div>
+                      </div>
+                    </div>
+                  </footer>
+                </article>
+                `;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="acc-card-panel" style="text-align:center; padding: 60px 24px;">
+              <div style="font-size: 54px; margin-bottom: 16px;">🛍️</div>
+              <h3 style="font-size: 22px; margin-bottom: 8px;">${t('acc.noorders')}</h3>
+              <p class="sub" style="max-width: 460px; margin: 0 auto 24px;">${t('acc.noorders.sub')}</p>
+              <a class="btn btn-primary" href="/magaza">${t('acc.start')} →</a>
+            </div>
+          `}
+        </section>
+
+        <!-- TAB 2: ADDRESS -->
+        <section class="acc-panel ${activeTab === 'address' ? 'active' : ''}" id="panel-address">
+          <div class="acc-card-panel">
+            <h3>📍 ${t('pf.title.address')}</h3>
+            <p class="sub">${t('pf.sub.address')}</p>
+
+            <div class="field">
+              <label>${t('pf.addr')}</label>
+              <textarea id="dash-ad-full" rows="3" placeholder="Mahalle, cadde, sokak, bina ve daire no...">${esc(a.full || '')}</textarea>
+            </div>
+
+            <div class="grid-3" style="margin-top: 14px;">
+              <div class="field">
+                <label>${t('pf.city')}</label>
+                <input id="dash-ad-city" value="${esc(a.city || '')}" placeholder="Örn: Eskişehir">
+              </div>
+              <div class="field">
+                <label>${t('pf.zip')}</label>
+                <input id="dash-ad-zip" value="${esc(a.zip || '')}" placeholder="Örn: 26100">
+              </div>
+              <div class="field">
+                <label>${t('pf.phone')}</label>
+                <input id="dash-ad-phone" value="${esc(a.phone || '')}" placeholder="05xx xxx xx xx">
+              </div>
+            </div>
+
+            <div class="checkbox-row" style="margin: 20px 0 24px;">
+              <input type="checkbox" id="dash-ad-discreet" ${a.discreet !== false ? 'checked' : ''}>
+              <label for="dash-ad-discreet">${t('pf.discreet')}</label>
+            </div>
+
+            <button class="btn btn-primary" id="dash-ad-save">
+              <span>💾 ${t('pf.saveaddr')}</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TAB 3: PROFILE -->
+        <section class="acc-panel ${activeTab === 'profile' ? 'active' : ''}" id="panel-profile">
+          <div class="acc-card-panel">
+            <h3>👤 ${t('pf.title.acc')}</h3>
+            <p class="sub">${t('pf.sub.acc')}</p>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>${t('pf.name')}</label>
+                <input id="dash-pf-name" value="${esc(s.user.name || '')}">
+              </div>
+              <div class="field">
+                <label>${t('pf.email')} (${LANG === 'tr' ? 'Salt-okunur' : 'Read-only'})</label>
+                <input value="${esc(s.user.email || '')}" disabled style="opacity: 0.6; cursor: not-allowed;">
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="dash-pf-save" style="margin-top: 20px;">
+              <span>💾 ${t('pf.save')}</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TAB 4: SECURITY -->
+        <section class="acc-panel ${activeTab === 'security' ? 'active' : ''}" id="panel-security">
+          <div class="acc-card-panel">
+            <h3>🔒 ${t('pf.title.pass')}</h3>
+            <p class="sub">${t('pf.sub.pass')}</p>
+
+            <div class="grid-2">
+              <div class="field">
+                <label>${t('pf.new')}</label>
+                <input type="password" id="dash-pw-new" placeholder="${LANG === 'tr' ? 'En az 6 karakter' : 'Min. 6 characters'}">
+              </div>
+              <div class="field">
+                <label>${t('pf.new2')}</label>
+                <input type="password" id="dash-pw-new2" placeholder="${LANG === 'tr' ? 'Şifrenizi tekrar girin' : 'Confirm new password'}">
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="dash-pw-save" style="margin-top: 20px;">
+              <span>🔒 ${t('pf.update')}</span>
+            </button>
+          </div>
+        </section>
+      </main>
+    `;
+
+    // Interactive Tab Switching
+    const tabBtns = $$('.acc-nav-btn[data-tab]', rootEl);
+    const panels = $$('.acc-panel', rootEl);
+
+    const activateTab = (tab) => {
+      if (!tab) return;
+      let cleanTab = tab.replace(/^#/, '');
+      if (['orders', 'siparisler', 'siparis'].includes(cleanTab)) cleanTab = 'orders';
+      else if (['address', 'adres', 'adresim'].includes(cleanTab)) cleanTab = 'address';
+      else if (['profile', 'profil', 'bilgiler'].includes(cleanTab)) cleanTab = 'profile';
+      else if (['security', 'guvenlik', 'sifre'].includes(cleanTab)) cleanTab = 'security';
+
+      tabBtns.forEach((b) => b.classList.toggle('active', b.dataset.tab === cleanTab));
+      panels.forEach((p) => p.classList.toggle('active', p.id === `panel-${cleanTab}`));
+    };
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        activateTab(tab);
+        try {
+          history.replaceState(null, '', `#${tab}`);
+        } catch {}
+      });
+    });
+
+    window.addEventListener('hashchange', () => {
+      if (location.hash) activateTab(location.hash);
+    });
+
+    // Save Address
+    $('#dash-ad-save', rootEl)?.addEventListener('click', async () => {
+      const btn = $('#dash-ad-save', rootEl);
+      try {
+        if (btn) btn.disabled = true;
+        await api('/api/account/address', {
+          method: 'POST',
+          body: {
+            label: 'Ev',
+            full: $('#dash-ad-full', rootEl).value.trim(),
+            city: $('#dash-ad-city', rootEl).value.trim(),
+            zip: $('#dash-ad-zip', rootEl).value.trim(),
+            phone: $('#dash-ad-phone', rootEl).value.trim(),
+            discreet: $('#dash-ad-discreet', rootEl).checked
+          }
+        });
+        toast(t('pf.addrok'), '📍');
+      } catch (err) {
+        toast(err.message, '⚠️');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
+
+    // Save Profile
+    $('#dash-pf-save', rootEl)?.addEventListener('click', async () => {
+      const btn = $('#dash-pf-save', rootEl);
+      try {
+        if (btn) btn.disabled = true;
+        const newName = $('#dash-pf-name', rootEl).value.trim();
+        await api('/api/account', {
+          method: 'POST',
+          body: { name: newName }
+        });
+        const nameEl = $('.acc-user-name', rootEl);
+        if (nameEl) nameEl.textContent = newName;
+        toast(t('pf.ok'), '✅');
+      } catch (err) {
+        toast(err.message, '⚠️');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
+
+    // Save Password
+    $('#dash-pw-save', rootEl)?.addEventListener('click', async () => {
+      const p1 = $('#dash-pw-new', rootEl).value;
+      const p2 = $('#dash-pw-new2', rootEl).value;
+      if (p1.length < 6) return toast(t('auth.pass6'), '⚠️');
+      if (p1 !== p2) return toast(t('auth.passmismatch'), '⚠️');
+      const btn = $('#dash-pw-save', rootEl);
+      try {
+        if (btn) btn.disabled = true;
+        await api('/api/account/password', {
+          method: 'POST',
+          body: { password: p1 }
+        });
+        toast(t('pf.passok'), '🔒');
+        $('#dash-pw-new', rootEl).value = '';
+        $('#dash-pw-new2', rootEl).value = '';
+      } catch (err) {
+        toast(err.message, '⚠️');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
+
+    // Logout
+    $('#acc-logout-btn', rootEl)?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await api('/api/auth/logout', { method: 'POST' });
+        localStorage.removeItem('ls_auth_token');
+        document.dispatchEvent(new Event('ls:logout'));
+        location.href = '/';
+      } catch {
+        location.href = '/';
+      }
+    });
+  }
+
   async function initAccount() {
     const root = $('#account-root');
     if (!root) return;
-    const s = await api('/api/session').catch(() => ({ user: null }));
-    if (!s.user) { location.href = '/giris'; return; }
-    const orders = await api('/api/orders/mine').catch(() => ({ orders: [] }));
-    const statusTr = { processing: t('st.processing'), shipped: t('st.shipped'), delivered: t('st.delivered'), cancelled: t('st.cancelled') };
-    root.innerHTML = `
-      <div class="acc-menu">
-        <a href="/hesap" class="on">${t('acc.orders')}</a>
-        <a href="/profil">${t('acc.profile')}</a>
-        <a href="#" id="logout-link">${t('acc.logout')}</a>
-      </div>
-      <div>
-        <div class="section-head" style="margin-bottom:22px"><div><h2>${t('acc.hello', { name: s.user.name })}</h2><p>${s.user.email}</p></div></div>
-        ${orders.orders.length ? orders.orders.map((o) => `
-        <div class="order-card">
-          <div class="order-head">
-            <div><strong>${o.id}</strong> <span class="muted" style="font-size:12px">· ${dateFmt(o.createdAt)}</span></div>
-            <span class="status-pill st-${o.status}">${statusTr[o.status] || o.status}</span>
-          </div>
-          <div class="order-items">
-            ${o.items.map((i) => `<div>${i.qty} × ${i.name} — <b>${fmt(i.price * i.qty)}</b></div>`).join('')}
-          </div>
-          <div class="order-head" style="margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px">
-            <span class="muted" style="font-size:12.5px">${o.payment}${o.discreet ? ' · ' + t('acc.discreet') : ''}</span>
-            <strong>${fmt(o.total)}</strong>
-          </div>
-        </div>`).join('') : `<div class="empty-state"><div class="big">📭</div><p>${t('acc.noorders')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:14px">${t('acc.start')}</a></div>`}
-      </div>`;
-    const lo = $('#logout-link');
-    if (lo) lo.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await api('/api/auth/logout', { method: 'POST' });
-      document.dispatchEvent(new Event('ls:logout'));
-      location.href = '/';
-    });
+    await renderLuxuryDashboard(root, 'orders');
   }
 
-  /* ================= PROFILE ================= */
   async function initProfile() {
     const root = $('#profile-root');
     if (!root) return;
-    const s = await api('/api/session').catch(() => ({ user: null }));
-    if (!s.user) { location.href = '/giris'; return; }
-    const a = (s.user.addresses && s.user.addresses[0]) || { label: 'Ev', full: '', city: '', zip: '', phone: '', discreet: true };
-    root.innerHTML = `
-      <div class="acc-menu">
-        <a href="/hesap">${t('acc.orders')}</a>
-        <a href="/profil" class="on">${t('acc.profile')}</a>
-        <a href="#" id="logout-link">${t('acc.logout')}</a>
-      </div>
-      <div>
-        <div class="check-step">
-          <h3>${t('pf.acc')}</h3>
-          <div class="grid-2">
-            <div class="field"><label>${t('pf.name')}</label><input id="pf-name" value="${s.user.name}"></div>
-            <div class="field"><label>${t('pf.email')}</label><input value="${s.user.email}" disabled style="opacity:.6"></div>
-          </div>
-          <button class="btn btn-primary btn-sm" id="pf-save">${t('pf.save')}</button>
-        </div>
-        <div class="check-step">
-          <h3>${t('pf.address')}</h3>
-          <div class="field"><label>${t('pf.addr')}</label><textarea id="ad-full">${a.full}</textarea></div>
-          <div class="grid-3">
-            <div class="field"><label>${t('pf.city')}</label><input id="ad-city" value="${a.city}"></div>
-            <div class="field"><label>${t('pf.zip')}</label><input id="ad-zip" value="${a.zip}"></div>
-            <div class="field"><label>${t('pf.phone')}</label><input id="ad-phone" value="${a.phone}"></div>
-          </div>
-          <div class="checkbox-row"><input type="checkbox" id="ad-discreet" ${a.discreet ? 'checked' : ''}><label for="ad-discreet">${t('pf.discreet')}</label></div>
-          <button class="btn btn-primary btn-sm" id="ad-save" style="margin-top:12px">${t('pf.saveaddr')}</button>
-        </div>
-        <div class="check-step">
-          <h3>${t('pf.pass')}</h3>
-          <div class="grid-2">
-            <div class="field"><label>${t('pf.new')}</label><input type="password" id="pw-new"></div>
-            <div class="field"><label>${t('pf.new2')}</label><input type="password" id="pw-new2"></div>
-          </div>
-          <button class="btn btn-ghost btn-sm" id="pw-save">${t('pf.update')}</button>
-        </div>
-      </div>`;
-    $('#pf-save').addEventListener('click', async () => {
-      try { await api('/api/account', { method: 'POST', body: { name: $('#pf-name').value.trim() } }); toast(t('pf.ok'), '✅'); } catch (e) { toast(e.message, '⚠️'); }
-    });
-    $('#ad-save').addEventListener('click', async () => {
-      try {
-        await api('/api/account/address', { method: 'POST', body: { label: 'Ev', full: $('#ad-full').value.trim(), city: $('#ad-city').value.trim(), zip: $('#ad-zip').value.trim(), phone: $('#ad-phone').value.trim(), discreet: $('#ad-discreet').checked } });
-        toast(t('pf.addrok'), '📍');
-      } catch (e) { toast(e.message, '⚠️'); }
-    });
-    $('#pw-save').addEventListener('click', async () => {
-      const p = $('#pw-new').value, p2 = $('#pw-new2').value;
-      if (p.length < 6) return toast(t('auth.pass6'), '⚠️');
-      if (p !== p2) return toast(t('auth.passmismatch'), '⚠️');
-      try { await api('/api/account/password', { method: 'POST', body: { password: p } }); toast(t('pf.passok'), '🔒'); $('#pw-new').value = ''; $('#pw-new2').value = ''; }
-      catch (e) { toast(e.message, '⚠️'); }
-    });
-    const lo = $('#logout-link');
-    if (lo) lo.addEventListener('click', async (e) => { e.preventDefault(); await api('/api/auth/logout', { method: 'POST' }); location.href = '/'; });
+    await renderLuxuryDashboard(root, 'profile');
   }
 
   /* ================= CONTACT ================= */
@@ -1431,11 +2014,9 @@
         const y = -(1 - depth) * 22 - f * 6 * breath;
         const rotY = -Math.sin(theta) * 48;
         const scale = (0.70 + depth * 0.30) * (1 + f * 0.024 * breath);
-        const blur = (1 - depth) * 2.2;
         pos.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
         pos.style.zIndex = Math.round(depth * 100);
-        pos.style.opacity = (0.46 + depth * 0.54).toFixed(2);
-        pos.style.filter = blur > 0.35 ? `blur(${blur.toFixed(1)}px)` : 'none';
+        pos.style.opacity = (0.50 + depth * 0.50).toFixed(2);
         pos.style.setProperty('--f', f.toFixed(3));
         if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
       });

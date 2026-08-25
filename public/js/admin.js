@@ -34,9 +34,16 @@
   }
 
   async function api(path, opts = {}) {
+    const token = localStorage.getItem('ls_auth_token') || localStorage.getItem('ls_admin_token');
+    const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+      headers['x-ls-token'] = token;
+    }
     const res = await fetch(path, {
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin', ...opts,
+      credentials: 'same-origin',
+      ...opts,
+      headers,
       body: opts.body ? JSON.stringify(opts.body) : undefined
     });
     let data; try { data = await res.json(); } catch { data = { ok: false }; }
@@ -53,7 +60,7 @@
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 2600);
   }
 
-  function optimizeImage(file, maxDim = 1600, quality = 0.88) {
+  function optimizeImage(file, maxDim = 1200, quality = 0.82) {
     return new Promise((resolve, reject) => {
       if (!file) return reject(new Error('Dosya seçilmedi'));
       if (file.type === 'image/svg+xml') {
@@ -90,8 +97,28 @@
           return;
         }
         ctx.drawImage(img, 0, 0, w, h);
-        const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-        const dataUrl = canvas.toDataURL(outType, quality);
+        
+        // Try WebP first for optimal compression with transparency support
+        let dataUrl = canvas.toDataURL('image/webp', quality);
+        if (!dataUrl.startsWith('data:image/webp')) {
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        // If still larger than 450KB base64, scale down to 900px
+        if (dataUrl.length > 450000 && (w > 800 || h > 800)) {
+          const c2 = document.createElement('canvas');
+          c2.width = Math.round(w * 0.75);
+          c2.height = Math.round(h * 0.75);
+          const ctx2 = c2.getContext('2d');
+          if (ctx2) {
+            ctx2.drawImage(canvas, 0, 0, c2.width, c2.height);
+            dataUrl = c2.toDataURL('image/webp', 0.78);
+            if (!dataUrl.startsWith('data:image/webp')) {
+              dataUrl = c2.toDataURL('image/jpeg', 0.78);
+            }
+          }
+        }
+
         resolve(dataUrl);
       };
       img.onerror = () => {
@@ -186,7 +213,13 @@
     $('#cmd-btn').addEventListener('click', openCommandPalette);
 
     const lo = $('#adm-logout');
-    if (lo) lo.addEventListener('click', async (e) => { e.preventDefault(); await api('/api/auth/logout', { method: 'POST' }); location.reload(); });
+    if (lo) lo.addEventListener('click', async (e) => {
+      e.preventDefault();
+      localStorage.removeItem('ls_auth_token');
+      localStorage.removeItem('ls_admin_token');
+      await api('/api/auth/logout', { method: 'POST' });
+      location.reload();
+    });
   }
 
   /* ================= COMMAND PALETTE (Cmd+K) ================= */
@@ -262,24 +295,39 @@
     }
   });
 
-  function loginScreen() {
+  function loginScreen(currentUser = null) {
+    const isCustomer = currentUser && currentUser.role !== 'admin';
     $('#admin-root').innerHTML = `
     <div class="admin-login"><div class="al-card">
       <div class="logo">🔐</div>
       <h1>LOVE SHOP ADMIN</h1>
-      <p class="sub">2026 Yönetim Paneline erişim için giriş yapın</p>
+      <p class="sub">Yönetim Paneline yalnızca yetkilendirilmiş yöneticiler erişebilir</p>
+      ${isCustomer ? `
+        <div style="background:rgba(225,29,72,0.1);border:1px solid rgba(225,29,72,0.25);color:var(--text);padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:18px;line-height:1.5">
+          ⚠️ <b>Yetkisiz Erişim:</b> <i>${esc(currentUser.email)}</i> hesabı müşteri statüsündedir. Bu panele yalnızca yönetici yetkisi verilmiş hesaplar girebilir.
+          <div style="margin-top:8px"><a href="/hesap" style="color:var(--rose);font-weight:600;text-decoration:underline">→ Müşteri Hesabım Paneline Git</a></div>
+        </div>
+      ` : ''}
       <form id="adm-login">
-        <div class="field"><label>E-posta</label><input id="al-email" type="email" placeholder="admin@loveshop.com.tr" required></div>
+        <div class="field"><label>Yönetici E-posta</label><input id="al-email" type="email" placeholder="admin@loveshop.com.tr" required></div>
         <div class="field"><label>Şifre</label><input id="al-pass" type="password" placeholder="••••••••" required></div>
-        <button class="btn btn-primary" style="width:100%;margin-top:10px" type="submit">Panele Giriş Yap</button>
+        <button class="btn btn-primary" style="width:100%;margin-top:10px" type="submit">Yönetici Girişi Yap</button>
       </form>
-      <div class="al-hint">Demo Bilgileri: <b>admin@loveshop.com.tr</b> · <b>loveshop2026</b><br><a href="/" style="color:var(--rose);font-weight:600;display:inline-block;margin-top:6px">← Mağazaya Dön</a></div>
+      <div class="al-hint">
+        <a href="/" style="color:var(--rose);font-weight:600;display:inline-block;margin-top:6px">← Mağazaya Dön</a>
+        <span style="display:inline-block;margin:0 8px;color:var(--muted)">·</span>
+        <a href="/hesap" style="color:var(--muted);display:inline-block;margin-top:6px">Müşteri Paneli</a>
+      </div>
     </div></div>`;
     $('#adm-login').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
         const r = await api('/api/auth/login', { method: 'POST', body: { email: $('#al-email').value.trim(), password: $('#al-pass').value } });
         if (r.user.role !== 'admin') throw new Error('Bu hesap yönetici yetkisine sahip değil.');
+        if (r.token) {
+          localStorage.setItem('ls_auth_token', r.token);
+          localStorage.setItem('ls_admin_token', r.token);
+        }
         toast('Hoş geldiniz, ' + r.user.name);
         route();
       } catch (err) { toast(err.message, true); }
@@ -1025,16 +1073,28 @@
   async function viewCategories() {
     mount('categories', `
     <div class="toolbar">
-      <div style="font-size:13px" class="muted">Kategoriler mağaza navigasyonunda ve ana sayfa vitrininde listelenir.</div>
+      <div>
+        <div style="font-weight:700;font-size:14px">Ana Sayfa Vitrini (Bento Grid) & Kategori Yönetimi</div>
+        <div style="font-size:12.5px" class="muted">Ana sayfa vitrininde 1 adet <b>Büyük Ana Kart</b> ve 3 adet <b>Küçük Yan Kart</b> bulunur. Hangi kategorinin hangi kutuda duracağını doğrudan seçebilirsiniz.</div>
+      </div>
       <button class="btn btn-primary" id="cat-add" style="margin-left:auto">＋ Yeni Kategori Ekle</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px" id="cat-grid"></div>`);
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px" id="cat-grid"></div>`);
     let list = [];
     try { list = (await api('/api/admin/categories')).categories; } catch (e) { return toast(e.message, true); }
+
+    const slotNames = {
+      1: '👑 1. Slot: BÜYÜK SOL KART (Ana Vitrin)',
+      2: '🔹 2. Slot: Sağ Üst Kart',
+      3: '🔹 3. Slot: Sağ Orta Kart',
+      4: '🔹 4. Slot: Sağ Alt Kart'
+    };
+
     $('#cat-grid').innerHTML = list.length ? list.map((c) => `
-    <div class="panel" style="margin-bottom:0;overflow:hidden">
+    <div class="panel" style="margin-bottom:0;overflow:hidden;border:${c.featuredOnHome ? (c.homeOrder === 1 ? '2px solid var(--rose)' : '1.5px solid #8b5cf6') : '1px solid var(--line)'}">
       <div style="aspect-ratio:16/10;background:var(--card-2);overflow:hidden;position:relative">
         ${c.image ? `<img src="${esc(c.image)}" style="width:100%;height:100%;object-fit:cover">` : '<div class="empty">Kapak Görseli Yok</div>'}
+        ${c.featuredOnHome ? `<div style="position:absolute;top:8px;left:8px;background:${c.homeOrder === 1 ? 'var(--rose)' : '#7c3aed'};color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.35)">${slotNames[c.homeOrder] || ('Slot #' + c.homeOrder)}</div>` : ''}
       </div>
       <div class="panel-body" style="padding:16px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -1042,15 +1102,43 @@
           <span class="muted" style="font-size:11.5px">${c.count} ürün</span>
         </div>
         <div class="muted" style="font-size:12px;margin-bottom:12px">/${esc(c.slug)}</div>
-        <div style="display:flex;gap:8px">
+        
+        <div style="background:var(--card-2);padding:8px 10px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span style="font-size:12px;font-weight:600">Vitrin Konumu:</span>
+          <select class="cat-slot-select" data-slot-id="${c.id}" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:600">
+            <option value="0" ${!c.featuredOnHome ? 'selected' : ''}>❌ Ana Sayfada Gösterme</option>
+            <option value="1" ${c.featuredOnHome && c.homeOrder === 1 ? 'selected' : ''}>🌟 BÜYÜK SOL KART (1. Sıra)</option>
+            <option value="2" ${c.featuredOnHome && c.homeOrder === 2 ? 'selected' : ''}>▫️ Küçük Yan Kart 1 (2. Sıra)</option>
+            <option value="3" ${c.featuredOnHome && c.homeOrder === 3 ? 'selected' : ''}>▫️ Küçük Yan Kart 2 (3. Sıra)</option>
+            <option value="4" ${c.featuredOnHome && c.homeOrder === 4 ? 'selected' : ''}>▫️ Küçük Yan Kart 3 (4. Sıra)</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center">
           <button class="btn btn-ghost btn-sm" data-edit="${c.id}">✏️ Düzenle</button>
-          <button class="btn-icon danger" data-del="${c.id}" title="Sil">🗑️</button>
+          <button class="btn-icon danger" data-del="${c.id}" title="Sil" style="margin-left:auto">🗑️</button>
         </div>
       </div>
     </div>`).join('') : '<div class="panel"><div class="empty"><div class="big">🗂️</div>Henüz kategori tanımlanmadı</div></div>';
 
     $('#cat-add').addEventListener('click', () => openCategoryModal(null));
     $$('[data-edit]', $('#cat-grid')).forEach((b) => b.addEventListener('click', () => openCategoryModal(list.find((c) => c.id === b.dataset.edit))));
+    $$('.cat-slot-select', $('#cat-grid')).forEach((sel) => sel.addEventListener('change', async () => {
+      const catId = sel.dataset.slotId;
+      const val = parseInt(sel.value, 10);
+      const featuredOnHome = val > 0;
+      const homeOrder = val > 0 ? val : 99;
+      try {
+        await api('/api/admin/categories/' + catId, {
+          method: 'POST',
+          body: { featuredOnHome, homeOrder }
+        });
+        toast(val === 1 ? 'Kategori BÜYÜK SOL KART olarak vitrine yerleştirildi! 🌟' : (val > 0 ? `Kategori Küçük Yan Kart #${val - 1} olarak ayarlandı.` : 'Kategori ana sayfa vitrininden kaldırıldı.'));
+        viewCategories();
+      } catch (e) {
+        toast(e.message, true);
+      }
+    }));
     $$('[data-del]', $('#cat-grid')).forEach((b) => b.addEventListener('click', async () => {
       const c = list.find((x) => x.id === b.dataset.del);
       if (!confirm(`"${c.name}" kategorisini silmek istiyor musunuz?`)) return;
@@ -1061,7 +1149,7 @@
 
   async function openCategoryModal(cat) {
     const isEdit = !!cat;
-    const v = cat || { name: '', slug: '', image: '' };
+    const v = cat || { name: '', slug: '', image: '', featuredOnHome: false, homeOrder: 2 };
     const m = document.createElement('div');
     m.className = 'modal-back open';
     m.innerHTML = `<div class="modal" style="max-width:540px">
@@ -1079,6 +1167,18 @@
           <input type="hidden" id="ct-image" value="${esc(v.image || '')}">
         </div>
         ${isEdit ? '<label class="checkbox-row" style="margin-top:10px"><input type="checkbox" id="ct-auto"> Bu kategorideki ilk ürünün görselini kapak yap</label>' : ''}
+        
+        <div class="field" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+          <label style="font-weight:700;font-size:13.5px">✨ Ana Sayfa Vitrin Konumu (Bento Grid)</label>
+          <select id="ct-grid-pos" style="width:100%;margin-top:4px;padding:8px 12px;font-size:13px;font-weight:600">
+            <option value="0" ${!v.featuredOnHome ? 'selected' : ''}>❌ Ana Sayfa Vitrininde Gösterme</option>
+            <option value="1" ${v.featuredOnHome && v.homeOrder === 1 ? 'selected' : ''}>🌟 BÜYÜK SOL KART (Ana Vitrin - 1. Sıra)</option>
+            <option value="2" ${v.featuredOnHome && v.homeOrder === 2 ? 'selected' : ''}>▫️ KÜÇÜK YAN KART 1 (2. Sıra)</option>
+            <option value="3" ${v.featuredOnHome && v.homeOrder === 3 ? 'selected' : ''}>▫️ KÜÇÜK YAN KART 2 (3. Sıra)</option>
+            <option value="4" ${v.featuredOnHome && v.homeOrder === 4 ? 'selected' : ''}>▫️ KÜÇÜK YAN KART 3 (4. Sıra)</option>
+          </select>
+          <div class="hint">Büyük Sol Kart ana vitrin kutusudur. Diğerleri sağ taraftaki 3 küçük kutudur.</div>
+        </div>
       </div>
       <div class="modal-foot">
         <button type="button" class="btn btn-ghost" id="ct-cancel" data-cancel="true">Vazgeç</button>
@@ -1127,7 +1227,17 @@
       const name = $('#ct-name', m).value.trim();
       if (!name) return toast('Kategori adı zorunludur', true);
       const autoCb = isEdit ? $('#ct-auto', m) : null;
-      const body = { name, image: hidden.value, slug: isEdit ? undefined : ($('#ct-slug', m).value || undefined), useAutoCover: autoCb ? autoCb.checked : undefined };
+      const posVal = parseInt($('#ct-grid-pos', m).value, 10);
+      const featuredOnHome = posVal > 0;
+      const homeOrder = posVal > 0 ? posVal : 99;
+      const body = {
+        name,
+        image: hidden.value,
+        slug: isEdit ? undefined : ($('#ct-slug', m).value || undefined),
+        useAutoCover: autoCb ? autoCb.checked : undefined,
+        featuredOnHome,
+        homeOrder
+      };
       const origText = catSaveBtn.innerHTML;
       catSaveBtn.disabled = true;
       catSaveBtn.innerHTML = 'Kaydediliyor... ⏳';
@@ -1336,7 +1446,7 @@
   async function route() {
     let sess;
     try { sess = await api('/api/session'); } catch { sess = { user: null }; }
-    if (!sess.user || sess.user.role !== 'admin') return loginScreen();
+    if (!sess.user || sess.user.role !== 'admin') return loginScreen(sess.user);
     window.__me = sess.user;
     try {
       const st = (await api('/api/admin/stats')).stats;
