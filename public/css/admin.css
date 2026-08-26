@@ -1162,3 +1162,102 @@ img { max-width: 100%; display: block; }
   .modal-back { position: static !important; background: transparent !important; padding: 0 !important; display: block !important; }
   .modal { box-shadow: none !important; border: 1px solid #ddd !important; width: 100% !important; max-width: 100% !important; }
 }
+
+/* Settings Dashboard Redesign Styling */
+.settings-container {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 40px;
+}
+
+.settings-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.settings-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow);
+}
+
+.settings-card-head {
+  padding: 20px 24px;
+  background: var(--card-2);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.settings-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.settings-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  letter-spacing: -0.2px;
+}
+.settings-card-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.settings-card-body {
+  padding: 24px;
+}
+
+.settings-hint {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+.announce-preview-box {
+  background: linear-gradient(135deg, #E63946 0%, #C1121F 100%);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(230, 57, 70, 0.25);
+}
+
+.settings-action-bar {
+  position: sticky;
+  bottom: 20px;
+  z-index: 40;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+

@@ -1487,9 +1487,7 @@
         const q = +b.nextElementSibling.value - 1;
         let res;
         if (q < 1) {
-          if (confirm(t('cart.remove.confirm'))) {
-            res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.dec } });
-          }
+          res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.dec } });
         } else {
           res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.dec, qty: q } });
         }

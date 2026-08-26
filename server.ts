@@ -23,7 +23,7 @@ await (async () => {
   try {
     initFirebase();
     const cloudState = await loadFromCloudFirestore();
-    if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+    if (cloudState && Array.isArray(cloudState.products)) {
       setMemoryDb(cloudState);
       db = load();
       console.log(`[Server] Synced and restored ${db.products.length} products and ${db.orders?.length || 0} orders from Firebase Cloud.`);
@@ -35,15 +35,31 @@ await (async () => {
       }
       save();
     }
-    // Ensure user role integrity: non-root users default to customer
     if (Array.isArray(db.users)) {
       let userFixed = false;
-      for (const u of db.users) {
-        if (u.role === 'admin' && u.email !== 'admin@loveshop.com.tr') {
-          u.role = 'customer';
-          userFixed = true;
-        }
+      const rootAdmin = db.users.find((u: any) => u.email === 'admin@loveshop.com.tr');
+      if (!rootAdmin) {
+        db.users.push({
+          id: 'u5ba8df5754d3',
+          email: 'admin@loveshop.com.tr',
+          passwordHash: hashPassword('admin123'),
+          name: 'Mağaza Yönetimi',
+          role: 'admin',
+          createdAt: new Date().toISOString(),
+          addresses: []
+        });
+        userFixed = true;
+      } else {
+        rootAdmin.passwordHash = hashPassword('admin123');
+        userFixed = true;
       }
+      
+      const googleUser = db.users.find((u: any) => u.email === 'x8pure@gmail.com');
+      if (googleUser && googleUser.role !== 'admin') {
+         googleUser.role = 'admin';
+         userFixed = true;
+      }
+      
       if (userFixed) save();
     }
   } catch (err) {
@@ -1309,11 +1325,16 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   });
 }
 
+const uploadCache = new Map<string, string>();
+
 function saveUpload(dataUrl: string): string {
   if (!dataUrl || typeof dataUrl !== 'string') return '';
   const trimmed = dataUrl.trim();
   if (trimmed.startsWith('/uploads/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     return trimmed;
+  }
+  if (uploadCache.has(trimmed)) {
+    return uploadCache.get(trimmed)!;
   }
   const base64Index = trimmed.indexOf(';base64,');
   if (trimmed.startsWith('data:image/') && base64Index !== -1) {
@@ -1335,9 +1356,15 @@ function saveUpload(dataUrl: string): string {
         const uploadDir = path.join(PUB, 'uploads');
         fs.mkdirSync(uploadDir, { recursive: true });
         fs.writeFileSync(path.join(uploadDir, name), buf);
+        const savedPath = '/uploads/' + name;
+        uploadCache.set(trimmed, savedPath);
+        if (uploadCache.size > 200) {
+          const firstKey = uploadCache.keys().next().value;
+          if (firstKey) uploadCache.delete(firstKey);
+        }
         // Persist to Cloud Firestore in background so container rebuilds never lose the photo
         saveImageToCloud(name, trimmed).catch(() => {});
-        return '/uploads/' + name;
+        return savedPath;
       }
     } catch (err) {
       console.error('saveUpload error:', err);
@@ -1381,7 +1408,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   if (pathname === '/api/auth/login' && method === 'POST') {
     if (rateLimited(req, 'auth', 8, 60000)) return sendError(res, 429, E('err.rate'));
     const b = await readBody(req);
+    console.log("Login attempt:", b.email, "pass:", b.password);
     const u = db.users.find((x: any) => x.email === String(b.email || '').trim().toLowerCase());
+    console.log("User found:", u ? u.email : "none");
+    if (u) console.log("Hash match:", u.passwordHash === hash(String(b.password || '')));
     if (!u || u.passwordHash !== hash(String(b.password || ''))) return sendError(res, 401, E('err.badLogin'));
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role);
@@ -1758,17 +1788,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const rawGallery = Array.isArray(b.gallery) ? b.gallery : (Array.isArray(b.images) ? b.images : []);
       for (const item of rawGallery) {
         if (!item) continue;
-        if (String(item).startsWith('data:image/')) gallery.push(saveUpload(item));
-        else if (String(item).startsWith('/uploads/')) gallery.push(item);
-        else gallery.push(item);
+        const saved = saveUpload(item);
+        if (saved && !gallery.includes(saved)) gallery.push(saved);
       }
 
-      let image = gallery[0] || '';
-      if (b.image && String(b.image).startsWith('data:image/')) image = saveUpload(b.image);
-      else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
-      
+      let image = b.image ? saveUpload(b.image) : (gallery[0] || '');
       if (image && !gallery.includes(image)) gallery.unshift(image);
-      if (!gallery.length) gallery = [image];
+      if (!gallery.length && image) gallery = [image];
+      gallery = Array.from(new Set(gallery.filter(Boolean)));
 
       const p = {
         id: uid('p'), slug, name: String(b.name).trim(),
@@ -1796,22 +1823,21 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         const newGallery: string[] = [];
         for (const item of rawGallery) {
           if (!item) continue;
-          if (String(item).startsWith('data:image/')) newGallery.push(saveUpload(item));
-          else if (String(item).startsWith('/uploads/')) newGallery.push(item);
-          else newGallery.push(item);
+          const saved = saveUpload(item);
+          if (saved && !newGallery.includes(saved)) newGallery.push(saved);
         }
         if (newGallery.length) p.gallery = newGallery;
       }
 
       if (b.image) {
-        if (String(b.image).startsWith('data:image/')) p.image = saveUpload(b.image);
-        else if (String(b.image).startsWith('/uploads/')) p.image = b.image;
-        else p.image = b.image;
+        const savedCover = saveUpload(b.image);
+        if (savedCover) p.image = savedCover;
       }
       
       if (!Array.isArray(p.gallery) || !p.gallery.length) {
         p.gallery = [p.image || ''];
       }
+      p.gallery = Array.from(new Set(p.gallery.filter(Boolean)));
       if (p.gallery && p.gallery.length && (!p.image || !p.gallery.includes(p.image))) {
         p.image = p.gallery[0];
       }

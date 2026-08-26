@@ -60,6 +60,28 @@
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 2600);
   }
 
+  function confirmDialog(msg, onConfirm) {
+    const m = document.createElement('div');
+    m.className = 'modal-back open';
+    m.style.zIndex = '99999';
+    m.innerHTML = `<div class="modal" style="max-width:400px;text-align:center;padding:24px">
+      <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Silme Onayı</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.5">${esc(msg)}</p>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button type="button" class="btn btn-ghost" id="cd-cancel" style="flex:1">Vazgeç</button>
+        <button type="button" class="btn" id="cd-yes" style="flex:1;background:#dc2626;color:#fff;border-color:#dc2626">Evet, Sil</button>
+      </div>
+    </div>`;
+    document.body.appendChild(m);
+    const close = () => { m.classList.remove('open'); setTimeout(() => m.remove(), 200); };
+    $('#cd-cancel', m).onclick = close;
+    $('#cd-yes', m).onclick = async () => {
+      close();
+      await onConfirm();
+    };
+  }
+
   function optimizeImage(file, maxDim = 1200, quality = 0.82) {
     return new Promise((resolve, reject) => {
       if (!file) return reject(new Error('Dosya seçilmedi'));
@@ -201,7 +223,14 @@
 
   const TITLES = { dashboard: 'Genel Bakış & Analitik', orders: 'Sipariş Yönetimi', products: 'Ürün Kataloğu', categories: 'Kategori Mimarisi', reviews: 'Müşteri Değerlendirmeleri', coupons: 'Kupon & Kampanya Motoru', users: 'Kullanıcı & Müşteri Veritabanı', messages: 'Gelen Kutusu & İletişim', settings: 'Sistem & Mağaza Ayarları' };
 
+  let currentPage = null;
+
   function mount(page, content) {
+    if (currentPage === page && $('#adm-content')) {
+      $('#adm-content').innerHTML = content;
+      return;
+    }
+    currentPage = page;
     const root = $('#admin-root');
     root.innerHTML = shell(page, content, window.__badges || {});
     $('#page-title').textContent = TITLES[page] || '';
@@ -737,11 +766,12 @@
         } catch (e) { toast(e.message, true); }
       }));
       $$('[data-edit]', $('#prod-body')).forEach((b) => b.addEventListener('click', () => openProductModal(all.find((p) => p.id === b.dataset.edit))));
-      $$('[data-del]', $('#prod-body')).forEach((b) => b.addEventListener('click', async () => {
+      $$('[data-del]', $('#prod-body')).forEach((b) => b.addEventListener('click', () => {
         const p = all.find((x) => x.id === b.dataset.del);
-        if (!confirm(`"${p.name}" ürününü silmek istediğinize emin misiniz?`)) return;
-        try { await api('/api/admin/products/' + p.id, { method: 'DELETE' }); toast('Ürün silindi'); viewProducts(); }
-        catch (e) { toast(e.message, true); }
+        confirmDialog(`"${p.name}" ürününü silmek istediğinize emin misiniz?`, async () => {
+          try { await api('/api/admin/products/' + p.id, { method: 'DELETE' }); toast('Ürün silindi'); viewProducts(); }
+          catch (e) { toast(e.message, true); }
+        });
       }));
     }
 
@@ -1140,11 +1170,12 @@
         toast(e.message, true);
       }
     }));
-    $$('[data-del]', $('#cat-grid')).forEach((b) => b.addEventListener('click', async () => {
+    $$('[data-del]', $('#cat-grid')).forEach((b) => b.addEventListener('click', () => {
       const c = list.find((x) => x.id === b.dataset.del);
-      if (!confirm(`"${c.name}" kategorisini silmek istiyor musunuz?`)) return;
-      try { await api('/api/admin/categories/' + c.id, { method: 'DELETE' }); toast('Kategori silindi'); CATS_CACHE = null; viewCategories(); }
-      catch (e) { toast(e.message, true); }
+      confirmDialog(`"${c.name}" kategorisini silmek istiyor musunuz?`, async () => {
+        try { await api('/api/admin/categories/' + c.id, { method: 'DELETE' }); toast('Kategori silindi'); CATS_CACHE = null; viewCategories(); }
+        catch (e) { toast(e.message, true); }
+      });
     }));
   }
 
@@ -1282,10 +1313,11 @@
       try { await api('/api/admin/reviews/' + b.dataset.app + '/approve', { method: 'POST' }); toast('Yorum onaylandı ve puan güncellendi'); viewReviews(); }
       catch (e) { toast(e.message, true); }
     }));
-    $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-      if (!confirm('Bu yorum silinsin mi?')) return;
-      try { await api('/api/admin/reviews/' + b.dataset.del, { method: 'DELETE' }); toast('Yorum silindi'); viewReviews(); }
-      catch (e) { toast(e.message, true); }
+    $$('[data-del]').forEach((b) => b.addEventListener('click', () => {
+      confirmDialog('Bu yorum silinsin mi?', async () => {
+        try { await api('/api/admin/reviews/' + b.dataset.del, { method: 'DELETE' }); toast('Yorum silindi'); viewReviews(); }
+        catch (e) { toast(e.message, true); }
+      });
     }));
   }
 
@@ -1335,10 +1367,11 @@
         try { await api('/api/admin/coupons/' + c.id, { method: 'POST', body: { active: !c.active } }); toast(c.active ? 'Kupon duraklatıldı' : 'Kupon aktifleştirildi'); load(); }
         catch (e) { toast(e.message, true); }
       }));
-      $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-        if (!confirm('Kuponu silmek istediğinize emin misiniz?')) return;
-        try { await api('/api/admin/coupons/' + b.dataset.del, { method: 'DELETE' }); toast('Kupon silindi'); load(); }
-        catch (e) { toast(e.message, true); }
+      $$('[data-del]').forEach((b) => b.addEventListener('click', () => {
+        confirmDialog('Kuponu silmek istediğinize emin misiniz?', async () => {
+          try { await api('/api/admin/coupons/' + b.dataset.del, { method: 'DELETE' }); toast('Kupon silindi'); load(); }
+          catch (e) { toast(e.message, true); }
+        });
       }));
     }
 
@@ -1374,10 +1407,11 @@
       try { await api('/api/admin/users/' + b.dataset.role, { method: 'POST', body: { role: 'admin' } }); toast('Yönetici yetkisi atandı'); viewUsers(); }
       catch (e) { toast(e.message, true); }
     }));
-    $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-      if (!confirm('Kullanıcı hesabı silinsin mi?')) return;
-      try { await api('/api/admin/users/' + b.dataset.del, { method: 'DELETE' }); toast('Kullanıcı silindi'); viewUsers(); }
-      catch (e) { toast(e.message, true); }
+    $$('[data-del]').forEach((b) => b.addEventListener('click', () => {
+      confirmDialog('Kullanıcı hesabı silinsin mi?', async () => {
+        try { await api('/api/admin/users/' + b.dataset.del, { method: 'DELETE' }); toast('Kullanıcı silindi'); viewUsers(); }
+        catch (e) { toast(e.message, true); }
+      });
     }));
   }
 
@@ -1404,42 +1438,166 @@
     mount('settings', '<div class="loading" style="text-align:center;padding:50px">Ayarlar getiriliyor…</div>');
     let s;
     try { s = (await api('/api/admin/settings')).settings; } catch (e) { return toast(e.message, true); }
+
     mount('settings', `
-    <div class="panel" style="max-width:800px">
-      <div class="panel-head"><h2>Mağaza & Operasyon Yapılandırması</h2></div>
-      <div class="panel-body">
-        <div class="grid-2">
-          <div class="field"><label>Mağaza Ünvanı</label><input id="st-name" value="${esc(s.storeName)}"></div>
-          <div class="field"><label>Üst Duyuru Bandı Metni</label><input id="st-announce" value="${esc(s.announcement)}"></div>
+    <div class="settings-container">
+      
+      <!-- Card 1: Mağaza Kimliği & Duyuru Bandı -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-icon">🏬</div>
+          <div>
+            <div class="settings-card-title">Mağaza Kimliği & Canlı Duyuru Bandı</div>
+            <div class="settings-card-sub">Marka ünvanı, üst duyuru metni ve sosyal medya bağlantıları</div>
+          </div>
         </div>
-        <div class="grid-3">
-          <div class="field"><label>Ücretsiz Kargo Limiti (₺)</label><input id="st-free" type="number" value="${esc(s.freeShippingThreshold)}"></div>
-          <div class="field"><label>Sabit Kargo Ücreti (₺)</label><input id="st-ship" type="number" step="0.01" value="${esc(s.shippingFee)}"></div>
-          <div class="field"><label>KDV Oranı (%)</label><input id="st-kdv" type="number" value="${esc(s.kdvRate)}"></div>
+        <div class="settings-card-body">
+          <div class="grid-2">
+            <div class="field">
+              <label>Mağaza Ünvanı *</label>
+              <input id="st-name" value="${esc(s.storeName)}" placeholder="Örn: Love. Sex Shop">
+              <div class="settings-hint">Ana sayfa, üst başlıklar ve fatura belgelerinde görünür.</div>
+            </div>
+            <div class="field">
+              <label>Instagram Kullanıcı Adı</label>
+              <input id="st-insta" value="${esc(s.instagram || '@loveshop.tr')}" placeholder="Örn: @loveshop.tr">
+              <div class="settings-hint">Alt bilgi ve iletişim alanlarında sergilenir.</div>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Üst Duyuru Bandı Metni (Canlı Önizleme)</label>
+            <input id="st-announce" value="${esc(s.announcement)}" placeholder="Örn: WHATSAPP SİPARİŞ + GİZLİ PAKETLEME GARANTİSİ">
+            <div class="announce-preview-box">
+              <span>📢 CANLI DUYURU:</span>
+              <span id="st-announce-preview">${esc(s.announcement)}</span>
+            </div>
+          </div>
         </div>
-        <div class="grid-3">
-          <div class="field"><label>Müşteri Hizmetleri E-posta</label><input id="st-mail" value="${esc(s.supportEmail)}"></div>
-          <div class="field"><label>İletişim Telefonu</label><input id="st-phone" value="${esc(s.supportPhone)}"></div>
-          <div class="field"><label>WhatsApp Destek Linki</label><input id="st-wa" value="${esc(s.whatsapp || '')}"></div>
-        </div>
-        <div class="grid-2">
-          <div class="field"><label>Fiziksel Mağaza Adresi</label><input id="st-addr" value="${esc(s.address || '')}"></div>
-          <div class="field"><label>Google Harita Arama Konumu</label><input id="st-maps" value="${esc(s.mapsQuery || '')}"></div>
-        </div>
-        <button class="btn btn-primary" id="st-save" style="margin-top:10px">Tüm Ayarları Güncelle</button>
       </div>
+
+      <!-- Card 2: Kargo & Fiyatlandırma Operasyonu -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-icon">🚚</div>
+          <div>
+            <div class="settings-card-title">Kargo, Fiyatlandırma & KDV Operasyonu</div>
+            <div class="settings-card-sub">Sepet limitleri, kargo ücretleri ve yasal KDV oranları</div>
+          </div>
+        </div>
+        <div class="settings-card-body">
+          <div class="grid-3">
+            <div class="field">
+              <label>Ücretsiz Kargo Limiti (₺)</label>
+              <input id="st-free" type="number" min="0" value="${esc(s.freeShippingThreshold)}">
+              <div class="settings-hint">Bu tutarın üzerindeki sepetlerde kargo otomatik 0 ₺ olur.</div>
+            </div>
+            <div class="field">
+              <label>Sabit Kargo Ücreti (₺)</label>
+              <input id="st-ship" type="number" step="0.01" min="0" value="${esc(s.shippingFee)}">
+              <div class="settings-hint">Limitin altındaki standart kargo bedeli.</div>
+            </div>
+            <div class="field">
+              <label>Yasal KDV Oranı (%)</label>
+              <input id="st-kdv" type="number" min="0" max="100" value="${esc(s.kdvRate)}">
+              <div class="settings-hint">Fatura ve sistem içi tutar hesaplamaları.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Müşteri İletişim Kanalları -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-icon">📞</div>
+          <div>
+            <div class="settings-card-title">İletişim & Müşteri Destek Kanalları</div>
+            <div class="settings-card-sub">E-posta, doğrudan telefon ve WhatsApp sipariş hatları</div>
+          </div>
+        </div>
+        <div class="settings-card-body">
+          <div class="grid-3">
+            <div class="field">
+              <label>Destek E-posta Adresi</label>
+              <input id="st-mail" type="email" value="${esc(s.supportEmail)}">
+              <div class="settings-hint">Sipariş onayları ve bildirim e-postaları.</div>
+            </div>
+            <div class="field">
+              <label>İletişim Telefon Numarası</label>
+              <input id="st-phone" value="${esc(s.supportPhone)}">
+              <div class="settings-hint">Müşteri hizmetleri iletişim hattı.</div>
+            </div>
+            <div class="field">
+              <label>WhatsApp Destek Bağlantısı</label>
+              <input id="st-wa" value="${esc(s.whatsapp || '')}">
+              <div class="settings-hint">Örn: https://wa.me/905436331325</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Mağaza Adresi & Konum -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-icon">📍</div>
+          <div>
+            <div class="settings-card-title">Fiziksel Mağaza Adresi & Konum Bilgisi</div>
+            <div class="settings-card-sub">Müşterilerin harita ve iletişim sayfasında göreceği açık adres</div>
+          </div>
+        </div>
+        <div class="settings-card-body">
+          <div class="grid-2">
+            <div class="field">
+              <label>Fiziksel Mağaza Açık Adresi</label>
+              <input id="st-addr" value="${esc(s.address || '')}">
+              <div class="settings-hint">İletişim sayfasında yer alacak adres detayları.</div>
+            </div>
+            <div class="field">
+              <label>Google Haritalar Arama Terimi</label>
+              <input id="st-maps" value="${esc(s.mapsQuery || '')}">
+              <div class="settings-hint">Google Maps linki için arama metni.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Save Action Bar -->
+      <div class="settings-action-bar">
+        <div>
+          <div style="font-weight:700;font-size:14px;color:var(--text)">Sistem & Operasyon Yapılandırması</div>
+          <div style="font-size:12px;color:var(--muted)">Değişikliklerin canlı mağazada etkinleşmesi için kaydedin</div>
+        </div>
+        <button class="btn btn-primary" id="st-save" style="padding:11px 24px;font-size:14px">💾 Tüm Ayarları Güncelle ve Yayınla</button>
+      </div>
+
     </div>`);
 
+    const announceInput = $('#st-announce');
+    const announcePreview = $('#st-announce-preview');
+    if (announceInput && announcePreview) {
+      announceInput.addEventListener('input', () => {
+        announcePreview.textContent = announceInput.value || 'GİRİLEN DUYURU METNİ...';
+      });
+    }
+
     $('#st-save').addEventListener('click', async () => {
+      const btn = $('#st-save');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Kaydediliyor... ⏳';
       try {
         await api('/api/admin/settings', { method: 'POST', body: {
-          storeName: $('#st-name').value, announcement: $('#st-announce').value,
+          storeName: $('#st-name').value, announcement: $('#st-announce').value, instagram: $('#st-insta').value,
           freeShippingThreshold: Number($('#st-free').value), shippingFee: Number($('#st-ship').value), kdvRate: Number($('#st-kdv').value),
           supportEmail: $('#st-mail').value, supportPhone: $('#st-phone').value, whatsapp: $('#st-wa').value,
           address: $('#st-addr').value, mapsQuery: $('#st-maps').value
         } });
         toast('Sistem ayarları başarıyla güncellendi ✅');
-      } catch (e) { toast(e.message, true); }
+      } catch (e) {
+        toast(e.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
     });
   }
 
