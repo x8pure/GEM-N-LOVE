@@ -211,7 +211,8 @@ const STR: Record<string, Record<string, string>> = {
     'age.no': 'Çıkış Yap',
     'age.small': 'Gizliliğin bizim için önemli — yaş bilgisi yalnızca bu tarayıcıda saklanır.',
     'nav.home': 'Anasayfa', 'nav.shop': 'Mağaza', 'nav.about': 'Hakkımızda', 'nav.contact': 'İletişim', 'nav.account': 'Hesabım',
-    'nav.admin': 'Admin Panel', 'nav.cart': 'Sepet', 'nav.menu': 'Menü', 'nav.login': 'Giriş',
+    'nav.admin': 'Admin Panel', 'nav.cart': 'Sepet', 'nav.menu': 'Menü', 'nav.login': 'Giriş', 'nav.search': 'Ürün Ara', 'nav.search_short': 'Ara',
+    'qs.ph': 'Ürün, kategori veya özellik ara...', 'qs.popular': 'Popüler Aramalar', 'qs.empty': 'Aramanızla eşleşen ürün bulunamadı.', 'qs.close': 'Kapat',
     'foot.desc': ' — bedenini tanı, keyfini keşfet. 2026 tasarım anlayışıyla, saygı ve gizlilik esaslı online mağaza.',
     'foot.h.shop': 'Mağaza', 'foot.all': 'Tüm Ürünler',
     'foot.about': 'Hakkımızda', 'foot.discreet': 'Gizli Paketleme', 'foot.returns': 'İade Politikası',
@@ -307,7 +308,8 @@ const STR: Record<string, Record<string, string>> = {
     'age.no': 'Exit',
     'age.small': 'Your privacy matters — age verification is stored only in this browser.',
     'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.about': 'About', 'nav.contact': 'Contact', 'nav.account': 'My Account',
-    'nav.admin': 'Admin Panel', 'nav.cart': 'Cart', 'nav.menu': 'Menu', 'nav.login': 'Sign in',
+    'nav.admin': 'Admin Panel', 'nav.cart': 'Cart', 'nav.menu': 'Menu', 'nav.login': 'Sign in', 'nav.search': 'Search Products', 'nav.search_short': 'Search',
+    'qs.ph': 'Search products, categories or features...', 'qs.popular': 'Popular Searches', 'qs.empty': 'No products matched your search.', 'qs.close': 'Close',
     'foot.desc': ' — know your body, discover your pleasure. A respect & privacy-first online store with a 2026 design language.',
     'foot.h.shop': 'Shop', 'foot.all': 'All Products',
     'foot.about': 'About Us', 'foot.discreet': 'Discreet Packaging', 'foot.returns': 'Return Policy',
@@ -613,7 +615,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const C = ctx || { lang: 'tr', theme: 'light', t: makeT('tr'), num: (n: number) => n.toLocaleString('tr-TR') };
   const tr = C.t;
   const dark = C.theme === 'dark';
-  const appVersion = '1.0.5';
+  const appVersion = '1.0.6';
   const desc = opts.description || `${st.storeName}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.`;
   const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
   const ogImage = opts.ogImage || 'https://loveshop.com.tr/test.png';
@@ -664,6 +666,9 @@ ${opts.noChrome ? body : `
     <a href="/iletisim" data-nav="/iletisim">${tr('nav.contact')}</a>
   </div>
   <div class="nav-tools">
+    <button id="nav-search-btn" class="icon-btn" title="${tr('nav.search')}" aria-label="Search">
+      <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </button>
     <button id="theme-toggle" class="icon-btn" title="${dark ? 'Aydınlık moda geç' : 'Karanlık moda geç'}" aria-label="Dark mode">
       ${dark ? '<svg class="icon-svg icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' : '<svg class="icon-svg icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}
     </button>
@@ -708,10 +713,55 @@ ${body}
   </div>
   <div class="foot-bottom">
     <span>© ${new Date().getFullYear()} ${esc(st.storeName)}${tr('foot.rights')}</span>
-    <button type="button" onclick="window.showAgeGate && window.showAgeGate()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;margin:0 8px;" title="Doğrulama Ekranını Yeniden Göster">🔞 +18 Doğrulama</button>
+    <button type="button" onclick="window.showAgeGate && window.showAgeGate()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;margin:0 8px;" title="Doğrulama Ekranını Yeniden Göster">+18 Yaş Doğrulama</button>
     <div class="pay-chips"><span>${tr('foot.pay.wa')}</span><span>${tr('foot.pay.shop')}</span><span>${tr('foot.pay.discreet')}</span></div>
   </div>
-</footer>`}
+</footer>
+
+<!-- Modern Mobile Bottom Navigation Bar (App-like 2026 UX - Luxury Monoline) -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobil Gezinme Menüsü">
+  <a href="/" class="mb-nav-item" data-mb-path="/" aria-label="${tr('nav.home')}">
+    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/><path d="M12 14v4"/></svg>
+    <span class="mb-nav-label">${tr('nav.home')}</span>
+  </a>
+  <a href="/magaza" class="mb-nav-item" data-mb-path="/magaza" aria-label="${tr('nav.shop')}">
+    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+    <span class="mb-nav-label">${tr('nav.shop')}</span>
+  </a>
+  <button type="button" class="mb-nav-item" id="mb-search-btn" aria-label="${tr('nav.search_short')}">
+    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><path d="m15.8 15.8 4.7 4.7"/></svg>
+    <span class="mb-nav-label">${tr('nav.search_short')}</span>
+  </button>
+  <a href="/sepet" class="mb-nav-item" data-mb-path="/sepet" aria-label="${tr('nav.cart')}">
+    <div class="mb-cart-wrap">
+      <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12a1.2 1.2 0 0 1-1.2 1H6.4a1.2 1.2 0 0 1-1.2-1z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="mb-cart-badge" id="mb-cart-badge"${(C.cartCount && C.cartCount > 0) ? '' : ' style="display:none"'}>${C.cartCount || 0}</span>
+    </div>
+    <span class="mb-nav-label">${tr('nav.cart')}</span>
+  </a>
+  <a href="/hesap" class="mb-nav-item" data-mb-path="/hesap" aria-label="${tr('nav.account')}">
+    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.75"/><path d="M5.5 20.5a6.5 6.5 0 0 1 13 0"/></svg>
+    <span class="mb-nav-label">${tr('nav.account')}</span>
+  </a>
+</nav>
+
+<!-- Instant Quick Search Overlay / Modal -->
+<div class="quick-search-modal" id="quick-search-modal" aria-hidden="true">
+  <div class="qs-backdrop" id="qs-backdrop"></div>
+  <div class="qs-dialog" role="dialog" aria-modal="true" aria-label="Hızlı Ürün Arama">
+    <div class="qs-header">
+      <div class="qs-input-wrap">
+        <svg class="qs-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="qs-input" placeholder="${tr('qs.ph')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button type="button" class="qs-clear-btn" id="qs-clear-btn" style="display:none" aria-label="Temizle">✕</button>
+      </div>
+      <button type="button" class="qs-close-btn" id="qs-close-btn" aria-label="${tr('qs.close')}">${tr('qs.close')}</button>
+    </div>
+    <div class="qs-body" id="qs-results">
+      <!-- Default Trending Searches or Live Results -->
+    </div>
+  </div>
+</div>`}
 <div id="toast-zone"></div>
 
 <!-- Spatial Card Zoom / Morphing Canvas Modal (2026 E-Commerce Award Winner) -->
@@ -1216,7 +1266,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   };
 
   fs.stat(p, (serr, st) => {
-    if (serr) { console.error("serveStatic fs.stat ERROR:", p, serr.message); return sendSvgFallback(); }
+    if (serr) { return sendSvgFallback(); }
     
     // Support HTTP Range requests for video/media playback (Essential for iOS Safari & Chrome)
     if (ext === '.mp4' || req.headers.range) {
@@ -1232,16 +1282,14 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
           'Content-Range': `bytes ${start}-${end}/${fileSize}`,
           'Accept-Ranges': 'bytes',
           'Content-Length': chunkSize,
-          'Content-Length': buf.length,
-        'Content-Type': type,
+          'Content-Type': type,
           'Cache-Control': 'public, max-age=86400'
         });
         return stream.pipe(res);
       } else {
         res.writeHead(200, {
           'Content-Length': fileSize,
-          'Content-Length': buf.length,
-        'Content-Type': type,
+          'Content-Type': type,
           'Accept-Ranges': 'bytes',
           'Cache-Control': 'public, max-age=86400'
         });
@@ -1798,8 +1846,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const b = await readBody(req);
       const name = String(b.name || '').trim();
       if (!name) return sendError(res, 400, E('err.catName'));
-      let slug = String(b.slug || name).toLowerCase().replace(/[çğıöşü]/g, (c) => ({ 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' }[c] || c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('ct');
-      if (allCategories().some((c: any) => c.slug === slug)) return sendError(res, 409, E('err.catSlug'));
+      let slug = String(b.slug || name).trim().toLowerCase().replace(/i̇/g, 'i').replace(/[çğıöşü]/g, (c) => ({ 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' }[c] || c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('ct');
+      if (allCategories().some((c: any) => c.slug === slug)) return sendError(res, 409, `Bu bağlantı (slug: ${slug}) zaten başka bir kategori tarafından kullanılıyor. Lütfen farklı bir isim deneyin.`);
       let image = '';
       if (b.image && String(b.image).startsWith('data:image/')) image = saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
@@ -2067,10 +2115,12 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
 
 const server = http.createServer(handler);
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`LOVE SHOP ready on http://0.0.0.0:${PORT}`);
-  console.log(`Admin paneli: http://localhost:${PORT}/admin`);
-  console.log(`Admin girişi -> admin@loveshop.com.tr / loveshop2026`);
-});
+if (!process.env.VERCEL) {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`LOVE SHOP ready on http://0.0.0.0:${PORT}`);
+    console.log(`Admin paneli: http://localhost:${PORT}/admin`);
+    console.log(`Admin girişi -> admin@loveshop.com.tr / loveshop2026`);
+  });
+}
 
 export default handler;

@@ -1134,6 +1134,7 @@
           body: { featuredOnHome, homeOrder }
         });
         toast(val === 1 ? 'Kategori BÜYÜK SOL KART olarak vitrine yerleştirildi! 🌟' : (val > 0 ? `Kategori Küçük Yan Kart #${val - 1} olarak ayarlandı.` : 'Kategori ana sayfa vitrininden kaldırıldı.'));
+        CATS_CACHE = null;
         viewCategories();
       } catch (e) {
         toast(e.message, true);
@@ -1142,7 +1143,7 @@
     $$('[data-del]', $('#cat-grid')).forEach((b) => b.addEventListener('click', async () => {
       const c = list.find((x) => x.id === b.dataset.del);
       if (!confirm(`"${c.name}" kategorisini silmek istiyor musunuz?`)) return;
-      try { await api('/api/admin/categories/' + c.id, { method: 'DELETE' }); toast('Kategori silindi'); viewCategories(); }
+      try { await api('/api/admin/categories/' + c.id, { method: 'DELETE' }); toast('Kategori silindi'); CATS_CACHE = null; viewCategories(); }
       catch (e) { toast(e.message, true); }
     }));
   }
@@ -1246,6 +1247,7 @@
         else await api('/api/admin/categories', { method: 'POST', body });
         toast(isEdit ? 'Kategori güncellendi' : 'Yeni kategori eklendi');
         closeModal();
+        CATS_CACHE = null;
         viewCategories();
       } catch (e) {
         catSaveBtn.disabled = false;

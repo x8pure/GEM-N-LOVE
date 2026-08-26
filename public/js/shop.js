@@ -481,20 +481,266 @@
     if (adminLink) adminLink.style.display = 'none';
   });
 
-  /* ---------- cart badge ---------- */
-  function updateCartBadge(count) {
-    const badge = $('#cart-badge');
-    if (!badge) return;
+  /* ---------- cart badge & magnetic micro-bounce ---------- */
+  function updateCartBadge(count, isNewAdd = false) {
+    const badges = $$('#cart-badge, #mb-cart-badge');
+    if (!badges.length) return;
     const n = Math.max(0, parseInt(count, 10) || 0);
-    badge.textContent = n;
-    if (n > 0) {
-      badge.style.display = 'grid';
-      badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
-    } else {
-      badge.style.display = 'none';
+    badges.forEach((b) => {
+      b.textContent = n;
+      if (n > 0) {
+        b.style.display = 'grid';
+        b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+      } else {
+        b.style.display = 'none';
+      }
+    });
+
+    if (isNewAdd) {
+      // 1. Magnetic bounce on bottom mobile nav cart item
+      const mbCartItem = $('#mobile-bottom-nav .mb-nav-item[data-mb-path="/sepet"], #mobile-bottom-nav a[href="/sepet"]');
+      if (mbCartItem) {
+        const mbIcon = $('.mb-nav-icon', mbCartItem);
+        const mbWrap = $('.mb-cart-wrap', mbCartItem);
+        if (mbIcon) {
+          mbIcon.classList.remove('cart-bounce');
+          void mbIcon.offsetWidth;
+          mbIcon.classList.add('cart-bounce');
+          setTimeout(() => mbIcon.classList.remove('cart-bounce'), 750);
+        }
+        if (mbWrap) {
+          mbWrap.classList.remove('cart-ripple-active');
+          void mbWrap.offsetWidth;
+          mbWrap.classList.add('cart-ripple-active');
+          setTimeout(() => mbWrap.classList.remove('cart-ripple-active'), 750);
+        }
+      }
+
+      // 2. Top desktop cart button spring bounce
+      const topCartBtn = $('nav.top .icon-btn[href="/sepet"], nav.top a[href="/sepet"]');
+      if (topCartBtn) {
+        topCartBtn.classList.remove('cart-bounce');
+        void topCartBtn.offsetWidth;
+        topCartBtn.classList.add('cart-bounce');
+        setTimeout(() => topCartBtn.classList.remove('cart-bounce'), 750);
+      }
     }
   }
   LS.updateCartBadge = updateCartBadge;
+
+  /* ---------- Quick Search Modal (Instant 2026 UX) ---------- */
+  function initQuickSearch() {
+    const modal = $('#quick-search-modal');
+    const input = $('#qs-input');
+    const results = $('#qs-results');
+    const clearBtn = $('#qs-clear-btn');
+    const closeBtn = $('#qs-close-btn');
+    const backdrop = $('#qs-backdrop');
+    const navSearchBtn = $('#nav-search-btn');
+    const mbSearchBtn = $('#mb-search-btn');
+
+    if (!modal || !input || !results) return;
+
+    const trendingKeywords = LANG === 'en'
+      ? ['Vibrators', 'Massage Oils', 'For Couples', 'Costumes', 'Games', 'New Arrivals']
+      : ['Vibratör', 'Masaj Yağı', 'Çiftler İçin', 'Fantezi & Kostüm', 'Oyunlar', 'Yeni Gelenler'];
+
+    function renderDefaultSearchState() {
+      results.innerHTML = `
+        <div class="qs-trending-wrap">
+          <div class="qs-section-title">${LANG === 'en' ? 'Trending Searches' : 'Popüler Aramalar'}</div>
+          <div class="qs-trending-chips">
+            ${trendingKeywords.map((kw) => `<button type="button" class="qs-chip" data-query="${esc(kw)}">${esc(kw)}</button>`).join('')}
+          </div>
+        </div>
+        <div class="qs-trending-wrap" style="margin-top:20px;">
+          <div class="qs-section-title">${LANG === 'en' ? 'Quick Categories' : 'Hızlı Kategoriler'}</div>
+          <div class="qs-quick-cats">
+            <a href="/magaza?kat=vibratori" class="qs-cat-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span>${LANG === 'en' ? 'Vibrators' : 'Vibratörler'}</span>
+            </a>
+            <a href="/magaza?kat=ciftler" class="qs-cat-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>${LANG === 'en' ? 'For Couples' : 'Çiftler İçin'}</span>
+            </a>
+            <a href="/magaza?kat=kozmetik" class="qs-cat-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              <span>${LANG === 'en' ? 'Cosmetics & Oils' : 'Kozmetik & Masaj'}</span>
+            </a>
+            <a href="/magaza?kat=fantasy" class="qs-cat-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+              <span>${LANG === 'en' ? 'Fantasy & Costume' : 'Fantezi & Kostüm'}</span>
+            </a>
+            <a href="/magaza?kat=oyunlar" class="qs-cat-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg>
+              <span>${LANG === 'en' ? 'Games & Accessories' : 'Oyunlar'}</span>
+            </a>
+          </div>
+        </div>
+      `;
+
+      $$('.qs-chip', results).forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const q = chip.dataset.query;
+          if (q) {
+            input.value = q;
+            if (clearBtn) clearBtn.style.display = 'block';
+            doSearch(q);
+          }
+        });
+      });
+
+      $$('.qs-cat-btn', results).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          closeSearch();
+        });
+      });
+    }
+
+    function openSearch() {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (!input.value.trim()) {
+        renderDefaultSearchState();
+      }
+      setTimeout(() => input.focus(), 60);
+    }
+
+    function closeSearch() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      input.blur();
+    }
+
+    navSearchBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSearch();
+    });
+
+    mbSearchBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSearch();
+    });
+
+    closeBtn?.addEventListener('click', closeSearch);
+    backdrop?.addEventListener('click', closeSearch);
+
+    clearBtn?.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.style.display = 'none';
+      renderDefaultSearchState();
+      input.focus();
+    });
+
+    let searchTimer = null;
+    async function doSearch(query) {
+      const q = String(query || '').trim();
+      if (!q) {
+        if (clearBtn) clearBtn.style.display = 'none';
+        renderDefaultSearchState();
+        return;
+      }
+      if (clearBtn) clearBtn.style.display = 'block';
+      results.innerHTML = `<div class="qs-loading"><div class="spinner"></div></div>`;
+
+      try {
+        const res = await api('/api/products?q=' + encodeURIComponent(q) + '&limit=12');
+        const list = (res && Array.isArray(res.products)) ? res.products : [];
+        if (list.length === 0) {
+          results.innerHTML = `
+            <div class="qs-empty-state">
+              <div style="display:flex;justify-content:center;margin-bottom:12px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+              <p><b>"${esc(q)}"</b> ${t('qs.empty')}</p>
+              <span style="font-size:12px;color:var(--muted);margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by category or another keyword.' : 'Kategori adı veya farklı bir anahtar kelime deneyebilirsiniz.'}</span>
+            </div>
+          `;
+          return;
+        }
+
+        results.innerHTML = `
+          <div class="qs-results-count">${LANG === 'en' ? `${list.length} products found for` : `${list.length} ürün bulundu:`} <b>"${esc(q)}"</b></div>
+          <div class="qs-results-list">
+            ${list.map((p) => `
+              <a href="/urun/${esc(p.slug)}" class="qs-item" data-id="${p.id}" data-slug="${esc(p.slug)}">
+                <img src="${imgSrc(p.image)}" alt="${esc(p.name)}" class="qs-item-img" loading="lazy">
+                <div class="qs-item-info">
+                  <div class="qs-item-cat">${esc(p.categoryName || p.category)}</div>
+                  <div class="qs-item-name">${esc(p.name)}</div>
+                  <div class="qs-item-price-row">
+                    <span class="qs-item-price">${fmt(p.price)}</span>
+                    ${p.oldPrice ? `<span class="qs-item-old-price">${fmt(p.oldPrice)}</span>` : ''}
+                    ${p.stock > 0 ? `<span class="qs-item-stock">● ${LANG === 'en' ? 'In Stock' : 'Stokta'}</span>` : `<span class="qs-item-stock out">● ${LANG === 'en' ? 'Out of Stock' : 'Tükendi'}</span>`}
+                  </div>
+                </div>
+                <div class="qs-item-arrow">→</div>
+              </a>
+            `).join('')}
+          </div>
+          <a href="/magaza?q=${encodeURIComponent(q)}" class="qs-view-all-btn">
+            ${LANG === 'en' ? 'View All in Catalog' : 'Tüm Sonuçları Katalogda Gör'} (${res.total || list.length}) →
+          </a>
+        `;
+
+        $$('.qs-item, .qs-view-all-btn', results).forEach((link) => {
+          link.addEventListener('click', () => {
+            closeSearch();
+          });
+        });
+      } catch (err) {
+        results.innerHTML = `<div class="qs-empty-state"><p>${err.message || 'Arama hatası oluştu.'}</p></div>`;
+      }
+    }
+
+    input.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        doSearch(input.value);
+      }, 160);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSearch();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (q) {
+          closeSearch();
+          location.href = '/magaza?q=' + encodeURIComponent(q);
+        }
+      }
+    });
+
+    // Keyboard shortcut: Cmd+K or Ctrl+K opens quick search
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        if (modal.classList.contains('open')) closeSearch();
+        else openSearch();
+      }
+    });
+  }
+
+  /* ---------- Mobile Bottom Navigation Bar ---------- */
+  function initMobileBottomNav() {
+    const mbNav = $('#mobile-bottom-nav');
+    if (!mbNav) return;
+
+    const currentPath = location.pathname;
+    $$('.mb-nav-item[data-mb-path]', mbNav).forEach((item) => {
+      const itemPath = item.getAttribute('data-mb-path');
+      if (itemPath === '/' && (currentPath === '/' || currentPath === '')) {
+        item.classList.add('active');
+      } else if (itemPath !== '/' && currentPath.startsWith(itemPath)) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
 
   async function refreshCartBadge() {
     // 1. Immediately reflect local cart count if present (eliminates any UI flicker)
@@ -541,21 +787,45 @@
   async function addToCart(productId, qty = 1, variant = 'standart', btn = null) {
     if (!productId) return;
     try {
+      // Haptic micro-feedback for mobile touch devices
+      try {
+        if (navigator && typeof navigator.vibrate === 'function') {
+          navigator.vibrate([18, 30, 20]);
+        }
+      } catch {}
+
       const res = await api('/api/cart/add', { method: 'POST', body: { productId, qty, variant } });
+      
+      // In-place button feedback
       if (btn) {
-        const origText = btn.innerHTML;
-        btn.innerHTML = '✓';
+        const isIconOnly = btn.classList.contains('action-btn') || btn.classList.contains('quick-add-btn') || btn.offsetWidth <= 52;
+        const origContent = btn.innerHTML;
+        const origWidth = btn.offsetWidth ? `${btn.offsetWidth}px` : '';
+
         btn.classList.add('added');
+        if (isIconOnly) {
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-check-icon"><polyline points="20 6 9 17 4 12"/></svg>`;
+        } else {
+          if (origWidth) btn.style.minWidth = origWidth;
+          btn.innerHTML = `<span class="btn-added-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <span>${LANG === 'en' ? 'Added' : 'Eklendi'}</span></span>`;
+        }
+
         setTimeout(() => {
-          btn.innerHTML = origText;
+          btn.innerHTML = origContent;
           btn.classList.remove('added');
-        }, 1400);
+          if (!isIconOnly) btn.style.minWidth = '';
+        }, 1350);
       }
-      toast(t('added'), '🛍️');
+
+      // On desktop (window > 860px), subtle toast notification
+      if (window.innerWidth > 860) {
+        toast(t('added'), '🛍️');
+      }
+
       if (res && Array.isArray(res.items)) {
         setLocalCart(res);
         const n = res.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0);
-        updateCartBadge(n);
+        updateCartBadge(n, true);
       }
       document.dispatchEvent(new Event('ls:cart'));
     } catch (e) {
@@ -1078,7 +1348,7 @@
     const qv = $('#q-val');
     $('#q-minus').addEventListener('click', () => { qty = Math.max(1, qty - 1); qv.value = qty; });
     $('#q-plus').addEventListener('click', () => { qty = Math.min(p.stock || 1, qty + 1); qv.value = qty; });
-    $('#pd-add').addEventListener('click', () => addToCart(p.id, qty));
+    $('#pd-add').addEventListener('click', (e) => addToCart(p.id, qty, 'standart', e.currentTarget));
     $('#pd-buy').addEventListener('click', async () => {
       try { await api('/api/cart/add', { method: 'POST', body: { productId: p.id, qty } }); location.href = '/odeme'; }
       catch (e) { toast(e.message, '⚠️'); }
@@ -2161,6 +2431,9 @@
         }
       });
 
+      // Update mobile bottom nav active state
+      initMobileBottomNav();
+
       // Update cart count or badges
       refreshCartBadge();
 
@@ -2232,7 +2505,7 @@
   }
 
   /* boot */
-  const globalInit = [initTiltPhysics, initQuickDrawerListeners, initSpaLinks, refreshRevealObservers];
+  const globalInit = [initTiltPhysics, initQuickDrawerListeners, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
   const pageInit = [initHome, initShop, initProduct, initReviewForm, initCart, initCheckout, initThanks, initAuth, initAccount, initProfile, initContact];
 
   function runBoot() {
