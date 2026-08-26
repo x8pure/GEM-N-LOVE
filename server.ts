@@ -49,7 +49,7 @@ await (async () => {
           addresses: []
         });
         userFixed = true;
-      } else {
+      } else if (!rootAdmin.passwordHash) {
         rootAdmin.passwordHash = hashPassword('admin123');
         userFixed = true;
       }
@@ -2049,6 +2049,17 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       for (const k of ['freeShippingThreshold', 'shippingFee', 'kdvRate']) if (b[k] !== undefined) db.settings[k] = Number(b[k]) || 0;
       save();
       return json(res, 200, { ok: true, settings: db.settings });
+    }
+
+    if (pathname === '/api/admin/change-password' && method === 'POST') {
+      const b = await readBody(req);
+      const newPass = String(b.password || '').trim();
+      if (!newPass || newPass.length < 6) return sendError(res, 400, 'Şifre en az 6 karakter olmalıdır.');
+      const me = db.users.find((u: any) => u.id === adm.id);
+      if (!me) return sendError(res, 404, 'Kullanıcı hesabı bulunamadı.');
+      me.passwordHash = hashPassword(newPass);
+      save();
+      return json(res, 200, { ok: true, message: 'Yönetici şifreniz başarıyla güncellendi.' });
     }
 
     if (pathname === '/api/admin/messages' && method === 'GET') return json(res, 200, { ok: true, messages: [...db.contact].reverse() });

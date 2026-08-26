@@ -29,17 +29,7 @@
     }
   ],
   "products": [],
-  "categories": [
-    {
-      "id": "ct57c9ac6fa9d0",
-      "slug": "erkekler",
-      "name": "Suni Vajinalar",
-      "image": "/uploads/img4c1b98943e76.webp",
-      "featuredOnHome": true,
-      "homeOrder": 1,
-      "createdAt": "2026-08-26T15:08:46.713Z"
-    }
-  ],
+  "categories": [],
   "orders": [
     {
       "id": "LS-1001",
@@ -60,7 +50,7 @@
       "discount": 0,
       "total": 1299,
       "coupon": null,
-      "status": "shipped",
+      "status": "cancelled",
       "payment": "WhatsApp ile Sipariş",
       "discreet": true,
       "address": {
@@ -91,7 +81,7 @@
       "discount": 0,
       "total": 567.9,
       "coupon": null,
-      "status": "processing",
+      "status": "cancelled",
       "payment": "Mağazadan Teslim & Ödeme",
       "discreet": true,
       "address": {
@@ -173,12 +163,12 @@
     "storeName": "Love.",
     "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
     "freeShippingThreshold": 750,
-    "shippingFee": 49.9,
+    "shippingFee": 49.86,
     "kdvRate": 20,
     "supportEmail": "info@loveshop.com.tr",
     "supportPhone": "+90 543 633 13 25",
     "whatsapp": "https://wa.me/905436331325",
-    "address": "İsmet İnönü-1 Cd. 52/2 (Akbank Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
+    "address": "İsmet İnönü-1 Cd. 52/2 (Watsons Mağazası Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
     "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
     "instagram": "@loveshop.tr",
     "wheelIds": [

@@ -1560,6 +1560,32 @@
         </div>
       </div>
 
+      <!-- Card 5: Admin Şifre Değiştirme -->
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div class="settings-card-icon">🔑</div>
+          <div>
+            <div class="settings-card-title">Yönetici Şifresi & Hesabı Güvenliği</div>
+            <div class="settings-card-sub">Giriş yaptığınız yönetici hesabınızın şifresini değiştirin</div>
+          </div>
+        </div>
+        <div class="settings-card-body">
+          <div class="grid-2">
+            <div class="field">
+              <label>Yeni Yönetici Şifresi *</label>
+              <input id="st-pass" type="password" placeholder="En az 6 karakter">
+              <div class="settings-hint">Güvenli ve karmaşık bir şifre seçmeniz önerilir.</div>
+            </div>
+            <div class="field">
+              <label>Yeni Şifre (Tekrar) *</label>
+              <input id="st-pass2" type="password" placeholder="Şifrenizi doğrulayın">
+              <div class="settings-hint">Yeni şifrenizi birebir aynı şekilde girin.</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="st-pass-btn" style="margin-top:10px;border-color:var(--line-strong)">🔒 Yönetici Şifresini Güncelle</button>
+        </div>
+      </div>
+
       <!-- Sticky Save Action Bar -->
       <div class="settings-action-bar">
         <div>
@@ -1578,6 +1604,28 @@
         announcePreview.textContent = announceInput.value || 'GİRİLEN DUYURU METNİ...';
       });
     }
+
+    $('#st-pass-btn').addEventListener('click', async () => {
+      const p1 = $('#st-pass').value;
+      const p2 = $('#st-pass2').value;
+      if (!p1 || p1.length < 6) return toast('Şifre en az 6 karakter olmalıdır', true);
+      if (p1 !== p2) return toast('Girdiğiniz şifreler eşleşmiyor', true);
+      const btn = $('#st-pass-btn');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Güncelleniyor... ⏳';
+      try {
+        const res = await api('/api/admin/change-password', { method: 'POST', body: { password: p1 } });
+        toast(res.message || 'Yönetici şifreniz güncellendi 🔑');
+        $('#st-pass').value = '';
+        $('#st-pass2').value = '';
+      } catch (e) {
+        toast(e.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    });
 
     $('#st-save').addEventListener('click', async () => {
       const btn = $('#st-save');
