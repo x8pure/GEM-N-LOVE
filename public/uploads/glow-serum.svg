@@ -50,10 +50,10 @@
       <stop offset="100%" stop-color="#141110"/>
     </linearGradient>
     <linearGradient id="matte-cream" x1="0.2" y1="0" x2="0.8" y2="1">
-      <stop offset="0%" stop-color="#38312E"/>
-      <stop offset="45%" stop-color="#26211F"/>
-      <stop offset="85%" stop-color="#1A1615"/>
-      <stop offset="100%" stop-color="#120F0E"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#F7EFE5"/>
+      <stop offset="85%" stop-color="#E2D4C3"/>
+      <stop offset="100%" stop-color="#C5B49E"/>
     </linearGradient>
     <linearGradient id="amber-oil" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FFE8B3"/>
@@ -87,7 +87,7 @@
       <rect x="405" y="240" width="90" height="70" rx="10" fill="url(#champagne-gold)"/>
       <path d="M420 240 L420 190 Q 420 180 435 180 L480 180 Q 495 180 495 195 L495 240 Z" fill="url(#champagne-gold)"/>
       <!-- Minimalist vertical typography -->
-      <text x="450" y="470" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" letter-spacing="4" fill="#F7D8CA" text-anchor="middle">GLOW</text>
+      <text x="450" y="470" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" letter-spacing="4" fill="#292524" text-anchor="middle">GLOW</text>
       <text x="450" y="495" font-family="'Outfit', sans-serif" font-size="9" letter-spacing="3" fill="#B58A5E" text-anchor="middle">SERUM</text>
       <line x1="430" y1="520" x2="470" y2="520" stroke="#B58A5E" stroke-width="1.5"/>
     </g>

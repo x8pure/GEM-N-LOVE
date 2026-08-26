@@ -1,30 +1,21 @@
 {
   "users": [
     {
-      "id": "ub27d671f172a",
+      "id": "u5ba8df5754d3",
       "email": "admin@loveshop.com.tr",
       "passwordHash": "9986abca34f4654f2d3cf9ed9c7d19f1730ee04109451b1ce1b54dd95db7d631",
       "name": "Mağaza Yönetimi",
       "role": "admin",
-      "createdAt": "2026-08-24T08:06:31.125Z",
-      "addresses": [
-        {
-          "label": "Ev",
-          "full": "İsmet İnönü 1 caddesi 52/2",
-          "city": "TEPEBAŞI",
-          "zip": "",
-          "phone": "05436331325",
-          "discreet": true
-        }
-      ]
+      "createdAt": "2026-08-26T14:02:46.012Z",
+      "addresses": []
     },
     {
-      "id": "u5b947964c1ae",
+      "id": "u40ad1297d1db",
       "email": "demo@loveshop.com.tr",
       "passwordHash": "a928a75120e800047cc4bc3f3b79b4ae52cf0b67cf90af9c4e0631bf5f2feab1",
       "name": "Demo Müşteri",
       "role": "customer",
-      "createdAt": "2026-08-24T08:06:31.125Z",
+      "createdAt": "2026-08-26T14:02:46.012Z",
       "addresses": [
         {
           "label": "Ev",
@@ -35,31 +26,11 @@
           "discreet": true
         }
       ]
-    },
-    {
-      "id": "u71fed1928e01",
-      "email": "cemal.ulas@gmail.com",
-      "passwordHash": "51a53d5dc1be744302d534e2ce86c1c5eae3453fad56f22ec1950265185bba19",
-      "name": "cemal ulaş",
-      "role": "customer",
-      "createdAt": "2026-08-24T17:15:56.477Z",
-      "addresses": []
-    },
-    {
-      "id": "ua2a7706555ef",
-      "email": "x8pure@gmail.com",
-      "passwordHash": "9e8ed3d68a273b8cc40a1d64610e40fe47c477e67c3b64ccb1f7b89dafd1ab32",
-      "name": "x8pure",
-      "role": "customer",
-      "googleAuth": true,
-      "avatar": "",
-      "createdAt": "2026-08-25T11:02:32.310Z",
-      "addresses": []
     }
   ],
   "products": [
     {
-      "id": "p63177d082126",
+      "id": "pdcbdf6a314fb",
       "slug": "aurora-wand",
       "name": "Aura Wand",
       "category": "vibratori",
@@ -69,54 +40,49 @@
       "price": 1299,
       "oldPrice": null,
       "stock": 89,
-      "rating": 4.5,
-      "reviewCount": 17,
+      "rating": 4.3,
+      "reviewCount": 30,
       "featured": true,
       "isNew": true,
       "bestSeller": true,
-      "image": "/uploads/imgcd7bf933f5e7.webp",
-      "gallery": [
-        "/uploads/imgcd7bf933f5e7.webp",
-        "/uploads/imgc828a762f133.webp"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "vibratori"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-24T08:06:31.117Z"
+      "createdAt": "2026-08-26T14:02:46.004Z"
     },
     {
-      "id": "pdec12179c962",
+      "id": "p1fce42fa5662",
       "slug": "nova-point",
-      "name": "Brezilya Bayraklı Anal Plug",
-      "category": "oyunlar",
-      "categoryName": "Anal Ürünler",
+      "name": "Nova Point",
+      "category": "vibratori",
+      "categoryName": "Vibratörler",
       "description": "Kompakt g-nokta tasarımı, USB-C şarjlı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.",
       "longDescription": "Kompakt g-nokta tasarımı, USB-C şarjlı. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
       "price": 849,
       "oldPrice": 1100,
       "stock": 64,
-      "rating": 5,
-      "reviewCount": 36,
+      "rating": 4.5,
+      "reviewCount": 7,
       "featured": true,
-      "isNew": true,
-      "bestSeller": true,
-      "image": "/uploads/img34608456dc83.webp",
-      "gallery": [
-        "/uploads/img34608456dc83.webp"
-      ],
+      "isNew": false,
+      "bestSeller": false,
+      "image": "",
+      "gallery": [],
       "tags": [
         "vibratori"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-23T08:06:31.118Z"
+      "createdAt": "2026-08-25T14:02:46.005Z"
     },
     {
-      "id": "p2d0e82522720",
+      "id": "p1a5c3f2cc9f0",
       "slug": "lumen-duo",
       "name": "Lumen Duo",
       "category": "vibratori",
@@ -126,25 +92,23 @@
       "price": 1749,
       "oldPrice": null,
       "stock": 47,
-      "rating": 4.6,
-      "reviewCount": 18,
+      "rating": 4.9,
+      "reviewCount": 20,
       "featured": true,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/lumen-duo.svg",
-      "gallery": [
-        "/uploads/lumen-duo.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "vibratori"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-22T08:06:31.118Z"
+      "createdAt": "2026-08-24T14:02:46.005Z"
     },
     {
-      "id": "p6404d4871462",
+      "id": "p35927540ca41",
       "slug": "puls-rabbit",
       "name": "Puls Rabbit",
       "category": "vibratori",
@@ -153,26 +117,24 @@
       "longDescription": "Klasik rabbit formu, 12 ritim. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
       "price": 1099,
       "oldPrice": 1430,
-      "stock": 72,
-      "rating": 4.8,
-      "reviewCount": 36,
+      "stock": 73,
+      "rating": 4.7,
+      "reviewCount": 11,
       "featured": true,
       "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/puls-rabbit.svg",
-      "gallery": [
-        "/uploads/puls-rabbit.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "vibratori"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-21T08:06:31.119Z"
+      "createdAt": "2026-08-23T14:02:46.006Z"
     },
     {
-      "id": "pb0ff71c9b051",
+      "id": "p1b99174e5b14",
       "slug": "we-vibe-stil",
       "name": "Duo Ring",
       "category": "ciftler",
@@ -183,24 +145,22 @@
       "oldPrice": null,
       "stock": 58,
       "rating": 4.5,
-      "reviewCount": 11,
+      "reviewCount": 7,
       "featured": true,
       "isNew": true,
       "bestSeller": false,
-      "image": "/uploads/we-vibe-stil.svg",
-      "gallery": [
-        "/uploads/we-vibe-stil.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "ciftler"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-20T08:06:31.119Z"
+      "createdAt": "2026-08-22T14:02:46.006Z"
     },
     {
-      "id": "p401445299a88",
+      "id": "p5459ed8b2355",
       "slug": "remote-love",
       "name": "Remote Love",
       "category": "ciftler",
@@ -210,25 +170,23 @@
       "price": 1399,
       "oldPrice": 1820,
       "stock": 36,
-      "rating": 4.7,
-      "reviewCount": 20,
+      "rating": 4.2,
+      "reviewCount": 14,
       "featured": true,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/remote-love.svg",
-      "gallery": [
-        "/uploads/remote-love.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "ciftler"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-19T08:06:31.119Z"
+      "createdAt": "2026-08-21T14:02:46.006Z"
     },
     {
-      "id": "p6cd01b38f81f",
+      "id": "p323715770e56",
       "slug": "silk-bondage-set",
       "name": "Silk Set",
       "category": "ciftler",
@@ -238,25 +196,23 @@
       "price": 649,
       "oldPrice": null,
       "stock": 81,
-      "rating": 4.5,
-      "reviewCount": 30,
+      "rating": 4.4,
+      "reviewCount": 32,
       "featured": true,
-      "isNew": true,
+      "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/img2929930da730.png",
-      "gallery": [
-        "/uploads/img2929930da730.png"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "ciftler"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-18T08:06:31.120Z"
+      "createdAt": "2026-08-20T14:02:46.007Z"
     },
     {
-      "id": "p6636d75d9885",
+      "id": "p4bc6d6d45600",
       "slug": "heat-couple",
       "name": "Heat Couple",
       "category": "ciftler",
@@ -267,24 +223,22 @@
       "oldPrice": 1560,
       "stock": 29,
       "rating": 4.4,
-      "reviewCount": 25,
+      "reviewCount": 27,
       "featured": true,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/heat-couple.svg",
-      "gallery": [
-        "/uploads/heat-couple.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "ciftler"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-17T08:06:31.120Z"
+      "createdAt": "2026-08-19T14:02:46.007Z"
     },
     {
-      "id": "pbda0b7f7700e",
+      "id": "p3e5eb622205e",
       "slug": "silk-touch-oil",
       "name": "Silk Touch Yağ",
       "category": "kozmetik",
@@ -295,24 +249,22 @@
       "oldPrice": null,
       "stock": 92,
       "rating": 4.9,
-      "reviewCount": 30,
+      "reviewCount": 14,
       "featured": false,
       "isNew": true,
       "bestSeller": false,
-      "image": "/uploads/silk-touch-oil.svg",
-      "gallery": [
-        "/uploads/silk-touch-oil.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "kozmetik"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-16T08:06:31.121Z"
+      "createdAt": "2026-08-18T14:02:46.008Z"
     },
     {
-      "id": "p4e00327c5d49",
+      "id": "p71bd8d3fc172",
       "slug": "rose-mist",
       "name": "Rose Mist",
       "category": "kozmetik",
@@ -322,25 +274,23 @@
       "price": 259,
       "oldPrice": 340,
       "stock": 67,
-      "rating": 4.9,
-      "reviewCount": 8,
+      "rating": 5,
+      "reviewCount": 28,
       "featured": false,
       "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/rose-mist.svg",
-      "gallery": [
-        "/uploads/rose-mist.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "kozmetik"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-15T08:06:31.121Z"
+      "createdAt": "2026-08-17T14:02:46.008Z"
     },
     {
-      "id": "p4adb42bae6b6",
+      "id": "pbac8878fb4d9",
       "slug": "velvet-balm",
       "name": "Velvet Balm",
       "category": "kozmetik",
@@ -350,25 +300,23 @@
       "price": 299,
       "oldPrice": null,
       "stock": 54,
-      "rating": 4.9,
-      "reviewCount": 38,
+      "rating": 4.7,
+      "reviewCount": 6,
       "featured": false,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/velvet-balm.svg",
-      "gallery": [
-        "/uploads/velvet-balm.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "kozmetik"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-14T08:06:31.121Z"
+      "createdAt": "2026-08-16T14:02:46.008Z"
     },
     {
-      "id": "pe745df15fa77",
+      "id": "p963aa8ced8e5",
       "slug": "glow-serum",
       "name": "Glow Serum",
       "category": "kozmetik",
@@ -377,26 +325,24 @@
       "longDescription": "Parlatıcı vücut serumu. Vücut dostu malzeme, CE sertifikalı. Gizli paketleme ile gönderilir.\n\nÖZELLİKLER\n• Vücut dostu premium malzeme\n• Sessiz teknoloji (40 dB altındaki modellerde)\n• USB ile şarj edilebilir\n• Su geçirmez (IPX7)\n• 2 yıl garanti\n\nKUTU İÇERİĞİ\n• Ürün saklama kesesi\n• USB-C şarj kablosu\n• Türkçe kullanım kılavuzu\n• Gizli paketleme notu",
       "price": 419,
       "oldPrice": 540,
-      "stock": 42,
-      "rating": 4.9,
-      "reviewCount": 21,
-      "featured": true,
-      "isNew": true,
-      "bestSeller": true,
-      "image": "/uploads/img570eb28bca0d.png",
-      "gallery": [
-        "/uploads/img570eb28bca0d.png"
-      ],
+      "stock": 43,
+      "rating": 4.8,
+      "reviewCount": 37,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "",
+      "gallery": [],
       "tags": [
         "kozmetik"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-13T08:06:31.122Z"
+      "createdAt": "2026-08-15T14:02:46.008Z"
     },
     {
-      "id": "p4196086893dd",
+      "id": "p5fbefa236f55",
       "slug": "noir-mask",
       "name": "Noir Maske",
       "category": "fantasy",
@@ -406,25 +352,23 @@
       "price": 229,
       "oldPrice": null,
       "stock": 76,
-      "rating": 4.9,
-      "reviewCount": 39,
+      "rating": 4.4,
+      "reviewCount": 7,
       "featured": false,
       "isNew": true,
       "bestSeller": true,
-      "image": "/uploads/noir-mask.svg",
-      "gallery": [
-        "/uploads/noir-mask.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "fantasy"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-12T08:06:31.122Z"
+      "createdAt": "2026-08-14T14:02:46.009Z"
     },
     {
-      "id": "pabbba16fe409",
+      "id": "pfd76961ba897",
       "slug": "lace-robe",
       "name": "Lace Robe",
       "category": "fantasy",
@@ -434,25 +378,23 @@
       "price": 749,
       "oldPrice": 970,
       "stock": 61,
-      "rating": 4.8,
-      "reviewCount": 25,
-      "featured": true,
-      "isNew": true,
-      "bestSeller": true,
-      "image": "/uploads/img9aa1bc76f15c.png",
-      "gallery": [
-        "/uploads/img9aa1bc76f15c.png"
-      ],
+      "rating": 4.7,
+      "reviewCount": 18,
+      "featured": false,
+      "isNew": false,
+      "bestSeller": false,
+      "image": "",
+      "gallery": [],
       "tags": [
         "fantasy"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-11T08:06:31.122Z"
+      "createdAt": "2026-08-13T14:02:46.009Z"
     },
     {
-      "id": "peeb69193d44f",
+      "id": "p36585530705a",
       "slug": "feather-tickle",
       "name": "Feather Tickle",
       "category": "fantasy",
@@ -462,25 +404,23 @@
       "price": 149,
       "oldPrice": null,
       "stock": 88,
-      "rating": 4.9,
-      "reviewCount": 11,
+      "rating": 4.8,
+      "reviewCount": 34,
       "featured": false,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/feather-tickle.svg",
-      "gallery": [
-        "/uploads/feather-tickle.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "fantasy"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-10T08:06:31.122Z"
+      "createdAt": "2026-08-12T14:02:46.009Z"
     },
     {
-      "id": "p2f71dace10a6",
+      "id": "pa4f560bd4ba0",
       "slug": "satin-cuffs",
       "name": "Satin Cuffs",
       "category": "fantasy",
@@ -490,25 +430,23 @@
       "price": 319,
       "oldPrice": 410,
       "stock": 52,
-      "rating": 4.7,
-      "reviewCount": 24,
+      "rating": 4.8,
+      "reviewCount": 34,
       "featured": false,
       "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/satin-cuffs.svg",
-      "gallery": [
-        "/uploads/satin-cuffs.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "fantasy"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-09T08:06:31.123Z"
+      "createdAt": "2026-08-11T14:02:46.009Z"
     },
     {
-      "id": "pb2be3b468333",
+      "id": "pabd905c50983",
       "slug": "truth-dare-cards",
       "name": "Truth or Dare",
       "category": "oyunlar",
@@ -518,25 +456,23 @@
       "price": 199,
       "oldPrice": null,
       "stock": 84,
-      "rating": 4.4,
-      "reviewCount": 13,
+      "rating": 4.7,
+      "reviewCount": 6,
       "featured": false,
       "isNew": true,
       "bestSeller": false,
-      "image": "/uploads/truth-dare-cards.svg",
-      "gallery": [
-        "/uploads/truth-dare-cards.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "oyunlar"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-08T08:06:31.123Z"
+      "createdAt": "2026-08-10T14:02:46.010Z"
     },
     {
-      "id": "p1580091a057b",
+      "id": "p44322eadb9ad",
       "slug": "dice-set",
       "name": "Love Dice",
       "category": "oyunlar",
@@ -546,25 +482,23 @@
       "price": 129,
       "oldPrice": 170,
       "stock": 95,
-      "rating": 4.9,
-      "reviewCount": 10,
+      "rating": 4.8,
+      "reviewCount": 35,
       "featured": false,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/dice-set.svg",
-      "gallery": [
-        "/uploads/dice-set.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "oyunlar"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-07T08:06:31.123Z"
+      "createdAt": "2026-08-09T14:02:46.010Z"
     },
     {
-      "id": "p0e80ac8f4e7c",
+      "id": "p1d9dccbfa13d",
       "slug": "mood-candles",
       "name": "Mood Candles",
       "category": "oyunlar",
@@ -575,24 +509,22 @@
       "oldPrice": null,
       "stock": 71,
       "rating": 4.7,
-      "reviewCount": 18,
+      "reviewCount": 11,
       "featured": false,
       "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/mood-candles.svg",
-      "gallery": [
-        "/uploads/mood-candles.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "oyunlar"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-06T08:06:31.124Z"
+      "createdAt": "2026-08-08T14:02:46.010Z"
     },
     {
-      "id": "p91d43972bdfa",
+      "id": "pabaac2be854d",
       "slug": "massage-stone",
       "name": "Massage Stone",
       "category": "oyunlar",
@@ -602,174 +534,68 @@
       "price": 459,
       "oldPrice": 600,
       "stock": 49,
-      "rating": 4.9,
-      "reviewCount": 32,
+      "rating": 4.6,
+      "reviewCount": 37,
       "featured": false,
       "isNew": false,
       "bestSeller": false,
-      "image": "/uploads/massage-stone.svg",
-      "gallery": [
-        "/uploads/massage-stone.svg"
-      ],
+      "image": "",
+      "gallery": [],
       "tags": [
         "oyunlar"
       ],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-05T08:06:31.124Z"
-    },
-    {
-      "id": "p38c0865f1d87",
-      "slug": "octopus-vibrator",
-      "name": "Octopus Vibratör",
-      "category": "vibratori",
-      "categoryName": "Vibratörler",
-      "description": "Dokunaç Tasarımlı Titreşimli Masaj Aleti – 7 Farklı Mod, USB Şarjlı, Silikon",
-      "longDescription": "Benzersiz tasarımıyla öne çıkan ahtapot dokunaç masaj aleti, farklı zevk deneyimleri yaşamak isteyenler için özel olarak tasarlanmıştır. Esnek ve yumuşak silikon malzemesi sayesinde cilde uyum sağlar, üzerinde bulunan kabartmalı yapısı ise ekstra uyarım sunar. Toplam uzunluğu 21,8 cm olan bu özel ürün, incelerek kalınlaşan yapısı ile hem yeni başlayanlara hem de deneyimli kullanıcılara hitap eder. En ince noktası 1,1 cm, en kalın kısmı ise 3,3 cm ölçüsündedir. Sap kısmı ergonomik olarak 3,5 cm genişliğinde tasarlanmıştır. Ürün, 7 farklı titreşim modu ve çift motorlu 360° dönebilen hareket özelliğiyle farklı hisler yaşatır. Güçlü motoru olmasına rağmen düşük ses seviyesi ile gizli kullanım imkânı sunar. Manyetik USB şarj sistemi sayesinde hızlı ve pratik bir şekilde şarj edilebilir. Su geçirmez özelliği sayesinde kolayca temizlenebilir ve hijyenik kullanım sağlar. İster tek başınıza ister partnerinizle keyifli anlar yaşamanıza yardımcı olur. 🔹 Öne Çıkan Özellikler Ahtapot dokunaç esintili tasarım 7 farklı titreşim modu 360° döner çift motor sistemi Yumuşak ve esnek silikon gövde Su geçirmez ve kolay temizlenebilir Manyetik USB şarjlı, taşınabilir kullanım Gizliliğe önem verenler için özel kutusunda gönderilmektedir.",
-      "price": 3599,
-      "oldPrice": 4200,
-      "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
-      "featured": true,
-      "isNew": true,
-      "bestSeller": true,
-      "image": "/uploads/img9d68742f3400.png",
-      "gallery": [
-        "/uploads/img9d68742f3400.png"
-      ],
-      "tags": [],
-      "variants": [
-        "standart"
-      ],
-      "createdAt": "2026-08-24T09:19:57.040Z"
-    },
-    {
-      "id": "pe021aec8595f",
-      "slug": "yumusak-dokulu-cift-katmanli-realistik-penis",
-      "name": "Yumuşak Dokulu Çift Katmanlı Realistik Penis",
-      "category": "ciftler",
-      "categoryName": "DİLDOLAR",
-      "description": "31 cm Dual Layered Platinum Silicone Cock",
-      "longDescription": "31 CM Yumuşak Dokulu Çift Katmanlı Realistik Penis - Dual Layered Platinum Silicone Cock\n\nAnti-bakteriyel, ekstra gerçekçi dokunuşa sahip, yumuşak, esnek ve sağlam, çift katman dokulu, güçlü vantuzlu, 30.5x5.3cm ebatlarında, eşsiz işçilikte kaliteli dildo.\nUltra yumuşak, et dokusunda, çift katmanlı yapıdadır.\nYumuşak yüzeye ve başa sahiptir. Kullanıcıyı ufak dokunuşlarla tatmin eder.\nTamamen güvenli, kokusuz, sağlıklı, toksik olmayan ve cilt dostu materyalden üretilmiştir.\nÇifte yoğunluk, doğal doku ve ftalat içermez.\nGerçekçi yapısı sayesinde kullanıcıya gerçek sex deneyimi yaşatır.\nÇift katmanı sayesinde ultra esnek ve bükülebilir yapıdadır.\nİnce damarlı,tırtıklı katman yüzeye sahiptir.\nKullanım anında sürtünme sırasında vücut sıcaklığına ulaşarak ürün ve kullanıcı arasındaki ısıyı dengeleyerek doğal ısı üretir.\nUltra güçlü vantuzlu, eller serbest kullanım için ekstra kolaylık sağlar.\nBelden bağlama kemeri ile kullanılabilir.\nYumuşak yumurtalık yapısı ve deri detayları gerçeğinden farksızdır.\nMuhteşem bir dolgun ve dokulu his için hayatın tadını çıkarın.\n30.5 CM uzunluğunda, 5.3 CM kalınlığındadır.\n\n \n\n30.5 CM Yumuşak Dokulu Çift Katmanlı Realistik Penis - Dual Layered Platinum Silicone Cock bir realistik dildo vibratör ürünüdür. Tüm Türkiye'de yaygın bilinen, memnuniyeti yüksek olan ve  çok satılan Sens Markasının %100 orijinal, lisanlı ürünüdür. Sens Erotik Shop www.sexshop-tr.com sitesinde realistik penis kategorisinde bulunan ürününü indirimli fiyata burada Sens Erotik Shop'ta bulabilirsiniz.\n\nÖzellikle bekar kadınların ve partnerinin penis boyundan şikayetçi olan evli kadınların, pasif biseksüel ve pasif eşcinsel erkeklerin tercih ettiği realistik gerçekçi et dokusunda penis çeşitleri, gerçekçiliği kullanıcıya birebir gerçeğinden farksız hissettiren 30.5 CM Yumuşak Dokulu Çift Katmanlı Realistik Penis - Dual Layered Platinum Silicone Cock %100 müşteri memnuniyetine sahiptir. Gövdedeki kalın ve iri damarlara, penis baş bölgesinde ve sünnet bölgesinde en ince ayrıntısına kadar özel el işçiliği ile yapılmıştır. Gerçekçi görünümüyle birlikte dokusu son teknoloji tpr materyalden tamamen sağlıklı, güvenli ve kokusuz bir yapıdadır.\n\nGönül rahatlığıyıla kullanabileceğiniz 30.5 CM Yumuşak Dokulu Çift Katmanlı Realistik Penis - Dual Layered Platinum Silicone Cock eğilebilir ve bükülebilir yapısı sayesinde kullanıcıya son derece rahat ve konforlu kullanım sağlar. Bu sayede konsantreniz bozulmadan maksimum düzeylerde haz alarak eğlencenizin tadını çıkarabilirsiniz. Güçlü vantuza sahip Sens markalı 30.5 CM Yumuşak Dokulu Çift Katmanlı Realistik Penis - Dual Layered Platinum Silicone Cock yerde, duşakabin camı veya normal camlarda, fayansta ve düz tüm zeminlerde kullanılabilir. \n\nSon derece yumuşak ve ten dokulu 30.5 CM Yumuşak Dokulu Çift Katmanlı Realistik Penis - Dual Layered Platinum Silicone Cock hem anal hem vajinal hatta oral işlevde kullanılabilir. Seks hayatında monotonluk yaşayan evli çiftlerin, yeni birisiyle tanışmak istemeyen fakat aynı zamanda kendini tatmin etmek isteyen kadınların, ilişkiye girmekten çekinen veya istemeyen pasif biseksüel veya eşcinsel erkek bireylerin tatmin olmasını sağlayacak anal dildo vibratör, çift taraflı dildo vibratör, çatal dildo vibratör, zenci vibratör, oynar başlı dildo vibratörler 2000'den fazla çeşit seçeneğiyle Sens Erotik Shop www.sexshop-tr.com adresinde bu kategoride bulabilirsiniz.\n\nÜrünü seçtikten sonra aklınızdaki soru işaretlerini gidermek için canlı desteğimizle görüşebilir ve karar verdiğinizde sipariş oluşturarak online ödeme sonrasında ürünü teslim alıp, eğlenceli dakikalar yaşayabilirsiniz.\n\nSens Erotik Shop firması olarak 1989'dan bu yana süre gelen zamanlarda müşterilerimize en iyi hizmeti sunmakla beraber müşterilerimizin memnun kalacağı realistik penis, zenci penis, vibratör, g nokta uyarıcı vibratör, klitoris uyarıcı vibratör, göğüs ürünleri, masaj vibratörler, klitoris emiş güçlü vibratör, rabbit vibratör, çift taraflı vibratör, teknolojik çift başlı vibratör, çatal vibratör, 3 in 1 vibratör ve aradığınız her şeyi bulabileceğiniz FDA onaylı, CE belgeli, orijinal ve lisanslı ürünleri ithal ederek yüksek kalite ve en uygun fiyata hizmetinize sunuyoruz.",
-      "price": 4359,
-      "oldPrice": 4999,
-      "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
-      "featured": true,
-      "isNew": true,
-      "bestSeller": true,
-      "image": "/uploads/img153c464e6e62.webp",
-      "gallery": [
-        "/uploads/img153c464e6e62.webp",
-        "/uploads/img61e2c152f05a.webp"
-      ],
-      "tags": [],
-      "variants": [
-        "standart"
-      ],
-      "createdAt": "2026-08-25T13:29:38.794Z"
-    },
-    {
-      "id": "p28f1993b6c2c",
-      "slug": "ultra-yumusak-dokulu-realistik-dildo",
-      "name": "Ultra Yumuşak Dokulu Realistik Dildo",
-      "category": "ciftler",
-      "categoryName": "Dildolar",
-      "description": "Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM",
-      "longDescription": "Master Perfection Dildo Oscar - Ultra Yumuşak Dokulu Realistik Dildo Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
-      "price": 3959,
-      "oldPrice": 4229,
-      "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
-      "featured": true,
-      "isNew": true,
-      "bestSeller": true,
-      "image": "/uploads/imgd21b452c8181.webp",
-      "gallery": [
-        "/uploads/imgd21b452c8181.webp",
-        "/uploads/img74b122458e21.webp"
-      ],
-      "tags": [],
-      "variants": [
-        "standart"
-      ],
-      "createdAt": "2026-08-25T13:56:45.376Z"
+      "createdAt": "2026-08-07T14:02:46.011Z"
     }
   ],
   "categories": [
     {
-      "id": "ct4e0ce0c0d58f",
+      "id": "ct9c96dd3629fd",
       "slug": "vibratori",
       "name": "Vibratörler",
-      "image": "/uploads/img12692e6292e6.png",
-      "createdAt": "2026-08-24T08:06:31.124Z",
-      "featuredOnHome": true,
-      "homeOrder": 1
+      "image": "/uploads/aurora-wand.svg",
+      "createdAt": "2026-08-26T14:02:46.011Z"
     },
     {
-      "id": "ctddf194e51dd1",
+      "id": "ct7819c108b85d",
       "slug": "ciftler",
-      "name": "Dildolar",
-      "image": "/uploads/img7cfa367627ae.webp",
-      "createdAt": "2026-08-24T08:06:31.124Z",
-      "featuredOnHome": true,
-      "homeOrder": 4
+      "name": "Çiftler İçin",
+      "image": "/uploads/silk-bondage-set.svg",
+      "createdAt": "2026-08-26T14:02:46.011Z"
     },
     {
-      "id": "ct5715f6e680c7",
+      "id": "ct48202fdc0150",
       "slug": "kozmetik",
       "name": "Kozmetik & Bakım",
-      "image": "/uploads/img32b507ad8b90.png",
-      "createdAt": "2026-08-24T08:06:31.124Z"
+      "image": "/uploads/rose-mist.svg",
+      "createdAt": "2026-08-26T14:02:46.011Z"
     },
     {
-      "id": "ct059050bb6574",
+      "id": "ctc0ad468e240b",
       "slug": "fantasy",
       "name": "Fantasy & Kostüm",
-      "image": "/uploads/img507dbde645d0.png",
-      "createdAt": "2026-08-24T08:06:31.125Z"
+      "image": "/uploads/noir-mask.svg",
+      "createdAt": "2026-08-26T14:02:46.011Z"
     },
     {
-      "id": "ct28560ff14225",
+      "id": "ct68368f19d6bd",
       "slug": "oyunlar",
-      "name": "Anal Ürünler",
-      "image": "/uploads/img3bb95b4a9389.png",
-      "createdAt": "2026-08-24T08:06:31.125Z",
-      "featuredOnHome": true,
-      "homeOrder": 4
-    },
-    {
-      "id": "ct75818a8bd9c7",
-      "slug": "erkekler",
-      "name": "Masturbatörler",
-      "image": "/uploads/imgf704b34b0b0d.png",
-      "createdAt": "2026-08-25T08:13:24.954Z",
-      "featuredOnHome": true,
-      "homeOrder": 2
-    },
-    {
-      "id": "ctc53872dfd698",
-      "slug": "realistik-mankenler",
-      "name": "Realistik Mankenler",
-      "image": "/uploads/imgcf25c13d276b.webp",
-      "featuredOnHome": false,
-      "homeOrder": 99,
-      "createdAt": "2026-08-25T13:48:35.407Z"
+      "name": "Oyunlar & Aksesuar",
+      "image": "/uploads/mood-candles.svg",
+      "createdAt": "2026-08-26T14:02:46.011Z"
     }
   ],
   "orders": [
     {
       "id": "LS-1001",
-      "userId": "u5b947964c1ae",
+      "userId": "u40ad1297d1db",
       "userEmail": "demo@loveshop.com.tr",
       "customerName": "Demo Müşteri",
       "items": [
         {
-          "productId": "p63177d082126",
+          "productId": "pdcbdf6a314fb",
           "name": "Aura Wand",
           "price": 1299,
           "qty": 1,
@@ -790,17 +616,17 @@
         "city": "İstanbul",
         "zip": "34700"
       },
-      "createdAt": "2026-08-21T08:06:31.125Z",
+      "createdAt": "2026-08-23T14:02:46.012Z",
       "note": "Kapıya bırakılabilir"
     },
     {
       "id": "LS-1002",
-      "userId": "u5b947964c1ae",
+      "userId": "u40ad1297d1db",
       "userEmail": "demo@loveshop.com.tr",
       "customerName": "Demo Müşteri",
       "items": [
         {
-          "productId": "p4e00327c5d49",
+          "productId": "p71bd8d3fc172",
           "name": "Rose Mist",
           "price": 259,
           "qty": 2,
@@ -812,7 +638,7 @@
       "discount": 0,
       "total": 567.9,
       "coupon": null,
-      "status": "delivered",
+      "status": "processing",
       "payment": "Mağazadan Teslim & Ödeme",
       "discreet": true,
       "address": {
@@ -821,75 +647,13 @@
         "city": "İstanbul",
         "zip": "34700"
       },
-      "createdAt": "2026-08-23T08:06:31.125Z",
-      "note": ""
-    },
-    {
-      "id": "LS-1003",
-      "userId": "ub27d671f172a",
-      "userEmail": "admin@loveshop.com.tr",
-      "customerName": "Ulaş Cemal",
-      "items": [
-        {
-          "productId": "pe745df15fa77",
-          "name": "Glow Serum",
-          "price": 419,
-          "qty": 1,
-          "image": "/uploads/img570eb28bca0d.png"
-        }
-      ],
-      "subtotal": 419,
-      "shipping": 49.9,
-      "discount": 0,
-      "total": 468.9,
-      "coupon": null,
-      "status": "delivered",
-      "payment": "WhatsApp ile Sipariş",
-      "discreet": true,
-      "phone": "05436331325",
-      "address": {
-        "full": "İsmet İnönü 1 caddesi 52/2",
-        "city": "TEPEBAŞI",
-        "zip": ""
-      },
-      "createdAt": "2026-08-24T17:14:13.175Z",
-      "note": ""
-    },
-    {
-      "id": "LS-1004",
-      "userId": null,
-      "userEmail": "",
-      "customerName": "Ulaş Cemal",
-      "items": [
-        {
-          "productId": "p6404d4871462",
-          "name": "Puls Rabbit",
-          "price": 1099,
-          "qty": 1,
-          "image": "/uploads/puls-rabbit.svg"
-        }
-      ],
-      "subtotal": 1099,
-      "shipping": 0,
-      "discount": 0,
-      "total": 1099,
-      "coupon": null,
-      "status": "delivered",
-      "payment": "WhatsApp ile Sipariş",
-      "discreet": true,
-      "phone": "05436331325",
-      "address": {
-        "full": "İsmet İnönü 1 caddesi 52/2",
-        "city": "TEPEBAŞI",
-        "zip": ""
-      },
-      "createdAt": "2026-08-25T07:55:00.751Z",
+      "createdAt": "2026-08-25T14:02:46.012Z",
       "note": ""
     }
   ],
   "coupons": [
     {
-      "id": "c1faf8f50c01f",
+      "id": "c98cefbf5620e",
       "code": "LOVE10",
       "type": "percent",
       "value": 10,
@@ -898,7 +662,7 @@
       "used": 14
     },
     {
-      "id": "c14946dc523c6",
+      "id": "c3f8ceaee8a4a",
       "code": "GIZLI100",
       "type": "fixed",
       "value": 100,
@@ -907,7 +671,7 @@
       "used": 6
     },
     {
-      "id": "c72bd58c0264f",
+      "id": "c18a3d2670366",
       "code": "YENI15",
       "type": "percent",
       "value": 15,
@@ -918,37 +682,37 @@
   ],
   "reviews": [
     {
-      "id": "r912378fdd1c8",
-      "productId": "p63177d082126",
+      "id": "r6d0db2c68a41",
+      "productId": "pdcbdf6a314fb",
       "userName": "E*** K.",
       "rating": 5,
       "text": "Paketleme gerçekten gizliydi, kutudan ürün adı bile belli olmuyordu. Ürün çok sessiz çalışıyor.",
       "approved": true,
-      "createdAt": "2026-08-24T08:06:31.125Z"
+      "createdAt": "2026-08-26T14:02:46.012Z"
     },
     {
-      "id": "r5b9d6ceaf232",
-      "productId": "pdec12179c962",
+      "id": "r9ff82f1911b9",
+      "productId": "p1fce42fa5662",
       "userName": "M*** A.",
       "rating": 4,
       "text": "Şarj süresi beklediğimden uzun. Tavsiye ederim.",
       "approved": true,
-      "createdAt": "2026-08-24T08:06:31.125Z"
+      "createdAt": "2026-08-26T14:02:46.012Z"
     },
     {
-      "id": "rf4c0e417762e",
-      "productId": "p401445299a88",
+      "id": "r51f09fa3cace",
+      "productId": "p5459ed8b2355",
       "userName": "S*** Y.",
       "rating": 5,
       "text": "İndirimle aldım, kalitesi fiyatının çok üstü.",
       "approved": true,
-      "createdAt": "2026-08-24T08:06:31.125Z"
+      "createdAt": "2026-08-26T14:02:46.012Z"
     }
   ],
   "newsletter": [
     {
       "email": "ornek@mail.com",
-      "createdAt": "2026-08-24T08:06:31.125Z"
+      "createdAt": "2026-08-26T14:02:46.012Z"
     }
   ],
   "contact": [],
@@ -964,22 +728,13 @@
     "address": "İsmet İnönü-1 Cd. 52/2 (Akbank Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
     "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
     "instagram": "@loveshop.tr",
-    "wheelIds": [
-      "p38c0865f1d87",
-      "pe745df15fa77",
-      "pabbba16fe409",
-      "pdec12179c962",
-      "p63177d082126",
-      "p6cd01b38f81f",
-      "pe021aec8595f",
-      "p28f1993b6c2c"
-    ]
+    "wheelIds": []
   },
   "meta": {
-    "createdAt": "2026-08-24T08:06:31.115Z",
+    "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 4
+      "order": 2
     }
   }
 }

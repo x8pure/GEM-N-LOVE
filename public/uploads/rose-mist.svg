@@ -50,10 +50,10 @@
       <stop offset="100%" stop-color="#141110"/>
     </linearGradient>
     <linearGradient id="matte-cream" x1="0.2" y1="0" x2="0.8" y2="1">
-      <stop offset="0%" stop-color="#38312E"/>
-      <stop offset="45%" stop-color="#26211F"/>
-      <stop offset="85%" stop-color="#1A1615"/>
-      <stop offset="100%" stop-color="#120F0E"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#F7EFE5"/>
+      <stop offset="85%" stop-color="#E2D4C3"/>
+      <stop offset="100%" stop-color="#C5B49E"/>
     </linearGradient>
     <linearGradient id="amber-oil" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FFE8B3"/>
@@ -84,11 +84,11 @@
       <rect x="375" y="270" width="150" height="420" rx="28" fill="url(#frosted-glass)"/>
       <rect x="388" y="320" width="124" height="355" rx="18" fill="url(#matte-blush)" opacity="0.65"/>
       <!-- Label -->
-      <rect x="400" y="420" width="100" height="150" rx="6" fill="#1A1716"/>
-      <text x="450" y="470" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#F7D8CA" text-anchor="middle">ROSE</text>
+      <rect x="400" y="420" width="100" height="150" rx="6" fill="#FAF7F2"/>
+      <text x="450" y="470" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#292524" text-anchor="middle">ROSE</text>
       <text x="450" y="492" font-family="'Outfit', sans-serif" font-size="9" font-weight="500" letter-spacing="2.5" fill="#E28B80" text-anchor="middle">MIST</text>
       <line x1="430" y1="510" x2="470" y2="510" stroke="#E28B80" stroke-width="1"/>
-      <text x="450" y="535" font-family="'Outfit', sans-serif" font-size="8" letter-spacing="1" fill="#D6B87B" text-anchor="middle">50 ML</text>
+      <text x="450" y="535" font-family="'Outfit', sans-serif" font-size="8" letter-spacing="1" fill="#78716C" text-anchor="middle">50 ML</text>
       <!-- Gold spray pump -->
       <rect x="415" y="200" width="70" height="70" rx="8" fill="url(#rose-gold)"/>
       <rect x="430" y="170" width="40" height="30" rx="4" fill="url(#rose-gold)"/>

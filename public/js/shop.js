@@ -5,7 +5,7 @@
   const LANG = window.__LS_LANG__ || 'tr';
   const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const imgSrc = (s) => {
-    if (!s) return '/uploads/aurora-wand.svg';
+    if (!s) return '';
     const str = String(s);
     if (str.startsWith('data:') || str.startsWith('http://') || str.startsWith('https://') || str.includes('?')) return str;
     return str + '?v=transparent2';
@@ -665,7 +665,7 @@
           <div class="qs-results-list">
             ${list.map((p) => `
               <a href="/urun/${esc(p.slug)}" class="qs-item" data-id="${p.id}" data-slug="${esc(p.slug)}">
-                <img src="${imgSrc(p.image)}" alt="${esc(p.name)}" class="qs-item-img" loading="lazy">
+                ${p.image ? `<img src="${imgSrc(p.image)}" alt="${esc(p.name)}" class="qs-item-img" loading="lazy">` : `<div class="qs-item-img" style="background:transparent"></div>`}
                 <div class="qs-item-info">
                   <div class="qs-item-cat">${esc(p.categoryName || p.category)}</div>
                   <div class="qs-item-name">${esc(p.name)}</div>
@@ -891,7 +891,7 @@
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
-        <img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy">
+        ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
         <div class="card-sheen"></div>
         <div class="prod-badges">${badges.join('')}</div>
       </a>

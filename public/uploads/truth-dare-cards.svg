@@ -50,10 +50,10 @@
       <stop offset="100%" stop-color="#141110"/>
     </linearGradient>
     <linearGradient id="matte-cream" x1="0.2" y1="0" x2="0.8" y2="1">
-      <stop offset="0%" stop-color="#38312E"/>
-      <stop offset="45%" stop-color="#26211F"/>
-      <stop offset="85%" stop-color="#1A1615"/>
-      <stop offset="100%" stop-color="#120F0E"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#F7EFE5"/>
+      <stop offset="85%" stop-color="#E2D4C3"/>
+      <stop offset="100%" stop-color="#C5B49E"/>
     </linearGradient>
     <linearGradient id="amber-oil" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FFE8B3"/>
@@ -81,15 +81,15 @@
     <!-- Truth or Dare: Luxury Ivory & Gold Slide Box Deck -->
     <g transform="translate(0, 20)">
       <!-- Bottom base card stack -->
-      <rect x="330" y="360" width="240" height="320" rx="16" fill="#1C1816" transform="rotate(-6 450 520)"/>
+      <rect x="330" y="360" width="240" height="320" rx="16" fill="#F5EFE6" transform="rotate(-6 450 520)"/>
       <!-- Top featured luxury box lid -->
-      <rect x="330" y="340" width="240" height="320" rx="16" fill="#221E1C" stroke="url(#champagne-gold)" stroke-width="2"/>
+      <rect x="330" y="340" width="240" height="320" rx="16" fill="#FCFAF7" stroke="url(#champagne-gold)" stroke-width="2"/>
       <rect x="350" y="360" width="200" height="280" rx="10" fill="none" stroke="url(#champagne-gold)" stroke-width="1.5"/>
       <!-- Gold foil geometric emblem & typography -->
       <polygon points="450,420 480,450 450,480 420,450" fill="none" stroke="url(#champagne-gold)" stroke-width="2"/>
-      <text x="450" y="525" font-family="'Playfair Display', Georgia, serif" font-size="20" font-weight="700" letter-spacing="3" fill="#F7D8CA" text-anchor="middle">TRUTH</text>
+      <text x="450" y="525" font-family="'Playfair Display', Georgia, serif" font-size="20" font-weight="700" letter-spacing="3" fill="#292524" text-anchor="middle">TRUTH</text>
       <text x="450" y="550" font-family="'Outfit', sans-serif" font-size="11" font-weight="600" letter-spacing="4" fill="#B58A5E" text-anchor="middle">OR DARE</text>
       <line x1="410" y1="570" x2="490" y2="570" stroke="url(#champagne-gold)" stroke-width="1"/>
-      <text x="450" y="600" font-family="'Outfit', sans-serif" font-size="8" letter-spacing="2" fill="#D6B87B" text-anchor="middle">100 INTIMATE CARDS</text>
+      <text x="450" y="600" font-family="'Outfit', sans-serif" font-size="8" letter-spacing="2" fill="#78716C" text-anchor="middle">100 INTIMATE CARDS</text>
     </g>
 </svg>

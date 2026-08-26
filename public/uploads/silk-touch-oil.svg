@@ -50,10 +50,10 @@
       <stop offset="100%" stop-color="#141110"/>
     </linearGradient>
     <linearGradient id="matte-cream" x1="0.2" y1="0" x2="0.8" y2="1">
-      <stop offset="0%" stop-color="#38312E"/>
-      <stop offset="45%" stop-color="#26211F"/>
-      <stop offset="85%" stop-color="#1A1615"/>
-      <stop offset="100%" stop-color="#120F0E"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#F7EFE5"/>
+      <stop offset="85%" stop-color="#E2D4C3"/>
+      <stop offset="100%" stop-color="#C5B49E"/>
     </linearGradient>
     <linearGradient id="amber-oil" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FFE8B3"/>
@@ -85,16 +85,16 @@
       <!-- Amber oil meniscus inside -->
       <rect x="370" y="420" width="160" height="235" rx="24" fill="url(#amber-oil)" opacity="0.88"/>
       <!-- Minimalist LOVE. Studio label -->
-      <rect x="385" y="460" width="130" height="145" rx="8" fill="#1A1716"/>
-      <text x="450" y="510" font-family="'Outfit', sans-serif" font-size="14" font-weight="700" letter-spacing="4" fill="#F7D8CA" text-anchor="middle">LOVE.</text>
-      <text x="450" y="535" font-family="'Outfit', sans-serif" font-size="9" font-weight="500" letter-spacing="2" fill="#D6B87B" text-anchor="middle">SILK TOUCH OIL</text>
+      <rect x="385" y="460" width="130" height="145" rx="8" fill="#FDFBF7"/>
+      <text x="450" y="510" font-family="'Outfit', sans-serif" font-size="14" font-weight="700" letter-spacing="4" fill="#292524" text-anchor="middle">LOVE.</text>
+      <text x="450" y="535" font-family="'Outfit', sans-serif" font-size="9" font-weight="500" letter-spacing="2" fill="#78716C" text-anchor="middle">SILK TOUCH OIL</text>
       <line x1="420" y1="552" x2="480" y2="552" stroke="#D9A08B" stroke-width="1.5"/>
-      <text x="450" y="575" font-family="'Outfit', sans-serif" font-size="8" font-weight="500" letter-spacing="1.5" fill="#E28B80" text-anchor="middle">100 ML • BOTANICAL</text>
+      <text x="450" y="575" font-family="'Outfit', sans-serif" font-size="8" font-weight="500" letter-spacing="1.5" fill="#A8A29E" text-anchor="middle">100 ML • BOTANICAL</text>
       <!-- Glass reflection sheen -->
       <path d="M375 380 L375 650" stroke="#FFFFFF" stroke-width="10" opacity="0.5" stroke-linecap="round"/>
       <!-- Gold dropper collar -->
       <rect x="405" y="295" width="90" height="65" rx="10" fill="url(#champagne-gold)"/>
       <!-- Rubber bulb -->
-      <path d="M420 295 C420 220 480 220 480 295 Z" fill="#F7D8CA"/>
+      <path d="M420 295 C420 220 480 220 480 295 Z" fill="#292524"/>
     </g>
 </svg>

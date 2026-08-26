@@ -50,10 +50,10 @@
       <stop offset="100%" stop-color="#141110"/>
     </linearGradient>
     <linearGradient id="matte-cream" x1="0.2" y1="0" x2="0.8" y2="1">
-      <stop offset="0%" stop-color="#38312E"/>
-      <stop offset="45%" stop-color="#26211F"/>
-      <stop offset="85%" stop-color="#1A1615"/>
-      <stop offset="100%" stop-color="#120F0E"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="45%" stop-color="#F7EFE5"/>
+      <stop offset="85%" stop-color="#E2D4C3"/>
+      <stop offset="100%" stop-color="#C5B49E"/>
     </linearGradient>
     <linearGradient id="amber-oil" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#FFE8B3"/>
@@ -82,7 +82,7 @@
     <g transform="translate(0, 20)">
       <!-- Matte ceramic vessel -->
       <path d="M340 400 L560 400 L530 670 L370 670 Z" fill="url(#matte-cream)"/>
-      <ellipse cx="450" cy="400" rx="110" ry="24" fill="#282220"/>
+      <ellipse cx="450" cy="400" rx="110" ry="24" fill="#F0E6D8"/>
       <!-- Melted warm wax pool -->
       <ellipse cx="450" cy="405" rx="98" ry="20" fill="url(#amber-oil)" opacity="0.8"/>
       <!-- Wooden wick and flame -->
@@ -90,7 +90,7 @@
       <path d="M450 310 C465 340 468 365 450 380 C432 365 435 340 450 310 Z" fill="url(#champagne-gold)"/>
       <circle cx="450" cy="355" r="30" fill="#FFE082" opacity="0.25" filter="url(#soft-blur)"/>
       <!-- Vessel Label -->
-      <text x="450" y="540" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" letter-spacing="4" fill="#F7D8CA" text-anchor="middle">LOVE.</text>
-      <text x="450" y="565" font-family="'Outfit', sans-serif" font-size="9" letter-spacing="2" fill="#D6B87B" text-anchor="middle">MOOD CANDLE</text>
+      <text x="450" y="540" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" letter-spacing="4" fill="#292524" text-anchor="middle">LOVE.</text>
+      <text x="450" y="565" font-family="'Outfit', sans-serif" font-size="9" letter-spacing="2" fill="#78716C" text-anchor="middle">MOOD CANDLE</text>
     </g>
 </svg>

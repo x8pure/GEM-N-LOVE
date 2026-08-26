@@ -30,7 +30,7 @@ await (async () => {
     } else {
       // If cloud is empty, seed and save
       if (!db.products || !db.products.length) {
-        try { seed(true); } catch (e) {}
+        // try { seed(true); } catch (e) {}
         db = load();
       }
       save();
@@ -780,7 +780,7 @@ ${body}
 const productCardSSR = (p: any, tr: any) => `
 <article class="prod-card rv" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
-    <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">
+    ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
     <div class="card-sheen"></div>
     <div class="prod-badges">${p.isNew ? `<span class="badge new">${tr('badge.new')}</span>` : ''}${p.bestSeller ? `<span class="badge hot">${tr('badge.hot')}</span>` : ''}${p.oldPrice ? `<span class="badge sale">${tr('badge.sale')}</span>` : ''}</div>
   </a>
@@ -1310,7 +1310,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
 }
 
 function saveUpload(dataUrl: string): string {
-  if (!dataUrl || typeof dataUrl !== 'string') return '/uploads/aurora-wand.svg';
+  if (!dataUrl || typeof dataUrl !== 'string') return '';
   const trimmed = dataUrl.trim();
   if (trimmed.startsWith('/uploads/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     return trimmed;
@@ -1343,7 +1343,7 @@ function saveUpload(dataUrl: string): string {
       console.error('saveUpload error:', err);
     }
   }
-  return trimmed.startsWith('data:') ? '/uploads/aurora-wand.svg' : trimmed;
+  return trimmed.startsWith('data:') ? '' : trimmed;
 }
 
 /* ---------------- API ---------------- */
@@ -1763,7 +1763,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         else gallery.push(item);
       }
 
-      let image = gallery[0] || '/uploads/aurora-wand.svg';
+      let image = gallery[0] || '';
       if (b.image && String(b.image).startsWith('data:image/')) image = saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
       
@@ -1810,7 +1810,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       }
       
       if (!Array.isArray(p.gallery) || !p.gallery.length) {
-        p.gallery = [p.image || '/uploads/aurora-wand.svg'];
+        p.gallery = [p.image || ''];
       }
       if (p.gallery && p.gallery.length && (!p.image || !p.gallery.includes(p.image))) {
         p.image = p.gallery[0];
