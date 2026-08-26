@@ -820,8 +820,8 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   const top = [...homeFeatured, ...homeRemaining].slice(0, 4);
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
-  const featured = db.products.filter((p: any) => p.featured).slice(0, 8);
-  const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
+  const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
+  const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
   const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 6);
   const html = `
 <section class="hero">

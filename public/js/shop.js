@@ -1169,16 +1169,16 @@
     refreshRevealObservers();
     const featured = $('#featured-grid');
     if (featured) {
-      const data = await api('/api/products?featured=1&limit=8').catch(() => ({ products: [] }));
-      featured.innerHTML = data.products.slice(0, 8).map(productCard).join('');
+      const data = await api('/api/products?featured=1&limit=10').catch(() => ({ products: [] }));
+      featured.innerHTML = data.products.slice(0, 10).map(productCard).join('');
       refreshRevealObservers();
     }
     const wheel = $('#cf-stage');
     if (wheel) initCoverflow(wheel);
     const best = $('#new-grid');
     if (best) {
-      const data = await api('/api/products?sort=new&limit=4').catch(() => ({ products: [] }));
-      best.innerHTML = data.products.slice(0, 4).map(productCard).join('');
+      const data = await api('/api/products?sort=new&limit=5').catch(() => ({ products: [] }));
+      best.innerHTML = data.products.slice(0, 5).map(productCard).join('');
       refreshRevealObservers();
     }
     const nlForm = $('#nl-form');
