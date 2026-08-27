@@ -19,6 +19,17 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
+const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS || 'cemal.ulas@gmail.com,x8pure@gmail.com,admin@loveshop.com.tr')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
+function isAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  const clean = String(email).trim().toLowerCase();
+  return ADMIN_EMAILS.includes(clean);
+}
+
 // Initialize Firebase and restore cloud state synchronously before accepting requests
 await (async () => {
   try {
@@ -50,15 +61,24 @@ await (async () => {
           addresses: []
         });
         userFixed = true;
-      } else if (!rootAdmin.passwordHash) {
-        rootAdmin.passwordHash = hashPassword('admin123');
-        userFixed = true;
+      } else {
+        rootAdmin.role = 'admin';
+        if (!rootAdmin.passwordHash) {
+          rootAdmin.passwordHash = hashPassword('admin123');
+          userFixed = true;
+        }
       }
       
-      const googleUser = db.users.find((u: any) => u.email === 'x8pure@gmail.com');
-      if (googleUser && googleUser.role !== 'admin') {
-         googleUser.role = 'admin';
-         userFixed = true;
+      // Audit all users in db.users: strictly enforce ADMIN_EMAILS
+      for (const u of db.users) {
+        const shouldBeAdmin = isAdminEmail(u.email);
+        if (shouldBeAdmin && u.role !== 'admin') {
+          u.role = 'admin';
+          userFixed = true;
+        } else if (!shouldBeAdmin && u.role === 'admin') {
+          u.role = 'customer';
+          userFixed = true;
+        }
       }
       
       if (userFixed) save();
@@ -145,8 +165,9 @@ function setSidCookie(res: http.ServerResponse, sid: string) {
 }
 function clearSidCookie(res: http.ServerResponse) {
   res.setHeader('Set-Cookie', [
-    'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0',
-    'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0'
+    'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+    'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+    'ls_auth_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
   ]);
 }
 function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
@@ -163,26 +184,32 @@ function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
 }
 
 function getAuthUser(req: http.IncomingMessage, sess?: any) {
+  let user: any = null;
   if (sess && sess.userId) {
-    const u = db.users.find((x: any) => x.id === sess.userId);
-    if (u) return u;
+    user = db.users.find((x: any) => x.id === sess.userId) || null;
   }
-  const authHeader = req.headers['authorization'] || '';
-  const tokenHeader = req.headers['x-ls-token'] || req.headers['x-auth-token'] || '';
-  const cookieToken = getCookieValue(req, 'ls_token') || getCookieValue(req, 'ls_auth_token');
-  const bearer = typeof authHeader === 'string' && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
-  const tokenStr = bearer || (typeof tokenHeader === 'string' ? tokenHeader.trim() : '') || cookieToken || '';
-  if (tokenStr) {
-    const payload = verifyAuthToken(tokenStr);
-    if (payload && payload.userId) {
-      const u = db.users.find((x: any) => x.id === payload.userId);
-      if (u) {
-        if (sess) { sess.userId = u.id; }
-        return u;
+  if (!user) {
+    const authHeader = req.headers['authorization'] || '';
+    const tokenHeader = req.headers['x-ls-token'] || req.headers['x-auth-token'] || '';
+    const cookieToken = getCookieValue(req, 'ls_token') || getCookieValue(req, 'ls_auth_token');
+    const bearer = typeof authHeader === 'string' && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+    const tokenStr = bearer || (typeof tokenHeader === 'string' ? tokenHeader.trim() : '') || cookieToken || '';
+    if (tokenStr) {
+      const payload = verifyAuthToken(tokenStr);
+      if (payload && payload.userId) {
+        user = db.users.find((x: any) => x.id === payload.userId) || null;
+        if (user && sess) { sess.userId = user.id; }
       }
     }
   }
-  return null;
+  if (user) {
+    const calculatedRole = isAdminEmail(user.email) ? 'admin' : 'customer';
+    if (user.role !== calculatedRole) {
+      user.role = calculatedRole;
+      save();
+    }
+  }
+  return user;
 }
 
 function getUser(sess: any, req?: http.IncomingMessage) {
@@ -193,7 +220,8 @@ function getUser(sess: any, req?: http.IncomingMessage) {
 function requireAdmin(req: http.IncomingMessage, res: http.ServerResponse) {
   const sess = getSession(req, res);
   const u = getAuthUser(req, sess);
-  if (!u || u.role !== 'admin') return null;
+  if (!u || !isAdminEmail(u.email)) return null;
+  u.role = 'admin';
   return u;
 }
 function sendError(res: http.ServerResponse, code: number, msg: string) { json(res, code, { ok: false, error: msg }); }
@@ -1445,7 +1473,16 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
   /* --- session --- */
   if (pathname === '/api/session' && method === 'GET') {
-    return json(res, 200, { ok: true, user: user ? { id: user.id, name: user.name, email: user.email, role: user.role, addresses: user.addresses } : null });
+    return json(res, 200, {
+      ok: true,
+      user: user ? {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: isAdminEmail(user.email) ? 'admin' : 'customer',
+        addresses: user.addresses || []
+      } : null
+    });
   }
 
   /* --- auth --- */
@@ -1456,7 +1493,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!/^\S+@\S+\.\S+$/.test(email)) return sendError(res, 400, E('err.email'));
     if (!String(b.password || '') || b.password.length < 6) return sendError(res, 400, E('err.pass6'));
     if (db.users.some((u: any) => u.email === email)) return sendError(res, 409, E('err.emailUsed'));
-    const u = { id: uid('u'), email, passwordHash: hash(b.password), name: String(b.name || '').trim() || 'Misafir', role: 'customer', createdAt: new Date().toISOString(), addresses: [] };
+    const role = isAdminEmail(email) ? 'admin' : 'customer';
+    const u = { id: uid('u'), email, passwordHash: hash(b.password), name: String(b.name || '').trim() || 'Misafir', role, createdAt: new Date().toISOString(), addresses: [] };
     db.users.push(u); save();
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role);
@@ -1469,11 +1507,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   if (pathname === '/api/auth/login' && method === 'POST') {
     if (rateLimited(req, 'auth', 8, 60000)) return sendError(res, 429, E('err.rate'));
     const b = await readBody(req);
-    console.log("Login attempt:", b.email, "pass:", b.password);
-    const u = db.users.find((x: any) => x.email === String(b.email || '').trim().toLowerCase());
-    console.log("User found:", u ? u.email : "none");
-    if (u) console.log("Hash match:", u.passwordHash === hash(String(b.password || '')));
+    const email = String(b.email || '').trim().toLowerCase();
+    const u = db.users.find((x: any) => x.email === email);
     if (!u || u.passwordHash !== hash(String(b.password || ''))) return sendError(res, 401, E('err.badLogin'));
+    // Enforce role
+    u.role = isAdminEmail(u.email) ? 'admin' : 'customer';
+    save();
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role);
     res.setHeader('Set-Cookie', [
@@ -1512,6 +1551,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       return sendError(res, 400, E('err.email'));
     }
 
+    const assignedRole = isAdminEmail(email) ? 'admin' : 'customer';
     let u = db.users.find((x: any) => x.email === email);
     if (!u) {
       u = {
@@ -1519,7 +1559,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         email,
         passwordHash: hash('google_oauth_' + uid('g') + '_' + Date.now()),
         name: name || email.split('@')[0] || 'Kullanıcı',
-        role: 'customer',
+        role: assignedRole,
         googleAuth: true,
         avatar: picture || '',
         createdAt: new Date().toISOString(),
@@ -1529,9 +1569,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       save();
     } else {
       let modified = false;
-      // Guarantee only the dedicated master admin account has admin role unless explicitly assigned
-      if (u.role === 'admin' && u.email !== 'admin@loveshop.com.tr') {
-        u.role = 'customer';
+      if (u.role !== assignedRole) {
+        u.role = assignedRole;
         modified = true;
       }
       if (name && (!u.name || u.name === 'Misafir')) {
@@ -1556,7 +1595,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   }
   if (pathname === '/api/auth/logout' && method === 'POST') {
     const sid = getSid(req);
-    if (sid && sessions[sid]) { delete sessions[sid]; persistSessions(); }
+    if (sid && sessions[sid]) {
+      sessions[sid].userId = null;
+      delete sessions[sid];
+      persistSessions();
+    }
+    if (sess) { sess.userId = null; }
     clearSidCookie(res);
     return json(res, 200, { ok: true });
   }
@@ -2128,7 +2172,17 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (!u) return sendError(res, 404, E('err.userNone'));
       if (u.id === adm.id) return sendError(res, 400, E('err.selfEdit'));
       const b = await readBody(req);
-      if (b.role === 'admin' || b.role === 'customer') u.role = b.role;
+      if (b.role === 'admin') {
+        if (!isAdminEmail(u.email)) {
+          return sendError(res, 403, 'Yönetici rolü yalnızca ADMIN_EMAILS listesindeki güvenli e-posta adreslerine atanabilir.');
+        }
+        u.role = 'admin';
+      } else if (b.role === 'customer') {
+        if (isAdminEmail(u.email) && u.email === 'admin@loveshop.com.tr') {
+          return sendError(res, 400, 'Ana yönetici hesabı müşteri rolüne düşürülemez.');
+        }
+        u.role = 'customer';
+      }
       save();
       return json(res, 200, { ok: true });
     }

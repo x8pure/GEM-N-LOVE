@@ -246,8 +246,15 @@
       e.preventDefault();
       localStorage.removeItem('ls_auth_token');
       localStorage.removeItem('ls_admin_token');
-      await api('/api/auth/logout', { method: 'POST' });
-      location.reload();
+      localStorage.removeItem('ls_token');
+      localStorage.removeItem('ls_user');
+      document.cookie = 'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      try {
+        await api('/api/auth/logout', { method: 'POST' });
+      } catch {}
+      location.href = '/giris';
     });
   }
 

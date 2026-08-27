@@ -240,6 +240,27 @@
   }
   LS.api = api;
 
+  /* ---------- global logout ---------- */
+  async function performLogout(redirectUrl = '/') {
+    try {
+      localStorage.removeItem('ls_auth_token');
+      localStorage.removeItem('ls_admin_token');
+      localStorage.removeItem('ls_token');
+      localStorage.removeItem('ls_user');
+      document.cookie = 'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      await api('/api/auth/logout', { method: 'POST' });
+    } catch {}
+    LS.session = null;
+    document.dispatchEvent(new Event('ls:logout'));
+    toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
+    setTimeout(() => {
+      location.href = redirectUrl;
+    }, 250);
+  }
+  LS.logout = performLogout;
+
   /* ---------- toast ---------- */
   function toast(msg, icon = '💖') {
     const zone = $('#toast-zone') || document.body.insertAdjacentHTML('beforeend', '<div id="toast-zone"></div>') && $('#toast-zone');
@@ -413,20 +434,10 @@
         });
 
         // Logout from dropdown
-        $('#nav-logout-btn', menu)?.addEventListener('click', async (e) => {
+        $('#nav-logout-btn', menu)?.addEventListener('click', (e) => {
           e.preventDefault();
           toggleMenu(false);
-          try {
-            await api('/api/auth/logout', { method: 'POST' });
-            localStorage.removeItem('ls_auth_token');
-            document.dispatchEvent(new Event('ls:logout'));
-            toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
-            if (location.pathname.startsWith('/hesap') || location.pathname.startsWith('/admin')) {
-              setTimeout(() => { location.href = '/'; }, 400);
-            }
-          } catch {
-            location.href = '/';
-          }
+          performLogout(location.pathname.startsWith('/hesap') || location.pathname.startsWith('/admin') ? '/' : location.pathname);
         });
 
         // Outside click and ESC listener
@@ -1734,6 +1745,33 @@
   }
 
   /* ================= AUTH ================= */
+  function getSavedGoogleAccounts() {
+    try {
+      const raw = localStorage.getItem('ls_google_accounts');
+      if (raw) {
+        const list = JSON.parse(raw);
+        if (Array.isArray(list) && list.length > 0) return list;
+      }
+    } catch {}
+    return [
+      { email: 'cemal.ulas@gmail.com', name: 'Cemal Ulaş' },
+      { email: 'x8pure@gmail.com', name: 'x8pure' }
+    ];
+  }
+
+  function saveGoogleAccount(acc) {
+    if (!acc || !acc.email) return;
+    try {
+      const current = getSavedGoogleAccounts().filter((a) => a.email.toLowerCase() !== acc.email.toLowerCase());
+      current.unshift({
+        email: acc.email.toLowerCase(),
+        name: acc.name || acc.email.split('@')[0],
+        avatar: acc.avatar || ''
+      });
+      localStorage.setItem('ls_google_accounts', JSON.stringify(current.slice(0, 5)));
+    } catch {}
+  }
+
   function openGoogleAuthModal() {
     const existing = $('.google-modal-backdrop');
     if (existing) existing.remove();
@@ -1742,6 +1780,29 @@
     const backdrop = document.createElement('div');
     backdrop.className = 'google-modal-backdrop';
     backdrop.id = 'google-auth-modal';
+
+    const renderAccountsHtml = () => {
+      const accounts = getSavedGoogleAccounts();
+      if (!accounts.length) return '';
+      return accounts.map((acc, idx) => {
+        const initials = (acc.name || acc.email || 'U').slice(0, 2).toUpperCase();
+        return `
+          <div class="gm-account-item-row" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <button class="gm-account-item" type="button" data-gm-idx="${idx}" style="flex:1">
+              <div class="gm-avatar">${esc(initials)}</div>
+              <div class="gm-acc-info">
+                <div class="gm-acc-name">${esc(acc.name || acc.email.split('@')[0])}</div>
+                <div class="gm-acc-email">${esc(acc.email)}</div>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="gm-acc-remove" type="button" data-gm-del="${esc(acc.email)}" title="${isEn ? 'Remove account' : 'Bu hesabı listeden kaldır'}" style="background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+    };
 
     backdrop.innerHTML = `
       <div class="google-modal-box" role="dialog" aria-modal="true">
@@ -1759,15 +1820,8 @@
         </div>
         <p class="gm-sub">${isEn ? 'Choose an account to continue to <b>Love Shop</b>' : '<b>Love Shop</b> ile devam etmek için hesabınızı seçin'}</p>
         
-        <div class="gm-accounts">
-          <button class="gm-account-item" id="gm-acc-primary" type="button">
-            <div class="gm-avatar">XP</div>
-            <div class="gm-acc-info">
-              <div class="gm-acc-name">x8pure</div>
-              <div class="gm-acc-email">x8pure@gmail.com</div>
-            </div>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
+        <div class="gm-accounts" id="gm-accounts-list">
+          ${renderAccountsHtml()}
         </div>
 
         <div class="gm-custom-form">
@@ -1816,20 +1870,47 @@
           method: 'POST',
           body: { email, name }
         });
+        if (r.token) {
+          localStorage.setItem('ls_auth_token', r.token);
+        }
+        saveGoogleAccount({ email, name: r.user?.name || name, avatar: r.user?.avatar || '' });
         close();
         toast(t('auth.google.ok'), '🎉');
         document.dispatchEvent(new Event('ls:session'));
         setTimeout(() => {
           location.href = getAuthRedirect(r.user?.role);
-        }, 500);
+        }, 400);
       } catch (err) {
         toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
       }
     };
 
-    $('#gm-acc-primary', backdrop)?.addEventListener('click', () => {
-      triggerAuth('x8pure@gmail.com', 'x8pure');
-    });
+    const attachAccountEvents = () => {
+      $$('.gm-account-item', backdrop).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-gm-idx'), 10);
+          const accounts = getSavedGoogleAccounts();
+          const acc = accounts[idx];
+          if (acc) triggerAuth(acc.email, acc.name);
+        });
+      });
+
+      $$('.gm-acc-remove', backdrop).forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const emailToDel = btn.getAttribute('data-gm-del');
+          const remaining = getSavedGoogleAccounts().filter((a) => a.email !== emailToDel);
+          localStorage.setItem('ls_google_accounts', JSON.stringify(remaining));
+          const list = $('#gm-accounts-list', backdrop);
+          if (list) {
+            list.innerHTML = renderAccountsHtml();
+            attachAccountEvents();
+          }
+        });
+      });
+    };
+
+    attachAccountEvents();
 
     const toggle = $('#gm-toggle-custom', backdrop);
     const box = $('#gm-custom-box', backdrop);
@@ -2261,16 +2342,9 @@
     });
 
     // Logout
-    $('#acc-logout-btn', rootEl)?.addEventListener('click', async (e) => {
+    $('#acc-logout-btn', rootEl)?.addEventListener('click', (e) => {
       e.preventDefault();
-      try {
-        await api('/api/auth/logout', { method: 'POST' });
-        localStorage.removeItem('ls_auth_token');
-        document.dispatchEvent(new Event('ls:logout'));
-        location.href = '/';
-      } catch {
-        location.href = '/';
-      }
+      performLogout('/');
     });
   }
 
