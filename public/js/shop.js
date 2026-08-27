@@ -1778,6 +1778,52 @@
     const gLogin = $('#btn-google-login');
     const gReg = $('#btn-google-reg');
     
+    let tokenClient = null;
+
+    const startGoogleFlow = () => {
+      if (!window.__LS_GOOGLE_CLIENT_ID__) {
+        toast('Google Client ID bulunamadı', '⚠️');
+        return;
+      }
+      if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+        if (!tokenClient) {
+          tokenClient = window.google.accounts.oauth2.initTokenClient({
+            client_id: window.__LS_GOOGLE_CLIENT_ID__,
+            scope: 'email profile openid',
+            callback: async (resp) => {
+              if (resp && resp.access_token) {
+                try {
+                  toast(LS.t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
+                  const r = await api('/api/auth/google', {
+                    method: 'POST',
+                    body: { accessToken: resp.access_token }
+                  });
+                  if (r.token) {
+                    localStorage.setItem('ls_auth_token', r.token);
+                  }
+                  toast((LS.t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
+                  document.dispatchEvent(new Event('ls:session'));
+                  setTimeout(() => {
+                    location.href = getAuthRedirect(r.user?.role);
+                  }, 400);
+                } catch (err) {
+                  toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
+                }
+              }
+            }
+          });
+        }
+        tokenClient.requestAccessToken();
+      } else if (window.google && window.google.accounts && window.google.accounts.id) {
+        window.google.accounts.id.prompt();
+      } else {
+        toast('Google servisleri hazırlanıyor, lütfen 1 saniye sonra tekrar deneyin...', '⏳');
+      }
+    };
+
+    if (gLogin) gLogin.onclick = startGoogleFlow;
+    if (gReg) gReg.onclick = startGoogleFlow;
+
     if (window.__LS_GOOGLE_CLIENT_ID__) {
        const handleCredentialResponse = async (response) => {
           try {
@@ -1800,21 +1846,18 @@
        };
        
        const initGsi = () => {
-         if (window.google && window.google.accounts) {
+         if (window.google && window.google.accounts && window.google.accounts.id) {
            window.google.accounts.id.initialize({
              client_id: window.__LS_GOOGLE_CLIENT_ID__,
-             callback: handleCredentialResponse
+             callback: handleCredentialResponse,
+             auto_select: false,
+             use_fedcm_for_prompt: false
            });
-           
-           if (gLogin) {
-              gLogin.innerHTML = '';
-              gLogin.style = '';
-              window.google.accounts.id.renderButton(gLogin, { theme: 'outline', size: 'large' });
-           }
-           if (gReg) {
-              gReg.innerHTML = '';
-              gReg.style = '';
-              window.google.accounts.id.renderButton(gReg, { theme: 'outline', size: 'large' });
+
+           if (window.self === window.top) {
+             try {
+               window.google.accounts.id.prompt((notification) => {});
+             } catch (e) {}
            }
          }
        };

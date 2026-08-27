@@ -2090,44 +2090,57 @@ footer { border-top: 1px solid var(--line); padding: 50px 5vw 30px; background: 
 
 .btn-google {
   width: 100%;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-md);
-  padding: 12px 20px;
-  color: var(--text);
+  background: #ffffff;
+  border: 1px solid var(--line-strong, #e4e4e7);
+  border-radius: 12px;
+  padding: 0 20px;
+  color: var(--text, #18181b);
   font-size: 14.5px;
   font-weight: 600;
   font-family: var(--font-body);
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  margin-bottom: 18px;
+  user-select: none;
+  outline: none;
+  position: relative;
 }
 .dark .btn-google {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 .btn-google:hover {
-  background: #ffffff;
-  border-color: var(--rose);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(255, 142, 134, 0.18);
+  background: #fafafa;
+  border-color: #d4d4d8;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 .dark .btn-google:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--rose);
-  box-shadow: 0 4px 16px rgba(255, 142, 134, 0.18);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 .btn-google:active {
   transform: translateY(0);
 }
 .btn-google .google-icon {
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.btn-google:hover .google-icon {
+  transform: scale(1.08);
 }
 
 .auth-divider {

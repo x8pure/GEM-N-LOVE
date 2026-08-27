@@ -58,39 +58,73 @@ const initAuthReplacement = `  function initAuth() {
           }
        };
        
-       if (window.google && window.google.accounts) {
-         window.google.accounts.id.initialize({
-           client_id: window.__LS_GOOGLE_CLIENT_ID__,
-           callback: handleCredentialResponse
-         });
-         
-         if (gLogin) {
-            gLogin.innerHTML = '';
-            window.google.accounts.id.renderButton(gLogin, { theme: 'outline', size: 'large' });
+       let tokenClient = null;
+
+       const startGoogleFlow = () => {
+         if (!window.__LS_GOOGLE_CLIENT_ID__) {
+           toast('Google Client ID bulunamadı', '⚠️');
+           return;
          }
-         if (gReg) {
-            gReg.innerHTML = '';
-            window.google.accounts.id.renderButton(gReg, { theme: 'outline', size: 'large' });
-         }
-       } else {
-         // Wait for script to load
-         window.onload = () => {
-           if (window.google && window.google.accounts) {
-             window.google.accounts.id.initialize({
+         if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+           if (!tokenClient) {
+             tokenClient = window.google.accounts.oauth2.initTokenClient({
                client_id: window.__LS_GOOGLE_CLIENT_ID__,
-               callback: handleCredentialResponse
+               scope: 'email profile openid',
+               callback: async (resp) => {
+                 if (resp && resp.access_token) {
+                   try {
+                     toast(t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
+                     const r = await api('/api/auth/google', {
+                       method: 'POST',
+                       body: { accessToken: resp.access_token }
+                     });
+                     if (r.token) {
+                       localStorage.setItem('ls_auth_token', r.token);
+                     }
+                     toast((t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
+                     document.dispatchEvent(new Event('ls:session'));
+                     setTimeout(() => {
+                       location.href = (typeof getAuthRedirect === 'function') ? getAuthRedirect(r.user?.role) : '/hesabim';
+                     }, 400);
+                   } catch (err) {
+                     toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
+                   }
+                 }
+               }
              });
-             
-             if (gLogin) {
-                gLogin.innerHTML = '';
-                window.google.accounts.id.renderButton(gLogin, { theme: 'outline', size: 'large' });
-             }
-             if (gReg) {
-                gReg.innerHTML = '';
-                window.google.accounts.id.renderButton(gReg, { theme: 'outline', size: 'large' });
-             }
+           }
+           tokenClient.requestAccessToken();
+         } else if (window.google && window.google.accounts && window.google.accounts.id) {
+           window.google.accounts.id.prompt();
+         } else {
+           toast('Google servisleri hazırlanıyor, lütfen 1 saniye sonra tekrar deneyin...', '⏳');
+         }
+       };
+
+       if (gLogin) gLogin.onclick = startGoogleFlow;
+       if (gReg) gReg.onclick = startGoogleFlow;
+
+       const initGsi = () => {
+         if (window.google && window.google.accounts && window.google.accounts.id) {
+           window.google.accounts.id.initialize({
+             client_id: window.__LS_GOOGLE_CLIENT_ID__,
+             callback: handleCredentialResponse,
+             auto_select: false,
+             use_fedcm_for_prompt: false
+           });
+
+           if (window.self === window.top) {
+             try {
+               window.google.accounts.id.prompt((notification) => {});
+             } catch (e) {}
            }
          }
+       };
+       
+       if (window.google && window.google.accounts) {
+         initGsi();
+       } else {
+         window.addEventListener('load', initGsi);
        }
     } else {
        if (gLogin) gLogin.style.display = 'none';

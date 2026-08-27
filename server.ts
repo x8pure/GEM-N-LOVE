@@ -1595,23 +1595,48 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (rateLimited(req, 'auth', 15, 60000)) return sendError(res, 429, E('err.rate'));
     if (!GOOGLE_CLIENT_ID) return json(res, 503, { ok: false, error: 'Google login disabled' });
     const b = await readBody(req);
-    if (!b.credential) return sendError(res, 401, 'Credential required');
+    const credential = b.credential || b.idToken;
+    const accessToken = b.accessToken || b.access_token;
+
+    if (!credential && !accessToken) return sendError(res, 401, 'Credential or Access Token required');
     let email = '';
     let name = '';
     let picture = '';
 
-    try {
-      const ticket = await googleClient.verifyIdToken({
-        idToken: b.credential,
-        audience: GOOGLE_CLIENT_ID,
-      });
-      const payload = ticket.getPayload();
-      if (!payload) throw new Error('No payload');
-      email = String(payload.email || '').trim().toLowerCase();
-      name = String(payload.name || payload.given_name || '').trim();
-      picture = String(payload.picture || '').trim();
-    } catch (err) {
-      return sendError(res, 401, 'Invalid credential');
+    if (credential) {
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken: credential,
+          audience: GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        if (!payload) throw new Error('No payload');
+        email = String(payload.email || '').trim().toLowerCase();
+        name = String(payload.name || payload.given_name || '').trim();
+        picture = String(payload.picture || '').trim();
+      } catch (err) {
+        // ID token verify failed
+      }
+    }
+
+    if (!email && accessToken) {
+      try {
+        const uRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (uRes.ok) {
+          const uData = await uRes.json();
+          email = String(uData.email || '').trim().toLowerCase();
+          name = String(uData.name || uData.given_name || '').trim();
+          picture = String(uData.picture || '').trim();
+        }
+      } catch (err) {
+        // Access token verify failed
+      }
+    }
+
+    if (!email) {
+      return sendError(res, 401, 'Invalid Google credentials');
     }
 
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
