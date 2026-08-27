@@ -5,7 +5,7 @@
       "email": "admin@loveshop.com.tr",
       "passwordHash": "d8489a0c4b604ca225c21cb0b582072de7bd3c06290576d80111e902d3f4aaa4",
       "name": "Mağaza Yönetimi",
-      "role": "admin",
+      "role": "customer",
       "createdAt": "2026-08-26T14:02:46.012Z",
       "addresses": []
     },
@@ -26,10 +26,132 @@
           "discreet": true
         }
       ]
+    },
+    {
+      "id": "ue364a7762ca6",
+      "email": "x8pure@gmail.com",
+      "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
+      "name": "Ulaş",
+      "role": "customer",
+      "googleAuth": true,
+      "avatar": "",
+      "createdAt": "2026-08-26T19:23:08.444Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 caddesi 52/2",
+          "city": "TEPEBAŞI",
+          "zip": "",
+          "phone": "05468696943",
+          "discreet": true
+        }
+      ]
+    },
+    {
+      "id": "uad8ba2526165",
+      "email": "cemal.ulas@gmail.com",
+      "passwordHash": "c54f3257f6053c538d0fce5c1a69f15e54c90c15814903b3ac09d211f252690b",
+      "name": "cemal.ulas",
+      "role": "admin",
+      "googleAuth": true,
+      "avatar": "",
+      "createdAt": "2026-08-27T11:03:28.260Z",
+      "addresses": []
+    },
+    {
+      "id": "u9468e81a05d7",
+      "email": "mmustafa445588@gmail.com",
+      "passwordHash": "51a53d5dc1be744302d534e2ce86c1c5eae3453fad56f22ec1950265185bba19",
+      "name": "Mustafa Gül",
+      "role": "customer",
+      "createdAt": "2026-08-27T11:47:53.886Z",
+      "addresses": []
     }
   ],
-  "products": [],
-  "categories": [],
+  "products": [
+    {
+      "id": "p2484e3b314df",
+      "slug": "ad",
+      "name": "3 in 1 Realistik Vajina",
+      "category": "ciftler",
+      "categoryName": "Realistik Vajinalar",
+      "description": "",
+      "longDescription": "",
+      "price": 1699,
+      "oldPrice": 2199,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/imga421c009a412.webp",
+      "gallery": [
+        "/uploads/imga421c009a412.webp",
+        "/uploads/imgb6192025b73c.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-27T09:36:06.470Z"
+    },
+    {
+      "id": "pe31257abd626",
+      "slug": "vibrator",
+      "name": "Vibratör",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "",
+      "longDescription": "",
+      "price": 1299,
+      "oldPrice": 1499,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img4196efd545f6.webp",
+      "gallery": [
+        "/uploads/img4196efd545f6.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-27T09:58:40.588Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "ct7842337befe2",
+      "slug": "realistik-mankenler",
+      "name": "Realistik Mankenler",
+      "image": "/uploads/img08ed92748370.webp",
+      "featuredOnHome": true,
+      "homeOrder": 2,
+      "createdAt": "2026-08-27T09:43:58.140Z"
+    },
+    {
+      "id": "ct_ciftler",
+      "slug": "ciftler",
+      "name": "Realistik Vajinalar",
+      "image": "/uploads/imga421c009a412.webp",
+      "featuredOnHome": true,
+      "homeOrder": 3,
+      "createdAt": "2026-08-27T09:44:35.092Z"
+    },
+    {
+      "id": "ctc3fe15335b3e",
+      "slug": "vibratorler",
+      "name": "Vibratörler",
+      "image": "/uploads/img4196efd545f6.webp",
+      "featuredOnHome": true,
+      "homeOrder": 1,
+      "createdAt": "2026-08-27T09:58:04.404Z"
+    }
+  ],
   "orders": [
     {
       "id": "LS-1001",
@@ -162,17 +284,19 @@
   "settings": {
     "storeName": "Love.",
     "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
-    "freeShippingThreshold": 750,
-    "shippingFee": 49.86,
+    "freeShippingThreshold": 2000,
+    "shippingFee": 99,
     "kdvRate": 20,
-    "supportEmail": "info@loveshop.com.tr",
+    "supportEmail": "info@loveeroticshop.com",
     "supportPhone": "+90 543 633 13 25",
     "whatsapp": "https://wa.me/905436331325",
     "address": "İsmet İnönü-1 Cd. 52/2 (Watsons Mağazası Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
     "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
-    "instagram": "@loveshop.tr",
+    "instagram": "@loveeroticshop",
     "wheelIds": [
-      "pc72312ba7126"
+      "pc72312ba7126",
+      "pe31257abd626",
+      "p2484e3b314df"
     ]
   },
   "meta": {

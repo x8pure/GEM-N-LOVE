@@ -1754,8 +1754,7 @@
       }
     } catch {}
     return [
-      { email: 'cemal.ulas@gmail.com', name: 'Cemal Ulaş' },
-      { email: 'x8pure@gmail.com', name: 'x8pure' }
+      { email: 'cemal.ulas@gmail.com', name: 'Cemal Ulaş' }
     ];
   }
 

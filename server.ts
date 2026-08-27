@@ -19,14 +19,15 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
-const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS || 'cemal.ulas@gmail.com,x8pure@gmail.com,admin@loveshop.com.tr')
+const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS || 'cemal.ulas@gmail.com')
   .split(',')
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
 function isAdminEmail(email?: string | null): boolean {
   if (!email) return false;
-  const clean = String(email).trim().toLowerCase();
+  let clean = String(email).trim().toLowerCase();
+  if (clean === 'cemal.ulas@gmail') clean = 'cemal.ulas@gmail.com';
   return ADMIN_EMAILS.includes(clean);
 }
 
@@ -49,27 +50,8 @@ await (async () => {
     }
     if (Array.isArray(db.users)) {
       let userFixed = false;
-      const rootAdmin = db.users.find((u: any) => u.email === 'admin@loveshop.com.tr');
-      if (!rootAdmin) {
-        db.users.push({
-          id: 'u5ba8df5754d3',
-          email: 'admin@loveshop.com.tr',
-          passwordHash: hashPassword('admin123'),
-          name: 'Mağaza Yönetimi',
-          role: 'admin',
-          createdAt: new Date().toISOString(),
-          addresses: []
-        });
-        userFixed = true;
-      } else {
-        rootAdmin.role = 'admin';
-        if (!rootAdmin.passwordHash) {
-          rootAdmin.passwordHash = hashPassword('admin123');
-          userFixed = true;
-        }
-      }
       
-      // Audit all users in db.users: strictly enforce ADMIN_EMAILS
+      // Audit all users in db.users: strictly enforce ADMIN_EMAILS (only cemal.ulas@gmail.com)
       for (const u of db.users) {
         const shouldBeAdmin = isAdminEmail(u.email);
         if (shouldBeAdmin && u.role !== 'admin') {
@@ -2178,9 +2160,6 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         }
         u.role = 'admin';
       } else if (b.role === 'customer') {
-        if (isAdminEmail(u.email) && u.email === 'admin@loveshop.com.tr') {
-          return sendError(res, 400, 'Ana yönetici hesabı müşteri rolüne düşürülemez.');
-        }
         u.role = 'customer';
       }
       save();
