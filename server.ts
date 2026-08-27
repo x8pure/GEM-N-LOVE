@@ -11,7 +11,7 @@ import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 
 const isProd = process.env.NODE_ENV === 'production';
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '56701005174-t1n68p29hirorldv6dis76rmij721c1t.apps.googleusercontent.com';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 const __filename = fileURLToPath(import.meta.url);
