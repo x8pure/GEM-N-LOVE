@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { load, save, uid, nextId, hashPassword, setMemoryDb } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
 import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase } from './lib/firebase.js';
+import { put } from '@vercel/blob';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -691,17 +692,55 @@ ${opts.noChrome ? body : `
     <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
     <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
     <a href="/admin" id="nav-admin" class="icon-btn" style="display:none" title="Admin Panel"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></a>
-    <a href="/sepet" class="icon-btn" title="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="cart-badge" id="cart-badge"${(C.cartCount && C.cartCount > 0) ? '' : ' style="display:none"'}>${C.cartCount || 0}</span></a>
-    <button id="burger" class="icon-btn" aria-label="Menü"><svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+    <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
+    <button id="burger" class="icon-btn" aria-label="Menü" title="Menü"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
   </div>
 </nav></header>
-<div class="mobile-menu" id="mobile-menu">
-  <a href="/">${tr('nav.home')}</a><a href="/magaza">${tr('nav.shop')}</a><a href="/hakkimizda">${tr('nav.about')}</a><a href="/iletisim">${tr('nav.contact')}</a><a href="/hesap">${tr('nav.account')}</a>
-  <div class="mm-toggles">
-    <button id="mm-theme" class="icon-btn" aria-label="Dark mode">
-      ${dark ? '<svg class="icon-svg icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' : '<svg class="icon-svg icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}
+<div class="mobile-menu" id="mobile-menu" aria-label="Mobil Gezinme Menüsü">
+  <div class="mm-head">
+    <a href="/" class="brand">LOVE<span class="dot">.</span></a>
+    <button type="button" id="mm-close" class="icon-btn" aria-label="Kapat">
+      <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <button id="mm-lang" class="lang-btn" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
+  </div>
+  <div class="mm-search-trigger" id="mm-search-btn" role="button" tabindex="0">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <span>${tr('nav.search')}...</span>
+  </div>
+  <div class="mm-links">
+    <a href="/" data-nav="/">
+      <span>${tr('nav.home')}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="/magaza" data-nav="/magaza">
+      <span>${tr('nav.shop')}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="/hakkimizda" data-nav="/hakkimizda">
+      <span>${tr('nav.about')}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="/iletisim" data-nav="/iletisim">
+      <span>${tr('nav.contact')}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="/hesap" data-nav="/hesap">
+      <span>${tr('nav.account')}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+  </div>
+  <div class="mm-footer">
+    <a class="mm-wa-btn" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+      <span>WhatsApp Canlı Destek & Sipariş</span>
+    </a>
+    <div class="mm-badges">
+      <span>🔒 %100 Gizli Paket</span>
+      <span>•</span>
+      <span>🔞 +18 Yetişkin</span>
+      <span>•</span>
+      <span>⚡ Hızlı Kargo</span>
+    </div>
   </div>
 </div>
 <main id="app-main">
@@ -733,33 +772,6 @@ ${body}
     <div class="pay-chips"><span>${tr('foot.pay.wa')}</span><span>${tr('foot.pay.shop')}</span><span>${tr('foot.pay.discreet')}</span></div>
   </div>
 </footer>
-
-<!-- Modern Mobile Bottom Navigation Bar (App-like 2026 UX - Luxury Monoline) -->
-<nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobil Gezinme Menüsü">
-  <a href="/" class="mb-nav-item" data-mb-path="/" aria-label="${tr('nav.home')}">
-    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/><path d="M12 14v4"/></svg>
-    <span class="mb-nav-label">${tr('nav.home')}</span>
-  </a>
-  <a href="/magaza" class="mb-nav-item" data-mb-path="/magaza" aria-label="${tr('nav.shop')}">
-    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
-    <span class="mb-nav-label">${tr('nav.shop')}</span>
-  </a>
-  <button type="button" class="mb-nav-item" id="mb-search-btn" aria-label="${tr('nav.search_short')}">
-    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><path d="m15.8 15.8 4.7 4.7"/></svg>
-    <span class="mb-nav-label">${tr('nav.search_short')}</span>
-  </button>
-  <a href="/sepet" class="mb-nav-item" data-mb-path="/sepet" aria-label="${tr('nav.cart')}">
-    <div class="mb-cart-wrap">
-      <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12a1.2 1.2 0 0 1-1.2 1H6.4a1.2 1.2 0 0 1-1.2-1z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-      <span class="mb-cart-badge" id="mb-cart-badge"${(C.cartCount && C.cartCount > 0) ? '' : ' style="display:none"'}>${C.cartCount || 0}</span>
-    </div>
-    <span class="mb-nav-label">${tr('nav.cart')}</span>
-  </a>
-  <a href="/hesap" class="mb-nav-item" data-mb-path="/hesap" aria-label="${tr('nav.account')}">
-    <svg class="mb-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.75"/><path d="M5.5 20.5a6.5 6.5 0 0 1 13 0"/></svg>
-    <span class="mb-nav-label">${tr('nav.account')}</span>
-  </a>
-</nav>
 
 <!-- Instant Quick Search Overlay / Modal -->
 <div class="quick-search-modal" id="quick-search-modal" aria-hidden="true">
@@ -1327,7 +1339,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
 
 const uploadCache = new Map<string, string>();
 
-function saveUpload(dataUrl: string): string {
+async function saveUpload(dataUrl: string): Promise<string> {
   if (!dataUrl || typeof dataUrl !== 'string') return '';
   const trimmed = dataUrl.trim();
   if (trimmed.startsWith('/uploads/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
@@ -1348,14 +1360,39 @@ function saveUpload(dataUrl: string): string {
       'webp': 'webp', 'avif': 'avif', 'gif': 'gif'
     };
     const ext = extMap[rawType] || 'jpg';
+    const mimeType = rawType === 'svg' || rawType === 'svg+xml' ? 'image/svg+xml' : (rawType === 'jpg' ? 'image/jpeg' : `image/${rawType}`);
     try {
       const cleanBase64 = rawBase64.replace(/[\s\r\n]+/g, '');
       const buf = Buffer.from(cleanBase64, 'base64');
       if (buf.length > 0) {
         const name = uid('img') + '.' + ext;
+
+        // 1. Primary for Vercel: If Vercel Blob Token is set, upload to Vercel Blob Storage CDN
+        if (process.env.BLOB_READ_WRITE_TOKEN) {
+          try {
+            const blob = await put(`uploads/${name}`, buf, {
+              access: 'public',
+              addRandomSuffix: true,
+              contentType: mimeType,
+              token: process.env.BLOB_READ_WRITE_TOKEN
+            });
+            if (blob && blob.url) {
+              uploadCache.set(trimmed, blob.url);
+              if (uploadCache.size > 200) {
+                const firstKey = uploadCache.keys().next().value;
+                if (firstKey) uploadCache.delete(firstKey);
+              }
+              return blob.url;
+            }
+          } catch (blobErr) {
+            console.error('Vercel Blob upload failed, falling back:', blobErr);
+          }
+        }
+
+        // 2. Fallback for local dev and Cloud container environment
         const uploadDir = path.join(PUB, 'uploads');
-        fs.mkdirSync(uploadDir, { recursive: true });
-        fs.writeFileSync(path.join(uploadDir, name), buf);
+        try { fs.mkdirSync(uploadDir, { recursive: true }); } catch {}
+        try { fs.writeFileSync(path.join(uploadDir, name), buf); } catch {}
         const savedPath = '/uploads/' + name;
         uploadCache.set(trimmed, savedPath);
         if (uploadCache.size > 200) {
@@ -1372,6 +1409,7 @@ function saveUpload(dataUrl: string): string {
   }
   return trimmed.startsWith('data:') ? '' : trimmed;
 }
+
 
 /* ---------------- API ---------------- */
 async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pathname: string, url: URL) {
@@ -1772,6 +1810,15 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       return json(res, 200, { ok: true, order: o });
     }
 
+    if (pathname === '/api/admin/upload' && method === 'POST') {
+      const b = await readBody(req);
+      const rawImage = b.image || b.file || b.data;
+      if (!rawImage) return sendError(res, 400, 'Görsel verisi bulunamadı.');
+      const url = await saveUpload(String(rawImage));
+      if (!url) return sendError(res, 400, 'Görsel yüklenemedi.');
+      return json(res, 200, { ok: true, url });
+    }
+
     if (pathname === '/api/admin/products' && method === 'GET') {
       const kw = (q.get('q') || '').toLowerCase();
       let list = [...db.products];
@@ -1788,11 +1835,11 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const rawGallery = Array.isArray(b.gallery) ? b.gallery : (Array.isArray(b.images) ? b.images : []);
       for (const item of rawGallery) {
         if (!item) continue;
-        const saved = saveUpload(item);
+        const saved = await saveUpload(item);
         if (saved && !gallery.includes(saved)) gallery.push(saved);
       }
 
-      let image = b.image ? saveUpload(b.image) : (gallery[0] || '');
+      let image = b.image ? await saveUpload(b.image) : (gallery[0] || '');
       if (image && !gallery.includes(image)) gallery.unshift(image);
       if (!gallery.length && image) gallery = [image];
       gallery = Array.from(new Set(gallery.filter(Boolean)));
@@ -1823,14 +1870,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         const newGallery: string[] = [];
         for (const item of rawGallery) {
           if (!item) continue;
-          const saved = saveUpload(item);
+          const saved = await saveUpload(item);
           if (saved && !newGallery.includes(saved)) newGallery.push(saved);
         }
         if (newGallery.length) p.gallery = newGallery;
       }
 
       if (b.image) {
-        const savedCover = saveUpload(b.image);
+        const savedCover = await saveUpload(b.image);
         if (savedCover) p.image = savedCover;
       }
       
@@ -1875,7 +1922,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       let slug = String(b.slug || name).trim().toLowerCase().replace(/i̇/g, 'i').replace(/[çğıöşü]/g, (c) => ({ 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' }[c] || c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('ct');
       if (allCategories().some((c: any) => c.slug === slug)) return sendError(res, 409, `Bu bağlantı (slug: ${slug}) zaten başka bir kategori tarafından kullanılıyor. Lütfen farklı bir isim deneyin.`);
       let image = '';
-      if (b.image && String(b.image).startsWith('data:image/')) image = saveUpload(b.image);
+      if (b.image && (String(b.image).startsWith('data:image/') || String(b.image).startsWith('http'))) image = await saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
       const featuredOnHome = !!b.featuredOnHome;
       const homeOrder = typeof b.homeOrder === 'number' ? Number(b.homeOrder) : (featuredOnHome ? 1 : 99);
@@ -1898,7 +1945,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         }
       }
       if (b.name) c.name = String(b.name).trim();
-      if (b.image && String(b.image).startsWith('data:image/')) c.image = saveUpload(b.image);
+      if (b.image && (String(b.image).startsWith('data:image/') || String(b.image).startsWith('http'))) c.image = await saveUpload(b.image);
       else if (b.image && String(b.image).startsWith('/uploads/')) c.image = b.image;
       else if (b.useAutoCover) {
         const cover = db.products.find((p: any) => p.category === c.slug && p.bestSeller) || db.products.find((p: any) => p.category === c.slug);
@@ -1909,6 +1956,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       save();
       return json(res, 200, { ok: true, category: c });
     }
+
     const ctToggle = pathname.match(/^\/api\/admin\/categories\/([^/]+)\/home-toggle$/);
     if (ctToggle && method === 'POST') {
       let c = db.categories.find((x: any) => x.id === decodeURIComponent(ctToggle[1]) || x.slug === decodeURIComponent(ctToggle[1]));

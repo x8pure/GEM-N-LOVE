@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
+    "@vercel/blob": "^2.8.0",
     "css": "^3.0.0",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",

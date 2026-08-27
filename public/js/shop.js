@@ -453,11 +453,19 @@
     addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
     const burger = $('#burger');
     const mm = $('#mobile-menu');
+    const mmClose = $('#mm-close');
     if (burger && mm) {
-      burger.addEventListener('click', () => {
+      burger.addEventListener('click', (e) => {
+        e.stopPropagation();
         const isOpen = mm.classList.toggle('open');
         document.body.style.overflow = isOpen ? 'hidden' : '';
       });
+      if (mmClose) {
+        mmClose.addEventListener('click', () => {
+          mm.classList.remove('open');
+          document.body.style.overflow = '';
+        });
+      }
       $$('a', mm).forEach((a) => a.addEventListener('click', () => {
         mm.classList.remove('open');
         document.body.style.overflow = '';
@@ -483,41 +491,20 @@
 
   /* ---------- cart badge & magnetic micro-bounce ---------- */
   function updateCartBadge(count, isNewAdd = false) {
-    const badges = $$('#cart-badge, #mb-cart-badge');
+    const badges = $$('#cart-badge');
     if (!badges.length) return;
     const n = Math.max(0, parseInt(count, 10) || 0);
     badges.forEach((b) => {
       b.textContent = n;
-      if (n > 0) {
-        b.style.display = 'grid';
+      b.style.display = 'flex';
+      if (isNewAdd) {
         b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
-      } else {
-        b.style.display = 'none';
       }
     });
 
     if (isNewAdd) {
-      // 1. Magnetic bounce on bottom mobile nav cart item
-      const mbCartItem = $('#mobile-bottom-nav .mb-nav-item[data-mb-path="/sepet"], #mobile-bottom-nav a[href="/sepet"]');
-      if (mbCartItem) {
-        const mbIcon = $('.mb-nav-icon', mbCartItem);
-        const mbWrap = $('.mb-cart-wrap', mbCartItem);
-        if (mbIcon) {
-          mbIcon.classList.remove('cart-bounce');
-          void mbIcon.offsetWidth;
-          mbIcon.classList.add('cart-bounce');
-          setTimeout(() => mbIcon.classList.remove('cart-bounce'), 750);
-        }
-        if (mbWrap) {
-          mbWrap.classList.remove('cart-ripple-active');
-          void mbWrap.offsetWidth;
-          mbWrap.classList.add('cart-ripple-active');
-          setTimeout(() => mbWrap.classList.remove('cart-ripple-active'), 750);
-        }
-      }
-
-      // 2. Top desktop cart button spring bounce
-      const topCartBtn = $('nav.top .icon-btn[href="/sepet"], nav.top a[href="/sepet"]');
+      // Top cart button spring bounce
+      const topCartBtn = $('#nav-cart-btn, nav.top .cart-btn, nav.top a[href="/sepet"]');
       if (topCartBtn) {
         topCartBtn.classList.remove('cart-bounce');
         void topCartBtn.offsetWidth;
@@ -537,7 +524,7 @@
     const closeBtn = $('#qs-close-btn');
     const backdrop = $('#qs-backdrop');
     const navSearchBtn = $('#nav-search-btn');
-    const mbSearchBtn = $('#mb-search-btn');
+    const mmSearchBtn = $('#mm-search-btn');
 
     if (!modal || !input || !results) return;
 
@@ -620,8 +607,9 @@
       openSearch();
     });
 
-    mbSearchBtn?.addEventListener('click', (e) => {
+    mmSearchBtn?.addEventListener('click', (e) => {
       e.preventDefault();
+      $('#mobile-menu')?.classList.remove('open');
       openSearch();
     });
 
