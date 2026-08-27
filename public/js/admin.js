@@ -679,12 +679,39 @@
     });
   }
 
-  /* ================= PRODUCTS ================= */
-  let CATS_CACHE = null;
+  /* ================= CATEGORY STATE MANAGER (CENTRALIZED) ================= */
+  let ADMIN_CATEGORIES = null;
+  let catFetchPromise = null;
+
+  async function fetchCategories(forceRefresh = false) {
+    if (!forceRefresh && ADMIN_CATEGORIES && ADMIN_CATEGORIES.length) {
+      return ADMIN_CATEGORIES;
+    }
+    if (catFetchPromise && !forceRefresh) {
+      return catFetchPromise;
+    }
+    catFetchPromise = (async () => {
+      try {
+        const res = await api('/api/admin/categories');
+        ADMIN_CATEGORIES = Array.isArray(res.categories) ? res.categories : [];
+        return ADMIN_CATEGORIES;
+      } catch (err) {
+        console.error('Kategori listesi senkronizasyon hatası:', err);
+        return ADMIN_CATEGORIES || [];
+      } finally {
+        catFetchPromise = null;
+      }
+    })();
+    return catFetchPromise;
+  }
+
+  function invalidateCategories() {
+    ADMIN_CATEGORIES = null;
+    catFetchPromise = null;
+  }
+
   async function ensureCats() {
-    if (CATS_CACHE) return CATS_CACHE;
-    CATS_CACHE = (await api('/api/categories')).categories;
-    return CATS_CACHE;
+    return fetchCategories(true);
   }
 
   async function viewProducts() {
@@ -1111,7 +1138,7 @@
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px" id="cat-grid"></div>`);
     let list = [];
-    try { list = (await api('/api/admin/categories')).categories; } catch (e) { return toast(e.message, true); }
+    try { list = await fetchCategories(true); } catch (e) { return toast(e.message, true); }
 
     const slotNames = {
       1: '👑 1. Slot: BÜYÜK SOL KART (Ana Vitrin)',
@@ -1164,8 +1191,8 @@
           body: { featuredOnHome, homeOrder }
         });
         toast(val === 1 ? 'Kategori BÜYÜK SOL KART olarak vitrine yerleştirildi! 🌟' : (val > 0 ? `Kategori Küçük Yan Kart #${val - 1} olarak ayarlandı.` : 'Kategori ana sayfa vitrininden kaldırıldı.'));
-        CATS_CACHE = null;
-        viewCategories();
+        invalidateCategories();
+        await viewCategories();
       } catch (e) {
         toast(e.message, true);
       }
@@ -1173,8 +1200,12 @@
     $$('[data-del]', $('#cat-grid')).forEach((b) => b.addEventListener('click', () => {
       const c = list.find((x) => x.id === b.dataset.del);
       confirmDialog(`"${c.name}" kategorisini silmek istiyor musunuz?`, async () => {
-        try { await api('/api/admin/categories/' + c.id, { method: 'DELETE' }); toast('Kategori silindi'); CATS_CACHE = null; viewCategories(); }
-        catch (e) { toast(e.message, true); }
+        try {
+          await api('/api/admin/categories/' + c.id, { method: 'DELETE' });
+          toast('Kategori silindi');
+          invalidateCategories();
+          await viewCategories();
+        } catch (e) { toast(e.message, true); }
       });
     }));
   }
@@ -1278,8 +1309,8 @@
         else await api('/api/admin/categories', { method: 'POST', body });
         toast(isEdit ? 'Kategori güncellendi' : 'Yeni kategori eklendi');
         closeModal();
-        CATS_CACHE = null;
-        viewCategories();
+        invalidateCategories();
+        await viewCategories();
       } catch (e) {
         catSaveBtn.disabled = false;
         catSaveBtn.innerHTML = origText;
