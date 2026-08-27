@@ -71,7 +71,7 @@
   "products": [
     {
       "id": "p2484e3b314df",
-      "slug": "ad",
+      "slug": "3-in-1-realistik-vajina",
       "name": "3 in 1 Realistik Vajina",
       "category": "ciftler",
       "categoryName": "Realistik Vajinalar",
@@ -79,7 +79,7 @@
       "longDescription": "",
       "price": 1699,
       "oldPrice": 2199,
-      "stock": 8,
+      "stock": 10,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -217,9 +217,9 @@
     },
     {
       "id": "LS-1003",
-      "userId": null,
-      "userEmail": "",
-      "customerName": "E2E Test User",
+      "userId": "uc6193a432807",
+      "userEmail": "musteri.test1093262438@example.com",
+      "customerName": "Test Musteri",
       "items": [
         {
           "productId": "p2484e3b314df",
@@ -234,48 +234,52 @@
       "discount": 0,
       "total": 1798,
       "coupon": null,
-      "status": "processing",
+      "status": "cancelled",
       "payment": "WhatsApp ile Sipariş",
       "discreet": false,
-      "phone": "5550001122",
+      "phone": "5551234567",
       "address": {
-        "full": "Test Mah",
-        "city": "Test",
+        "full": "Test Sok. No:1 Kadikoy",
+        "city": "Istanbul",
         "zip": ""
       },
-      "createdAt": "2026-08-27T12:24:40.950Z",
-      "note": ""
+      "createdAt": "2026-08-27T12:27:26.377Z",
+      "note": "",
+      "trackingNumber": "",
+      "adminNote": ""
     },
     {
       "id": "LS-1004",
       "userId": null,
       "userEmail": "",
-      "customerName": "E2E Test User",
+      "customerName": "Ziyaretci Misafir",
       "items": [
         {
-          "productId": "p2484e3b314df",
-          "name": "3 in 1 Realistik Vajina",
-          "price": 1699,
+          "productId": "pe31257abd626",
+          "name": "Vibratör",
+          "price": 1299,
           "qty": 1,
-          "image": "/uploads/imga421c009a412.webp"
+          "image": "/uploads/img4196efd545f6.webp"
         }
       ],
-      "subtotal": 1699,
+      "subtotal": 1299,
       "shipping": 99,
       "discount": 0,
-      "total": 1798,
+      "total": 1398,
       "coupon": null,
-      "status": "processing",
+      "status": "cancelled",
       "payment": "WhatsApp ile Sipariş",
       "discreet": false,
-      "phone": "5550001122",
+      "phone": "5321112233",
       "address": {
-        "full": "Test Mah",
-        "city": "Test",
+        "full": "Guest Adres 1",
+        "city": "Ankara",
         "zip": ""
       },
-      "createdAt": "2026-08-27T12:25:06.614Z",
-      "note": ""
+      "createdAt": "2026-08-27T12:30:35.657Z",
+      "note": "",
+      "trackingNumber": "",
+      "adminNote": ""
     }
   ],
   "coupons": [
@@ -340,9 +344,22 @@
     {
       "email": "ornek@mail.com",
       "createdAt": "2026-08-26T14:02:46.012Z"
+    },
+    {
+      "email": "nl1869562170@test.com",
+      "createdAt": "2026-08-27T12:28:49.513Z"
     }
   ],
-  "contact": [],
+  "contact": [
+    {
+      "id": "m5d7bf6037762",
+      "name": "Test",
+      "email": "ct@test.com",
+      "message": "Test mesaji",
+      "createdAt": "2026-08-27T12:28:49.555Z",
+      "read": false
+    }
+  ],
   "settings": {
     "storeName": "Love.",
     "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
@@ -356,7 +373,6 @@
     "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
     "instagram": "@loveeroticshop",
     "wheelIds": [
-      "pc72312ba7126",
       "pe31257abd626",
       "p2484e3b314df"
     ]
@@ -365,7 +381,7 @@
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 4
+      "order": 9
     }
   }
 }

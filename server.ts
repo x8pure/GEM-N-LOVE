@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
@@ -7,6 +8,11 @@ import { load, save, uid, nextId, hashPassword, setMemoryDb } from './lib/db.js'
 import seed, { getSvgForSlug } from './lib/seed.js';
 import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase, flushPendingSave } from './lib/firebase.js';
 import { put } from '@vercel/blob';
+import { OAuth2Client } from 'google-auth-library';
+
+const isProd = process.env.NODE_ENV === 'production';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +45,16 @@ await (async () => {
     if (cloudState && Array.isArray(cloudState.products)) {
       setMemoryDb(cloudState);
       db = load();
+      let slugMigrated = false;
+      for (const p of db.products) {
+        if (!p.slug || p.slug.length < 2 || p.slug === 'ad') {
+          const newSlug = String(p.name).toLowerCase().replace(/[çğıöşü]/g, (c) => ({'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u'}[c]||c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || require('./lib/db.js').uid('p');
+          const isTaken = db.products.some((x) => x !== p && x.slug === newSlug);
+          p.slug = isTaken ? newSlug + '-' + Date.now().toString(36) : newSlug;
+          slugMigrated = true;
+        }
+      }
+      if (slugMigrated) save();
       console.log(`[Server] Synced and restored ${db.products.length} products and ${db.orders?.length || 0} orders from Firebase Cloud.`);
     } else {
       // If cloud is empty, seed and save
@@ -83,7 +99,11 @@ const hash = hashPassword;
 const now = () => Date.now();
 
 /* ---------------- token & auth engine ---------------- */
-const AUTH_SECRET = 'loveshop_jwt_secret_2026_salt_key_ls';
+const AUTH_SECRET = process.env.AUTH_SECRET || '';
+if (!AUTH_SECRET) {
+  console.error('AUTH_SECRET is required');
+  process.exit(1);
+}
 function createAuthToken(userId: string, role: string): string {
   const exp = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
   const payload = `${userId}:${role}:${exp}`;
@@ -143,14 +163,14 @@ function getSid(req: http.IncomingMessage) {
   return m ? decodeURIComponent(m[1]) : null;
 }
 function setSidCookie(res: http.ServerResponse, sid: string) {
-  res.setHeader('Set-Cookie', `ls_sid=${sid}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`);
+  res.setHeader('Set-Cookie', `ls_sid=${sid}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
   res.setHeader('x-ls-sid', sid);
 }
 function clearSidCookie(res: http.ServerResponse) {
   res.setHeader('Set-Cookie', [
-    'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
-    'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
-    'ls_auth_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    `ls_sid=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+    `ls_token=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+    `ls_auth_token=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`
   ]);
 }
 function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
@@ -551,10 +571,21 @@ function wheelProducts() {
   if (!Array.isArray(db.settings.wheelIds)) db.settings.wheelIds = [];
   const chosen: any[] = [];
   const ids = new Set();
+  const validIds: string[] = [];
+  let changed = false;
   for (const id of db.settings.wheelIds) {
     const p = db.products.find((x: any) => x.id === id);
-    if (p && !ids.has(p.id)) { chosen.push(p); ids.add(p.id); }
+    if (p) {
+      validIds.push(id);
+      if (!ids.has(p.id)) { chosen.push(p); ids.add(p.id); }
+    } else {
+      changed = true;
+    }
     if (chosen.length >= 8) break;
+  }
+  if (changed) {
+    db.settings.wheelIds = validIds;
+    save();
   }
   if (chosen.length < 8) {
     for (const p of db.products.filter((x: any) => (x.featured || x.bestSeller) && !ids.has(x.id)).slice(0, 8 - chosen.length)) {
@@ -647,6 +678,7 @@ function findCoupon(code: string, lang = 'tr') {
   const c = db.coupons.find((x: any) => x.code.toUpperCase() === String(code || '').toUpperCase().trim());
   if (!c) return { error: errT(lang, 'err.couponNone') };
   if (!c.active) return { error: errT(lang, 'err.couponOff') };
+  if (c.maxUses > 0 && c.used >= c.maxUses) return { error: 'Bu kuponun kullanım limiti dolmuş.' };
   return { coupon: c };
 }
 
@@ -692,6 +724,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
+${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID}'</script><script src="https://accounts.google.com/gsi/client" async defer></script>` : ''}
 </head>
 <body>
 ${opts.noChrome ? body : `
@@ -1210,6 +1243,49 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
   res.end(layout(C.lang === 'en' ? 'About Us' : 'Hakkımızda', html, {}, C));
 }
 
+
+function pagePrivacy(req: http.IncomingMessage, res: http.ServerResponse) {
+  const C = pageCtx(req);
+  const title = C.lang === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası';
+  const html = `<div class="rich">
+    <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1">${title}</h1>
+    <p><strong>Son Güncelleme: ${new Date().toLocaleDateString('tr-TR')}</strong></p>
+    <h2>1. Veri Toplama</h2>
+    <p>Size daha iyi hizmet verebilmek amacıyla adınız, e-posta adresiniz, fatura ve teslimat adresiniz gibi temel bilgileri topluyoruz.</p>
+    <h2>2. Veri Kullanımı</h2>
+    <p>Topladığımız veriler siparişlerinizin teslimatı, müşteri destek hizmetleri ve bilgilendirme amaçlı kullanılmaktadır.</p>
+    <h2>3. Üçüncü Taraflarla Paylaşım</h2>
+    <p>Kişisel bilgileriniz, yasal zorunluluklar veya kargo firmaları gibi hizmet sağlayıcılarımız haricinde hiçbir 3. taraf ile paylaşılmaz veya satılmaz.</p>
+    <h2>4. Çerezler (Cookies)</h2>
+    <p>Sitemizde oturum yönetimi ve site tercihlerini (dil, tema) hatırlamak için zorunlu çerezler kullanılmaktadır.</p>
+    <h2>5. İletişim</h2>
+    <p>Gizlilik politikamız hakkında sorularınız için bizimle iletişime geçebilirsiniz.</p>
+  </div>`;
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(layout(title, html, {}, C));
+}
+
+function pageTerms(req: http.IncomingMessage, res: http.ServerResponse) {
+  const C = pageCtx(req);
+  const title = C.lang === 'en' ? 'Terms of Service' : 'Kullanım Koşulları';
+  const html = `<div class="rich">
+    <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1">${title}</h1>
+    <p><strong>Son Güncelleme: ${new Date().toLocaleDateString('tr-TR')}</strong></p>
+    <h2>1. Kabul Beyanı</h2>
+    <p>Bu siteyi kullanarak ve alışveriş yaparak bu kullanım koşullarını kabul etmiş sayılırsınız.</p>
+    <h2>2. Hizmet Kapsamı</h2>
+    <p>Platformumuz üzerinden sunulan ürünler, stoklarla sınırlıdır ve firmamız ürün fiyatları ve özelliklerinde değişiklik yapma hakkını saklı tutar.</p>
+    <h2>3. Kullanıcı Yükümlülükleri</h2>
+    <p>Siteye üye olurken ve sipariş verirken doğru ve güncel bilgiler sağlamakla yükümlüsünüz. Hesabınızın güvenliği sizin sorumluluğunuzdadır.</p>
+    <h2>4. İptal ve İade Koşulları</h2>
+    <p>Alıcı, ürünü teslim aldıktan sonra mevzuatta belirtilen yasal süre içerisinde iade veya iptal hakkını kullanabilir.</p>
+    <h2>5. Fikri Mülkiyet</h2>
+    <p>Bu sitedeki tüm içerik, logo ve materyallerin telif hakları saklıdır.</p>
+  </div>`;
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(layout(title, html, {}, C));
+}
+
 function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
   const st = db.settings;
   const C = pageCtx(req);
@@ -1310,6 +1386,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
               'Content-Type': `image/${m[1]}`,
               'Cache-Control': 'public, max-age=86400'
             });
+            if (req.method === 'HEAD') return res.end();
             return res.end(buf);
           }
         }
@@ -1321,6 +1398,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
         'Content-Type': 'image/svg+xml; charset=utf-8',
         'Cache-Control': 'public, max-age=86400'
       });
+      if (req.method === 'HEAD') return res.end();
       return res.end(svg);
     }
     res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -1331,6 +1409,15 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
     if (serr) { return sendSvgFallback(); }
     
     // Support HTTP Range requests for video/media playback (Essential for iOS Safari & Chrome)
+    if (req.method === 'HEAD') {
+      res.writeHead(200, {
+        'Content-Length': st.size,
+        'Content-Type': type,
+        'Cache-Control': isScriptOrStyle ? 'no-cache, must-revalidate' : 'public, max-age=86400'
+      });
+      return res.end();
+    }
+    
     if (ext === '.mp4' || req.headers.range) {
       const range = req.headers.range;
       const fileSize = st.size;
@@ -1481,10 +1568,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     db.users.push(u); save();
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role);
-    res.setHeader('Set-Cookie', [
-      `ls_token=${token}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`,
-      `ls_sid=${getSid(req) || 'sid_' + uid('s')}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`
-    ]);
+    const cur = res.getHeader('Set-Cookie');
+    const arr = Array.isArray(cur) ? [...cur].map(String) : (cur ? [String(cur)] : []);
+    arr.push(`ls_token=${token}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
+    res.setHeader('Set-Cookie', arr);
     return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role }, token });
   }
   if (pathname === '/api/auth/login' && method === 'POST') {
@@ -1498,36 +1585,33 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     save();
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role);
-    res.setHeader('Set-Cookie', [
-      `ls_token=${token}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`,
-      `ls_sid=${getSid(req) || 'sid_' + uid('s')}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`
-    ]);
+    const cur = res.getHeader('Set-Cookie');
+    const arr = Array.isArray(cur) ? [...cur].map(String) : (cur ? [String(cur)] : []);
+    arr.push(`ls_token=${token}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
+    res.setHeader('Set-Cookie', arr);
     return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role }, token });
   }
   if (pathname === '/api/auth/google' && method === 'POST') {
     if (rateLimited(req, 'auth', 15, 60000)) return sendError(res, 429, E('err.rate'));
+    if (!GOOGLE_CLIENT_ID) return json(res, 503, { ok: false, error: 'Google login disabled' });
     const b = await readBody(req);
+    if (!b.credential) return sendError(res, 401, 'Credential required');
     let email = '';
     let name = '';
     let picture = '';
 
-    if (b.credential) {
-      try {
-        const parts = String(b.credential).split('.');
-        if (parts.length >= 2) {
-          const payloadRaw = Buffer.from(parts[1], 'base64').toString('utf8');
-          const payload = JSON.parse(payloadRaw);
-          email = String(payload.email || '').trim().toLowerCase();
-          name = String(payload.name || payload.given_name || '').trim();
-          picture = String(payload.picture || '').trim();
-        }
-      } catch {}
-    }
-
-    if (!email && b.email) {
-      email = String(b.email).trim().toLowerCase();
-      name = String(b.name || '').trim();
-      picture = String(b.picture || '').trim();
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: b.credential,
+        audience: GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      if (!payload) throw new Error('No payload');
+      email = String(payload.email || '').trim().toLowerCase();
+      name = String(payload.name || payload.given_name || '').trim();
+      picture = String(payload.picture || '').trim();
+    } catch (err) {
+      return sendError(res, 401, 'Invalid credential');
     }
 
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
@@ -1570,10 +1654,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     sess.userId = u.id;
     persistSessions();
     const token = createAuthToken(u.id, u.role);
-    res.setHeader('Set-Cookie', [
-      `ls_token=${token}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`,
-      `ls_sid=${getSid(req) || 'sid_' + uid('s')}; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=${60 * 60 * 24 * 30}`
-    ]);
+    const cur = res.getHeader('Set-Cookie');
+    const arr = Array.isArray(cur) ? [...cur].map(String) : (cur ? [String(cur)] : []);
+    arr.push(`ls_token=${token}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
+    res.setHeader('Set-Cookie', arr);
     return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role, avatar: u.avatar || '' }, token });
   }
   if (pathname === '/api/auth/logout' && method === 'POST') {
@@ -1823,7 +1907,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const email = String(b.email || '').trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(email)) return sendError(res, 400, E('err.email'));
     if (db.newsletter.some((n: any) => n.email === email)) return sendError(res, 409, E('err.emailUsed'));
-    db.newsletter.push({ email, createdAt: new Date().toISOString() }); save();
+    db.newsletter.push({ id: uid('n'), email, createdAt: new Date().toISOString() }); save();
     return json(res, 200, { ok: true });
   }
   if (pathname === '/api/contact' && method === 'POST') {
@@ -1880,12 +1964,34 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const o = db.orders.find((x: any) => x.id === decodeURIComponent(oUp[1]));
       if (!o) return sendError(res, 404, E('err.noOrder'));
       const b = await readBody(req);
-      if (['processing', 'shipped', 'delivered', 'cancelled'].includes(b.status)) { o.status = b.status; }
+      if (['processing', 'shipped', 'delivered', 'cancelled'].includes(b.status)) {
+        if (o.status !== b.status) {
+          if (b.status === 'cancelled') {
+            for (const item of o.items) {
+              const p = db.products.find((x: any) => x.id === item.productId);
+              if (p) p.stock += item.qty;
+            }
+          } else if (o.status === 'cancelled') {
+            for (const item of o.items) {
+              const p = db.products.find((x: any) => x.id === item.productId);
+              if (p) p.stock = Math.max(0, p.stock - item.qty);
+            }
+          }
+          o.status = b.status;
+        }
+      }
       if (b.trackingNumber !== undefined) o.trackingNumber = String(b.trackingNumber).trim();
       if (b.carrier !== undefined) o.carrier = String(b.carrier).trim();
       if (b.adminNote !== undefined) o.adminNote = String(b.adminNote).trim();
       save();
       return json(res, 200, { ok: true, order: o });
+    }
+    if (oUp && method === 'DELETE') {
+      const idx = db.orders.findIndex((x: any) => x.id === decodeURIComponent(oUp[1]));
+      if (idx === -1) return sendError(res, 404, E('err.noOrder'));
+      db.orders.splice(idx, 1);
+      save();
+      return json(res, 200, { ok: true });
     }
 
     if (pathname === '/api/admin/upload' && method === 'POST') {
@@ -2066,7 +2172,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     /* --- wheel --- */
     if (pathname === '/api/admin/wheel' && method === 'GET') {
       if (!Array.isArray(db.settings.wheelIds)) db.settings.wheelIds = [];
-      return json(res, 200, { ok: true, ids: db.settings.wheelIds, products: wheelProducts() });
+      const wp = wheelProducts();
+      return json(res, 200, { ok: true, ids: db.settings.wheelIds, products: wp });
     }
     if (pathname === '/api/admin/wheel' && method === 'POST') {
       if (!Array.isArray(db.settings.wheelIds)) db.settings.wheelIds = [];
@@ -2125,7 +2232,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const code = String(b.code || '').toUpperCase().trim();
       if (!code || code.length < 3) return sendError(res, 400, E('err.couponShort'));
       if (db.coupons.some((c: any) => c.code === code)) return sendError(res, 409, E('err.couponExists'));
-      const c = { id: uid('c'), code, type: b.type === 'fixed' ? 'fixed' : 'percent', value: Math.max(0, Number(b.value) || 0), minTotal: Math.max(0, Number(b.minTotal) || 0), active: b.active !== false, used: 0 };
+      const c = { id: uid('c'), code, type: b.type === 'fixed' ? 'fixed' : 'percent', value: Math.max(0, Number(b.value) || 0), minTotal: Math.max(0, Number(b.minTotal) || 0), maxUses: Math.max(0, Number(b.maxUses) || 0), active: b.active !== false, used: 0 };
       db.coupons.push(c); save();
       return json(res, 200, { ok: true, coupon: c });
     }
@@ -2136,6 +2243,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const b = await readBody(req);
       if (b.active !== undefined) c.active = !!b.active;
       if (b.value !== undefined) c.value = Number(b.value);
+      if (b.minTotal !== undefined) c.minTotal = Number(b.minTotal);
+      if (b.maxUses !== undefined) c.maxUses = Math.max(0, Number(b.maxUses) || 0);
       save();
       return json(res, 200, { ok: true });
     }
@@ -2196,6 +2305,18 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
 
     if (pathname === '/api/admin/messages' && method === 'GET') return json(res, 200, { ok: true, messages: [...db.contact].reverse() });
+    const msgMatch = pathname.match(/^\/api\/admin\/messages\/([^/]+)$/);
+    if (msgMatch && method === 'DELETE') {
+      const idx = db.contact.findIndex((x: any) => x.id === decodeURIComponent(msgMatch[1]));
+      if (idx !== -1) { db.contact.splice(idx, 1); save(); }
+      return json(res, 200, { ok: true });
+    }
+    const nslMatch = pathname.match(/^\/api\/admin\/newsletter\/([^/]+)$/);
+    if (nslMatch && method === 'DELETE') {
+      const idx = db.newsletter.findIndex((x: any) => x.id === decodeURIComponent(nslMatch[1]));
+      if (idx !== -1) { db.newsletter.splice(idx, 1); save(); }
+      return json(res, 200, { ok: true });
+    }
   }
 
   return sendError(res, 404, E('err.notFound404'));
@@ -2217,7 +2338,12 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
     pathname = '/';
   }
   try {
-    if (req.method === 'GET') {
+    if (req.method === 'GET' || req.method === 'HEAD') {
+      if (pathname === '/favicon.ico') {
+        const fp = path.join(ROOT, 'public', 'favicon.ico');
+        if (fs.existsSync(fp)) return serveStatic(req, res, '/favicon.ico');
+        res.writeHead(204); return res.end();
+      }
       if (
         pathname.startsWith('/css/') ||
         pathname.startsWith('/js/') ||
@@ -2262,7 +2388,11 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       if (pathname === '/hakkimizda') return pageAbout(req, res);
       if (pathname === '/iletisim') return pageContact(req, res);
       if (pathname === '/admin') return pageAdmin(req, res);
-      if (pathname === '/favicon.ico') { res.writeHead(204); return res.end(); }
+
+      if (pathname === '/gizlilik-politikasi' || pathname === '/privacy-policy') return pagePrivacy(req, res);
+      if (pathname === '/kullanim-kosullari' || pathname === '/terms-of-service') return pageTerms(req, res);
+
+      
     }
     if (pathname.startsWith('/api/')) return await handleApi(req, res, pathname, url);
     const nf = pageCtx(req);

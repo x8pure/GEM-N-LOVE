@@ -186,7 +186,7 @@
         localStorage.setItem('ls_sid', sid);
       }
       try {
-        document.cookie = 'ls_sid=' + encodeURIComponent(sid) + '; Path=/; SameSite=None; Secure; Max-Age=31536000';
+        document.cookie = 'ls_sid=' + encodeURIComponent(sid) + '; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=31536000';
       } catch {}
       return sid;
     } catch {
@@ -230,7 +230,7 @@
     if (serverSid) {
       try {
         localStorage.setItem('ls_sid', serverSid);
-        document.cookie = 'ls_sid=' + encodeURIComponent(serverSid) + '; Path=/; SameSite=None; Secure; Max-Age=31536000';
+        document.cookie = 'ls_sid=' + encodeURIComponent(serverSid) + '; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=31536000';
       } catch {}
     }
     let data;
@@ -247,9 +247,9 @@
       localStorage.removeItem('ls_admin_token');
       localStorage.removeItem('ls_token');
       localStorage.removeItem('ls_user');
-      document.cookie = 'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_sid=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
       await api('/api/auth/logout', { method: 'POST' });
     } catch {}
     LS.session = null;
@@ -1745,190 +1745,7 @@
   }
 
   /* ================= AUTH ================= */
-  function getSavedGoogleAccounts() {
-    try {
-      const raw = localStorage.getItem('ls_google_accounts');
-      if (raw) {
-        const list = JSON.parse(raw);
-        if (Array.isArray(list) && list.length > 0) return list;
-      }
-    } catch {}
-    return [
-      { email: 'cemal.ulas@gmail.com', name: 'Cemal Ulaş' }
-    ];
-  }
-
-  function saveGoogleAccount(acc) {
-    if (!acc || !acc.email) return;
-    try {
-      const current = getSavedGoogleAccounts().filter((a) => a.email.toLowerCase() !== acc.email.toLowerCase());
-      current.unshift({
-        email: acc.email.toLowerCase(),
-        name: acc.name || acc.email.split('@')[0],
-        avatar: acc.avatar || ''
-      });
-      localStorage.setItem('ls_google_accounts', JSON.stringify(current.slice(0, 5)));
-    } catch {}
-  }
-
-  function openGoogleAuthModal() {
-    const existing = $('.google-modal-backdrop');
-    if (existing) existing.remove();
-
-    const isEn = LANG === 'en';
-    const backdrop = document.createElement('div');
-    backdrop.className = 'google-modal-backdrop';
-    backdrop.id = 'google-auth-modal';
-
-    const renderAccountsHtml = () => {
-      const accounts = getSavedGoogleAccounts();
-      if (!accounts.length) return '';
-      return accounts.map((acc, idx) => {
-        const initials = (acc.name || acc.email || 'U').slice(0, 2).toUpperCase();
-        return `
-          <div class="gm-account-item-row" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-            <button class="gm-account-item" type="button" data-gm-idx="${idx}" style="flex:1">
-              <div class="gm-avatar">${esc(initials)}</div>
-              <div class="gm-acc-info">
-                <div class="gm-acc-name">${esc(acc.name || acc.email.split('@')[0])}</div>
-                <div class="gm-acc-email">${esc(acc.email)}</div>
-              </div>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-            <button class="gm-acc-remove" type="button" data-gm-del="${esc(acc.email)}" title="${isEn ? 'Remove account' : 'Bu hesabı listeden kaldır'}" style="background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-        `;
-      }).join('');
-    };
-
-    backdrop.innerHTML = `
-      <div class="google-modal-box" role="dialog" aria-modal="true">
-        <button class="google-modal-close" aria-label="Close" id="gm-close">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-        <div class="gm-header">
-          <svg class="google-icon" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
-            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-          </svg>
-          <h3>${isEn ? 'Sign in with Google' : 'Google ile Giriş Yap'}</h3>
-        </div>
-        <p class="gm-sub">${isEn ? 'Choose an account to continue to <b>Love Shop</b>' : '<b>Love Shop</b> ile devam etmek için hesabınızı seçin'}</p>
-        
-        <div class="gm-accounts" id="gm-accounts-list">
-          ${renderAccountsHtml()}
-        </div>
-
-        <div class="gm-custom-form">
-          <button type="button" class="gm-custom-toggle" id="gm-toggle-custom">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-            ${isEn ? 'Use another Google account' : 'Farklı bir Google hesabı kullan'}
-          </button>
-          <form id="gm-custom-box" style="display:none;margin-top:12px">
-            <div class="field" style="margin-bottom:8px">
-              <input id="gm-input-email" type="email" placeholder="ornek@gmail.com" required style="font-size:13.5px;padding:9px 12px">
-            </div>
-            <button type="submit" class="btn btn-primary btn-block" style="padding:10px;font-size:13.5px">
-              ${isEn ? 'Continue with this account' : 'Bu Hesapla Devam Et'}
-            </button>
-          </form>
-        </div>
-
-        <p class="gm-terms">${isEn ? 'To continue, Google will securely share your profile and email with Love Shop.' : 'Devam ettiğinizde Google; profil bilgilerinizi ve e-posta adresinizi Love Shop ile güvenle paylaşır.'}</p>
-      </div>
-    `;
-
-    document.body.appendChild(backdrop);
-
-    const close = () => {
-      backdrop.style.opacity = '0';
-      setTimeout(() => backdrop.remove(), 200);
-    };
-
-    $('#gm-close', backdrop)?.addEventListener('click', close);
-    backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) close();
-    });
-
-    const getAuthRedirect = (role) => {
-      if (role === 'admin') return '/admin';
-      const params = new URLSearchParams(location.search);
-      const next = params.get('next') || params.get('redirect') || params.get('returnUrl');
-      if (next && next.startsWith('/') && !next.startsWith('//')) return next;
-      return '/';
-    };
-
-    const triggerAuth = async (email, name) => {
-      try {
-        toast(t('auth.google.wait'), '⏳');
-        const r = await api('/api/auth/google', {
-          method: 'POST',
-          body: { email, name }
-        });
-        if (r.token) {
-          localStorage.setItem('ls_auth_token', r.token);
-        }
-        saveGoogleAccount({ email, name: r.user?.name || name, avatar: r.user?.avatar || '' });
-        close();
-        toast(t('auth.google.ok'), '🎉');
-        document.dispatchEvent(new Event('ls:session'));
-        setTimeout(() => {
-          location.href = getAuthRedirect(r.user?.role);
-        }, 400);
-      } catch (err) {
-        toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
-      }
-    };
-
-    const attachAccountEvents = () => {
-      $$('.gm-account-item', backdrop).forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const idx = parseInt(btn.getAttribute('data-gm-idx'), 10);
-          const accounts = getSavedGoogleAccounts();
-          const acc = accounts[idx];
-          if (acc) triggerAuth(acc.email, acc.name);
-        });
-      });
-
-      $$('.gm-acc-remove', backdrop).forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const emailToDel = btn.getAttribute('data-gm-del');
-          const remaining = getSavedGoogleAccounts().filter((a) => a.email !== emailToDel);
-          localStorage.setItem('ls_google_accounts', JSON.stringify(remaining));
-          const list = $('#gm-accounts-list', backdrop);
-          if (list) {
-            list.innerHTML = renderAccountsHtml();
-            attachAccountEvents();
-          }
-        });
-      });
-    };
-
-    attachAccountEvents();
-
-    const toggle = $('#gm-toggle-custom', backdrop);
-    const box = $('#gm-custom-box', backdrop);
-    if (toggle && box) {
-      toggle.addEventListener('click', () => {
-        box.style.display = box.style.display === 'none' ? 'block' : 'none';
-        if (box.style.display === 'block') $('#gm-input-email', box)?.focus();
-      });
-    }
-
-    box?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const mail = $('#gm-input-email', box)?.value.trim();
-      if (!mail) return;
-      triggerAuth(mail, mail.split('@')[0]);
-    });
-  }
-
-  function initAuth() {
+    function initAuth() {
     const getAuthRedirect = (role) => {
       if (role === 'admin') return '/admin';
       const params = new URLSearchParams(location.search);
@@ -1942,7 +1759,7 @@
       e.preventDefault();
       try {
         const r = await api('/api/auth/login', { method: 'POST', body: { email: $('#l-email').value.trim(), password: $('#l-pass').value } });
-        toast(t('auth.hi', { name: r.user.name }), '👋');
+        toast(LS.t('auth.hi', { name: r.user.name }), '👋');
         document.dispatchEvent(new Event('ls:session'));
         setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
       } catch (err) { toast(err.message, '⚠️'); }
@@ -1950,29 +1767,69 @@
     const reg = $('#register-form');
     if (reg) reg.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const pass = $('#r-pass').value, pass2 = $('#r-pass2').value;
-      if (pass.length < 6) return toast(t('auth.pass6'), '⚠️');
-      if (pass !== pass2) return toast(t('auth.passmismatch'), '⚠️');
-      if (!$('#r-age').checked) return toast(t('auth.age'), '⚠️');
       try {
-        const r = await api('/api/auth/register', { method: 'POST', body: { name: $('#r-name').value.trim(), email: $('#r-email').value.trim(), password: pass } });
-        toast(t('auth.created'), '🎉');
+        const r = await api('/api/auth/register', { method: 'POST', body: { name: $('#r-name').value.trim(), email: $('#r-email').value.trim(), password: $('#r-pass').value } });
+        toast(LS.t('auth.hi', { name: r.user.name }), '🎉');
         document.dispatchEvent(new Event('ls:session'));
         setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
       } catch (err) { toast(err.message, '⚠️'); }
     });
 
     const gLogin = $('#btn-google-login');
-    if (gLogin) gLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      openGoogleAuthModal();
-    });
-
     const gReg = $('#btn-google-reg');
-    if (gReg) gReg.addEventListener('click', (e) => {
-      e.preventDefault();
-      openGoogleAuthModal();
-    });
+    
+    if (window.__LS_GOOGLE_CLIENT_ID__) {
+       const handleCredentialResponse = async (response) => {
+          try {
+            toast(LS.t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
+            const r = await api('/api/auth/google', {
+              method: 'POST',
+              body: { credential: response.credential }
+            });
+            if (r.token) {
+              localStorage.setItem('ls_auth_token', r.token);
+            }
+            toast((LS.t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
+            document.dispatchEvent(new Event('ls:session'));
+            setTimeout(() => {
+              location.href = getAuthRedirect(r.user?.role);
+            }, 400);
+          } catch (err) {
+            toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
+          }
+       };
+       
+       const initGsi = () => {
+         if (window.google && window.google.accounts) {
+           window.google.accounts.id.initialize({
+             client_id: window.__LS_GOOGLE_CLIENT_ID__,
+             callback: handleCredentialResponse
+           });
+           
+           if (gLogin) {
+              gLogin.innerHTML = '';
+              gLogin.style = '';
+              window.google.accounts.id.renderButton(gLogin, { theme: 'outline', size: 'large' });
+           }
+           if (gReg) {
+              gReg.innerHTML = '';
+              gReg.style = '';
+              window.google.accounts.id.renderButton(gReg, { theme: 'outline', size: 'large' });
+           }
+         }
+       };
+       
+       if (window.google && window.google.accounts) {
+         initGsi();
+       } else {
+         window.addEventListener('load', initGsi);
+       }
+    } else {
+       if (gLogin) gLogin.style.display = 'none';
+       if (gReg) gReg.style.display = 'none';
+       const orDividers = document.querySelectorAll('.auth-or');
+       orDividers.forEach(d => d.style.display = 'none');
+    }
   }
 
   /* ================= ACCOUNT & PROFILE DASHBOARD (OPTION 1) ================= */

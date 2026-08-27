@@ -548,7 +548,7 @@
             ${['processing', 'shipped', 'delivered', 'cancelled'].map((s) => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${STATUS[s]}</option>`).join('')}
           </select>
         </td>
-      </tr>`).join('') : '<tr><td colspan="7"><div class="empty">Aramaya uygun sipariş bulunamadı</div></td></tr>';
+      </tr>`).join('') : '<tr><td colspan="8"><div class="empty">Aramaya uygun sipariş bulunamadı</div></td></tr>';
 
       $$('[data-view]').forEach((b) => b.addEventListener('click', () => openOrderModal(all.find((o) => o.id === b.dataset.view))));
       $$('[data-status]').forEach((sel) => sel.addEventListener('change', async () => {
@@ -1372,6 +1372,7 @@
         </div>
         <div class="grid-3" style="align-items:end">
           <div class="field"><label>Minimum Sepet Tutarı (₺)</label><input id="cp-min" type="number" min="0" value="0"></div>
+          <div class="field"><label>Kullanım Limiti (0 = Sınırsız)</label><input id="cp-max" type="number" min="0" value="0"></div>
           <div style="padding-bottom:16px"><label class="checkbox-row"><input type="checkbox" id="cp-active" checked> Hemen aktif et</label></div>
           <div style="padding-bottom:16px"><button class="btn btn-primary" id="cp-add" style="width:100%">＋ Kuponu Kaydet</button></div>
         </div>
@@ -1379,7 +1380,7 @@
     </div>
     <div class="panel"><div class="panel-body flush">
       <div class="tbl-wrap">
-        <table class="tbl"><thead><tr><th>Kupon Kodu</th><th>İndirim Türü</th><th>Değer</th><th>Min. Sepet</th><th>Kullanım</th><th>Durum</th><th>İşlem</th></tr></thead><tbody id="cp-body"></tbody></table>
+        <table class="tbl"><thead><tr><th>Kupon Kodu</th><th>İndirim Türü</th><th>Değer</th><th>Min. Sepet</th><th>Kullanım</th><th>Limit</th><th>Durum</th><th>İşlem</th></tr></thead><tbody id="cp-body"></tbody></table>
       </div>
     </div></div>`);
 
@@ -1393,6 +1394,7 @@
         <td><b>${c.type === 'percent' ? '%' + c.value : fmt(c.value)}</b></td>
         <td>${c.minTotal ? fmt(c.minTotal) : 'Alt limitsiz'}</td>
         <td>${c.used} defa</td>
+        <td>${c.maxUses > 0 ? c.maxUses : 'Sınırsız'}</td>
         <td>${c.active ? '<span class="pill s-active">Aktif</span>' : '<span class="pill s-passive">Pasif</span>'}</td>
         <td style="white-space:nowrap">
           <button class="btn-icon" data-tog="${c.id}" title="${c.active ? 'Pasifleştir' : 'Aktifleştir'}">${c.active ? '⏸️' : '▶️'}</button>
@@ -1462,7 +1464,8 @@
     <div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:20px;margin-bottom:14px;background:var(--card-2)">
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
         <b class="${privacyMode ? 'privacy-masked' : ''}">${esc(m.name)} · <span style="color:var(--rose)">${esc(m.email)}</span></b>
-        <span class="muted" style="font-size:12px">${dShort(m.createdAt)}</span>
+        <span class="muted" style="font-size:12px">${dShort(m.createdAt)}</span></div>
+        <button class="btn btn-sm btn-ghost del-msg" data-id="${m.id || ''}" style="color:var(--danger)">Sil</button>
       </div>
       <div style="line-height:1.6;color:var(--text-2)">${esc(m.message)}</div>
       <div style="margin-top:12px">
@@ -1641,6 +1644,15 @@
       announceInput.addEventListener('input', () => {
         announcePreview.textContent = announceInput.value || 'GİRİLEN DUYURU METNİ...';
       });
+    $('.del-msg').forEach(btn => btn.addEventListener('click', async (e) => {
+      const id = e.target.getAttribute('data-id');
+      if (!id || !confirm('Mesaj silinsin mi?')) return;
+      try {
+        await api('/api/admin/messages/' + id, { method: 'DELETE' });
+        toast('Mesaj silindi');
+        viewMessages();
+      } catch (err) { toast(err.message, true); }
+    }));
     }
 
     $('#st-pass-btn').addEventListener('click', async () => {
