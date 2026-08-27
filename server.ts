@@ -48,7 +48,7 @@ await (async () => {
       let slugMigrated = false;
       for (const p of db.products) {
         if (!p.slug || p.slug.length < 2 || p.slug === 'ad') {
-          const newSlug = String(p.name).toLowerCase().replace(/[çğıöşü]/g, (c) => ({'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u'}[c]||c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || require('./lib/db.js').uid('p');
+          const newSlug = String(p.name).toLowerCase().replace(/[çğıöşü]/g, (c) => ({'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u'}[c]||c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('p');
           const isTaken = db.products.some((x) => x !== p && x.slug === newSlug);
           p.slug = isTaken ? newSlug + '-' + Date.now().toString(36) : newSlug;
           slugMigrated = true;
