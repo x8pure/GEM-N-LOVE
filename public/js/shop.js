@@ -737,8 +737,12 @@
     if (local && Array.isArray(local.items)) {
       const localCount = local.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
       updateCartBadge(localCount);
-    } else if (local === null) {
+    } else {
       updateCartBadge(0);
+    }
+
+    if (!local || !Array.isArray(local.items) || local.items.length === 0) {
+      return null;
     }
 
     // 2. Coalesce concurrent in-flight fetches so rapid triggers share a single network call
@@ -748,7 +752,10 @@
 
     activeCartFetchPromise = (async () => {
       try {
-        const c = await api('/api/cart');
+        const c = await api('/api/cart/calc', {
+          method: 'POST',
+          body: { items: local.items, coupon: local.coupon?.code || (typeof local.coupon === 'string' ? local.coupon : undefined) }
+        });
         if (c && Array.isArray(c.items)) {
           if (c.items.length > 0) {
             setLocalCart(c);
@@ -793,7 +800,14 @@
       } catch {}
 
       const cleanQty = Math.max(1, parseInt(qty, 10) || 1);
-      const res = await api('/api/cart/add', { method: 'POST', body: { productId, qty: cleanQty, variant } });
+      const local = getLocalCart();
+      const currentItems = (local && Array.isArray(local.items)) ? local.items : [];
+      const currentCoupon = local?.coupon?.code || (typeof local?.coupon === 'string' ? local.coupon : undefined);
+
+      const res = await api('/api/cart/add', {
+        method: 'POST',
+        body: { productId, qty: cleanQty, variant, items: currentItems, coupon: currentCoupon }
+      });
       
       // In-place button feedback
       if (btn) {
@@ -1363,7 +1377,13 @@
       if (btn.disabled) return;
       btn.disabled = true;
       try {
-        const res = await api('/api/cart/add', { method: 'POST', body: { productId: p.id, qty } });
+        const local = getLocalCart();
+        const currentItems = (local && Array.isArray(local.items)) ? local.items : [];
+        const currentCoupon = local?.coupon?.code || (typeof local?.coupon === 'string' ? local.coupon : undefined);
+        const res = await api('/api/cart/add', {
+          method: 'POST',
+          body: { productId: p.id, qty, variant: 'standart', items: currentItems, coupon: currentCoupon }
+        });
         if (res && Array.isArray(res.items)) {
           setLocalCart(res);
           const n = res.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
@@ -1435,7 +1455,14 @@
     if (!root) return;
     async function render() {
       root.innerHTML = '<div class="spinner"></div>';
-      const c = await api('/api/cart').catch(() => null);
+      const local = getLocalCart();
+      let c = null;
+      if (local && Array.isArray(local.items) && local.items.length > 0) {
+        c = await api('/api/cart/calc', {
+          method: 'POST',
+          body: { items: local.items, coupon: local.coupon?.code || (typeof local.coupon === 'string' ? local.coupon : undefined) }
+        }).catch(() => local);
+      }
 
       if (!c || !c.items || !c.items.length) {
         setLocalCart(null);
@@ -1475,7 +1502,7 @@
           ? `<div class="free-ship-note">${t('cart.freeship.left', { x: '<b>' + fmt(c.freeShippingThreshold - c.subtotal) + '</b>' })}<div class="progress-bar"><i style="width:${pct}%"></i></div></div>`
           : `<div class="free-ship-note">${t('cart.freeship.won')}</div>`}
         <div class="coupon-row">
-          <input id="coupon-input" class="field-input" placeholder="${t('cart.coupon.ph')}" style="background:var(--card-2);border:1px solid var(--line);border-radius:100px;padding:11px 18px;color:var(--text);outline:none">
+          <input id="coupon-input" class="field-input" placeholder="${t('cart.coupon.ph')}" value="${c.coupon ? c.coupon.code : ''}" style="background:var(--card-2);border:1px solid var(--line);border-radius:100px;padding:11px 18px;color:var(--text);outline:none">
           <button class="btn btn-ghost btn-sm" id="coupon-apply">${t('cart.apply')}</button>
         </div>
         ${c.coupon ? `<div class="sum-row" style="color:var(--ok)"><span>${t('cart.coupon.is', { code: c.coupon.code })}</span><span>-${fmt(c.discount)}</span></div>` : ''}
@@ -1491,7 +1518,16 @@
         if (b.disabled) return;
         b.disabled = true;
         try {
-          const res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.inc, qty: +b.nextElementSibling.value + 1 } });
+          const l = getLocalCart() || { items: [] };
+          const res = await api('/api/cart/update', {
+            method: 'POST',
+            body: {
+              productId: b.dataset.inc,
+              qty: +b.nextElementSibling.value + 1,
+              items: l.items,
+              coupon: l.coupon?.code || (typeof l.coupon === 'string' ? l.coupon : undefined)
+            }
+          });
           if (res) {
             setLocalCart(res);
             const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
@@ -1509,11 +1545,19 @@
         b.disabled = true;
         const q = +b.nextElementSibling.value - 1;
         try {
+          const l = getLocalCart() || { items: [] };
+          const currentCoupon = l.coupon?.code || (typeof l.coupon === 'string' ? l.coupon : undefined);
           let res;
           if (q < 1) {
-            res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.dec } });
+            res = await api('/api/cart/remove', {
+              method: 'POST',
+              body: { productId: b.dataset.dec, items: l.items, coupon: currentCoupon }
+            });
           } else {
-            res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.dec, qty: q } });
+            res = await api('/api/cart/update', {
+              method: 'POST',
+              body: { productId: b.dataset.dec, qty: q, items: l.items, coupon: currentCoupon }
+            });
           }
           if (res) {
             setLocalCart(res);
@@ -1531,7 +1575,12 @@
         if (b.disabled) return;
         b.disabled = true;
         try {
-          const res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.del } });
+          const l = getLocalCart() || { items: [] };
+          const currentCoupon = l.coupon?.code || (typeof l.coupon === 'string' ? l.coupon : undefined);
+          const res = await api('/api/cart/remove', {
+            method: 'POST',
+            body: { productId: b.dataset.del, items: l.items, coupon: currentCoupon }
+          });
           if (res) {
             setLocalCart(res);
             const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
@@ -1549,7 +1598,11 @@
         const code = $('#coupon-input').value.trim().toUpperCase();
         if (!code) return;
         try {
-          const res = await api('/api/cart/coupon', { method: 'POST', body: { code } });
+          const l = getLocalCart() || { items: [] };
+          const res = await api('/api/cart/coupon', {
+            method: 'POST',
+            body: { code, items: l.items }
+          });
           toast(t('cart.coupon.ok'), '🎟️');
           if (res) {
             setLocalCart(res);
@@ -1567,8 +1620,28 @@
   async function initCheckout() {
     const root = $('#checkout-root');
     if (!root) return;
-    const [c, s] = await Promise.all([api('/api/cart').catch(() => ({ items: [] })), api('/api/session').catch(() => ({ user: null }))]);
-    if (!c.items.length) { location.href = '/sepet'; return; }
+
+    const local = getLocalCart();
+    if (!local || !Array.isArray(local.items) || !local.items.length) {
+      location.href = '/sepet';
+      return;
+    }
+
+    const [c, s] = await Promise.all([
+      api('/api/cart/calc', {
+        method: 'POST',
+        body: { items: local.items, coupon: local.coupon?.code || (typeof local.coupon === 'string' ? local.coupon : undefined) }
+      }).catch(() => local),
+      api('/api/session').catch(() => ({ user: null }))
+    ]);
+
+    if (!c || !c.items || !c.items.length) {
+      setLocalCart(null);
+      updateCartBadge(0);
+      location.href = '/sepet';
+      return;
+    }
+    setLocalCart(c);
     const u = s.user;
     const addr = (u && u.addresses && u.addresses[0]) || null;
     root.innerHTML = `
@@ -1621,10 +1694,13 @@
 
     $('#ck-submit').addEventListener('click', async () => {
       const method = document.querySelector('input[name=pay]:checked').value;
+      const curLocal = getLocalCart();
       const body = {
         name: $('#ck-name').value.trim(), phone: $('#ck-phone').value.trim(),
         payment: method, note: $('#ck-note').value.trim(),
-        discreet: $('#ck-discreet').checked
+        discreet: $('#ck-discreet').checked,
+        items: (curLocal && Array.isArray(curLocal.items)) ? curLocal.items : [],
+        coupon: curLocal?.coupon?.code || (typeof curLocal?.coupon === 'string' ? curLocal.coupon : undefined)
       };
       if (method === 'whatsapp') {
         body.address = $('#ck-address').value.trim();

@@ -583,22 +583,45 @@ function bentoTemplate(n: number) {
   return { desktop: formatRows(desk), mid: formatRows(mid), mob: formatRows(mob) };
 }
 
-function cartCalc(sess: any) {
+function cartCalc(cartOrSess: any, couponParam?: string) {
   const st = db.settings;
   const items: any[] = [];
-  for (const line of sess.cart || []) {
-    const p = db.products.find((x: any) => x.id === line.productId);
+  let rawList: any[] = [];
+  let couponCode: string | null = null;
+
+  if (Array.isArray(cartOrSess)) {
+    rawList = cartOrSess;
+    couponCode = couponParam || null;
+  } else if (cartOrSess && typeof cartOrSess === 'object') {
+    rawList = Array.isArray(cartOrSess.cart) ? cartOrSess.cart : (Array.isArray(cartOrSess.items) ? cartOrSess.items : []);
+    couponCode = couponParam || cartOrSess.coupon || (typeof cartOrSess.coupon === 'object' ? cartOrSess.coupon?.code : null) || null;
+  }
+
+  for (const line of rawList) {
+    if (!line) continue;
+    const prodId = String(line.productId || line.id || '').trim();
+    const p = db.products.find((x: any) => x.id === prodId || x.slug === prodId);
     if (!p || p.stock <= 0) continue;
-    items.push({
-      productId: p.id, slug: p.slug, name: p.name, categoryName: p.categoryName,
-      category: p.category, image: p.image, variant: line.variant || 'standart',
-      price: p.price, qty: Math.min(line.qty, p.stock), lineTotal: p.price * Math.min(line.qty, p.stock)
-    });
+    const reqQty = Math.max(1, parseInt(line.qty, 10) || 1);
+    const validQty = Math.min(reqQty, p.stock);
+    const variant = String(line.variant || 'standart').trim();
+    
+    const existing = items.find((it) => it.productId === p.id && it.variant === variant);
+    if (existing) {
+      existing.qty = Math.min(existing.qty + validQty, p.stock);
+      existing.lineTotal = existing.price * existing.qty;
+    } else {
+      items.push({
+        productId: p.id, slug: p.slug, name: p.name, categoryName: p.categoryName,
+        category: p.category, image: p.image, variant,
+        price: p.price, qty: validQty, lineTotal: p.price * validQty, stock: p.stock
+      });
+    }
   }
   const subtotal = items.reduce((a, i) => a + i.lineTotal, 0);
   let discount = 0, coupon = null;
-  if (sess.coupon) {
-    const c = db.coupons.find((x: any) => x.code === sess.coupon);
+  if (couponCode) {
+    const c = db.coupons.find((x: any) => x.code.toUpperCase() === String(couponCode).toUpperCase().trim());
     if (c && c.active && subtotal >= c.minTotal) {
       coupon = c;
       discount = c.type === 'percent' ? Math.round(subtotal * c.value) / 100 : c.value;
@@ -1606,55 +1629,83 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   }
 
   /* --- cart --- */
-  if (pathname === '/api/cart' && method === 'GET') return json(res, 200, { ok: true, ...cartCalc(sess) });
+  if ((pathname === '/api/cart' || pathname === '/api/cart/calc') && (method === 'GET' || method === 'POST')) {
+    if (method === 'POST') {
+      const b = await readBody(req);
+      const items = Array.isArray(b.items) ? b.items : (Array.isArray(b.cart) ? b.cart : (sess.cart || []));
+      const coupon = b.coupon !== undefined ? b.coupon : sess.coupon;
+      return json(res, 200, { ok: true, ...cartCalc(items, coupon) });
+    }
+    return json(res, 200, { ok: true, ...cartCalc(sess) });
+  }
   if (pathname === '/api/cart/add' && method === 'POST') {
     const b = await readBody(req);
     const prodId = String(b.productId || '').trim();
     const p = db.products.find((x: any) => x.id === prodId || x.slug === prodId);
     if (!p) return sendError(res, 404, E('err.noProd'));
     if (p.stock <= 0) return sendError(res, 400, E('err.noStock'));
-    if (!Array.isArray(sess.cart)) sess.cart = [];
-    const line = sess.cart.find((l: any) => l.productId === p.id);
+    
+    // Support stateless client items array or fallback to session
+    const clientItems = Array.isArray(b.items) ? [...b.items] : (Array.isArray(sess.cart) ? [...sess.cart] : []);
     const qty = Math.min(Math.max(1, parseInt(b.qty, 10) || 1), p.stock);
-    if (line) line.qty = Math.min(line.qty + qty, p.stock);
-    else sess.cart.push({ productId: p.id, qty, variant: b.variant || 'standart' });
+    const variant = String(b.variant || 'standart').trim();
+    const line = clientItems.find((l: any) => (l.productId === p.id || l.id === p.id) && (l.variant || 'standart') === variant);
+    if (line) {
+      line.qty = Math.min((parseInt(line.qty, 10) || 0) + qty, p.stock);
+    } else {
+      clientItems.push({ productId: p.id, qty, variant });
+    }
+    const coupon = b.coupon !== undefined ? b.coupon : sess.coupon;
+    sess.cart = clientItems;
+    if (coupon) sess.coupon = coupon;
     persistSessions();
-    return json(res, 200, { ok: true, ...cartCalc(sess) });
+    return json(res, 200, { ok: true, ...cartCalc(clientItems, coupon) });
   }
   if (pathname === '/api/cart/update' && method === 'POST') {
     const b = await readBody(req);
     const prodId = String(b.productId || '').trim();
-    if (!Array.isArray(sess.cart)) sess.cart = [];
-    const line = sess.cart.find((l: any) => l.productId === prodId);
+    const clientItems = Array.isArray(b.items) ? [...b.items] : (Array.isArray(sess.cart) ? [...sess.cart] : []);
+    const line = clientItems.find((l: any) => l.productId === prodId || l.id === prodId);
     if (!line) return sendError(res, 404, E('err.notInCart'));
     const p = db.products.find((x: any) => x.id === prodId || x.slug === prodId);
     line.qty = Math.min(Math.max(1, parseInt(b.qty, 10) || 1), p ? p.stock : 99);
+    const coupon = b.coupon !== undefined ? b.coupon : sess.coupon;
+    sess.cart = clientItems;
+    if (coupon) sess.coupon = coupon;
     persistSessions();
-    return json(res, 200, { ok: true, ...cartCalc(sess) });
+    return json(res, 200, { ok: true, ...cartCalc(clientItems, coupon) });
   }
   if (pathname === '/api/cart/remove' && method === 'POST') {
     const b = await readBody(req);
     const prodId = String(b.productId || '').trim();
-    if (!Array.isArray(sess.cart)) sess.cart = [];
-    sess.cart = sess.cart.filter((l: any) => l.productId !== prodId);
+    let clientItems = Array.isArray(b.items) ? [...b.items] : (Array.isArray(sess.cart) ? [...sess.cart] : []);
+    clientItems = clientItems.filter((l: any) => l.productId !== prodId && l.id !== prodId);
+    const coupon = b.coupon !== undefined ? b.coupon : sess.coupon;
+    sess.cart = clientItems;
+    if (coupon) sess.coupon = coupon;
     persistSessions();
-    return json(res, 200, { ok: true, ...cartCalc(sess) });
+    return json(res, 200, { ok: true, ...cartCalc(clientItems, coupon) });
   }
   if (pathname === '/api/cart/coupon' && method === 'POST') {
     const b = await readBody(req);
     const r = findCoupon(b.code, apiLang);
     if (r.error) return sendError(res, 400, r.error);
-    const c = cartCalc({ ...sess, coupon: r.coupon.code });
+    const clientItems = Array.isArray(b.items) ? b.items : (Array.isArray(sess.cart) ? sess.cart : []);
+    const c = cartCalc(clientItems, r.coupon.code);
     if (r.coupon.minTotal > c.subtotal) return sendError(res, 400, E('err.couponMin', { min: fmt(r.coupon.minTotal) }));
-    sess.coupon = r.coupon.code; persistSessions();
-    return json(res, 200, { ok: true, ...cartCalc(sess) });
+    sess.coupon = r.coupon.code;
+    sess.cart = clientItems;
+    persistSessions();
+    return json(res, 200, { ok: true, ...c });
   }
 
   /* --- checkout --- */
   if (pathname === '/api/checkout' && method === 'POST') {
     const st = db.settings;
     const b = await readBody(req);
-    const c = cartCalc(sess);
+    const clientItems = Array.isArray(b.items) ? b.items : null;
+    const clientCoupon = typeof b.coupon === 'string' ? b.coupon : (typeof b.coupon === 'object' ? b.coupon?.code : undefined);
+    const c = clientItems ? cartCalc(clientItems, clientCoupon) : cartCalc(sess);
     if (!c.items.length) return sendError(res, 400, E('err.emptyCart'));
     const name = String(b.name || '').trim();
     const phone = String(b.phone || '').trim();
