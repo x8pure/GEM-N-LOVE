@@ -730,43 +730,50 @@
     });
   }
 
+  let activeCartFetchPromise = null;
   async function refreshCartBadge() {
     // 1. Immediately reflect local cart count if present (eliminates any UI flicker)
     const local = getLocalCart();
     if (local && Array.isArray(local.items)) {
-      const localCount = local.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0);
+      const localCount = local.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
       updateCartBadge(localCount);
+    } else if (local === null) {
+      updateCartBadge(0);
     }
 
-    try {
-      const c = await api('/api/cart');
-      if (c && Array.isArray(c.items)) {
-        if (c.items.length > 0) {
-          setLocalCart(c);
-          const n = c.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0);
-          updateCartBadge(n);
-        } else if (local && Array.isArray(local.items) && local.items.length > 0) {
-          // If server session lost items, restore them from local cache
-          for (const item of local.items) {
-            try {
-              await api('/api/cart/add', { method: 'POST', body: { productId: item.productId, qty: item.qty, variant: item.variant } });
-            } catch {}
+    // 2. Coalesce concurrent in-flight fetches so rapid triggers share a single network call
+    if (activeCartFetchPromise) {
+      return activeCartFetchPromise;
+    }
+
+    activeCartFetchPromise = (async () => {
+      try {
+        const c = await api('/api/cart');
+        if (c && Array.isArray(c.items)) {
+          if (c.items.length > 0) {
+            setLocalCart(c);
+            const n = c.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+            updateCartBadge(n);
+          } else {
+            setLocalCart(null);
+            updateCartBadge(0);
           }
-          const fresh = await api('/api/cart').catch(() => local);
-          setLocalCart(fresh);
-          const n = (fresh && Array.isArray(fresh.items)) ? fresh.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0) : 0;
-          updateCartBadge(n);
+          return c;
         } else {
           setLocalCart(null);
           updateCartBadge(0);
         }
+      } catch (err) {
+        if (local && Array.isArray(local.items)) {
+          const localCount = local.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+          updateCartBadge(localCount);
+        }
+      } finally {
+        activeCartFetchPromise = null;
       }
-    } catch {
-      if (local && Array.isArray(local.items)) {
-        const localCount = local.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0);
-        updateCartBadge(localCount);
-      }
-    }
+    })();
+
+    return activeCartFetchPromise;
   }
   LS.refreshCartBadge = refreshCartBadge;
   document.addEventListener('ls:cart', refreshCartBadge);
@@ -774,6 +781,9 @@
 
   async function addToCart(productId, qty = 1, variant = 'standart', btn = null) {
     if (!productId) return;
+    if (btn && btn.dataset.busy === '1') return;
+    if (btn) btn.dataset.busy = '1';
+
     try {
       // Haptic micro-feedback for mobile touch devices
       try {
@@ -782,7 +792,8 @@
         }
       } catch {}
 
-      const res = await api('/api/cart/add', { method: 'POST', body: { productId, qty, variant } });
+      const cleanQty = Math.max(1, parseInt(qty, 10) || 1);
+      const res = await api('/api/cart/add', { method: 'POST', body: { productId, qty: cleanQty, variant } });
       
       // In-place button feedback
       if (btn) {
@@ -802,6 +813,7 @@
           btn.innerHTML = origContent;
           btn.classList.remove('added');
           if (!isIconOnly) btn.style.minWidth = '';
+          delete btn.dataset.busy;
         }, 1350);
       }
 
@@ -812,11 +824,11 @@
 
       if (res && Array.isArray(res.items)) {
         setLocalCart(res);
-        const n = res.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0);
+        const n = res.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
         updateCartBadge(n, true);
       }
-      document.dispatchEvent(new Event('ls:cart'));
     } catch (e) {
+      if (btn) delete btn.dataset.busy;
       toast(e.message || 'Ürün sepete eklenemedi', '⚠️');
     }
   }
@@ -903,6 +915,7 @@
 
   /* ================= 2026 SPATIAL CARD ZOOM (MORPHING CANVAS) ================= */
   let activeOriginCard = null;
+  let activeZoomRequestId = 0;
 
   async function openSpatialCardZoom(productIdOrSlug, originCard) {
     if (!productIdOrSlug) return;
@@ -910,6 +923,7 @@
     const stage = $('#spatial-card-stage');
     if (!overlay || !stage) return;
 
+    const reqId = ++activeZoomRequestId;
     activeOriginCard = originCard;
     document.body.style.overflow = 'hidden';
 
@@ -933,6 +947,7 @@
     try {
       const cleanKey = String(productIdOrSlug || '').replace(/^\/urun\//, '').replace(/\/+$/, '').trim();
       const res = await api('/api/products/' + encodeURIComponent(cleanKey));
+      if (reqId !== activeZoomRequestId) return;
       const p = (res && res.product) ? res.product : res;
       if (!p || !p.id) throw new Error('Ürün bulunamadı');
 
@@ -1025,7 +1040,7 @@
                 <span class="spatial-qty-val" id="spatial-qty-val">1</span>
                 <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
               </div>
-              <button type="button" class="spatial-add-btn" id="spatial-add-btn" ${!inStock ? 'disabled' : ''}>
+              <button type="button" class="spatial-add-btn" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 <span>${LANG === 'en' ? 'Add to Cart' : 'Sepete Ekle'}</span>
               </button>
@@ -1073,10 +1088,12 @@
       $('#spatial-stage-close')?.addEventListener('click', closeSpatialCardZoom);
 
       addBtn?.addEventListener('click', async () => {
-        await addToCart(p.id, currentQty, 'standart', addBtn);
+        const targetPid = addBtn.dataset.productId || p.id;
+        await addToCart(targetPid, currentQty, 'standart', addBtn);
       });
 
     } catch (err) {
+      if (reqId !== activeZoomRequestId) return;
       stage.innerHTML = `
         <button type="button" class="spatial-stage-close" id="spatial-stage-close">✕</button>
         <div class="empty-state" style="padding:60px 20px;">
@@ -1087,6 +1104,7 @@
   }
 
   function closeSpatialCardZoom() {
+    activeZoomRequestId++;
     const overlay = $('#spatial-canvas-overlay');
     if (overlay) {
       overlay.classList.remove('open');
@@ -1105,6 +1123,9 @@
   }
 
   function initQuickDrawerListeners() {
+    if (initQuickDrawerListeners.initialized) return;
+    initQuickDrawerListeners.initialized = true;
+
     $('#spatial-canvas-overlay')?.addEventListener('click', (e) => {
       if (e.target === $('#spatial-canvas-overlay')) closeSpatialCardZoom();
     });
@@ -1337,9 +1358,22 @@
     $('#q-minus').addEventListener('click', () => { qty = Math.max(1, qty - 1); qv.value = qty; });
     $('#q-plus').addEventListener('click', () => { qty = Math.min(p.stock || 1, qty + 1); qv.value = qty; });
     $('#pd-add').addEventListener('click', (e) => addToCart(p.id, qty, 'standart', e.currentTarget));
-    $('#pd-buy').addEventListener('click', async () => {
-      try { await api('/api/cart/add', { method: 'POST', body: { productId: p.id, qty } }); location.href = '/odeme'; }
-      catch (e) { toast(e.message, '⚠️'); }
+    $('#pd-buy').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      if (btn.disabled) return;
+      btn.disabled = true;
+      try {
+        const res = await api('/api/cart/add', { method: 'POST', body: { productId: p.id, qty } });
+        if (res && Array.isArray(res.items)) {
+          setLocalCart(res);
+          const n = res.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+          updateCartBadge(n, true);
+        }
+        location.href = '/odeme';
+      } catch (err) {
+        btn.disabled = false;
+        toast(err.message || 'Hata oluştu', '⚠️');
+      }
     });
 
     const panels = { detay: p.longDescription || p.description };
@@ -1401,18 +1435,7 @@
     if (!root) return;
     async function render() {
       root.innerHTML = '<div class="spinner"></div>';
-      let c = await api('/api/cart').catch(() => null);
-      const local = getLocalCart();
-
-      // If server returned empty cart but local cache has items, restore them to server
-      if ((!c || !c.items || !c.items.length) && local && Array.isArray(local.items) && local.items.length > 0) {
-        for (const item of local.items) {
-          try {
-            await api('/api/cart/add', { method: 'POST', body: { productId: item.productId, qty: item.qty, variant: item.variant } });
-          } catch {}
-        }
-        c = await api('/api/cart').catch(() => local);
-      }
+      const c = await api('/api/cart').catch(() => null);
 
       if (!c || !c.items || !c.items.length) {
         setLocalCart(null);
@@ -1422,7 +1445,7 @@
       }
 
       setLocalCart(c);
-      const badgeCount = c.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 1), 0);
+      const badgeCount = c.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
       updateCartBadge(badgeCount);
 
       const lines = c.items.map((i) => `
@@ -1465,30 +1488,60 @@
       </div>`;
 
       $$('[data-inc]').forEach((b) => b.addEventListener('click', async () => {
-        const res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.inc, qty: +b.nextElementSibling.value + 1 } });
-        if (res) setLocalCart(res);
-        render();
-        document.dispatchEvent(new Event('ls:cart'));
+        if (b.disabled) return;
+        b.disabled = true;
+        try {
+          const res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.inc, qty: +b.nextElementSibling.value + 1 } });
+          if (res) {
+            setLocalCart(res);
+            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+            updateCartBadge(n);
+          }
+          render();
+        } catch (err) {
+          b.disabled = false;
+          toast(err.message || 'Hata oluştu', '⚠️');
+        }
       }));
 
       $$('[data-dec]').forEach((b) => b.addEventListener('click', async () => {
+        if (b.disabled) return;
+        b.disabled = true;
         const q = +b.nextElementSibling.value - 1;
-        let res;
-        if (q < 1) {
-          res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.dec } });
-        } else {
-          res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.dec, qty: q } });
+        try {
+          let res;
+          if (q < 1) {
+            res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.dec } });
+          } else {
+            res = await api('/api/cart/update', { method: 'POST', body: { productId: b.dataset.dec, qty: q } });
+          }
+          if (res) {
+            setLocalCart(res);
+            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+            updateCartBadge(n);
+          }
+          render();
+        } catch (err) {
+          b.disabled = false;
+          toast(err.message || 'Hata oluştu', '⚠️');
         }
-        if (res) setLocalCart(res);
-        render();
-        document.dispatchEvent(new Event('ls:cart'));
       }));
 
       $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-        const res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.del } });
-        if (res) setLocalCart(res);
-        render();
-        document.dispatchEvent(new Event('ls:cart'));
+        if (b.disabled) return;
+        b.disabled = true;
+        try {
+          const res = await api('/api/cart/remove', { method: 'POST', body: { productId: b.dataset.del } });
+          if (res) {
+            setLocalCart(res);
+            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+            updateCartBadge(n);
+          }
+          render();
+        } catch (err) {
+          b.disabled = false;
+          toast(err.message || 'Hata oluştu', '⚠️');
+        }
       }));
 
       const ca = $('#coupon-apply');
@@ -1498,7 +1551,11 @@
         try {
           const res = await api('/api/cart/coupon', { method: 'POST', body: { code } });
           toast(t('cart.coupon.ok'), '🎟️');
-          if (res) setLocalCart(res);
+          if (res) {
+            setLocalCart(res);
+            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
+            updateCartBadge(n);
+          }
           render();
         } catch (e) { toast(e.message, '⚠️'); }
       });
@@ -2452,6 +2509,9 @@
   }
 
   function initSpaLinks() {
+    if (initSpaLinks.initialized) return;
+    initSpaLinks.initialized = true;
+
     document.addEventListener('click', (e) => {
       // Find closest anchor tag
       const link = e.target.closest('a');
@@ -2468,6 +2528,9 @@
       const dest = new URL(link.href, location.origin);
       if (dest.origin !== location.origin) return;
       if (dest.pathname.startsWith('/admin') || dest.pathname.startsWith('/api/')) return;
+
+      // Prevent concurrent navigation race conditions
+      if (isNavigating) return;
 
       // If user is clicking category chip inside shop page and already in /magaza, let shop filter handle it
       if (location.pathname === '/magaza' && dest.pathname === '/magaza' && dest.searchParams.has('kat')) {
