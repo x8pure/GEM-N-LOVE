@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { load, save, uid, nextId, hashPassword, setMemoryDb } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
-import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase } from './lib/firebase.js';
+import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase, flushPendingSave } from './lib/firebase.js';
 import { put } from '@vercel/blob';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -109,7 +109,8 @@ function verifyAuthToken(tokenStr: string): { userId: string; role: string } | n
 }
 
 /* ---------------- utils ---------------- */
-function json(res: http.ServerResponse, code: number, obj: any) {
+async function json(res: http.ServerResponse, code: number, obj: any) {
+  try { await flushPendingSave(); } catch (e) {}
   const body = JSON.stringify(obj);
   res.statusCode = code;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -206,7 +207,7 @@ function requireAdmin(req: http.IncomingMessage, res: http.ServerResponse) {
   u.role = 'admin';
   return u;
 }
-function sendError(res: http.ServerResponse, code: number, msg: string) { json(res, code, { ok: false, error: msg }); }
+function sendError(res: http.ServerResponse, code: number, msg: string) { return json(res, code, { ok: false, error: msg }); }
 const esc = (s: any) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
 const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: n % 1 ? 2 : 0 }).format(n);
 const stars = (r: number) => '★'.repeat(Math.round(r || 0)) + '☆'.repeat(5 - Math.round(r || 0));

@@ -79,7 +79,7 @@
       "longDescription": "",
       "price": 1699,
       "oldPrice": 2199,
-      "stock": 10,
+      "stock": 8,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -214,6 +214,68 @@
       },
       "createdAt": "2026-08-25T14:02:46.012Z",
       "note": ""
+    },
+    {
+      "id": "LS-1003",
+      "userId": null,
+      "userEmail": "",
+      "customerName": "E2E Test User",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 1,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 1699,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1798,
+      "coupon": null,
+      "status": "processing",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": false,
+      "phone": "5550001122",
+      "address": {
+        "full": "Test Mah",
+        "city": "Test",
+        "zip": ""
+      },
+      "createdAt": "2026-08-27T12:24:40.950Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1004",
+      "userId": null,
+      "userEmail": "",
+      "customerName": "E2E Test User",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 1,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 1699,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1798,
+      "coupon": null,
+      "status": "processing",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": false,
+      "phone": "5550001122",
+      "address": {
+        "full": "Test Mah",
+        "city": "Test",
+        "zip": ""
+      },
+      "createdAt": "2026-08-27T12:25:06.614Z",
+      "note": ""
     }
   ],
   "coupons": [
@@ -303,7 +365,7 @@
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 2
+      "order": 4
     }
   }
 }
