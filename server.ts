@@ -4,9 +4,9 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
-import { load, save, uid, nextId, hashPassword, setMemoryDb } from './lib/db.js';
+import { load, save, uid, nextId, hashPassword, setMemoryDb, saveAsync } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
-import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase, flushPendingSave } from './lib/firebase.js';
+import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase, flushPendingSave, saveToCloudFirestore } from './lib/firebase.js';
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -41,9 +41,63 @@ function isAdminEmail(email?: string | null): boolean {
 await (async () => {
   try {
     initFirebase();
+    const localDb = load();
     const cloudState = await loadFromCloudFirestore();
+    
     if (cloudState && Array.isArray(cloudState.products)) {
-      setMemoryDb(cloudState);
+      // Reconcile local and cloud data to prevent race-condition overwrite
+      const cloudProdMap = new Map((cloudState.products || []).map((p: any) => [p.id, p]));
+      let hasLocalAdditions = false;
+
+      if (Array.isArray(localDb.products)) {
+        for (const lp of localDb.products) {
+          if (!cloudProdMap.has(lp.id)) {
+            cloudState.products.push(lp);
+            cloudProdMap.set(lp.id, lp);
+            hasLocalAdditions = true;
+          }
+        }
+      }
+
+      if (!Array.isArray(cloudState.categories)) cloudState.categories = [];
+      const cloudCatMap = new Map((cloudState.categories || []).map((c: any) => [c.id || c.slug, c]));
+      if (Array.isArray(localDb.categories)) {
+        for (const lc of localDb.categories) {
+          const key = lc.id || lc.slug;
+          if (!cloudCatMap.has(key)) {
+            cloudState.categories.push(lc);
+            cloudCatMap.set(key, lc);
+            hasLocalAdditions = true;
+          }
+        }
+      }
+
+      if (!Array.isArray(cloudState.orders)) cloudState.orders = [];
+      const cloudOrderMap = new Map((cloudState.orders || []).map((o: any) => [o.id, o]));
+      if (Array.isArray(localDb.orders)) {
+        for (const lo of localDb.orders) {
+          if (!cloudOrderMap.has(lo.id)) {
+            cloudState.orders.push(lo);
+            cloudOrderMap.set(lo.id, lo);
+            hasLocalAdditions = true;
+          }
+        }
+      }
+
+      if (!Array.isArray(cloudState.users)) cloudState.users = [];
+      const cloudUserMap = new Map((cloudState.users || []).map((u: any) => [u.id || u.email, u]));
+      if (Array.isArray(localDb.users)) {
+        for (const lu of localDb.users) {
+          const key = lu.id || lu.email;
+          if (!cloudUserMap.has(key)) {
+            cloudState.users.push(lu);
+            cloudUserMap.set(key, lu);
+            hasLocalAdditions = true;
+          }
+        }
+      }
+
+      setMemoryDb(cloudState, false);
       db = load();
       let slugMigrated = false;
       for (const p of db.products) {
@@ -54,15 +108,18 @@ await (async () => {
           slugMigrated = true;
         }
       }
-      if (slugMigrated) save();
-      console.log(`[Server] Synced and restored ${db.products.length} products and ${db.orders?.length || 0} orders from Firebase Cloud.`);
+      if (slugMigrated || hasLocalAdditions) {
+        await saveAsync();
+      } else {
+        save();
+      }
+      console.log(`[Server] Synced and restored ${db.products.length} products, ${db.categories?.length || 0} categories and ${db.orders?.length || 0} orders from Firebase Cloud.`);
     } else {
-      // If cloud is empty, seed and save
+      // If cloud is empty, save local state directly to cloud
       if (!db.products || !db.products.length) {
-        // try { seed(true); } catch (e) {}
         db = load();
       }
-      save();
+      await saveAsync();
     }
     if (Array.isArray(db.users)) {
       let userFixed = false;
@@ -79,7 +136,7 @@ await (async () => {
         }
       }
       
-      if (userFixed) save();
+      if (userFixed) await saveAsync();
     }
   } catch (err) {
     console.error('[Server] Cloud sync initial load error:', err);
@@ -779,7 +836,6 @@ ${opts.noChrome ? body : `
     </button>
     <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
     <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
-    <a href="/admin" id="nav-admin" class="icon-btn" style="display:none" title="Admin Panel"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></a>
     <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
     <button id="burger" class="icon-btn" aria-label="Menü" title="Menü"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
   </div>
@@ -814,6 +870,10 @@ ${opts.noChrome ? body : `
     </a>
     <a href="/hesap" data-nav="/hesap">
       <span>${tr('nav.account')}</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="/admin" id="mm-admin-link" data-nav="/admin" style="display:none;" class="mm-admin-link">
+      <span>👑 ${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </a>
   </div>
@@ -1561,8 +1621,8 @@ async function saveUpload(dataUrl: string): Promise<string> {
           const firstKey = uploadCache.keys().next().value;
           if (firstKey) uploadCache.delete(firstKey);
         }
-        // Persist to Cloud Firestore in background so container rebuilds never lose the photo
-        saveImageToCloud(name, trimmed).catch(() => {});
+        // Persist to Cloud Firestore so container rebuilds never lose the photo
+        await saveImageToCloud(name, trimmed).catch(() => {});
         return savedPath;
       }
     } catch (err) {
@@ -1606,7 +1666,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (db.users.some((u: any) => u.email === email)) return sendError(res, 409, E('err.emailUsed'));
     const role = isAdminEmail(email) ? 'admin' : 'customer';
     const u = { id: uid('u'), email, passwordHash: hash(b.password), name: String(b.name || '').trim() || 'Misafir', role, tokenVersion: 1, createdAt: new Date().toISOString(), addresses: [] };
-    db.users.push(u); save();
+    db.users.push(u); await saveAsync();
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role, u.tokenVersion);
     const cur = res.getHeader('Set-Cookie');
@@ -1624,7 +1684,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     // Enforce role and ensure valid token version
     u.role = isAdminEmail(u.email) ? 'admin' : 'customer';
     u.tokenVersion = u.tokenVersion || 1;
-    save();
+    await saveAsync();
     sess.userId = u.id; persistSessions();
     const token = createAuthToken(u.id, u.role, u.tokenVersion);
     const cur = res.getHeader('Set-Cookie');
@@ -1701,7 +1761,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         addresses: []
       };
       db.users.push(u);
-      save();
+      await saveAsync();
     } else {
       let modified = false;
       if (u.role !== assignedRole) {
@@ -1720,7 +1780,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         u.tokenVersion = 1;
         modified = true;
       }
-      if (modified) save();
+      if (modified) await saveAsync();
     }
 
     sess.userId = u.id;
@@ -1736,7 +1796,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const authUser = getAuthUser(req, sess);
     if (authUser) {
       authUser.tokenVersion = (authUser.tokenVersion || 1) + 1;
-      save();
+      await saveAsync();
     }
     const sid = getSid(req);
     if (sid && sessions[sid]) {
@@ -1811,7 +1871,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const rating = Math.min(5, Math.max(1, parseInt(b.rating, 10) || 5));
       const masked = user ? user.name.trim()[0] + '***' : 'M***';
       db.reviews.push({ id: uid('r'), productId: p.id, userName: masked, rating, text, approved: false, createdAt: new Date().toISOString() });
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
   }
@@ -1927,7 +1987,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
     db.orders.push(order);
     sess.cart = []; sess.coupon = null; sess.lastGuestEmail = email || null;
-    save(); persistSessions();
+    await saveAsync(); persistSessions();
 
     const lines = ['Merhaba Love, yeni siparişim var:', 'Sipariş No: ' + orderId, ''];
     for (const i of order.items) lines.push(`- ${i.name} x${i.qty} = ${fmt(i.price * i.qty)}`);
@@ -1960,14 +2020,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!user) return sendError(res, 401, E('err.noUser'));
     const b = await readBody(req);
     if (b.name) user.name = String(b.name).trim();
-    save();
+    await saveAsync();
     return json(res, 200, { ok: true });
   }
   if (pathname === '/api/account/address' && method === 'POST') {
     if (!user) return sendError(res, 401, E('err.noUser'));
     const b = await readBody(req);
     user.addresses = [{ label: 'Ev', full: String(b.full || ''), city: String(b.city || ''), zip: String(b.zip || ''), phone: String(b.phone || ''), discreet: !!b.discreet }];
-    save();
+    await saveAsync();
     return json(res, 200, { ok: true });
   }
   if (pathname === '/api/account/password' && method === 'POST') {
@@ -1976,7 +2036,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!b.password || b.password.length < 6) return sendError(res, 400, E('err.pass6'));
     user.passwordHash = hash(b.password);
     user.tokenVersion = (user.tokenVersion || 1) + 1;
-    save();
+    await saveAsync();
     return json(res, 200, { ok: true });
   }
 
@@ -1986,7 +2046,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const email = String(b.email || '').trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(email)) return sendError(res, 400, E('err.email'));
     if (db.newsletter.some((n: any) => n.email === email)) return sendError(res, 409, E('err.emailUsed'));
-    db.newsletter.push({ id: uid('n'), email, createdAt: new Date().toISOString() }); save();
+    db.newsletter.push({ id: uid('n'), email, createdAt: new Date().toISOString() }); await saveAsync();
     return json(res, 200, { ok: true });
   }
   if (pathname === '/api/contact' && method === 'POST') {
@@ -1996,7 +2056,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!/^\S+@\S+\.\S+$/.test(email)) return sendError(res, 400, E('err.email'));
     if (message.length < 5) return sendError(res, 400, E('err.msgShort'));
     db.contact.push({ id: uid('m'), name: String(b.name || 'Anonim').trim(), email, message, createdAt: new Date().toISOString(), read: false });
-    save();
+    await saveAsync();
     return json(res, 200, { ok: true });
   }
 
@@ -2062,14 +2122,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (b.trackingNumber !== undefined) o.trackingNumber = String(b.trackingNumber).trim();
       if (b.carrier !== undefined) o.carrier = String(b.carrier).trim();
       if (b.adminNote !== undefined) o.adminNote = String(b.adminNote).trim();
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true, order: o });
     }
     if (oUp && method === 'DELETE') {
       const idx = db.orders.findIndex((x: any) => x.id === decodeURIComponent(oUp[1]));
       if (idx === -1) return sendError(res, 404, E('err.noOrder'));
       db.orders.splice(idx, 1);
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -2116,7 +2176,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         featured: !!b.featured, isNew: !!b.isNew, bestSeller: !!b.bestSeller,
         image, gallery, tags: [], variants: ['standart'], createdAt: new Date().toISOString()
       };
-      db.products.push(p); save();
+      db.products.push(p); await saveAsync();
       return json(res, 200, { ok: true, product: p });
     }
     const pUp = pathname.match(/^\/api\/admin\/products\/([^/]+)$/);
@@ -2152,7 +2212,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         p.image = p.gallery[0];
       }
 
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true, product: p });
     }
     if (pUp && method === 'DELETE') {
@@ -2161,7 +2221,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (idx === -1) return sendError(res, 404, E('err.noProd'));
       db.products.splice(idx, 1);
       for (const s of Object.values(sessions)) s.cart = (s.cart || []).filter((l: any) => l.productId !== id);
-      persistSessions(); save();
+      persistSessions(); await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -2190,7 +2250,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const featuredOnHome = !!b.featuredOnHome;
       const homeOrder = typeof b.homeOrder === 'number' ? Number(b.homeOrder) : (featuredOnHome ? 1 : 99);
       const c = { id: uid('ct'), slug, name, image, featuredOnHome, homeOrder, createdAt: new Date().toISOString() };
-      db.categories.push(c); save();
+      db.categories.push(c); await saveAsync();
       return json(res, 200, { ok: true, category: c });
     }
     const ctUp = pathname.match(/^\/api\/admin\/categories\/([^/]+)$/);
@@ -2216,7 +2276,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       }
       if (typeof b.featuredOnHome !== 'undefined') c.featuredOnHome = !!b.featuredOnHome;
       if (typeof b.homeOrder !== 'undefined') c.homeOrder = Number(b.homeOrder) || 1;
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true, category: c });
     }
 
@@ -2234,7 +2294,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       }
       c.featuredOnHome = !c.featuredOnHome;
       if (c.featuredOnHome && (!c.homeOrder || c.homeOrder > 10)) c.homeOrder = 1;
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true, category: c });
     }
     if (ctUp && method === 'DELETE') {
@@ -2244,7 +2304,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const count = db.products.filter((p: any) => p.category === c.slug).length;
       if (count > 0) return sendError(res, 400, `Bu kategoride ${count} ürün var. Önce ürünleri taşı veya sil.`);
       db.categories = db.categories.filter((x: any) => x.id !== id);
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -2264,7 +2324,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
           if (p && !seen.has(p.id)) { clean.push(p.id); seen.add(p.id); }
           if (clean.length >= 8) break;
         }
-        db.settings.wheelIds = clean; save();
+        db.settings.wheelIds = clean; await saveAsync();
         return json(res, 200, { ok: true, ids: db.settings.wheelIds });
       }
       if (b.toggle) {
@@ -2275,7 +2335,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
           if (db.settings.wheelIds.length >= 8) return sendError(res, 400, E('err.wheelFull'));
           db.settings.wheelIds.push(p.id);
         }
-        save();
+        await saveAsync();
         return json(res, 200, { ok: true, ids: db.settings.wheelIds });
       }
       return sendError(res, 400, E('err.badReq'));
@@ -2294,14 +2354,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         p.rating = Math.round(((p.rating || 0) * (p.reviewCount || 0) + r.rating) / ((p.reviewCount || 0) + 1) * 10) / 10;
         p.reviewCount = (p.reviewCount || 0) + 1;
       }
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
     const rDel = pathname.match(/^\/api\/admin\/reviews\/([^/]+)$/);
     if (rDel && method === 'DELETE') {
       const i = db.reviews.findIndex((x: any) => x.id === decodeURIComponent(rDel[1]));
       if (i === -1) return sendError(res, 404, E('err.revNone'));
-      db.reviews.splice(i, 1); save();
+      db.reviews.splice(i, 1); await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -2312,7 +2372,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (!code || code.length < 3) return sendError(res, 400, E('err.couponShort'));
       if (db.coupons.some((c: any) => c.code === code)) return sendError(res, 409, E('err.couponExists'));
       const c = { id: uid('c'), code, type: b.type === 'fixed' ? 'fixed' : 'percent', value: Math.max(0, Number(b.value) || 0), minTotal: Math.max(0, Number(b.minTotal) || 0), maxUses: Math.max(0, Number(b.maxUses) || 0), active: b.active !== false, used: 0 };
-      db.coupons.push(c); save();
+      db.coupons.push(c); await saveAsync();
       return json(res, 200, { ok: true, coupon: c });
     }
     const cUp = pathname.match(/^\/api\/admin\/coupons\/([^/]+)$/);
@@ -2324,13 +2384,13 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (b.value !== undefined) c.value = Number(b.value);
       if (b.minTotal !== undefined) c.minTotal = Number(b.minTotal);
       if (b.maxUses !== undefined) c.maxUses = Math.max(0, Number(b.maxUses) || 0);
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
     if (cUp && method === 'DELETE') {
       const i = db.coupons.findIndex((x: any) => x.id === decodeURIComponent(cUp[1]));
       if (i === -1) return sendError(res, 404, E('err.couponNone'));
-      db.coupons.splice(i, 1); save();
+      db.coupons.splice(i, 1); await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -2351,7 +2411,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       } else if (b.role === 'customer') {
         u.role = 'customer';
       }
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
     if (uUp && method === 'DELETE') {
@@ -2359,7 +2419,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (id === adm.id) return sendError(res, 400, E('err.selfDel'));
       const i = db.users.findIndex((x: any) => x.id === id);
       if (i === -1) return sendError(res, 404, E('err.userNone'));
-      db.users.splice(i, 1); save();
+      db.users.splice(i, 1); await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -2368,7 +2428,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const b = await readBody(req);
       for (const k of ['storeName', 'announcement', 'supportEmail', 'supportPhone', 'instagram', 'whatsapp', 'address', 'mapsQuery']) if (b[k] !== undefined) db.settings[k] = String(b[k]);
       for (const k of ['freeShippingThreshold', 'shippingFee', 'kdvRate']) if (b[k] !== undefined) db.settings[k] = Number(b[k]) || 0;
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true, settings: db.settings });
     }
 
@@ -2380,7 +2440,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (!me) return sendError(res, 404, 'Kullanıcı hesabı bulunamadı.');
       me.passwordHash = hashPassword(newPass);
       me.tokenVersion = (me.tokenVersion || 1) + 1;
-      save();
+      await saveAsync();
       return json(res, 200, { ok: true, message: 'Yönetici şifreniz başarıyla güncellendi.' });
     }
 
@@ -2388,13 +2448,13 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const msgMatch = pathname.match(/^\/api\/admin\/messages\/([^/]+)$/);
     if (msgMatch && method === 'DELETE') {
       const idx = db.contact.findIndex((x: any) => x.id === decodeURIComponent(msgMatch[1]));
-      if (idx !== -1) { db.contact.splice(idx, 1); save(); }
+      if (idx !== -1) { db.contact.splice(idx, 1); await saveAsync(); }
       return json(res, 200, { ok: true });
     }
     const nslMatch = pathname.match(/^\/api\/admin\/newsletter\/([^/]+)$/);
     if (nslMatch && method === 'DELETE') {
       const idx = db.newsletter.findIndex((x: any) => x.id === decodeURIComponent(nslMatch[1]));
-      if (idx !== -1) { db.newsletter.splice(idx, 1); save(); }
+      if (idx !== -1) { db.newsletter.splice(idx, 1); await saveAsync(); }
       return json(res, 200, { ok: true });
     }
   }

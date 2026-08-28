@@ -345,10 +345,10 @@
         : `<span>${initial}</span>`;
       
       slot.innerHTML = `
-        <button type="button" class="user-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false" title="${esc(displayName)}">
+        <button type="button" class="user-btn ${isAdmin ? 'is-admin' : ''}" id="user-menu-btn" aria-haspopup="true" aria-expanded="false" title="${esc(displayName)}${isAdmin ? ' (Yönetici)' : ''}">
           <span class="user-btn-avatar">
             ${avatarHtml}
-            <span class="user-btn-online" title="Aktif Oturum"></span>
+            ${isAdmin ? '<span class="user-btn-crown" title="Yönetici">👑</span>' : '<span class="user-btn-online" title="Aktif Oturum"></span>'}
           </span>
           <span class="user-btn-name">${esc(displayName)}</span>
           <svg class="user-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -356,13 +356,27 @@
 
         <div class="user-dropdown-menu" id="user-dropdown-menu" role="menu" aria-label="Kullanıcı Menüsü">
           <div class="user-dd-header">
-            <div class="user-dd-avatar">${avatarHtml}</div>
+            <div class="user-dd-avatar ${isAdmin ? 'is-admin' : ''}">${avatarHtml}</div>
             <div class="user-dd-info">
               <div class="user-dd-name">${esc(displayName)}</div>
               <div class="user-dd-email">${esc(user.email || '')}</div>
               <span class="user-dd-badge ${isAdmin ? 'admin' : ''}">${isAdmin ? '👑 ' + t('acc.role_admin') : '✨ ' + t('acc.role_user')}</span>
             </div>
           </div>
+
+          ${isAdmin ? `
+            <a href="/admin" class="user-dd-admin-card" role="menuitem">
+              <span class="user-dd-admin-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+              <div class="user-dd-admin-text">
+                <span class="user-dd-admin-title">👑 ${LANG === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
+                <span class="user-dd-admin-desc">${LANG === 'tr' ? 'Sipariş, ürün ve ayarlar' : 'Store & order control'}</span>
+              </div>
+              <svg class="user-dd-admin-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <div class="user-dd-divider"></div>
+          ` : ''}
 
           <div class="user-dd-list">
             <a href="/hesap#orders" class="user-dd-item" role="menuitem">
@@ -392,15 +406,6 @@
               </span>
               <span>${t('acc.tab.security')}</span>
             </a>
-
-            ${isAdmin ? `
-              <a href="/admin" class="user-dd-item" role="menuitem" style="color:#d97706">
-                <span class="user-dd-icon" style="color:#d97706">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                </span>
-                <span><b>${LANG === 'tr' ? 'Yönetim Paneli' : 'Admin Dashboard'}</b></span>
-              </a>
-            ` : ''}
 
             <div class="user-dd-divider"></div>
 
@@ -490,8 +495,8 @@
       try {
         const s = await api('/api/session');
         renderNavUser(s.user);
-        const adminLink = $('#nav-admin');
-        if (adminLink) adminLink.style.display = (s.user && s.user.role === 'admin') ? '' : 'none';
+        const mmAdminLink = $('#mm-admin-link');
+        if (mmAdminLink) mmAdminLink.style.display = (s.user && s.user.role === 'admin') ? 'flex' : 'none';
         LS.session = s;
       } catch {}
     };
@@ -500,8 +505,8 @@
   }
   document.addEventListener('ls:logout', () => {
     renderNavUser(null);
-    const adminLink = $('#nav-admin');
-    if (adminLink) adminLink.style.display = 'none';
+    const mmAdminLink = $('#mm-admin-link');
+    if (mmAdminLink) mmAdminLink.style.display = 'none';
   });
 
   /* ---------- cart badge & magnetic micro-bounce ---------- */
