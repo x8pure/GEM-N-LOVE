@@ -104,25 +104,34 @@ const AUTH_SECRET = process.env.AUTH_SECRET || DEFAULT_AUTH_SECRET;
 if (!process.env.AUTH_SECRET) {
   console.warn('[AUTH] Warning: AUTH_SECRET environment variable is missing. Using fallback secret to prevent server crash.');
 }
-function createAuthToken(userId: string, role: string): string {
+function createAuthToken(userId: string, role: string, tokenVersion = 1): string {
   const exp = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
-  const payload = `${userId}:${role}:${exp}`;
+  const payload = `${userId}:${role}:${tokenVersion}:${exp}`;
   const sig = crypto.createHmac('sha256', AUTH_SECRET).update(payload).digest('hex');
   return Buffer.from(`${payload}:${sig}`).toString('base64url');
 }
 
-function verifyAuthToken(tokenStr: string): { userId: string; role: string } | null {
+function verifyAuthToken(tokenStr: string): { userId: string; role: string; tokenVersion: number } | null {
   try {
-    if (!tokenStr) return null;
+    if (!tokenStr || typeof tokenStr !== 'string') return null;
     const raw = Buffer.from(tokenStr, 'base64url').toString('utf8');
     const parts = raw.split(':');
-    if (parts.length !== 4) return null;
-    const [userId, role, expStr, sig] = parts;
+    let userId = '', role = '', versionStr = '1', expStr = '', sig = '';
+    if (parts.length === 5) {
+      [userId, role, versionStr, expStr, sig] = parts;
+    } else if (parts.length === 4) {
+      [userId, role, expStr, sig] = parts;
+      versionStr = '1';
+    } else {
+      return null;
+    }
     const exp = parseInt(expStr, 10);
+    const tokenVersion = parseInt(versionStr, 10) || 1;
     if (isNaN(exp) || Date.now() > exp) return null;
-    const expected = crypto.createHmac('sha256', AUTH_SECRET).update(`${userId}:${role}:${exp}`).digest('hex');
-    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
-      return { userId, role };
+    const expectedPayload = parts.length === 5 ? `${userId}:${role}:${tokenVersion}:${exp}` : `${userId}:${role}:${exp}`;
+    const expected = crypto.createHmac('sha256', AUTH_SECRET).update(expectedPayload).digest('hex');
+    if (sig.length === expected.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+      return { userId, role, tokenVersion };
     }
   } catch (e) {}
   return null;
@@ -134,7 +143,9 @@ async function json(res: http.ServerResponse, code: number, obj: any) {
   const body = JSON.stringify(obj);
   res.statusCode = code;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.end(body);
 }
 
@@ -168,10 +179,14 @@ function setSidCookie(res: http.ServerResponse, sid: string) {
 }
 function clearSidCookie(res: http.ServerResponse) {
   res.setHeader('Set-Cookie', [
-    `ls_sid=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-    `ls_token=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-    `ls_auth_token=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`
+    `ls_sid=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0`,
+    `ls_token=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0`,
+    `ls_auth_token=; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=0`
   ]);
+  res.setHeader('Clear-Site-Data', '"cache", "cookies", "storage"');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
 }
 function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
   let sid = getSid(req);
@@ -200,8 +215,14 @@ function getAuthUser(req: http.IncomingMessage, sess?: any) {
     if (tokenStr) {
       const payload = verifyAuthToken(tokenStr);
       if (payload && payload.userId) {
-        user = db.users.find((x: any) => x.id === payload.userId) || null;
-        if (user && sess) { sess.userId = user.id; }
+        const found = db.users.find((x: any) => x.id === payload.userId) || null;
+        if (found) {
+          const userVersion = found.tokenVersion || 1;
+          if (payload.tokenVersion === userVersion) {
+            user = found;
+            if (sess) { sess.userId = user.id; }
+          }
+        }
       }
     }
   }
@@ -1157,7 +1178,12 @@ function pageLogin(req: http.IncomingMessage, res: http.ServerResponse) {
   </form>
   <p class="auth-alt">${tr('login.alt')} <a href="/kayit">${tr('login.altLink')}</a></p>
 </div></div>`;
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   res.end(layout(C.lang === 'en' ? 'Sign In' : 'Giriş Yap', html, {}, C));
 }
 
@@ -1193,21 +1219,36 @@ function pageRegister(req: http.IncomingMessage, res: http.ServerResponse) {
   </form>
   <p class="auth-alt">${tr('reg.alt')} <a href="/giris">${tr('reg.altLink')}</a></p>
 </div></div>`;
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   res.end(layout(C.lang === 'en' ? 'Register' : 'Kayıt Ol', html, {}, C));
 }
 
 function pageAccount(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   res.end(layout(tr('account.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('nav.account')}</div><h1>${tr('account.title')}</h1></div><div class="acc-layout" id="account-root"><div class="spinner"></div></div>`, {}, C));
 }
 
 function pageProfile(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
   res.end(layout(tr('profile.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/hesap">${tr('account.title')}</a> / ${tr('profile.title')}</div><h1>${tr('profile.title')}</h1></div><div class="acc-layout" id="profile-root"><div class="spinner"></div></div>`, {}, C));
 }
 
@@ -1564,10 +1605,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!String(b.password || '') || b.password.length < 6) return sendError(res, 400, E('err.pass6'));
     if (db.users.some((u: any) => u.email === email)) return sendError(res, 409, E('err.emailUsed'));
     const role = isAdminEmail(email) ? 'admin' : 'customer';
-    const u = { id: uid('u'), email, passwordHash: hash(b.password), name: String(b.name || '').trim() || 'Misafir', role, createdAt: new Date().toISOString(), addresses: [] };
+    const u = { id: uid('u'), email, passwordHash: hash(b.password), name: String(b.name || '').trim() || 'Misafir', role, tokenVersion: 1, createdAt: new Date().toISOString(), addresses: [] };
     db.users.push(u); save();
     sess.userId = u.id; persistSessions();
-    const token = createAuthToken(u.id, u.role);
+    const token = createAuthToken(u.id, u.role, u.tokenVersion);
     const cur = res.getHeader('Set-Cookie');
     const arr = Array.isArray(cur) ? [...cur].map(String) : (cur ? [String(cur)] : []);
     arr.push(`ls_token=${token}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
@@ -1580,11 +1621,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const email = String(b.email || '').trim().toLowerCase();
     const u = db.users.find((x: any) => x.email === email);
     if (!u || u.passwordHash !== hash(String(b.password || ''))) return sendError(res, 401, E('err.badLogin'));
-    // Enforce role
+    // Enforce role and ensure valid token version
     u.role = isAdminEmail(u.email) ? 'admin' : 'customer';
+    u.tokenVersion = u.tokenVersion || 1;
     save();
     sess.userId = u.id; persistSessions();
-    const token = createAuthToken(u.id, u.role);
+    const token = createAuthToken(u.id, u.role, u.tokenVersion);
     const cur = res.getHeader('Set-Cookie');
     const arr = Array.isArray(cur) ? [...cur].map(String) : (cur ? [String(cur)] : []);
     arr.push(`ls_token=${token}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
@@ -1652,6 +1694,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         passwordHash: hash('google_oauth_' + uid('g') + '_' + Date.now()),
         name: name || email.split('@')[0] || 'Kullanıcı',
         role: assignedRole,
+        tokenVersion: 1,
         googleAuth: true,
         avatar: picture || '',
         createdAt: new Date().toISOString(),
@@ -1673,12 +1716,16 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         u.avatar = picture;
         modified = true;
       }
+      if (!u.tokenVersion) {
+        u.tokenVersion = 1;
+        modified = true;
+      }
       if (modified) save();
     }
 
     sess.userId = u.id;
     persistSessions();
-    const token = createAuthToken(u.id, u.role);
+    const token = createAuthToken(u.id, u.role, u.tokenVersion || 1);
     const cur = res.getHeader('Set-Cookie');
     const arr = Array.isArray(cur) ? [...cur].map(String) : (cur ? [String(cur)] : []);
     arr.push(`ls_token=${token}; Path=/; SameSite=Lax; HttpOnly${isProd ? '; Secure' : ''}; Max-Age=${60 * 60 * 24 * 30}`);
@@ -1686,6 +1733,11 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, role: u.role, avatar: u.avatar || '' }, token });
   }
   if (pathname === '/api/auth/logout' && method === 'POST') {
+    const authUser = getAuthUser(req, sess);
+    if (authUser) {
+      authUser.tokenVersion = (authUser.tokenVersion || 1) + 1;
+      save();
+    }
     const sid = getSid(req);
     if (sid && sessions[sid]) {
       sessions[sid].userId = null;
@@ -1922,7 +1974,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!user) return sendError(res, 401, E('err.noUser'));
     const b = await readBody(req);
     if (!b.password || b.password.length < 6) return sendError(res, 400, E('err.pass6'));
-    user.passwordHash = hash(b.password); save();
+    user.passwordHash = hash(b.password);
+    user.tokenVersion = (user.tokenVersion || 1) + 1;
+    save();
     return json(res, 200, { ok: true });
   }
 
@@ -2325,6 +2379,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const me = db.users.find((u: any) => u.id === adm.id);
       if (!me) return sendError(res, 404, 'Kullanıcı hesabı bulunamadı.');
       me.passwordHash = hashPassword(newPass);
+      me.tokenVersion = (me.tokenVersion || 1) + 1;
       save();
       return json(res, 200, { ok: true, message: 'Yönetici şifreniz başarıyla güncellendi.' });
     }

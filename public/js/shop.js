@@ -243,21 +243,25 @@
   /* ---------- global logout ---------- */
   async function performLogout(redirectUrl = '/') {
     try {
+      await api('/api/auth/logout', { method: 'POST' });
+    } catch (e) {}
+    try {
       localStorage.removeItem('ls_auth_token');
       localStorage.removeItem('ls_admin_token');
       localStorage.removeItem('ls_token');
       localStorage.removeItem('ls_user');
-      document.cookie = 'ls_sid=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'ls_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      await api('/api/auth/logout', { method: 'POST' });
-    } catch {}
+      localStorage.removeItem('ls_sid');
+      sessionStorage.clear();
+      document.cookie = 'ls_sid=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+      document.cookie = 'ls_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+    } catch (e) {}
     LS.session = null;
     document.dispatchEvent(new Event('ls:logout'));
     toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
     setTimeout(() => {
-      location.href = redirectUrl;
-    }, 250);
+      window.location.replace(redirectUrl);
+    }, 200);
   }
   LS.logout = performLogout;
 

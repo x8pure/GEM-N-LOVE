@@ -244,17 +244,24 @@
     const lo = $('#adm-logout');
     if (lo) lo.addEventListener('click', async (e) => {
       e.preventDefault();
-      localStorage.removeItem('ls_auth_token');
-      localStorage.removeItem('ls_admin_token');
-      localStorage.removeItem('ls_token');
-      localStorage.removeItem('ls_user');
-      document.cookie = 'ls_sid=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'ls_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax; HttpOnly; Secure; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
       try {
         await api('/api/auth/logout', { method: 'POST' });
-      } catch {}
-      location.href = '/giris';
+      } catch (e) {}
+      try {
+        localStorage.removeItem('ls_auth_token');
+        localStorage.removeItem('ls_admin_token');
+        localStorage.removeItem('ls_token');
+        localStorage.removeItem('ls_user');
+        localStorage.removeItem('ls_sid');
+        sessionStorage.clear();
+        document.cookie = 'ls_sid=; Path=/; SameSite=Lax; Max-Age=0';
+        document.cookie = 'ls_token=; Path=/; SameSite=Lax; Max-Age=0';
+        document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax; Max-Age=0';
+      } catch (e) {}
+      toast('Başarıyla çıkış yapıldı');
+      setTimeout(() => {
+        window.location.replace('/giris');
+      }, 150);
     });
   }
 
