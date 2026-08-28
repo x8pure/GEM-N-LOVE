@@ -283,10 +283,10 @@
     const listEl = $('#cmd-list', m);
 
     const COMMANDS = [
-      { name: '📊 Genel Bakış Paneli', action: () => { location.hash = '#/dashboard'; m.remove(); }, badge: 'Sayfa' },
+            { name: '📊 Genel Bakış Paneli', action: () => { location.hash = '#/dashboard'; m.remove(); }, badge: 'Sayfa' },
       { name: '📦 Sipariş Yönetimi', action: () => { location.hash = '#/orders'; m.remove(); }, badge: 'Sayfa' },
       { name: '🛍️ Ürün Kataloğu', action: () => { location.hash = '#/products'; m.remove(); }, badge: 'Sayfa' },
-      { name: '＋ Yeni Ürün Ekle', action: () => { location.hash = '#/products'; m.remove(); setTimeout(() => $('#prod-add') && $('#prod-add').click(), 100); }, badge: 'Eylem' },
+      { name: '＋ Yeni Ürün Ekle (Manuel)', action: () => { location.hash = '#/products'; m.remove(); setTimeout(() => $('#prod-add') && $('#prod-add').click(), 100); }, badge: 'Eylem' },
       { name: '🗂️ Kategori Mimarisi', action: () => { location.hash = '#/categories'; m.remove(); }, badge: 'Sayfa' },
       { name: '⭐ Yorum Onayları', action: () => { location.hash = '#/reviews'; m.remove(); }, badge: 'Sayfa' },
       { name: '🎟️ Kuponlar & İndirimler', action: () => { location.hash = '#/coupons'; m.remove(); }, badge: 'Sayfa' },
@@ -739,7 +739,7 @@
       </select>
       <button class="btn btn-ghost" id="prod-export">📥 Ürünleri CSV İndir</button>
       <button class="btn btn-ghost" id="wheel-mgr" style="margin-left:auto">🎡 Çarkı Yönet</button>
-      <button class="btn btn-primary" id="prod-add">＋ Yeni Ürün Ekle</button>
+      <button class="btn btn-ghost" id="prod-add">＋ Manuel Ekle</button>
     </div>
     <div class="panel"><div class="panel-body flush">
       <div class="tbl-wrap">
@@ -827,7 +827,7 @@
     });
 
     $('#wheel-mgr').addEventListener('click', () => openWheelModal());
-    $('#prod-add').addEventListener('click', () => openProductModal(null));
+        $('#prod-add').addEventListener('click', () => openProductModal(null));
     $('#prod-q').addEventListener('input', draw);
     $('#prod-stock-filter').addEventListener('change', draw);
     draw();
@@ -916,10 +916,29 @@
     });
   }
 
-  async function openProductModal(p) {
+  /* ================= PRODUCT MODAL (WITH AI ASSIST & STUDIO CLEANER) ================= */
+  async function openProductModal(p, prefillData = null) {
     const cats = await ensureCats();
     const isEdit = !!p;
-    const v = p || { name: '', category: cats[0] ? cats[0].slug : 'ciftler', categoryName: cats[0] ? cats[0].name : '', description: '', longDescription: '', price: '', oldPrice: '', stock: 10, rating: 4.5, featured: false, isNew: true, bestSeller: false, image: '', gallery: [] };
+    
+    // Merge existing product or prefilled scraped data
+    const initialData = p || prefillData || {};
+    const v = {
+      name: initialData.name || '',
+      category: initialData.category || (cats[0] ? cats[0].slug : 'ciftler'),
+      categoryName: initialData.categoryName || (cats[0] ? cats[0].name : ''),
+      description: initialData.description || '',
+      longDescription: initialData.longDescription || '',
+      price: initialData.price !== undefined ? initialData.price : '',
+      oldPrice: initialData.oldPrice !== undefined ? initialData.oldPrice : '',
+      stock: initialData.stock !== undefined ? initialData.stock : 10,
+      rating: initialData.rating || 4.5,
+      featured: !!initialData.featured,
+      isNew: initialData.isNew !== undefined ? !!initialData.isNew : true,
+      bestSeller: !!initialData.bestSeller,
+      image: initialData.image || '',
+      gallery: Array.isArray(initialData.gallery) ? initialData.gallery : (Array.isArray(initialData.images) ? initialData.images : [])
+    };
     
     // Maintain gallery array and primary cover image
     let gallery = Array.isArray(v.gallery) && v.gallery.length ? [...v.gallery] : (v.image ? [v.image] : []);
@@ -930,15 +949,22 @@
 
     const m = document.createElement('div');
     m.className = 'modal-back open';
-    m.innerHTML = `<div class="modal" style="max-width:760px">
+    m.innerHTML = `<div class="modal" style="max-width:780px">
       <div class="modal-head">
         <div>
           <h3>${isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Oluştur'}</h3>
-          <span class="muted" style="font-size:12px">${isEdit ? esc(v.name) : 'Kataloğa yeni ürün ve görseller ekleyin'}</span>
+          <span class="muted" style="font-size:12px">${isEdit ? esc(v.name) : 'Kataloğa yeni ürün ve görseller ekleyin veya linkten otomatik doldurun'}</span>
         </div>
         <button type="button" class="modal-close" id="pm-close-x" aria-label="Kapat">✕</button>
       </div>
       <div class="modal-body">
+        <!-- AI Fast URL Import Bar inside Modal -->
+        <div class="ai-quick-bar">
+          <span class="ai-quick-badge">✨ AI Linkten Doldur</span>
+          <input type="url" id="pm-quick-url" placeholder="Toptancı veya ürün linkini yapıştırın (https://...)" class="ai-quick-input">
+          <button type="button" class="btn btn-ghost btn-sm" id="pm-quick-scrape-btn" style="font-size:12px;background:var(--card-2)">⚡ Bilgileri Çek</button>
+        </div>
+
         <div class="grid-2">
           <div class="field"><label>Ürün Adı *</label><input id="pm-name" value="${esc(v.name)}"></div>
           <div class="field"><label>Kategori</label>
@@ -950,14 +976,25 @@
           <div class="field"><label>İndirim Öncesi Fiyat (₺)</label><input id="pm-old" type="number" min="0" step="0.01" value="${esc(v.oldPrice || '')}" placeholder="Yoksa boş bırakın"></div>
           <div class="field"><label>Stok Adedi</label><input id="pm-stock" type="number" min="0" value="${esc(v.stock)}"></div>
         </div>
-        <div class="field"><label>Kısa Tanıtım / Vurgu</label><input id="pm-desc" value="${esc(v.description)}"></div>
-        <div class="field"><label>Detaylı Ürün Açıklaması</label><textarea id="pm-long">${esc(v.longDescription)}</textarea></div>
+        
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label style="margin-bottom:0">Kısa Tanıtım / Vurgu</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="pm-ai-enhance-btn" style="font-size:11px;color:var(--rose)">🪄 AI Açıklamaları Yeniden Yaz</button>
+          </div>
+          <input id="pm-desc" value="${esc(v.description)}">
+        </div>
+        
+        <div class="field"><label>Detaylı Ürün Açıklaması (Özellikler & Gizlilik)</label><textarea id="pm-long" style="min-height:120px">${esc(v.longDescription)}</textarea></div>
         
         <!-- Multi-photo management section -->
         <div class="field">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
             <label style="margin-bottom:0">Ürün Fotoğrafları & Galeri (<span id="pm-photo-count">0</span> Fotoğraf)</label>
-            <button type="button" class="btn btn-ghost btn-sm" id="pm-add-photo-btn" style="font-size:11.5px">＋ Fotoğraf Ekle</button>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn btn-ghost btn-sm" id="pm-clean-all-btn" style="font-size:11.5px;color:var(--violet)">🪄 Tüm Arka Planları Temizle</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="pm-add-photo-btn" style="font-size:11.5px">＋ Fotoğraf Ekle</button>
+            </div>
           </div>
           <input type="file" id="pm-file" accept="image/*" multiple style="display:none">
           <div class="img-drop" id="pm-drop">
@@ -1000,6 +1037,76 @@
       if (e.target === m) closeModal();
     });
 
+    // Top AI Quick Scraper inside Modal
+    const quickScrapeBtn = $('#pm-quick-scrape-btn', m);
+    const quickUrlIn = $('#pm-quick-url', m);
+    quickScrapeBtn.addEventListener('click', async () => {
+      const url = quickUrlIn.value.trim();
+      if (!url || !url.startsWith('http')) return toast('Lütfen geçerli bir ürün URL linki giriniz', true);
+      
+      const origText = quickScrapeBtn.innerHTML;
+      quickScrapeBtn.disabled = true;
+      quickScrapeBtn.innerHTML = 'Çekiliyor... ⏳';
+      toast('Ürün taranıyor ve Gemini AI içerikleri üretiyor... ⏳');
+
+      try {
+        const res = await api('/api/admin/scrape-product', { method: 'POST', body: { url } });
+        const d = res.data;
+        if (d.name) $('#pm-name', m).value = d.name;
+        if (d.category) $('#pm-cat', m).value = d.category;
+        if (d.price) $('#pm-price', m).value = d.price;
+        if (d.oldPrice) $('#pm-old', m).value = d.oldPrice;
+        if (d.stock) $('#pm-stock', m).value = d.stock;
+        if (d.description) $('#pm-desc', m).value = d.description;
+        if (d.longDescription) $('#pm-long', m).value = d.longDescription;
+
+        if (Array.isArray(d.images) && d.images.length) {
+          for (const img of d.images) {
+            if (!gallery.includes(img)) gallery.push(img);
+          }
+          if (!coverImage && gallery.length) coverImage = gallery[0];
+          renderGallery();
+        }
+        toast('Ürün bilgileri başarıyla dolduruldu! ✨');
+      } catch (err) {
+        toast(err.message || 'Bilgiler çekilemedi', true);
+      } finally {
+        quickScrapeBtn.disabled = false;
+        quickScrapeBtn.innerHTML = origText;
+      }
+    });
+
+    // AI Text Enhancer
+    const aiEnhanceBtn = $('#pm-ai-enhance-btn', m);
+    aiEnhanceBtn.addEventListener('click', async () => {
+      const name = $('#pm-name', m).value.trim();
+      const currentDesc = $('#pm-desc', m).value.trim() || $('#pm-long', m).value.trim();
+      const catSlug = $('#pm-cat', m).value;
+      const catObj = cats.find((c) => c.slug === catSlug);
+      
+      if (!name) return toast('Lütfen önce bir ürün adı girin', true);
+
+      const origText = aiEnhanceBtn.innerHTML;
+      aiEnhanceBtn.disabled = true;
+      aiEnhanceBtn.innerHTML = 'Yazılıyor... ⏳';
+      toast('Gemini AI SEO açıklaması oluşturuyor... 🪄');
+
+      try {
+        const res = await api('/api/admin/ai/enhance-text', {
+          method: 'POST',
+          body: { name, description: currentDesc, categoryName: catObj ? catObj.name : '' }
+        });
+        if (res.data.description) $('#pm-desc', m).value = res.data.description;
+        if (res.data.longDescription) $('#pm-long', m).value = res.data.longDescription;
+        toast('Açıklamalar LoveShop diline göre güncellendi ✨');
+      } catch (err) {
+        toast(err.message || 'AI açıklaması üretilemedi', true);
+      } finally {
+        aiEnhanceBtn.disabled = false;
+        aiEnhanceBtn.innerHTML = origText;
+      }
+    });
+
     const drop = $('#pm-drop', m), fileIn = $('#pm-file', m), addPhotoBtn = $('#pm-add-photo-btn', m), grid = $('#pm-gallery-grid', m), countEl = $('#pm-photo-count', m);
     
     addPhotoBtn.addEventListener('click', () => fileIn.click());
@@ -1018,6 +1125,22 @@
         handleFiles(fileIn.files);
         fileIn.value = '';
       }
+    });
+
+    // Clean all images button
+    const cleanAllBtn = $('#pm-clean-all-btn', m);
+    cleanAllBtn.addEventListener('click', async () => {
+      if (!gallery.length) return toast('Henüz galeride fotoğraf bulunmuyor', true);
+      toast('Tüm fotoğrafların arka planı stüdyo moduna temizleniyor... 🪄');
+      const newGallery = [];
+      for (const img of gallery) {
+        const cleaned = await cleanImageBackground(img);
+        newGallery.push(cleaned);
+      }
+      gallery = newGallery;
+      if (gallery.length) coverImage = gallery[0];
+      renderGallery();
+      toast('Tüm görseller stüdyo moduna dönüştürüldü! ✨');
     });
 
     async function handleFiles(files) {
@@ -1058,16 +1181,33 @@
             ${isCover ? '<span class="photo-tile-cover-badge">👑 Kapak</span>' : ''}
             <button type="button" class="photo-tile-del-btn" data-del-idx="${idx}" title="Bu Fotoğrafı Kaldır">✕</button>
           </div>
-          <div class="photo-tile-actions">
+          <div class="photo-tile-actions" style="display:flex;flex-direction:column;gap:4px;width:100%">
+            <button type="button" class="photo-tile-clean-btn" data-clean-idx="${idx}" title="Arka planı sil ve stüdyo moduna çevir">🪄 Arka Planı Sil</button>
             ${isCover
-              ? '<span class="muted" style="font-size:10.5px;font-weight:600">Ana Görsel</span>'
-              : `<button type="button" class="btn btn-ghost btn-sm" data-cover-idx="${idx}">⭐ Kapak Yap</button>`
+              ? '<span class="muted" style="font-size:10.5px;font-weight:600;text-align:center">Ana Görsel</span>'
+              : `<button type="button" class="btn btn-ghost btn-sm" data-cover-idx="${idx}" style="font-size:10.5px;padding:2px 7px">⭐ Kapak Yap</button>`
             }
           </div>
         </div>`;
       }).join('');
 
       // Attach gallery tile event handlers
+      $$('[data-clean-idx]', grid).forEach((b) => b.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const idx = parseInt(b.dataset.cleanIdx, 10);
+        b.innerHTML = 'Temizleniyor... ⏳';
+        try {
+          const cleaned = await cleanImageBackground(gallery[idx]);
+          gallery[idx] = cleaned;
+          if (coverImage === gallery[idx] || idx === 0) coverImage = cleaned;
+          renderGallery();
+          toast('Arka plan başarıyla temizlendi ✨');
+        } catch (err) {
+          toast('Görsel işlenemedi', true);
+        }
+      }));
+
       $$('[data-del-idx]', grid).forEach((b) => b.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -1479,6 +1619,16 @@
         <a href="mailto:${esc(m.email)}?subject=Love%20Shop%20Yan%C4%B1t" class="btn btn-ghost btn-sm">✉️ E-posta ile Yanıtla</a>
       </div>
     </div>`).join('') : '<div class="empty"><div class="big">💌</div>Gelen kutusunda yeni mesaj yok</div>';
+
+    $$('.del-msg').forEach((btn) => btn.addEventListener('click', async (e) => {
+      const id = e.currentTarget.getAttribute('data-id') || e.currentTarget.dataset.id;
+      if (!id || !confirm('Mesaj silinsin mi?')) return;
+      try {
+        await api('/api/admin/messages/' + id, { method: 'DELETE' });
+        toast('Mesaj silindi');
+        viewMessages();
+      } catch (err) { toast(err.message, true); }
+    }));
   }
 
   /* ================= SETTINGS ================= */
@@ -1651,15 +1801,6 @@
       announceInput.addEventListener('input', () => {
         announcePreview.textContent = announceInput.value || 'GİRİLEN DUYURU METNİ...';
       });
-    $('.del-msg').forEach(btn => btn.addEventListener('click', async (e) => {
-      const id = e.target.getAttribute('data-id');
-      if (!id || !confirm('Mesaj silinsin mi?')) return;
-      try {
-        await api('/api/admin/messages/' + id, { method: 'DELETE' });
-        toast('Mesaj silindi');
-        viewMessages();
-      } catch (err) { toast(err.message, true); }
-    }));
     }
 
     $('#st-pass-btn').addEventListener('click', async () => {

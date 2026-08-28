@@ -37,111 +37,64 @@ function isAdminEmail(email?: string | null): boolean {
   return ADMIN_EMAILS.includes(clean);
 }
 
-// Initialize Firebase and restore cloud state synchronously before accepting requests
-await (async () => {
+let lastCloudSyncTime = 0;
+let isSyncing = false;
+
+export async function syncWithCloud(force = false) {
+  if (isSyncing) return;
+  isSyncing = true;
   try {
     initFirebase();
     const localDb = load();
     const cloudState = await loadFromCloudFirestore();
     
-    if (cloudState && Array.isArray(cloudState.products)) {
-      // Reconcile local and cloud data to prevent race-condition overwrite
-      const cloudProdMap = new Map((cloudState.products || []).map((p: any) => [p.id, p]));
-      let hasLocalAdditions = false;
-
-      if (Array.isArray(localDb.products)) {
-        for (const lp of localDb.products) {
-          if (!cloudProdMap.has(lp.id)) {
-            cloudState.products.push(lp);
-            cloudProdMap.set(lp.id, lp);
-            hasLocalAdditions = true;
-          }
-        }
-      }
-
-      if (!Array.isArray(cloudState.categories)) cloudState.categories = [];
-      const cloudCatMap = new Map((cloudState.categories || []).map((c: any) => [c.id || c.slug, c]));
-      if (Array.isArray(localDb.categories)) {
-        for (const lc of localDb.categories) {
-          const key = lc.id || lc.slug;
-          if (!cloudCatMap.has(key)) {
-            cloudState.categories.push(lc);
-            cloudCatMap.set(key, lc);
-            hasLocalAdditions = true;
-          }
-        }
-      }
-
-      if (!Array.isArray(cloudState.orders)) cloudState.orders = [];
-      const cloudOrderMap = new Map((cloudState.orders || []).map((o: any) => [o.id, o]));
-      if (Array.isArray(localDb.orders)) {
-        for (const lo of localDb.orders) {
-          if (!cloudOrderMap.has(lo.id)) {
-            cloudState.orders.push(lo);
-            cloudOrderMap.set(lo.id, lo);
-            hasLocalAdditions = true;
-          }
-        }
-      }
-
-      if (!Array.isArray(cloudState.users)) cloudState.users = [];
-      const cloudUserMap = new Map((cloudState.users || []).map((u: any) => [u.id || u.email, u]));
-      if (Array.isArray(localDb.users)) {
-        for (const lu of localDb.users) {
-          const key = lu.id || lu.email;
-          if (!cloudUserMap.has(key)) {
-            cloudState.users.push(lu);
-            cloudUserMap.set(key, lu);
-            hasLocalAdditions = true;
-          }
-        }
-      }
-
-      setMemoryDb(cloudState, false);
+    if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+      setMemoryDb(cloudState, true);
       db = load();
-      let slugMigrated = false;
-      for (const p of db.products) {
-        if (!p.slug || p.slug.length < 2 || p.slug === 'ad') {
-          const newSlug = String(p.name).toLowerCase().replace(/[çğıöşü]/g, (c) => ({'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u'}[c]||c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('p');
-          const isTaken = db.products.some((x) => x !== p && x.slug === newSlug);
-          p.slug = isTaken ? newSlug + '-' + Date.now().toString(36) : newSlug;
-          slugMigrated = true;
-        }
-      }
-      if (slugMigrated || hasLocalAdditions) {
-        await saveAsync();
-      } else {
-        save();
-      }
-      console.log(`[Server] Synced and restored ${db.products.length} products, ${db.categories?.length || 0} categories and ${db.orders?.length || 0} orders from Firebase Cloud.`);
-    } else {
-      // If cloud is empty, save local state directly to cloud
-      if (!db.products || !db.products.length) {
-        db = load();
-      }
+      lastCloudSyncTime = Date.now();
+      console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories.`);
+    } else if (localDb && Array.isArray(localDb.products) && localDb.products.length > 0) {
       await saveAsync();
-    }
-    if (Array.isArray(db.users)) {
-      let userFixed = false;
-      
-      // Audit all users in db.users: strictly enforce ADMIN_EMAILS (only cemal.ulas@gmail.com)
-      for (const u of db.users) {
-        const shouldBeAdmin = isAdminEmail(u.email);
-        if (shouldBeAdmin && u.role !== 'admin') {
-          u.role = 'admin';
-          userFixed = true;
-        } else if (!shouldBeAdmin && u.role === 'admin') {
-          u.role = 'customer';
-          userFixed = true;
-        }
-      }
-      
-      if (userFixed) await saveAsync();
+      lastCloudSyncTime = Date.now();
     }
   } catch (err) {
-    console.error('[Server] Cloud sync initial load error:', err);
+    console.error('[Server] Cloud sync error:', err);
+  } finally {
+    isSyncing = false;
   }
-})();
+}
+
+export async function ensureCloudDatabaseReady(force = false) {
+  const hasProducts = db && Array.isArray(db.products) && db.products.length > 0;
+  const now = Date.now();
+  if (!force && hasProducts && (now - lastCloudSyncTime < 8000)) {
+    return;
+  }
+  if (!hasProducts || force) {
+    await syncWithCloud(true);
+  } else if (now - lastCloudSyncTime >= 8000) {
+    // Non-blocking background sync for fresh data across instances
+    syncWithCloud(false).catch(() => {});
+  }
+}
+
+// Initial startup cloud synchronization
+await syncWithCloud(true);
+
+if (Array.isArray(db.users)) {
+  let userFixed = false;
+  for (const u of db.users) {
+    const shouldBeAdmin = isAdminEmail(u.email);
+    if (shouldBeAdmin && u.role !== 'admin') {
+      u.role = 'admin';
+      userFixed = true;
+    } else if (!shouldBeAdmin && u.role === 'admin') {
+      u.role = 'customer';
+      userFixed = true;
+    }
+  }
+  if (userFixed) await saveAsync();
+}
 
 let sessions: Record<string, any> = {};
 try { sessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')); } catch { sessions = {}; }
@@ -2464,6 +2417,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
 /* ---------------- router ---------------- */
 export const handler = async (req: http.IncomingMessage, res: http.ServerResponse) => {
+  await ensureCloudDatabaseReady();
   let url: URL;
   let pathname = '/';
   try {
