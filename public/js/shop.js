@@ -156,10 +156,20 @@
     document.cookie = 'ls_theme=' + (dark ? 'dark' : 'light') + '; Path=/; Max-Age=31536000; SameSite=Lax';
   }
   function syncThemeButtons(dark) {
-    $$('#theme-toggle,#mm-theme').forEach((b) => {
-      b.innerHTML = dark ? SUN_SVG : MOON_SVG;
-      b.title = dark ? (LANG === 'tr' ? 'Aydınlık moda geç' : 'Switch to Light mode') : (LANG === 'tr' ? 'Karanlık moda geç' : 'Switch to Dark mode');
-    });
+    const themeBtn = $('#theme-toggle');
+    if (themeBtn) {
+      themeBtn.innerHTML = dark ? SUN_SVG : MOON_SVG;
+      themeBtn.title = dark ? (LANG === 'tr' ? 'Aydınlık moda geç' : 'Switch to Light mode') : (LANG === 'tr' ? 'Karanlık moda geç' : 'Switch to Dark mode');
+    }
+    const mmSwitch = $('#mm-theme');
+    if (mmSwitch) {
+      mmSwitch.classList.toggle('active', dark);
+      mmSwitch.setAttribute('aria-checked', String(dark));
+    }
+    const mmStatus = $('#mm-theme-status');
+    if (mmStatus) {
+      mmStatus.textContent = dark ? (LANG === 'tr' ? 'Açık' : 'On') : (LANG === 'tr' ? 'Kapalı' : 'Off');
+    }
   }
   const darkNow = document.documentElement.classList.contains('dark');
   syncThemeButtons(darkNow);
@@ -474,22 +484,35 @@
     const burger = $('#burger');
     const mm = $('#mobile-menu');
     const mmClose = $('#mm-close');
+    const mmBackdrop = $('#mm-backdrop');
+
+    const toggleDrawer = (open) => {
+      if (!mm) return;
+      const isOpen = open !== undefined ? open : !mm.classList.contains('open');
+      mm.classList.toggle('open', isOpen);
+      if (mmBackdrop) mmBackdrop.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    };
+
     if (burger && mm) {
       burger.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isOpen = mm.classList.toggle('open');
-        document.body.style.overflow = isOpen ? 'hidden' : '';
+        toggleDrawer(true);
       });
       if (mmClose) {
-        mmClose.addEventListener('click', () => {
-          mm.classList.remove('open');
-          document.body.style.overflow = '';
-        });
+        mmClose.addEventListener('click', () => toggleDrawer(false));
+      }
+      if (mmBackdrop) {
+        mmBackdrop.addEventListener('click', () => toggleDrawer(false));
       }
       $$('a', mm).forEach((a) => a.addEventListener('click', () => {
-        mm.classList.remove('open');
-        document.body.style.overflow = '';
+        toggleDrawer(false);
       }));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mm.classList.contains('open')) {
+          toggleDrawer(false);
+        }
+      });
     }
     const updateNavSession = async () => {
       try {
@@ -1088,6 +1111,88 @@
 
       // Spatial gallery thumbnail switcher
       const spatialMain = $('#spatial-main-image', stage);
+      
+      // Mobile Pull-to-Zoom (Elastic Rubber-Band Effect)
+      const spatialVisual = $('.spatial-visual-hero', stage);
+      const spatialContent = $('.spatial-content-pane', stage);
+      if (spatialVisual && spatialMain) {
+        let startY = 0;
+        let isPulling = false;
+        
+        spatialVisual.addEventListener('touchstart', (e) => {
+          // Sadece sayfa/modal başındayken aktif olsun
+          const scrollTop = spatialVisual.closest('.spatial-card-stage')?.scrollTop || window.scrollY;
+          if (scrollTop <= 10) {
+            startY = e.touches[0].clientY;
+            isPulling = true;
+            spatialMain.style.transition = 'none';
+            spatialMain.style.transformOrigin = 'center center';
+            if (spatialContent) {
+              spatialContent.style.transition = 'none';
+              // Bilgi kartını (yazılar + arkaplan) tek bir kütle yapmak için:
+              spatialContent.style.backgroundColor = 'var(--card-solid)';
+              spatialContent.style.position = 'relative';
+              spatialContent.style.zIndex = '10';
+            }
+            // Görselin aşağıya taşabilmesi için overflow'u serbest bırak
+            spatialVisual.style.overflow = 'visible';
+          }
+        }, { passive: true });
+
+        spatialVisual.addEventListener('touchmove', (e) => {
+          if (!isPulling) return;
+          const currentY = e.touches[0].clientY;
+          const deltaY = currentY - startY;
+          
+          if (deltaY > 0) {
+            e.preventDefault(); // Tarayıcının varsayılan aşağı kaydırma (pull-to-refresh) hareketini engeller
+            // Yaylanma direnci
+            let scale = 1 + (deltaY / 300);
+            if (scale > 1.3) {
+               scale = 1.3 + (scale - 1.3) * 0.3; 
+            }
+            spatialMain.style.transform = `scale(${scale})`;
+            
+            // Bilgi kartını görselin merkezden büyümesi kadar aşağı doğru kaydır (translateY)
+            if (spatialContent) {
+               const moveY = (spatialMain.offsetHeight * (scale - 1)) / 2;
+               spatialContent.style.transform = `translateY(${moveY}px)`;
+            }
+          } else {
+            isPulling = false;
+          }
+        }, { passive: false });
+
+        const resetZoom = () => {
+          if (isPulling || spatialMain.style.transform !== '') {
+            isPulling = false;
+            spatialMain.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            spatialMain.style.transform = 'scale(1)';
+            
+            if (spatialContent) {
+              spatialContent.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+              spatialContent.style.transform = 'translateY(0)';
+            }
+            
+            setTimeout(() => {
+              if (!isPulling) {
+                spatialMain.style.transition = '';
+                if (spatialContent) {
+                  spatialContent.style.transition = '';
+                  spatialContent.style.backgroundColor = '';
+                  spatialContent.style.position = '';
+                  spatialContent.style.zIndex = '';
+                }
+                spatialVisual.style.overflow = '';
+              }
+            }, 500);
+          }
+        };
+
+        spatialVisual.addEventListener('touchend', resetZoom);
+        spatialVisual.addEventListener('touchcancel', resetZoom);
+      }
+
       $$('.spatial-thumb-btn', stage).forEach((btn) => {
         btn.addEventListener('click', () => {
           const targetSrc = btn.dataset.thumbSrc;

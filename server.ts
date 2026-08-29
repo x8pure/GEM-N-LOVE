@@ -67,12 +67,12 @@ export async function syncWithCloud(force = false) {
 export async function ensureCloudDatabaseReady(force = false) {
   const hasProducts = db && Array.isArray(db.products) && db.products.length > 0;
   const now = Date.now();
-  if (!force && hasProducts && (now - lastCloudSyncTime < 8000)) {
+  if (!force && hasProducts && (now - lastCloudSyncTime < 45000)) {
     return;
   }
   if (!hasProducts || force) {
     await syncWithCloud(true);
-  } else if (now - lastCloudSyncTime >= 8000) {
+  } else if (now - lastCloudSyncTime >= 45000) {
     // Non-blocking background sync for fresh data across instances
     syncWithCloud(false).catch(() => {});
   }
@@ -773,77 +773,60 @@ ${opts.noChrome ? body : `
 </div>
 <div id="cursor-glow"></div>
 <header><nav class="top">
-  <a href="/" class="brand">LOVE<span class="dot">.</span></a>
-  <div class="nav-links">
-    <a href="/" data-nav="/">${tr('nav.home')}</a>
-    <a href="/magaza" data-nav="/magaza">${tr('nav.shop')}</a>
-    <a href="/hakkimizda" data-nav="/hakkimizda">${tr('nav.about')}</a>
-    <a href="/iletisim" data-nav="/iletisim">${tr('nav.contact')}</a>
-  </div>
-  <div class="nav-tools">
-    <button id="nav-search-btn" class="icon-btn" title="${tr('nav.search')}" aria-label="Search">
-      <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    </button>
-    <button id="theme-toggle" class="icon-btn" title="${dark ? 'Aydınlık moda geç' : 'Karanlık moda geç'}" aria-label="Dark mode">
-      ${dark ? '<svg class="icon-svg icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' : '<svg class="icon-svg icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}
-    </button>
-    <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
-    <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
-    <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
-    <button id="burger" class="icon-btn" aria-label="Menü" title="Menü"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
-  </div>
-</nav></header>
-<div class="mobile-menu" id="mobile-menu" aria-label="Mobil Gezinme Menüsü">
-  <div class="mm-head">
+  <div class="nav-inner">
     <a href="/" class="brand">LOVE<span class="dot">.</span></a>
-    <button type="button" id="mm-close" class="icon-btn" aria-label="Kapat">
-      <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="mm-search-trigger" id="mm-search-btn" role="button" tabindex="0">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    <span>${tr('nav.search')}...</span>
-  </div>
-  <div class="mm-links">
-    <a href="/" data-nav="/">
-      <span>${tr('nav.home')}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="/magaza" data-nav="/magaza">
-      <span>${tr('nav.shop')}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="/hakkimizda" data-nav="/hakkimizda">
-      <span>${tr('nav.about')}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="/iletisim" data-nav="/iletisim">
-      <span>${tr('nav.contact')}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="/hesap" data-nav="/hesap">
-      <span>${tr('nav.account')}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="/admin" id="mm-admin-link" data-nav="/admin" style="display:none;" class="mm-admin-link">
-      <span>👑 ${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-  </div>
-  <div class="mm-footer">
-    <a class="mm-wa-btn" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
-      <span>WhatsApp Canlı Destek & Sipariş</span>
-    </a>
-    <div class="mm-badges">
-      <span>🔒 %100 Gizli Paket</span>
-      <span>•</span>
-      <span>🔞 +18 Yetişkin</span>
-      <span>•</span>
-      <span>⚡ Hızlı Kargo</span>
+    <div class="nav-links">
+      <a href="/" data-nav="/">${tr('nav.home')}</a>
+      <a href="/magaza" data-nav="/magaza">${tr('nav.shop')}</a>
+      <a href="/hakkimizda" data-nav="/hakkimizda">${tr('nav.about')}</a>
+      <a href="/iletisim" data-nav="/iletisim">${tr('nav.contact')}</a>
+    </div>
+    <div class="nav-tools">
+      <button id="nav-search-btn" class="icon-btn" title="${tr('nav.search')}" aria-label="Search">
+        <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button id="theme-toggle" class="icon-btn" title="${dark ? 'Aydınlık moda geç' : 'Karanlık moda geç'}" aria-label="Dark mode">
+        ${dark ? '<svg class="icon-svg icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' : '<svg class="icon-svg icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}
+      </button>
+      <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
+      <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
+      <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
+      <button id="burger" class="icon-btn" aria-label="Menü" title="Menü"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
     </div>
   </div>
-</div>
+</nav></header>
+<div class="mm-backdrop" id="mm-backdrop"></div>
+<aside class="mobile-menu" id="mobile-menu" aria-label="Mobil Gezinme Menüsü" role="dialog" aria-modal="true">
+  <div class="mm-head">
+    <a href="/" class="brand">LOVE<span class="dot">.</span></a>
+    <button type="button" id="mm-close" class="icon-btn mm-close-btn" aria-label="Kapat">
+      <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="mm-body">
+    <nav class="mm-pure-nav" aria-label="Ana Gezinme">
+      <a href="/" data-nav="/" class="mm-pure-link">${tr('nav.home')}</a>
+      <a href="/magaza" data-nav="/magaza" class="mm-pure-link">${tr('nav.shop')}</a>
+      <a href="/hakkimizda" data-nav="/hakkimizda" class="mm-pure-link">${tr('nav.about')}</a>
+      <a href="/iletisim" data-nav="/iletisim" class="mm-pure-link">${tr('nav.contact')}</a>
+      <a href="/hesap" data-nav="/hesap" class="mm-pure-link">${tr('nav.account')}</a>
+      <a href="/admin" id="mm-admin-link" data-nav="/admin" style="display:none;" class="mm-pure-link mm-pure-admin">
+        <span>👑 ${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="mm-footer">
+    <a class="mm-pure-wa" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+      <span>${C.lang === 'tr' ? 'WhatsApp Canlı Destek' : 'WhatsApp Concierge'}</span>
+    </a>
+    <div class="mm-pure-note">
+      <span>🔒 %100 Gizli Paket • Hızlı Teslimat</span>
+    </div>
+  </div>
+</aside>
 <main id="app-main">
 ${body}
 </main>
@@ -1942,14 +1925,31 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     sess.cart = []; sess.coupon = null; sess.lastGuestEmail = email || null;
     await saveAsync(); persistSessions();
 
-    const lines = ['Merhaba Love, yeni siparişim var:', 'Sipariş No: ' + orderId, ''];
-    for (const i of order.items) lines.push(`- ${i.name} x${i.qty} = ${fmt(i.price * i.qty)}`);
-    if (order.discount) lines.push(`Kupon indirimi: -${fmt(order.discount)}`);
-    if (order.shipping) lines.push(`Kargo: ${fmt(order.shipping)}`);
-    lines.push(`TOPLAM: ${fmt(total)}`, '');
-    lines.push(pickup ? 'Teslimat: Mağazanızdan teslim alacağım (Ilgaz İş Hanı)' : 'Teslimat: Adrese kargo, gizli paketleme lütfen');
-    lines.push('Ad Soyad: ' + name, 'Telefon: ' + phone);
-    if (!pickup) lines.push('Adres: ' + address + ', ' + city);
+    const lines = [
+      'Merhaba Love Shop! 🖤',
+      'Web sitenizden yeni bir sipariş vermek istiyorum. Detaylar aşağıdadır:',
+      '',
+      '🛍️ SİPARİŞ ÖZETİ:'
+    ];
+    for (const i of order.items) {
+      lines.push(`${i.qty}x ${i.name} - ${fmt(i.price * i.qty)}`);
+    }
+    lines.push('');
+    lines.push('--------------------------');
+    lines.push(`📦 TESLİMAT: ${pickup ? 'Mağazadan Teslim' : `Adrese Kargo (${fmt(shipping)})`}`);
+    if (order.discount && order.coupon) lines.push(`🎁 İNDİRİM: -${fmt(order.discount)} (Kupon: ${order.coupon})`);
+    else if (order.discount) lines.push(`🎁 İNDİRİM: -${fmt(order.discount)}`);
+    lines.push(`💳 TOPLAM TUTAR: ${fmt(total)}`);
+    lines.push('');
+    lines.push('👤 BİLGİLERİM:');
+    lines.push(`İsim: ${name}`);
+    if (!pickup) lines.push(`Adres: ${address}, ${city}`);
+    lines.push(`Tel: ${phone}`);
+    if (order.discreet) lines.push('Not: Gizli paketleme talep edildi. 🔒');
+    if (order.note) lines.push(`Sipariş Notu: ${order.note}`);
+    lines.push('');
+    lines.push('Siparişi onaylamak için IBAN veya ödeme linki alabilir miyim? Teşekkürler! ✨');
+
     const waMessage = lines.join('\n');
     return json(res, 200, { ok: true, orderId, total, pickup, waMessage, waLink: (st.whatsapp || 'https://wa.me/905436331325') + '?text=' + encodeURIComponent(waMessage) });
   }
@@ -2040,6 +2040,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
           customers: db.users.filter((u: any) => u.role === 'customer').length,
           products: db.products.length,
           newsletter: db.newsletter.length,
+          pendingOrders: db.orders.filter((o: any) => o.status === 'processing').length,
           pendingReviews: db.reviews.filter((r: any) => !r.approved).length,
           lowStock: db.products.filter((p: any) => p.stock <= 5),
           days, catDist

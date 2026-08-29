@@ -1856,7 +1856,7 @@
     window.__me = sess.user;
     try {
       const st = (await api('/api/admin/stats')).stats;
-      window.__badges = { orders: 0, reviews: st.pendingReviews };
+      window.__badges = { orders: st.pendingOrders || 0, reviews: st.pendingReviews || 0 };
     } catch { window.__badges = {}; }
     const page = (location.hash || '#/dashboard').split('/')[1] || 'dashboard';
     if (!VIEWS[page]) return (location.hash = '#/dashboard');
@@ -1864,4 +1864,37 @@
   }
   addEventListener('hashchange', route);
   route();
+
+  let lastPendingOrders = null;
+  setInterval(async () => {
+    if (!window.__me) return;
+    try {
+      const res = await api('/api/admin/stats');
+      if (!res || !res.stats) return;
+      const st = res.stats;
+      window.__badges = { orders: st.pendingOrders || 0, reviews: st.pendingReviews || 0 };
+      
+      if (lastPendingOrders !== null && st.pendingOrders > lastPendingOrders) {
+        toast('🛒 Yeni bir sipariş geldi!', false);
+      }
+      lastPendingOrders = st.pendingOrders;
+
+      // Update badge in DOM if it exists
+      const ordersLink = document.querySelector('a[href="#/orders"]');
+      if (ordersLink) {
+        const existingBadge = ordersLink.querySelector('.pill');
+        if (st.pendingOrders > 0) {
+          if (existingBadge) existingBadge.textContent = st.pendingOrders;
+          else {
+            const badgeEl = document.createElement('span');
+            badgeEl.className = 'pill';
+            badgeEl.textContent = st.pendingOrders;
+            ordersLink.appendChild(badgeEl);
+          }
+        } else if (existingBadge) {
+          existingBadge.remove();
+        }
+      }
+    } catch (e) {}
+  }, 10000); // Check every 10 seconds
 })();
