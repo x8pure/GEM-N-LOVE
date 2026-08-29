@@ -1122,27 +1122,79 @@ function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: str
   const en = C.lang === 'en';
   const order = db.orders.find((o: any) => o.id === id);
   const pickup = !!(order && order.address && String(order.address.full).startsWith('MAĞAZADAN'));
-  const lines = order
-    ? [(en ? 'Hello Love, my order:' : 'Merhaba Love, siparişim:'), (en ? 'Order No: ' : 'Sipariş No: ') + order.id, '']
-    : [(en ? 'Hello Love, I have a new order:' : 'Merhaba Love, yeni siparişim var:')];
+  
+  let lines = [];
   if (order) {
-    for (const i of order.items) lines.push(`- ${i.name} x${i.qty} = ${fmt(i.price * i.qty)}`);
-    if (order.discount) lines.push((en ? 'Coupon discount: ' : 'Kupon indirimi: ') + '-' + fmt(order.discount));
-    if (order.shipping) lines.push((en ? 'Shipping: ' : 'Kargo: ') + fmt(order.shipping));
-    lines.push((en ? 'TOTAL: ' : 'TOPLAM: ') + fmt(order.total));
+    if (en) {
+      lines = [
+        '✨ *Hello Love, I have a new order!*', '',
+        `📦 *ORDER SUMMARY* (Order No: #${order.id})`,
+        '━━━━━━━━━━━━━━━━━━'
+      ];
+      for (const i of order.items) lines.push(`🔹 ${i.name} (x${i.qty}) - ${fmt(i.price * i.qty)}`);
+      lines.push('━━━━━━━━━━━━━━━━━━');
+      if (order.shipping) lines.push(`🚚 Shipping: ${fmt(order.shipping)}`);
+      if (order.discount) lines.push(`🎁 Discount: -${fmt(order.discount)}`);
+      lines.push(`💰 *TOTAL: ${fmt(order.total)}*`);
+      lines.push('', '👤 *CUSTOMER INFO*');
+      lines.push(`*Name:* ${order.customerName}`);
+      lines.push(`*Phone:* ${order.phone}`);
+      if (order.address && !pickup) lines.push(`*Address:* ${order.address.full} ${order.address.city}`);
+      if (order.note) lines.push(`*Note:* ${order.note}`);
+      lines.push('', `💳 *Payment Method:* ${order.payment || 'Bank Transfer'}`);
+      lines.push('', '_Looking forward to your reply, thanks! 🌸_');
+    } else {
+      lines = [
+        '✨ *Merhaba Love, yeni bir sipariş vermek istiyorum!*', '',
+        `📦 *SİPARİŞ ÖZETİ* (Sipariş No: #${order.id})`,
+        '━━━━━━━━━━━━━━━━━━'
+      ];
+      for (const i of order.items) lines.push(`🔹 ${i.name} (x${i.qty}) - ${fmt(i.price * i.qty)}`);
+      lines.push('━━━━━━━━━━━━━━━━━━');
+      if (order.shipping) lines.push(`🚚 Kargo: ${fmt(order.shipping)}`);
+      if (order.discount) lines.push(`🎁 İndirim: -${fmt(order.discount)}`);
+      lines.push(`💰 *GENEL TOPLAM: ${fmt(order.total)}*`);
+      lines.push('', '👤 *MÜŞTERİ BİLGİLERİ*');
+      lines.push(`*İsim:* ${order.customerName}`);
+      lines.push(`*Telefon:* ${order.phone}`);
+      if (order.address && !pickup) lines.push(`*Adres:* ${order.address.full} ${order.address.city} ${order.address.zip}`);
+      if (order.note) lines.push(`*Not:* ${order.note}`);
+      lines.push('', `💳 *Ödeme Tercihi:* ${order.payment || 'Havale/EFT'}`);
+      lines.push('', '_Siparişimle ilgili dönüşünüzü bekliyorum, iyi çalışmalar! 🌸_');
+    }
   }
+
   const waLink = (st.whatsapp || 'https://wa.me/905436331325') + '?text=' + encodeURIComponent(lines.join('\n'));
   const html = `
-<div class="success-wrap"><div class="success-card">
-  <div class="success-icon">${pickup ? '🏬' : '💬'}</div>
-  <h1>${pickup ? tr('thanks.h.pickup') : tr('thanks.h.ship')}</h1>
+<div class="success-wrap" id="thanks-wrap"><div class="success-card">
+  <div class="success-icon" id="thanks-icon">${pickup ? '🏬' : '💬'}</div>
+  <h1 id="thanks-h1">${pickup ? tr('thanks.h.pickup') : tr('thanks.h.ship')}</h1>
   <p id="thanks-total">${order ? tr('thanks.total') + ' ' + fmt(order.total) : ''}</p>
-  <p>${pickup ? tr('thanks.p.pickup') : tr('thanks.p.ship')}</p>
+  <p id="thanks-p">${pickup ? tr('thanks.p.pickup') : tr('thanks.p.ship')}</p>
   <div class="order-no" id="thanks-order">${esc(id)}</div>
-  <a href="${esc(waLink)}" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:20px">💬 ${pickup ? tr('thanks.wa.pickup') : tr('thanks.wa.ship')}</a>
-  <p style="font-size:12.5px;color:var(--muted);margin-top:8px">${tr('thanks.account')}</p>
+  <a href="${esc(waLink)}" target="_blank" rel="noopener" class="btn btn-primary" id="thanks-wa-btn" style="margin-top:20px">💬 ${pickup ? tr('thanks.wa.pickup') : tr('thanks.wa.ship')}</a>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:8px" id="thanks-acc-info">${tr('thanks.account')}</p>
   <div style="margin-top:26px;display:flex;gap:12px;justify-content:center"><a href="/magaza" class="btn btn-ghost">${tr('thanks.continue')}</a></div>
-</div></div>`;
+</div></div>
+<script>
+  const btn = document.getElementById('thanks-wa-btn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      setTimeout(() => {
+        const h1 = document.getElementById('thanks-h1');
+        const p = document.getElementById('thanks-p');
+        const icon = document.getElementById('thanks-icon');
+        const accInfo = document.getElementById('thanks-acc-info');
+        if (h1) h1.textContent = '${en ? "Congratulations! Order Placed 🎉" : "Tebrikler! Siparişiniz Alındı 🎉"}';
+        if (p) p.textContent = '${en ? "Your order details have been sent to us. We will get back to you shortly." : "Sipariş detaylarınız bize ulaştı. WhatsApp üzerinden sizinle iletişime geçeceğiz."}';
+        if (icon) { icon.textContent = '✅'; icon.style.background = 'rgba(76, 175, 80, 0.1)'; icon.style.color = '#4CAF50'; }
+        if (btn) btn.style.display = 'none';
+        if (accInfo) accInfo.style.display = 'none';
+      }, 800);
+    });
+  }
+</script>
+`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(en ? 'Order Received' : 'Sipariş Alındı', html, {}, C));
 }
