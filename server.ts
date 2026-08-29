@@ -729,7 +729,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const C = ctx || { lang: 'tr', theme: 'light', t: makeT('tr'), num: (n: number) => n.toLocaleString('tr-TR') };
   const tr = C.t;
   const dark = C.theme === 'dark';
-  const appVersion = '1.0.8';
+  const appVersion = '1.0.9-' + Date.now();
   const desc = opts.description || `${st.storeName}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.`;
   const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
   const ogImage = opts.ogImage || 'https://loveshop.com.tr/test.png';
@@ -1502,7 +1502,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
       res.writeHead(200, {
         'Content-Length': st.size,
         'Content-Type': type,
-        'Cache-Control': isScriptOrStyle ? 'no-cache, must-revalidate' : 'public, max-age=86400'
+        'Cache-Control': isScriptOrStyle ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=86400'
       });
       return res.end();
     }
@@ -1540,7 +1540,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
       res.writeHead(200, {
         'Content-Length': buf.length,
         'Content-Type': type,
-        'Cache-Control': isScriptOrStyle ? 'no-cache, must-revalidate' : 'public, max-age=86400'
+        'Cache-Control': isScriptOrStyle ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=86400'
       });
       res.end(buf);
     });

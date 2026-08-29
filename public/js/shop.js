@@ -479,18 +479,25 @@
   }
 
   const nav = $('nav.top');
+  const hdr = $('header');
   if (nav) {
     let isNavScrolled = false;
-    addEventListener('scroll', () => {
+    const handleScroll = () => {
       const y = window.scrollY || window.pageYOffset || 0;
-      if (!isNavScrolled && y > 35) {
+      if (!isNavScrolled && y > 20) {
         isNavScrolled = true;
         nav.classList.add('scrolled');
-      } else if (isNavScrolled && y < 10) {
+        if (hdr) hdr.classList.add('scrolled');
+        document.body.classList.add('scrolled');
+      } else if (isNavScrolled && y <= 6) {
         isNavScrolled = false;
         nav.classList.remove('scrolled');
+        if (hdr) hdr.classList.remove('scrolled');
+        document.body.classList.remove('scrolled');
       }
-    }, { passive: true });
+    };
+    addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     const burger = $('#burger');
     const mm = $('#mobile-menu');
     const mmClose = $('#mm-close');
