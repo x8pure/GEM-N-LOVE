@@ -5,7 +5,7 @@
       "email": "admin@loveshop.com.tr",
       "passwordHash": "d8489a0c4b604ca225c21cb0b582072de7bd3c06290576d80111e902d3f4aaa4",
       "name": "Mağaza Yönetimi",
-      "role": "customer",
+      "role": "admin",
       "createdAt": "2026-08-26T14:02:46.012Z",
       "addresses": []
     },
@@ -32,9 +32,9 @@
       "email": "x8pure@gmail.com",
       "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
       "name": "Ulaş",
-      "role": "customer",
+      "role": "admin",
       "googleAuth": true,
-      "avatar": "",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKnVsL6kmZscCWiCqAGhy0YMcZljoS0Vcw3m5bK7DATa9kOG_M=s96-c",
       "createdAt": "2026-08-26T19:23:08.444Z",
       "addresses": [
         {
@@ -45,7 +45,8 @@
           "phone": "05468696943",
           "discreet": true
         }
-      ]
+      ],
+      "tokenVersion": 3
     },
     {
       "id": "uad8ba2526165",
@@ -54,9 +55,19 @@
       "name": "cemal.ulas",
       "role": "admin",
       "googleAuth": true,
-      "avatar": "",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIO0NJxfnvKTmEkfu8NrOFsMoWYth5JRUBnbbMAHSobJ_2_wOGrsQ=s96-c",
       "createdAt": "2026-08-27T11:03:28.260Z",
-      "addresses": []
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 Caddesi 52/2",
+          "city": "Tepebaşı",
+          "zip": "",
+          "phone": "05468696943",
+          "discreet": true
+        }
+      ],
+      "tokenVersion": 12
     },
     {
       "id": "u9468e81a05d7",
@@ -79,7 +90,7 @@
       "longDescription": "",
       "price": 1699,
       "oldPrice": 2199,
-      "stock": 10,
+      "stock": 9,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -106,7 +117,7 @@
       "longDescription": "",
       "price": 1299,
       "oldPrice": 1499,
-      "stock": 10,
+      "stock": 9,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -121,6 +132,249 @@
         "standart"
       ],
       "createdAt": "2026-08-27T09:58:40.588Z"
+    },
+    {
+      "id": "pb8933905dc29",
+      "slug": "oscar-ultra-yumusak-dokulu-realistik-dildo",
+      "name": "Oscar - Ultra Yumuşak Dokulu Realistik Dildo",
+      "category": "realistik-dildolar",
+      "categoryName": "Realistik Dildolar",
+      "description": "Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM",
+      "longDescription": "Master Perfection Dildo Oscar - Ultra Yumuşak Dokulu Realistik Dildo Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
+      "price": 2499,
+      "oldPrice": 3259,
+      "stock": 9,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img9e03f59652d2.webp",
+      "gallery": [
+        "/uploads/img9e03f59652d2.webp",
+        "/uploads/img6aa7a25b966a.webp",
+        "/uploads/img097d12e6d469.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-28T14:43:54.851Z"
+    },
+    {
+      "id": "pb7847614536e",
+      "slug": "steve-ultra-yumusak-dokulu-realistik-dildo",
+      "name": "Steve - Ultra Yumuşak Dokulu Realistik Dildo",
+      "category": "realistik-dildolar",
+      "categoryName": "Realistik Dildolar",
+      "description": "Çift Katmanlı Silikon Gerçekçi Yapay Penis 26 CM,",
+      "longDescription": "Master Perfection Dildo Steve - Ultra Yumuşak Çift Katmanlı Mavi Damarlı Büyük Boy Realistik Yapay Penis 26 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
+      "price": 4999,
+      "oldPrice": 5266,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/imgee90f2ac5ae0.webp",
+      "gallery": [
+        "/uploads/imgee90f2ac5ae0.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-28T15:01:10.601Z"
+    },
+    {
+      "id": "pdf2748be251d",
+      "slug": "stag-9000-lidokain-sprey",
+      "name": "Stag 9000  Sprey",
+      "category": "erkekler",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "description": "STAG 9000 %10 Sprey (20 mL), etkin madde olarak 100 mg/mL lidokain içeren topikal bir ilaçtır",
+      "longDescription": "STAG 9000 %10 Sprey, etkin madde olarak her 1 mL'de 100 mg lidokain içeren topikal anestezik bir ilaçtır. Erkeklerde erken boşalma (prematür ejakülasyon) tedavisinde kullanılmak üzere geliştirilmiştir. Uygulama bölgesinde geçici duyarsızlaşma sağlayarak cinsel performans üzerinde daha fazla kontrol elde edilmesine yardımcı olur.\n\nPratik sprey formu sayesinde kolay uygulanabilen STAG 9000, hedef bölgeye doğrudan uygulanır ve kısa sürede lokal anestezik etki gösterir. Ürün, yalnızca haricen kullanım için tasarlanmış olup kullanım talimatlarına uygun şekilde uygulanmalıdır.",
+      "price": 499,
+      "oldPrice": 559,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/imga69c5630d16e.webp",
+      "gallery": [
+        "/uploads/imga69c5630d16e.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-28T16:57:37.098Z"
+    },
+    {
+      "id": "p56895cc74a84",
+      "slug": "love-telefon-kontrollu-titresimli-anal-plug",
+      "name": "LOVE. Telefon Kontrollü Titreşimli Anal plug",
+      "category": "erkek-ve-kadinlar",
+      "categoryName": "Anal Ürünler",
+      "description": "Telefon Kontrollü Titreşimli Anal Plug",
+      "longDescription": "APP Kontrollü 10 Frekanslı Anal Vibratör – Uzaktan Kumandalı, Su Geçirmez, Unisex Kullanım Teknolojiyle haz deneyimini birleştiren bu özel tasarım, hem bireysel hem de çiftler için eşsiz bir seçenek sunuyor. 10 farklı titreşim modu, kablosuz mobil uygulama desteği ile her an her yerde tutkuyu doruklara taşıyabilirsiniz. Ürün Özellikleri: 10 Titreşim Modu: Hafiften yoğuna farklı hız ve ritimlerde titreşim seçenekleriyle kişisel zevkinize göre ayarlanabilir. APP & Uzaktan Kumanda Kontrolü: “Love Spouse” uygulaması üzerinden ya da kablosuz uzaktan kumanda ile kontrol edilebilir. Uygulama, özellikle uzak mesafeli ilişkilerde çiftler için etkileşimli bir deneyim sunar. Su Geçirmez Tasarım: Duşta, banyoda ya da ıslak ortamlarda güvenle kullanılabilir. Ergonomik ve Esnek Yapı: Vücuda uyumlu silikon + ABS malzeme ile maksimum konfor ve güvenli kullanım sağlar. Unisex Kullanım: Kadınlar, erkekler ve eşcinsel çiftler tarafından rahatlıkla kullanılabilir. Prostat masajı için de idealdir. Eller Serbest Deneyim: Uzun süreli kullanımda bile rahatlık sunar ve ellerinizi serbest bırakır. Gizli Paketleme: Ürün, dışarıdan içeriği anlaşılmayacak şekilde gizli paketlenerek gönderilir. APP Bağlantı Kılavuzu: Telefonunuzun Bluetooth özelliğini aktif edin. Uygulama mağazasından “Love Spouse” uygulamasını indirin veya QR kodu tarayın. Uygulamayı açın, hesap oluşturun ve giriş yapın. Cihazın güç tuşuna 3-5 saniye basılı tutarak açın. Uygulamada “+” simgesine tıklayarak cihazı ekleyin. Partnerinizin de aynı uygulamayı indirip kaydolmasını sağlayın. “İnteraktif Mod” üzerinden partnerinizi cihazınıza bağlayarak uzaktan kontrol deneyimi yaşayın. Kutu İçeriği: 1 x APP Kontrollü Anal Plug Vibratör 1 x USB Şarj Kablosu 1 x Kullanım Kılavuzu",
+      "price": 1799,
+      "oldPrice": 2099,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": false,
+      "image": "/uploads/imge4386f83d8e6.webp",
+      "gallery": [
+        "/uploads/imge4386f83d8e6.webp",
+        "/uploads/img599f75e25637.webp",
+        "/uploads/img1541febdeaaa.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-29T11:36:01.379Z"
+    },
+    {
+      "id": "pc8f905e761bf",
+      "slug": "noctis-telefon-kontrollu-pembe-vibrator",
+      "name": "Noctis Telefon kontrollü Pembe Vibratör",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "Akıllı Telefon Uyarıcılı Yumurta Vibratör – Zevki Yeniden Tanımlayın",
+      "longDescription": "Akıllı Telefon Uyarıcılı Yumurta Vibratör – Zevki Yeniden Tanımlayın\n\nTelefon Kontrollü Yumurta Vibratör, yenilikçi teknoloji ve estetik tasarımın mükemmel bir kombinasyonudur. Bu ürün, 10 farklı titreşim moduyla, kullanıcılarına benzersiz bir zevk deneyimi sunar. Akıllı telefon uygulamasıyla kontrol edilebilir ve sessiz çalışma özelliği sayesinde gizliliği ön planda tutar.\n\nÜrün Özellikleri:\n\nBoyut ve Ağırlık: 18 cm X 3.7 cm X 7.3 cm boyutları ve 170 gr ağırlığıyla kullanımı son derece rahat ve konforludur. Taşıması kolaydır ve istenilen her yere götürülebilir.\nRenk Seçeneği: Göz alıcı pembe rengiyle estetik bir görünüm sunar. Bu renk seçeneği, ürüne şıklık ve zarafet katmaktadır.\nTitreşim Modları: 10 farklı titreşim moduyla çeşitli zevk seviyelerine hitap eder. Kullanıcılar istedikleri titreşim modunu seçerek kişisel tercihlerine uygun deneyimler yaşayabilirler.\nAkıllı Telefon Uygulaması: Akıllı telefonlara indirilen kişisel uygulama ile kontrol edilebilir. Bu özellik, kullanıcıya daha fazla kontrol ve esneklik sağlar.\nKolay Temizlenebilir ve Esnek Yapı: %100 medikal materyalden üretilmiş olan ürün, kolayca temizlenebilir ve hijyenik bir kullanım sağlar. Esnek yapısıyla vücuda mükemmel uyum sağlar.\nTelefon Kontrollü Yumurta Vibratör, kaliteli malzeme ve yenilikçi teknolojiyle üretilmiştir. Kullanıcıların beklentilerini karşılamak için özenle tasarlanmıştır ve her anınızı daha özel hale getirmek için ideal bir tercihtir.",
+      "price": 1999,
+      "oldPrice": 2259,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/imged8838ca011b.webp",
+      "gallery": [
+        "/uploads/imged8838ca011b.webp",
+        "/uploads/img1e34058bf48e.webp",
+        "/uploads/img0103fa877c83.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-29T11:49:54.185Z"
+    },
+    {
+      "id": "pe6440906f9a6",
+      "slug": "hareketli-rabbit-vibrator-rose-pembe",
+      "name": "Hareketli Rabbit Vibratör Rose Pembe",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "Rose Pembe Hareketli Rabbit Vibratör – Derin ve Çok Yönlü Hazzın Anahtarı!",
+      "longDescription": "Rose Pembe Hareketli Rabbit Vibratör – Derin ve Çok Yönlü Hazzın Anahtarı!\n\nYeni nesil zevk deneyimi sunan Rose Pembe Hareketli Rabbit Vibratör, özel olarak tasarlanmış iç ve dış uyarım kolları ile hem G noktası hem de klitoris bölgesini aynı anda hedefler. 360° dönebilen başlık yapısı ve 20 mm’lik ileri-geri itme hareketi sayesinde daha derin, daha yoğun hisler sunar.\n\n9 farklı titreşim modu, farklı hız ve ritimlerle vücudunuza tam uyum sağlar. Sessiz motor teknolojisi sayesinde gece kullanımı için de son derece uygundur (≤ 45db).\n\nErgonomik yapısı ve kıvrımlı silikon gövdesi sayesinde kolay kavranır, kontrol butonları ise sezgisel bir kullanım sunar. IPX7 su geçirmezlik seviyesiyle duşta veya banyoda kullanıma uygundur.\n\nUSB şarj edilebilir manyetik kablosu sayesinde pratik bir şekilde PC, powerbank veya adaptör ile şarj edebilirsiniz.\n\nÜrün Özellikleri:\n\n360° dönebilen başlık\n\n20 mm ileri-geri hareket\n\n9 farklı titreşim modu\n\nSu geçirmez (IPX7)\n\nUSB ile şarj edilebilir (manyetik başlık)\n\nTıbbi sınıf yumuşak silikon\n\nUzunluk: 22.7 cm, Genişlik: 4.9 cm",
+      "price": 3900,
+      "oldPrice": 4600,
+      "stock": 0,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img499069f317db.webp",
+      "gallery": [
+        "/uploads/img499069f317db.webp",
+        "/uploads/imgd983bd4f6dfb.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-29T11:57:38.638Z"
+    },
+    {
+      "id": "pbcfa6505bc8d",
+      "slug": "cabs-glide-kayganlastirici-jel-250-ml",
+      "name": "Cabs Glide Kayganlaştırıcı Jel 250 ml.",
+      "category": "kadinlar",
+      "categoryName": "Kadın Cinsel Sağlık",
+      "description": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel, uzun süreli kayganlık sağlar. Klinik testlerden geçen ürün, kondom çeşitleri ile birlikte kullanmaya uyumludur. Tamamen su bazlı olan ürünün formülünde yağ yoktur. Çocukların ulaşamayacağı, serin ve kuru bir yerde saklayınız.",
+      "longDescription": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel, uzun süreli kayganlık sağlar. Klinik testlerden geçen ürün, kondom çeşitleri ile birlikte kullanmaya uyumludur. Tamamen su bazlı olan ürünün formülünde yağ yoktur. Çocukların ulaşamayacağı, serin ve kuru bir yerde saklayınız.",
+      "price": 499,
+      "oldPrice": 559,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img7bfbe4451fed.webp",
+      "gallery": [
+        "/uploads/img7bfbe4451fed.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-29T12:10:40.125Z"
+    },
+    {
+      "id": "p5bdb3e17409d",
+      "slug": "proling-erkeklere-ozel-gelistirilmis-sprey",
+      "name": "Proling Erkeklere Özel Geliştirilmiş Sprey",
+      "category": "erkekler",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "description": "Proling %10 Sprey (59 mL), etkin madde olarak 100 mg/mL lidokain içeren topikal bir ilaçtır",
+      "longDescription": "Cinsel birleşmeden 15 dakika önce penise, 3 kez sıkılan Proling Erkeklere Özel Geliştirilmiş Sprey, 15 dakika sonunda etkisini gösterir.\n\n\nSprey, kondom ile uyumlu olduğu için kondom ile birlikte kullanabilirsiniz. Yerli üretim Proling sprey, temiz içeriği nedeniyle cilde zarar vermez.\n\n\nÜrünün; tadı, kokusu veya rengi bulunmadığı için partneriniz tarafından fark edilmez. Sprey formu sayesinde uzun bir kullanım ömrüne sahiptir.\n\n\nProling sprey; CE belgesine, ürün sertifikasına ve ISO 9001, 2000 belgelerine sahiptir.",
+      "price": 699,
+      "oldPrice": 779,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img42353635ba75.webp",
+      "gallery": [
+        "/uploads/img42353635ba75.webp",
+        "/uploads/img161323149046.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-29T12:15:37.475Z"
+    },
+    {
+      "id": "p12df7e2816fd",
+      "slug": "proling-erkeklere-ozel-gelistirilmis-krem",
+      "name": "Proling Erkeklere Özel Geliştirilmiş Krem",
+      "category": "erkekler",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "description": "Proling %10 KREM (59 mL), etkin madde olarak 100 mg/mL lidokain içeren topikal bir ilaçtır",
+      "longDescription": "Yetişkin erkeklerin kullanımına özel formüle edilen Proloonging Kremi, cinsel ilişkiden 15 dakika önce kullanmanız tavsiye edilir.\n\n\nKremi, sürdükten kısa süre sonra emilir ve etkisini 15 dakika sonunda göstermeye başlar. Prezervatif ile birlikte kullanıma uygundur.\n\n\nKrem; herhangi bir koku, tat ve renge sahip olmadığı için partneriniz tarafından fark edilmeyecektir. Cilde zarar vermeyen içeriğe sahiptir.\n\n\nProloonging krem; ABD’den ithal edilmektedir ve CE belgesine, ürün sertifikasına ve ISO 9001, 2000 belgelerine sahiptir.",
+      "price": 699,
+      "oldPrice": 789,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img2dbde1404660.webp",
+      "gallery": [
+        "/uploads/img2dbde1404660.webp",
+        "/uploads/imgb42fc9f88fdb.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-29T12:18:40.364Z"
     }
   ],
   "categories": [
@@ -146,10 +400,55 @@
       "id": "ctc3fe15335b3e",
       "slug": "vibratorler",
       "name": "Vibratörler",
-      "image": "/uploads/img4196efd545f6.webp",
+      "image": "/uploads/img84a900a10ee8.webp",
       "featuredOnHome": true,
       "homeOrder": 1,
       "createdAt": "2026-08-27T09:58:04.404Z"
+    },
+    {
+      "id": "ct_realistik-dildolar",
+      "slug": "realistik-dildolar",
+      "name": "Realistik Dildolar",
+      "image": "/uploads/img9e03f59652d2.webp",
+      "featuredOnHome": true,
+      "homeOrder": 4,
+      "createdAt": "2026-08-28T14:49:41.786Z"
+    },
+    {
+      "id": "ct97947ff7350f",
+      "slug": "fantezi-ic-giyim",
+      "name": "Fantezi İç Giyim",
+      "image": "/uploads/imgef30653f009d.webp",
+      "featuredOnHome": false,
+      "homeOrder": 99,
+      "createdAt": "2026-08-28T15:53:46.693Z"
+    },
+    {
+      "id": "ct3177d2d9d44e",
+      "slug": "erkekler",
+      "name": "Erkek Cinsel Sağlık",
+      "image": "/uploads/imga69c5630d16e.webp",
+      "featuredOnHome": true,
+      "homeOrder": 3,
+      "createdAt": "2026-08-28T16:22:49.472Z"
+    },
+    {
+      "id": "ct602bf4ee7ca6",
+      "slug": "erkek-ve-kadinlar",
+      "name": "Anal Ürünler",
+      "image": "/uploads/imge4386f83d8e6.webp",
+      "featuredOnHome": false,
+      "homeOrder": 99,
+      "createdAt": "2026-08-29T11:34:20.348Z"
+    },
+    {
+      "id": "ct4b7db25ea427",
+      "slug": "kadinlar",
+      "name": "Kadın Cinsel Sağlık",
+      "image": "/uploads/img7bfbe4451fed.webp",
+      "featuredOnHome": false,
+      "homeOrder": 99,
+      "createdAt": "2026-08-29T12:09:14.353Z"
     }
   ],
   "orders": [
@@ -280,6 +579,165 @@
       "note": "",
       "trackingNumber": "",
       "adminNote": ""
+    },
+    {
+      "id": "LS-1010",
+      "userId": null,
+      "userEmail": "",
+      "customerName": "Cemal ulaş",
+      "items": [
+        {
+          "productId": "pe31257abd626",
+          "name": "Vibratör",
+          "price": 1299,
+          "qty": 1,
+          "image": "/uploads/img4196efd545f6.webp"
+        }
+      ],
+      "subtotal": 1299,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1398,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05436331325",
+      "address": {
+        "full": "İsmet İnönü 1 caddesi 52/2",
+        "city": "TEPEBAŞI",
+        "zip": ""
+      },
+      "createdAt": "2026-08-28T14:28:37.200Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1011",
+      "userId": "uad8ba2526165",
+      "userEmail": "cemal.ulas@gmail.com",
+      "customerName": "Cemal Ulaş",
+      "items": [
+        {
+          "productId": "pb8933905dc29",
+          "name": "Oscar - Ultra Yumuşak Dokulu Realistik Dildo",
+          "price": 2499,
+          "qty": 1,
+          "image": "/uploads/img9e03f59652d2.webp"
+        }
+      ],
+      "subtotal": 2499,
+      "shipping": 0,
+      "discount": 0,
+      "total": 2499,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-28T17:25:29.615Z",
+      "note": "",
+      "trackingNumber": "112558966336",
+      "carrier": "Yurtiçi Kargo"
+    },
+    {
+      "id": "LS-1012",
+      "userId": null,
+      "userEmail": "",
+      "customerName": "Cemal Ulaş",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 1,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 1699,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1798,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-29T11:11:18.689Z",
+      "note": "",
+      "trackingNumber": "",
+      "carrier": "Yurtiçi Kargo"
+    },
+    {
+      "id": "LS-1013",
+      "userId": null,
+      "userEmail": "",
+      "customerName": "Cemal Ulaş",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 1,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 1699,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1798,
+      "coupon": null,
+      "status": "cancelled",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-29T11:23:07.936Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1014",
+      "userId": "uad8ba2526165",
+      "userEmail": "cemal.ulas@gmail.com",
+      "customerName": "cemal.ulas",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 2,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 3398,
+      "shipping": 0,
+      "discount": 0,
+      "total": 3398,
+      "coupon": null,
+      "status": "cancelled",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-29T11:25:12.164Z",
+      "note": ""
     }
   ],
   "coupons": [
@@ -374,14 +832,21 @@
     "instagram": "@loveeroticshop",
     "wheelIds": [
       "pe31257abd626",
-      "p2484e3b314df"
+      "p2484e3b314df",
+      "pb8933905dc29",
+      "p56895cc74a84",
+      "pdf2748be251d",
+      "pe6440906f9a6",
+      "p5bdb3e17409d"
     ]
   },
   "meta": {
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 9
-    }
+      "order": 14
+    },
+    "updatedAt": "2026-08-29T13:22:12.458Z",
+    "version": 141
   }
 }

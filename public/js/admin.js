@@ -779,11 +779,11 @@
           </div>
         </td>
         <td>${esc(p.categoryName || p.category)}</td>
-        <td>
+        <td class="quick-edit-cell" data-quick-price="${p.id}" title="Çift tıklayarak fiyatı hızlı düzenleyin">
           <b>${fmt(p.price)}</b>
           ${p.oldPrice ? `<div class="muted" style="font-size:11px;text-decoration:line-through">${fmt(p.oldPrice)}</div>` : ''}
         </td>
-        <td class="${p.stock === 0 ? 'no-stock' : p.stock <= 5 ? 'low-stock' : ''}">
+        <td class="quick-edit-cell ${p.stock === 0 ? 'no-stock' : p.stock <= 5 ? 'low-stock' : ''}" data-quick-stock="${p.id}" title="Çift tıklayarak stoğu hızlı düzenleyin">
           <b>${p.stock === 0 ? 'TÜKENDİ' : p.stock + ' adet'}</b>
         </td>
         <td>
@@ -797,6 +797,67 @@
           <button class="btn-icon danger" data-del="${p.id}" title="Sil">🗑️</button>
         </td>
       </tr>`).join('') : '<tr><td colspan="6"><div class="empty">Kritere uygun ürün bulunamadı</div></td></tr>';
+
+      $$('[data-quick-price]', $('#prod-body')).forEach((cell) => cell.addEventListener('dblclick', (e) => {
+        if (cell.querySelector('input')) return;
+        const pid = cell.dataset.quickPrice;
+        const p = all.find((x) => x.id === pid);
+        if (!p) return;
+        const oldVal = p.price;
+        cell.innerHTML = `<input class="quick-edit-input" type="number" value="${oldVal}">`;
+        const inp = cell.querySelector('input');
+        inp.focus();
+        inp.select();
+        const save = async () => {
+          const val = Number(inp.value);
+          if (!val || isNaN(val) || val < 0) {
+            cell.innerHTML = `<b>${fmt(oldVal)}</b>${p.oldPrice ? `<div class="muted" style="font-size:11px;text-decoration:line-through">${fmt(p.oldPrice)}</div>` : ''}`;
+            return;
+          }
+          try {
+            await api('/api/admin/products/' + p.id, { method: 'POST', body: { price: val } });
+            p.price = val;
+            toast(`Fiyat güncellendi: ${fmt(val)} 💰`);
+          } catch (err) { toast(err.message, true); }
+          cell.innerHTML = `<b>${fmt(p.price)}</b>${p.oldPrice ? `<div class="muted" style="font-size:11px;text-decoration:line-through">${fmt(p.oldPrice)}</div>` : ''}`;
+        };
+        inp.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') save();
+          if (ev.key === 'Escape') cell.innerHTML = `<b>${fmt(oldVal)}</b>${p.oldPrice ? `<div class="muted" style="font-size:11px;text-decoration:line-through">${fmt(p.oldPrice)}</div>` : ''}`;
+        });
+        inp.addEventListener('blur', save);
+      }));
+
+      $$('[data-quick-stock]', $('#prod-body')).forEach((cell) => cell.addEventListener('dblclick', (e) => {
+        if (cell.querySelector('input')) return;
+        const pid = cell.dataset.quickStock;
+        const p = all.find((x) => x.id === pid);
+        if (!p) return;
+        const oldVal = p.stock;
+        cell.innerHTML = `<input class="quick-edit-input" type="number" value="${oldVal}">`;
+        const inp = cell.querySelector('input');
+        inp.focus();
+        inp.select();
+        const save = async () => {
+          const val = Number(inp.value);
+          if (isNaN(val) || val < 0) {
+            cell.innerHTML = `<b>${oldVal === 0 ? 'TÜKENDİ' : oldVal + ' adet'}</b>`;
+            return;
+          }
+          try {
+            await api('/api/admin/products/' + p.id, { method: 'POST', body: { stock: val } });
+            p.stock = val;
+            toast(`Stok güncellendi: ${val} adet 📦`);
+          } catch (err) { toast(err.message, true); }
+          cell.className = `quick-edit-cell ${p.stock === 0 ? 'no-stock' : p.stock <= 5 ? 'low-stock' : ''}`;
+          cell.innerHTML = `<b>${p.stock === 0 ? 'TÜKENDİ' : p.stock + ' adet'}</b>`;
+        };
+        inp.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') save();
+          if (ev.key === 'Escape') cell.innerHTML = `<b>${oldVal === 0 ? 'TÜKENDİ' : oldVal + ' adet'}</b>`;
+        });
+        inp.addEventListener('blur', save);
+      }));
 
       $$('[data-wheel]', $('#prod-body')).forEach((b) => b.addEventListener('click', async () => {
         try {
@@ -958,13 +1019,6 @@
         <button type="button" class="modal-close" id="pm-close-x" aria-label="Kapat">✕</button>
       </div>
       <div class="modal-body">
-        <!-- AI Fast URL Import Bar inside Modal -->
-        <div class="ai-quick-bar">
-          <span class="ai-quick-badge">✨ AI Linkten Doldur</span>
-          <input type="url" id="pm-quick-url" placeholder="Toptancı veya ürün linkini yapıştırın (https://...)" class="ai-quick-input">
-          <button type="button" class="btn btn-ghost btn-sm" id="pm-quick-scrape-btn" style="font-size:12px;background:var(--card-2)">⚡ Bilgileri Çek</button>
-        </div>
-
         <div class="grid-2">
           <div class="field"><label>Ürün Adı *</label><input id="pm-name" value="${esc(v.name)}"></div>
           <div class="field"><label>Kategori</label>
@@ -978,10 +1032,7 @@
         </div>
         
         <div class="field">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <label style="margin-bottom:0">Kısa Tanıtım / Vurgu</label>
-            <button type="button" class="btn btn-ghost btn-sm" id="pm-ai-enhance-btn" style="font-size:11px;color:var(--rose)">🪄 AI Açıklamaları Yeniden Yaz</button>
-          </div>
+          <label>Kısa Tanıtım / Vurgu</label>
           <input id="pm-desc" value="${esc(v.description)}">
         </div>
         
@@ -992,7 +1043,6 @@
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
             <label style="margin-bottom:0">Ürün Fotoğrafları & Galeri (<span id="pm-photo-count">0</span> Fotoğraf)</label>
             <div style="display:flex;gap:8px">
-              <button type="button" class="btn btn-ghost btn-sm" id="pm-clean-all-btn" style="font-size:11.5px;color:var(--violet)">🪄 Tüm Arka Planları Temizle</button>
               <button type="button" class="btn btn-ghost btn-sm" id="pm-add-photo-btn" style="font-size:11.5px">＋ Fotoğraf Ekle</button>
             </div>
           </div>
@@ -1037,76 +1087,6 @@
       if (e.target === m) closeModal();
     });
 
-    // Top AI Quick Scraper inside Modal
-    const quickScrapeBtn = $('#pm-quick-scrape-btn', m);
-    const quickUrlIn = $('#pm-quick-url', m);
-    quickScrapeBtn.addEventListener('click', async () => {
-      const url = quickUrlIn.value.trim();
-      if (!url || !url.startsWith('http')) return toast('Lütfen geçerli bir ürün URL linki giriniz', true);
-      
-      const origText = quickScrapeBtn.innerHTML;
-      quickScrapeBtn.disabled = true;
-      quickScrapeBtn.innerHTML = 'Çekiliyor... ⏳';
-      toast('Ürün taranıyor ve Gemini AI içerikleri üretiyor... ⏳');
-
-      try {
-        const res = await api('/api/admin/scrape-product', { method: 'POST', body: { url } });
-        const d = res.data;
-        if (d.name) $('#pm-name', m).value = d.name;
-        if (d.category) $('#pm-cat', m).value = d.category;
-        if (d.price) $('#pm-price', m).value = d.price;
-        if (d.oldPrice) $('#pm-old', m).value = d.oldPrice;
-        if (d.stock) $('#pm-stock', m).value = d.stock;
-        if (d.description) $('#pm-desc', m).value = d.description;
-        if (d.longDescription) $('#pm-long', m).value = d.longDescription;
-
-        if (Array.isArray(d.images) && d.images.length) {
-          for (const img of d.images) {
-            if (!gallery.includes(img)) gallery.push(img);
-          }
-          if (!coverImage && gallery.length) coverImage = gallery[0];
-          renderGallery();
-        }
-        toast('Ürün bilgileri başarıyla dolduruldu! ✨');
-      } catch (err) {
-        toast(err.message || 'Bilgiler çekilemedi', true);
-      } finally {
-        quickScrapeBtn.disabled = false;
-        quickScrapeBtn.innerHTML = origText;
-      }
-    });
-
-    // AI Text Enhancer
-    const aiEnhanceBtn = $('#pm-ai-enhance-btn', m);
-    aiEnhanceBtn.addEventListener('click', async () => {
-      const name = $('#pm-name', m).value.trim();
-      const currentDesc = $('#pm-desc', m).value.trim() || $('#pm-long', m).value.trim();
-      const catSlug = $('#pm-cat', m).value;
-      const catObj = cats.find((c) => c.slug === catSlug);
-      
-      if (!name) return toast('Lütfen önce bir ürün adı girin', true);
-
-      const origText = aiEnhanceBtn.innerHTML;
-      aiEnhanceBtn.disabled = true;
-      aiEnhanceBtn.innerHTML = 'Yazılıyor... ⏳';
-      toast('Gemini AI SEO açıklaması oluşturuyor... 🪄');
-
-      try {
-        const res = await api('/api/admin/ai/enhance-text', {
-          method: 'POST',
-          body: { name, description: currentDesc, categoryName: catObj ? catObj.name : '' }
-        });
-        if (res.data.description) $('#pm-desc', m).value = res.data.description;
-        if (res.data.longDescription) $('#pm-long', m).value = res.data.longDescription;
-        toast('Açıklamalar LoveShop diline göre güncellendi ✨');
-      } catch (err) {
-        toast(err.message || 'AI açıklaması üretilemedi', true);
-      } finally {
-        aiEnhanceBtn.disabled = false;
-        aiEnhanceBtn.innerHTML = origText;
-      }
-    });
-
     const drop = $('#pm-drop', m), fileIn = $('#pm-file', m), addPhotoBtn = $('#pm-add-photo-btn', m), grid = $('#pm-gallery-grid', m), countEl = $('#pm-photo-count', m);
     
     addPhotoBtn.addEventListener('click', () => fileIn.click());
@@ -1125,22 +1105,6 @@
         handleFiles(fileIn.files);
         fileIn.value = '';
       }
-    });
-
-    // Clean all images button
-    const cleanAllBtn = $('#pm-clean-all-btn', m);
-    cleanAllBtn.addEventListener('click', async () => {
-      if (!gallery.length) return toast('Henüz galeride fotoğraf bulunmuyor', true);
-      toast('Tüm fotoğrafların arka planı stüdyo moduna temizleniyor... 🪄');
-      const newGallery = [];
-      for (const img of gallery) {
-        const cleaned = await cleanImageBackground(img);
-        newGallery.push(cleaned);
-      }
-      gallery = newGallery;
-      if (gallery.length) coverImage = gallery[0];
-      renderGallery();
-      toast('Tüm görseller stüdyo moduna dönüştürüldü! ✨');
     });
 
     async function handleFiles(files) {
@@ -1182,7 +1146,6 @@
             <button type="button" class="photo-tile-del-btn" data-del-idx="${idx}" title="Bu Fotoğrafı Kaldır">✕</button>
           </div>
           <div class="photo-tile-actions" style="display:flex;flex-direction:column;gap:4px;width:100%">
-            <button type="button" class="photo-tile-clean-btn" data-clean-idx="${idx}" title="Arka planı sil ve stüdyo moduna çevir">🪄 Arka Planı Sil</button>
             ${isCover
               ? '<span class="muted" style="font-size:10.5px;font-weight:600;text-align:center">Ana Görsel</span>'
               : `<button type="button" class="btn btn-ghost btn-sm" data-cover-idx="${idx}" style="font-size:10.5px;padding:2px 7px">⭐ Kapak Yap</button>`
@@ -1192,21 +1155,6 @@
       }).join('');
 
       // Attach gallery tile event handlers
-      $$('[data-clean-idx]', grid).forEach((b) => b.addEventListener('click', async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const idx = parseInt(b.dataset.cleanIdx, 10);
-        b.innerHTML = 'Temizleniyor... ⏳';
-        try {
-          const cleaned = await cleanImageBackground(gallery[idx]);
-          gallery[idx] = cleaned;
-          if (coverImage === gallery[idx] || idx === 0) coverImage = cleaned;
-          renderGallery();
-          toast('Arka plan başarıyla temizlendi ✨');
-        } catch (err) {
-          toast('Görsel işlenemedi', true);
-        }
-      }));
 
       $$('[data-del-idx]', grid).forEach((b) => b.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1866,6 +1814,23 @@
   route();
 
   let lastPendingOrders = null;
+  function playOrderChime() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+      g.gain.setValueAtTime(0.14, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    } catch (e) {}
+  }
+
   setInterval(async () => {
     if (!window.__me) return;
     try {
@@ -1875,7 +1840,8 @@
       window.__badges = { orders: st.pendingOrders || 0, reviews: st.pendingReviews || 0 };
       
       if (lastPendingOrders !== null && st.pendingOrders > lastPendingOrders) {
-        toast('🛒 Yeni bir sipariş geldi!', false);
+        playOrderChime();
+        toast('🛒 CANLI SİPARİŞ ALINDI! Lütfen siparişler sayfasını kontrol edin.', false);
       }
       lastPendingOrders = st.pendingOrders;
 
@@ -1896,5 +1862,5 @@
         }
       }
     } catch (e) {}
-  }, 10000); // Check every 10 seconds
+  }, 8000); // Check every 8 seconds
 })();

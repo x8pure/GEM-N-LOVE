@@ -1261,3 +1261,64 @@ img { max-width: 100%; display: block; }
   backdrop-filter: blur(12px);
 }
 
+/* Quick Inline Edit & Telemetry Control Tower Styles */
+.quick-edit-cell {
+  position: relative;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background .18s ease;
+}
+.quick-edit-cell:hover {
+  background: var(--card-hover);
+}
+.quick-edit-cell:hover::after {
+  content: ' ✎';
+  font-size: 10px;
+  color: var(--muted);
+  opacity: 0.8;
+}
+.quick-edit-input {
+  width: 90px;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--rose);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--rose-glow);
+}
+
+.cmd-item-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.telemetry-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--card-2);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.telemetry-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rose) 0%, var(--gold) 100%);
+  border-radius: 100px;
+  transition: width .6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pulseToast {
+  0% { transform: scale(0.98); opacity: 0; }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.toast-pulse {
+  animation: pulseToast 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  border-left: 4px solid var(--rose) !important;
+}
+

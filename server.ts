@@ -25,7 +25,7 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
-const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS || 'cemal.ulas@gmail.com')
+const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS || 'admin@loveshop.com.tr,x8pure@gmail.com,cemal.ulas@gmail.com')
   .split(',')
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
@@ -729,7 +729,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const C = ctx || { lang: 'tr', theme: 'light', t: makeT('tr'), num: (n: number) => n.toLocaleString('tr-TR') };
   const tr = C.t;
   const dark = C.theme === 'dark';
-  const appVersion = '1.0.6';
+  const appVersion = '1.0.8';
   const desc = opts.description || `${st.storeName}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.`;
   const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
   const ogImage = opts.ogImage || 'https://loveshop.com.tr/test.png';
