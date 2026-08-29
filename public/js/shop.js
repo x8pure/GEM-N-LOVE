@@ -1115,6 +1115,7 @@
       // Mobile Pull-to-Zoom (Elastic Rubber-Band Effect)
       const spatialVisual = $('.spatial-visual-hero', stage);
       const spatialContent = $('.spatial-content-pane', stage);
+      const spatialThumbs = $('.spatial-thumbs', stage);
       if (spatialVisual && spatialMain) {
         let startY = 0;
         let isPulling = false;
@@ -1133,6 +1134,9 @@
               spatialContent.style.backgroundColor = 'var(--card-solid)';
               spatialContent.style.position = 'relative';
               spatialContent.style.zIndex = '10';
+            }
+            if (spatialThumbs) {
+              spatialThumbs.style.transition = 'none';
             }
             // Görselin aşağıya taşabilmesi için overflow'u serbest bırak
             spatialVisual.style.overflow = 'visible';
@@ -1158,8 +1162,19 @@
                const moveY = (spatialMain.offsetHeight * (scale - 1)) / 2;
                spatialContent.style.transform = `translateY(${moveY}px)`;
             }
+
+            // Küçük resimleri yumuşakça yok et (fade-out)
+            if (spatialThumbs) {
+               let opacity = 1 - (deltaY / 120);
+               spatialThumbs.style.opacity = Math.max(0, opacity);
+               spatialThumbs.style.pointerEvents = 'none';
+            }
           } else {
             isPulling = false;
+            // Kullanıcı yukarı kaydırmaya karar verirse efekti geri sar
+            if (spatialMain.style.transform !== '' && spatialMain.style.transform !== 'scale(1)') {
+                resetZoom();
+            }
           }
         }, { passive: false });
 
@@ -1173,6 +1188,11 @@
               spatialContent.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
               spatialContent.style.transform = 'translateY(0)';
             }
+
+            if (spatialThumbs) {
+              spatialThumbs.style.transition = 'opacity 0.4s ease';
+              spatialThumbs.style.opacity = '1';
+            }
             
             setTimeout(() => {
               if (!isPulling) {
@@ -1182,6 +1202,11 @@
                   spatialContent.style.backgroundColor = '';
                   spatialContent.style.position = '';
                   spatialContent.style.zIndex = '';
+                }
+                if (spatialThumbs) {
+                  spatialThumbs.style.transition = '';
+                  spatialThumbs.style.opacity = '';
+                  spatialThumbs.style.pointerEvents = '';
                 }
                 spatialVisual.style.overflow = '';
               }
