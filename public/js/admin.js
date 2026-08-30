@@ -998,6 +998,7 @@
       isNew: initialData.isNew !== undefined ? !!initialData.isNew : true,
       bestSeller: !!initialData.bestSeller,
       image: initialData.image || '',
+      highlights: Array.isArray(initialData.highlights) ? initialData.highlights.join(', ') : (initialData.highlights || ''),
       gallery: Array.isArray(initialData.gallery) ? initialData.gallery : (Array.isArray(initialData.images) ? initialData.images : [])
     };
     
@@ -1033,7 +1034,13 @@
         
         <div class="field">
           <label>Kısa Tanıtım / Vurgu</label>
-          <input id="pm-desc" value="${esc(v.description)}">
+          <input id="pm-desc" value="${esc(v.description)}" placeholder="Örn: Çiftlere özel 10 farklı titreşim modu">
+        </div>
+
+        <div class="field">
+          <label>Öne Çıkan Rozet Özellikleri (Virgülle Ayırın)</label>
+          <input id="pm-highlights" value="${esc(v.highlights)}" placeholder="Örn: %100 Medikal Silikon, IPX7 Su Geçirmez, Sessiz Motor, Manyetik Şarj">
+          <div class="hint">Boş bırakırsanız kategoriye göre otomatik akıllı rozetler atanır.</div>
         </div>
         
         <div class="field"><label>Detaylı Ürün Açıklaması (Özellikler & Gizlilik)</label><textarea id="pm-long" style="min-height:120px">${esc(v.longDescription)}</textarea></div>
@@ -1203,6 +1210,7 @@
         oldPrice: $('#pm-old', m).value === '' ? null : Number($('#pm-old', m).value),
         stock: Number($('#pm-stock', m).value),
         description: $('#pm-desc', m).value.trim(),
+        highlights: $('#pm-highlights', m).value.split(',').map(s => s.trim()).filter(Boolean),
         longDescription: $('#pm-long', m).value.trim(),
         image: coverImage || gallery[0] || '',
         gallery: gallery.length ? gallery : undefined,

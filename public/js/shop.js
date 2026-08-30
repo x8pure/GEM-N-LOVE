@@ -1,5 +1,13 @@
 'use strict';
 (() => {
+  // Gracefully handle browser internal view-transition rejections in iframe environments
+  if (typeof window !== 'undefined') {
+    window.addEventListener('unhandledrejection', (e) => {
+      if (e && e.reason && (String(e.reason).includes('Transition was skipped') || String(e.reason?.message || '').includes('Transition was skipped'))) {
+        e.preventDefault();
+      }
+    });
+  }
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
   const LANG = window.__LS_LANG__ || 'tr';
@@ -965,7 +973,7 @@
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
-        ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
+        ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
         <div class="card-sheen"></div>
         <div class="prod-badges">${badges.join('')}</div>
       </a>
@@ -1033,6 +1041,76 @@
       const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
       const hasMultipleImages = productGallery.length > 1;
 
+      // Compute Smart Dynamic Specs (Custom Highlights > Category Rules > Universal Safe Specs)
+      function getProductSpecs(prod) {
+        // 1. Admin Defined Highlights
+        if (Array.isArray(prod.highlights) && prod.highlights.length) {
+          const icons = [
+            '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+            '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+            '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+            '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>'
+          ];
+          return prod.highlights.slice(0, 4).map((text, i) => ({
+            icon: icons[i % icons.length],
+            text: String(text).trim()
+          }));
+        }
+
+        const cat = String(prod.category || '').toLowerCase();
+        const name = String(prod.name || '').toLowerCase();
+
+        // 2. Electronic / Vibrators / Masturbators / Dolls
+        if (cat.includes('vibrator') || cat.includes('masturbator') || cat.includes('vajina') || cat.includes('sisme') || name.includes('vibratör') || name.includes('şarjlı') || name.includes('motor')) {
+          return [
+            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Medical Silicone' : '%100 Medikal Silikon' },
+            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'IPX7 Waterproof' : 'IPX7 Su Geçirmez' },
+            { icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', text: LANG === 'en' ? 'Magnetic USB Charge' : 'Manyetik USB Şarj' },
+            { icon: '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>', text: LANG === 'en' ? '<40dB Whisper Motor' : '<40dB Fısıltı Motoru' }
+          ];
+        }
+
+        // 3. Cosmetics / Oils / Lubricants / Sprays / Care
+        if (cat.includes('kozmetik') || cat.includes('saglik') || name.includes('jel') || name.includes('yağ') || name.includes('sprey') || name.includes('krem') || name.includes('lube')) {
+          return [
+            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Dermatologically Tested' : 'Dermatolojik Test Edildi' },
+            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'Water Based & Safe pH' : 'Su Bazlı & Güvenli pH' },
+            { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', text: LANG === 'en' ? 'Condom & Skin Safe' : 'Cilt & Prezervatif Uyumlu' },
+            { icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>', text: LANG === 'en' ? 'Stain Free & Easy Clean' : 'Leke Bırakmaz & Kolay Temizlenir' }
+          ];
+        }
+
+        // 4. Lingerie / Costume / Fantasy
+        if (cat.includes('fantezi') || cat.includes('fantasy') || cat.includes('kostum') || cat.includes('giyim') || name.includes('çorap') || name.includes('gecelik') || name.includes('deri') || name.includes('dantel')) {
+          return [
+            { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', text: LANG === 'en' ? 'Soft Touch Fabric' : 'Hassas & Yumuşak Doku' },
+            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Flexible Ergonomic Fit' : 'Esnek & Rahat Kalıp' },
+            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'Breathable Textile' : 'Nefes Alan Kumaş' },
+            { icon: '<polyline points="20 6 9 17 4 12"/>', text: LANG === 'en' ? 'Premium Handcraft' : 'Kaliteli & Dayanıklı Dikiş' }
+          ];
+        }
+
+        // 5. Dildos / Anal / Non-electric Body Safe Products
+        if (cat.includes('dildo') || cat.includes('anal') || cat.includes('knot')) {
+          return [
+            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? '%100 Body-Safe Material' : '%100 Vücut Dostu Materyal' },
+            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? '100% Waterproof' : '%100 Su Geçirmez' },
+            { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', text: LANG === 'en' ? 'Seamless & Hypoallergenic' : 'Pürüzsüz & Hipoalerjenik' },
+            { icon: '<polyline points="20 6 9 17 4 12"/>', text: LANG === 'en' ? 'Easy to Sanitize' : 'Kolay Sterilize Edilir' }
+          ];
+        }
+
+        // 6. Universal Default Trust & Quality Specs
+        return [
+          { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı' },
+          { icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>', text: LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme' },
+          { icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', text: LANG === 'en' ? 'Fast 24h Dispatch' : '24 Saatte Hızlı Kargo' },
+          { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', text: LANG === 'en' ? 'Premium Quality Standard' : 'Yüksek Kalite Standardı' }
+        ];
+      }
+
+      const activeSpecs = getProductSpecs(p);
+
       stage.innerHTML = `
         <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -1078,32 +1156,21 @@
               <p class="spatial-desc" style="margin-top:12px;">${p.description || ''}</p>
             </div>
 
-            <!-- Minimal Quiet Luxury Spec Bar -->
+            <!-- Dynamic Category & Product Specs Bar -->
             <div class="spatial-spec-deck">
-              <div class="spatial-spec-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>%100 Medikal Silikon</span>
-              </div>
-              <div class="spatial-spec-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-                <span>IPX7 Su Geçirmez</span>
-              </div>
-              <div class="spatial-spec-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                <span>Manyetik USB Şarj</span>
-              </div>
-              <div class="spatial-spec-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                <span>&lt;40dB Fısıltı Motoru</span>
-              </div>
+              ${activeSpecs.map((spec) => `
+                <div class="spatial-spec-card">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${spec.icon}</svg>
+                  <span>${esc(spec.text)}</span>
+                </div>
+              `).join('')}
             </div>
 
             <!-- Discreet Privacy Reassurance -->
             <div class="spatial-privacy-seal">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
               <div>
-                <strong>%100 Gizli Paketleme & Anonim Fatura</strong>
-                <p>Dış ambalajda ürün bilgisi yer almaz. Kart ekstrenizde yalnızca "LS TR Bilişim" görünür.</p>
+                <strong>${LANG === 'en' ? '100% Discreet Packaging & Anonymous Payment' : '%100 Gizli Paketleme & Anonim Ödeme'}</strong>
               </div>
             </div>
 

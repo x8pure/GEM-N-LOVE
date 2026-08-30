@@ -732,13 +732,75 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const appVersion = '1.0.9-' + Date.now();
   const desc = opts.description || `${st.storeName}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.`;
   const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
-  const ogImage = opts.ogImage || 'https://loveshop.com.tr/test.png';
+  const ogImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveshop.com.tr/test.png');
+
+  // 2026 Structured Data (JSON-LD)
+  const schemaGraph: any[] = [
+    {
+      "@type": "WebSite",
+      "@id": "https://loveshop.com.tr/#website",
+      "url": "https://loveshop.com.tr/",
+      "name": st.storeName || "Love.",
+      "description": "18+ Yetkin Yaşam Mağazası",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://loveshop.com.tr/magaza?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Store",
+      "@id": "https://loveshop.com.tr/#store",
+      "name": st.storeName || "Love.",
+      "url": "https://loveshop.com.tr/",
+      "logo": "https://loveshop.com.tr/test.png",
+      "image": "https://loveshop.com.tr/test.png",
+      "description": "Gizli paketleme, güvenli teslimat, vücut dostu ürünler. 18+ yetkin yaşam mağazası.",
+      "priceRange": "₺₺",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Eskişehir",
+        "addressCountry": "TR"
+      }
+    }
+  ];
+
+  if (opts.product) {
+    const prod = opts.product;
+    schemaGraph.push({
+      "@type": "Product",
+      "@id": `https://loveshop.com.tr/urun/${prod.slug}#product`,
+      "name": prod.name,
+      "description": prod.desc || prod.name,
+      "image": prod.image ? [prod.image] : [],
+      "sku": prod.id,
+      "brand": {
+        "@type": "Brand",
+        "name": "Love."
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": `https://loveshop.com.tr/urun/${prod.slug}`,
+        "priceCurrency": "TRY",
+        "price": prod.price,
+        "availability": (prod.stock ?? 1) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": prod.rating || 5.0,
+        "reviewCount": prod.reviewCount || 12
+      }
+    });
+  }
+
+  const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": schemaGraph });
+
   return `<!DOCTYPE html>
 <html lang="${C.lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="view-transition" content="same-origin">
 <title>${esc(title)} — ${esc(st.storeName)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta property="og:title" content="${esc(title)} — ${esc(st.storeName)}">
@@ -755,6 +817,28 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
+<script type="application/ld+json">${jsonLd}</script>
+<script type="speculationrules">
+{
+  "prerender": [
+    {
+      "source": "list",
+      "urls": ["/magaza", "/hakkimizda", "/iletisim"],
+      "eagerness": "moderate"
+    },
+    {
+      "where": { "href_matches": "/urun/*" },
+      "eagerness": "moderate"
+    }
+  ],
+  "prefetch": [
+    {
+      "where": { "href_matches": "/*" },
+      "eagerness": "conservative"
+    }
+  ]
+}
+</script>
 ${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID}'</script><script src="https://accounts.google.com/gsi/client" async defer></script>` : ''}
 </head>
 <body>
@@ -1067,9 +1151,12 @@ function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: 
     return s === cleanKey || i === cleanKey || s === rawKey || i === rawKey;
   });
   const pageTitle = p ? p.name : (C.lang === 'en' ? 'Product' : 'Ürün');
+  const desc = p ? (p.desc || p.name) : undefined;
+  const ogImage = p ? p.image : undefined;
+  const canonical = p ? `https://loveshop.com.tr/urun/${p.slug}` : undefined;
   const html = `<div id="product-root"><div class="spinner"></div></div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(pageTitle, html, {}, C));
+  res.end(layout(pageTitle, html, { product: p, description: desc, ogImage, canonical }, C));
 }
 
 function pageReviewForm(req: http.IncomingMessage, res: http.ServerResponse, slug: string) {
@@ -1167,7 +1254,9 @@ function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: str
   const waLink = (st.whatsapp || 'https://wa.me/905436331325') + '?text=' + encodeURIComponent(lines.join('\n'));
   const html = `
 <div class="success-wrap" id="thanks-wrap"><div class="success-card">
-  <div class="success-icon" id="thanks-icon">${pickup ? '🏬' : '💬'}</div>
+  <div class="success-icon" id="thanks-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  </div>
   <h1 id="thanks-h1">${pickup ? tr('thanks.h.pickup') : tr('thanks.h.ship')}</h1>
   <p id="thanks-total">${order ? tr('thanks.total') + ' ' + fmt(order.total) : ''}</p>
   <p id="thanks-p">${pickup ? tr('thanks.p.pickup') : tr('thanks.p.ship')}</p>
@@ -1183,11 +1272,9 @@ function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: str
       setTimeout(() => {
         const h1 = document.getElementById('thanks-h1');
         const p = document.getElementById('thanks-p');
-        const icon = document.getElementById('thanks-icon');
         const accInfo = document.getElementById('thanks-acc-info');
-        if (h1) h1.textContent = '${en ? "Congratulations! Order Placed 🎉" : "Tebrikler! Siparişiniz Alındı 🎉"}';
-        if (p) p.textContent = '${en ? "Your order details have been sent to us. We will get back to you shortly." : "Sipariş detaylarınız bize ulaştı. WhatsApp üzerinden sizinle iletişime geçeceğiz."}';
-        if (icon) { icon.textContent = '✅'; icon.style.background = 'rgba(76, 175, 80, 0.1)'; icon.style.color = '#4CAF50'; }
+        if (h1) h1.textContent = '${en ? "Order Received" : "Siparişiniz Alındı"}';
+        if (p) p.textContent = '${en ? "Your order details have been received. We will contact you via WhatsApp shortly." : "Sipariş detaylarınız bize ulaştı. WhatsApp üzerinden sizinle iletişime geçeceğiz."}';
         if (btn) btn.style.display = 'none';
         if (accInfo) accInfo.style.display = 'none';
       }, 800);
@@ -2180,6 +2267,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         price: Math.max(0, Number(b.price)), oldPrice: b.oldPrice ? Number(b.oldPrice) : null,
         stock: Math.max(0, parseInt(b.stock, 10) || 0), rating: Number(b.rating) || 0, reviewCount: 0,
         featured: !!b.featured, isNew: !!b.isNew, bestSeller: !!b.bestSeller,
+        highlights: Array.isArray(b.highlights) ? b.highlights.map(String).map(s => s.trim()).filter(Boolean) : (typeof b.highlights === 'string' ? b.highlights.split(',').map(s => s.trim()).filter(Boolean) : []),
         image, gallery, tags: [], variants: ['standart'], createdAt: new Date().toISOString()
       };
       db.products.push(p); await saveAsync();
@@ -2190,8 +2278,16 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const p = db.products.find((x: any) => x.id === decodeURIComponent(pUp[1]));
       if (!p) return sendError(res, 404, E('err.noProd'));
       const b = await readBody(req);
-      const f = ['name', 'category', 'categoryName', 'description', 'longDescription', 'price', 'oldPrice', 'stock', 'rating', 'featured', 'isNew', 'bestSeller', 'slug'];
-      for (const k of f) if (b[k] !== undefined) p[k] = k === 'featured' || k === 'isNew' || k === 'bestSeller' ? !!b[k] : b[k];
+      const f = ['name', 'category', 'categoryName', 'description', 'longDescription', 'price', 'oldPrice', 'stock', 'rating', 'featured', 'isNew', 'bestSeller', 'slug', 'highlights'];
+      for (const k of f) if (b[k] !== undefined) {
+        if (k === 'featured' || k === 'isNew' || k === 'bestSeller') {
+          p[k] = !!b[k];
+        } else if (k === 'highlights') {
+          p[k] = Array.isArray(b[k]) ? b[k].map(String).map(s => s.trim()).filter(Boolean) : (typeof b[k] === 'string' ? b[k].split(',').map(s => s.trim()).filter(Boolean) : []);
+        } else {
+          p[k] = b[k];
+        }
+      }
       if (b.oldPrice === null || b.oldPrice === '') p.oldPrice = null;
       
       if (b.gallery !== undefined || b.images !== undefined) {

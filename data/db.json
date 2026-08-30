@@ -5,7 +5,7 @@
       "email": "admin@loveshop.com.tr",
       "passwordHash": "d8489a0c4b604ca225c21cb0b582072de7bd3c06290576d80111e902d3f4aaa4",
       "name": "Mağaza Yönetimi",
-      "role": "admin",
+      "role": "customer",
       "createdAt": "2026-08-26T14:02:46.012Z",
       "addresses": []
     },
@@ -837,7 +837,8 @@
       "p56895cc74a84",
       "pdf2748be251d",
       "pe6440906f9a6",
-      "p5bdb3e17409d"
+      "p5bdb3e17409d",
+      "pbcfa6505bc8d"
     ]
   },
   "meta": {
@@ -846,7 +847,7 @@
       "product": 0,
       "order": 14
     },
-    "updatedAt": "2026-08-29T13:22:12.458Z",
-    "version": 141
+    "updatedAt": "2026-08-30T10:09:56.340Z",
+    "version": 163
   }
 }
