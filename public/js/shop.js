@@ -8,6 +8,7 @@ import { api, getClientSid } from './modules/api.js';
 import { toast } from './modules/ui.js';
 import { initCoverflow } from './modules/coverflow.js';
 import { initContact } from './modules/contact.js';
+import { initAutoCropNormalizer } from './modules/autocrop.js';
 
 
 
@@ -1241,7 +1242,7 @@ import { initContact } from './modules/contact.js';
   }
 
   /* boot */
-  const globalInit = [initSpatialAnimations, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
+  const globalInit = [initAutoCropNormalizer, initSpatialAnimations, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
   const pageInit = [initHome, initShop, initProduct, initReviewForm, initCart, initCheckout, initThanks, initAuth, initAccount, initProfile, initContact];
 
   function runBoot() {
