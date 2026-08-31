@@ -171,11 +171,15 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
             ${p.oldPrice ? `<span>${t('badge.sale')}</span>` : ''}
           </div>
           ${hasMultipleImages ? `
-            <div class="spatial-thumbs">
-              ${productGallery.map((img, idx) => `
-                <button type="button" class="spatial-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" aria-label="${esc(p.name)} ${idx + 1}">
-                  <img src="${imgSrc(img)}" alt="${esc(p.name)} - ${idx + 1}">
-                </button>
+            <button type="button" class="spatial-nav-btn prev" id="spatial-nav-prev" aria-label="${LANG === 'en' ? 'Previous image' : 'Önceki Fotoğraf'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button type="button" class="spatial-nav-btn next" id="spatial-nav-next" aria-label="${LANG === 'en' ? 'Next image' : 'Sonraki Fotoğraf'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            <div class="spatial-dots" id="spatial-dots">
+              ${productGallery.map((_, idx) => `
+                <span class="spatial-dot ${idx === 0 ? 'active' : ''}" data-dot-idx="${idx}"></span>
               `).join('')}
             </div>
           ` : ''}
@@ -255,7 +259,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       let isPulling = false;
       
       spatialVisual.addEventListener('touchstart', (e) => {
-        if (e.target.closest('.spatial-thumbs')) return;
+        if (e.target.closest('.spatial-nav-btn') || e.target.closest('.spatial-dots')) return;
         
         const scrollTop = stageGrid ? stageGrid.scrollTop : 0;
         if (scrollTop <= 5 && e.touches.length === 1) {
@@ -290,6 +294,9 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         
         if (deltaY > 0) {
           e.preventDefault();
+          if (!spatialVisual.classList.contains('is-pulling')) {
+            spatialVisual.classList.add('is-pulling');
+          }
           
           // 3D Pop-out growth
           let scale = 1 + (deltaY / 230);
@@ -328,6 +335,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           
           setTimeout(() => {
             if (!isPulling) {
+              spatialVisual.classList.remove('is-pulling');
               spatialMain.style.transition = '';
               spatialMain.style.transform = '';
               spatialMain.style.willChange = '';
@@ -355,19 +363,43 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       spatialVisual.addEventListener('touchcancel', resetZoom);
     }
 
-    // Thumbnail switcher
-    $$('.spatial-thumb-btn', stage).forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const targetSrc = btn.dataset.thumbSrc;
-        if (spatialMain && targetSrc) {
-          spatialMain.src = imgSrc(targetSrc);
-          $$('.spatial-thumb-btn', stage).forEach((b) => {
-            b.classList.toggle('active', b === btn);
-            b.style.borderColor = (b === btn) ? 'var(--rose)' : 'var(--line)';
-          });
+    // Gallery Arrow & Dot Navigation (Option 1)
+    if (hasMultipleImages) {
+      let activeImgIdx = 0;
+      const updateActiveImage = (newIdx) => {
+        if (newIdx < 0) newIdx = productGallery.length - 1;
+        if (newIdx >= productGallery.length) newIdx = 0;
+        activeImgIdx = newIdx;
+        const targetImg = productGallery[activeImgIdx];
+        if (spatialMain && targetImg) {
+          spatialMain.src = imgSrc(targetImg);
         }
+        $$('.spatial-dot', stage).forEach((dot, idx) => {
+          dot.classList.toggle('active', idx === activeImgIdx);
+        });
+      };
+
+      $('#spatial-nav-prev', stage)?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateActiveImage(activeImgIdx - 1);
       });
-    });
+
+      $('#spatial-nav-next', stage)?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateActiveImage(activeImgIdx + 1);
+      });
+
+      $$('.spatial-dot', stage).forEach((dot) => {
+        dot.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const idx = parseInt(dot.dataset.dotIdx, 10);
+          if (!isNaN(idx)) updateActiveImage(idx);
+        });
+      });
+    }
 
     let currentQty = 1;
     const qtyVal = $('#spatial-qty-val', stage);

@@ -46,7 +46,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 3
+      "tokenVersion": 5
     },
     {
       "id": "uad8ba2526165",
@@ -144,7 +144,7 @@
       "longDescription": "Master Perfection Dildo Oscar - Ultra Yumuşak Dokulu Realistik Dildo Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
       "price": 2499,
       "oldPrice": 3259,
-      "stock": 9,
+      "stock": 8,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -422,7 +422,7 @@
       "name": "Realistik Vajinalar",
       "image": "/uploads/imga421c009a412.webp",
       "featuredOnHome": true,
-      "homeOrder": 3,
+      "homeOrder": 1,
       "createdAt": "2026-08-27T09:44:35.092Z"
     },
     {
@@ -869,6 +869,37 @@
       },
       "createdAt": "2026-08-30T16:52:22.283Z",
       "note": ""
+    },
+    {
+      "id": "LS-1018",
+      "userId": "ue364a7762ca6",
+      "userEmail": "x8pure@gmail.com",
+      "customerName": "Ulaş",
+      "items": [
+        {
+          "productId": "pb8933905dc29",
+          "name": "Oscar - Ultra Yumuşak Dokulu Realistik Dildo",
+          "price": 2499,
+          "qty": 1,
+          "image": "/uploads/img9e03f59652d2.webp"
+        }
+      ],
+      "subtotal": 2499,
+      "shipping": 0,
+      "discount": 0,
+      "total": 2499,
+      "coupon": null,
+      "status": "processing",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 caddesi 52/2",
+        "city": "TEPEBAŞI",
+        "zip": ""
+      },
+      "createdAt": "2026-08-31T11:57:00.810Z",
+      "note": ""
     }
   ],
   "coupons": [
@@ -967,9 +998,9 @@
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 17
+      "order": 18
     },
-    "updatedAt": "2026-08-31T11:06:55.009Z",
-    "version": 251
+    "updatedAt": "2026-08-31T12:04:49.892Z",
+    "version": 261
   }
 }
