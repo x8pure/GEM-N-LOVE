@@ -52,8 +52,8 @@ html.dark {
 }
 html.dark body { background: var(--bg); color: var(--text); }
 html.dark #age-gate { background: #0F1012; }
-html.dark nav.top { background: rgba(15, 16, 18, 0.78); border-bottom-color: var(--line); }
-html.dark nav.top.scrolled { background: rgba(15, 16, 18, 0.94); }
+html.dark nav.top { background: rgba(15, 16, 18, 0.82); border-bottom-color: var(--line); }
+html.dark nav.top.scrolled { background: rgba(18, 20, 24, 0.82) !important; }
 html.dark .mobile-menu.open { background: rgba(15, 16, 18, 0.98); }
 html.dark ::selection { background: #FF7B72; color: #0F1012; }
 html.dark #cursor-glow { background: radial-gradient(circle, rgba(255, 123, 114, 0.06), rgba(212, 175, 55, 0.03) 45%, transparent 70%); }
@@ -357,8 +357,8 @@ nav.top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 5vw;
-  background: rgba(253, 252, 248, 0.92);
+  padding: 18px 5vw;
+  background: rgba(253, 252, 248, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-style: solid;
@@ -397,48 +397,52 @@ nav::before {
   overflow: visible !important;
 }
 
-/* Desktop Floating Island Scrolled State with Card-Matching Radius */
+/* Floating Island Pill Capsule (Desktop) */
 @media (min-width: 769px) {
   header:nth-of-type(1) > nav:nth-of-type(1).scrolled,
   nav.top.scrolled {
-    margin: 10px auto 0 !important;
-    width: min(1440px, calc(100% - 8vw)) !important;
-    border-radius: 18px !important;
-    padding: 10px 2.5vw !important;
-    background: rgba(253, 252, 248, 0.88) !important;
-    backdrop-filter: blur(24px) saturate(200%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
-    border-color: rgba(220, 215, 205, 0.85) !important;
-    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04) !important;
+    margin: 12px auto 0 !important;
+    width: min(1440px, calc(100% - 10vw)) !important;
+    border-radius: 100px !important;
+    padding: 10px 28px !important;
+    background: rgba(253, 252, 248, 0.82) !important;
+    backdrop-filter: blur(28px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+    border: 1px solid rgba(41, 37, 36, 0.12) !important;
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 123, 114, 0.14) !important;
     overflow: visible !important;
   }
 
   html.dark header:nth-of-type(1) > nav:nth-of-type(1).scrolled,
   html.dark nav.top.scrolled {
-    background: rgba(15, 16, 18, 0.88) !important;
-    border-color: rgba(255, 255, 255, 0.14) !important;
-    box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.65), 0 6px 16px rgba(0, 0, 0, 0.35) !important;
+    background: rgba(18, 20, 24, 0.82) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 20px 50px -8px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 123, 114, 0.22) !important;
     overflow: visible !important;
   }
 }
 
-/* Mobile Scrolled State */
+/* Floating Island Pill Capsule (Mobile) */
 @media (max-width: 768px) {
   header:nth-of-type(1) > nav:nth-of-type(1).scrolled,
   nav.top.scrolled {
-    background: rgba(253, 252, 248, 0.96) !important;
+    margin: 8px auto 0 !important;
+    width: calc(100% - 10vw) !important;
+    border-radius: 100px !important;
+    padding: 8px 18px !important;
+    background: rgba(253, 252, 248, 0.88) !important;
     backdrop-filter: blur(24px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-    border-bottom-color: rgba(41, 37, 36, 0.12) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid rgba(41, 37, 36, 0.12) !important;
+    box-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(255, 123, 114, 0.12) !important;
     overflow: visible !important;
   }
 
   html.dark header:nth-of-type(1) > nav:nth-of-type(1).scrolled,
   html.dark nav.top.scrolled {
-    background: rgba(15, 16, 18, 0.95) !important;
-    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+    background: rgba(18, 20, 24, 0.88) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 123, 114, 0.2) !important;
     overflow: visible !important;
   }
 }
@@ -451,14 +455,27 @@ html.dark nav.top {
   background: rgba(15, 16, 18, 0.88);
   border-color: transparent transparent rgba(255, 255, 255, 0.08) transparent;
 }
-.brand { font-family: var(--font-display); font-weight: 700; font-size: 31px; letter-spacing: -1.6px; color: var(--text); display: inline-flex; align-items: baseline; }
+
+.brand { 
+  font-family: var(--font-display); 
+  font-weight: 700; 
+  font-size: 31px; 
+  letter-spacing: -1.6px; 
+  color: var(--text); 
+  display: inline-flex; 
+  align-items: baseline;
+  transition: font-size 0.35s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+nav.top.scrolled .brand {
+  font-size: 25px;
+  letter-spacing: -1.2px;
+}
 .brand .dot { color: #E63946; font-weight: 800; display: inline-block; margin-left: 1px; width: auto; height: auto; background: none; border-radius: 0; box-shadow: none; animation: beat 2.4s ease-in-out infinite; transform-origin: center bottom; }
 @keyframes beat { 0%,100% { transform: scale(1); } 10% { transform: scale(1.16); } 20% { transform: scale(1); } 30% { transform: scale(1.1); } 40%,100% { transform: scale(1); } }
-.nav-links { display: flex; gap: 38px; font-size: 12px; font-weight: 500; letter-spacing: 1.8px; text-transform: uppercase; color: var(--muted); }
-.nav-links a { position: relative; transition: color .2s ease, opacity .2s ease; padding: 4px 0; -webkit-font-smoothing: antialiased; }
-.nav-links a::after { content: ''; position: absolute; left: 0; bottom: -2px; height: 1.5px; width: 0; background: var(--text); opacity: .85; transition: width .28s cubic-bezier(.2,.8,.3,1); }
-.nav-links a:hover, .nav-links a.active { color: var(--text); }
-.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links { display: flex; gap: 32px; font-size: 12px; font-weight: 500; letter-spacing: 1.8px; text-transform: uppercase; color: var(--muted); }
+.nav-links a { position: relative; transition: all .25s cubic-bezier(0.16, 1, 0.3, 1); padding: 6px 14px; border-radius: 100px; -webkit-font-smoothing: antialiased; }
+.nav-links a::after { display: none; }
+.nav-links a:hover, .nav-links a.active { color: var(--text); background: rgba(255, 123, 114, 0.12); color: var(--rose); }
 .nav-tools { display: flex; align-items: center; gap: 10px; }
 .icon-btn {
   width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;

@@ -289,13 +289,14 @@
       "image": "/uploads/img499069f317db.webp",
       "gallery": [
         "/uploads/img499069f317db.webp",
-        "/uploads/imgd983bd4f6dfb.webp"
+        "/uploads/img2fc48566e463.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-29T11:57:38.638Z"
+      "createdAt": "2026-08-29T11:57:38.638Z",
+      "highlights": []
     },
     {
       "id": "pbcfa6505bc8d",
@@ -1000,7 +1001,7 @@
       "product": 0,
       "order": 18
     },
-    "updatedAt": "2026-08-31T12:04:49.892Z",
-    "version": 261
+    "updatedAt": "2026-08-31T13:02:55.953Z",
+    "version": 262
   }
 }
