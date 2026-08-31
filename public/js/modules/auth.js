@@ -1,0 +1,158 @@
+import { api } from './api.js';
+import { toast } from './ui.js';
+
+const $ = (s, r) => (r || document).querySelector(s);
+const LANG = window.__LS_LANG__ || 'tr';
+
+export async function performLogout(redirectUrl = '/') {
+  try {
+    await api('/api/auth/logout', { method: 'POST' });
+  } catch (e) {}
+  try {
+    localStorage.removeItem('ls_auth_token');
+    localStorage.removeItem('ls_admin_token');
+    localStorage.removeItem('ls_token');
+    localStorage.removeItem('ls_user');
+    localStorage.removeItem('ls_sid');
+    sessionStorage.clear();
+    document.cookie = 'ls_sid=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+    document.cookie = 'ls_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+    document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+  } catch (e) {}
+  if (window.LS) window.LS.session = null;
+  document.dispatchEvent(new Event('ls:logout'));
+  toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
+  setTimeout(() => {
+    window.location.replace(redirectUrl);
+  }, 200);
+}
+
+export function initAuth() {
+  const getAuthRedirect = (role) => {
+    if (role === 'admin') return '/admin';
+    const params = new URLSearchParams(location.search);
+    const next = params.get('next') || params.get('redirect') || params.get('returnUrl');
+    if (next && next.startsWith('/') && !next.startsWith('//')) return next;
+    return '/';
+  };
+
+  const login = $('#login-form');
+  if (login) login.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('/api/auth/login', { method: 'POST', body: { email: $('#l-email').value.trim(), password: $('#l-pass').value } });
+      toast(window.LS.t('auth.hi', { name: r.user.name }), '👋');
+      document.dispatchEvent(new Event('ls:session'));
+      setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
+    } catch (err) { toast(err.message, '⚠️'); }
+  });
+
+  const reg = $('#register-form');
+  if (reg) reg.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('/api/auth/register', { method: 'POST', body: { name: $('#r-name').value.trim(), email: $('#r-email').value.trim(), password: $('#r-pass').value } });
+      toast(window.LS.t('auth.hi', { name: r.user.name }), '🎉');
+      document.dispatchEvent(new Event('ls:session'));
+      setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
+    } catch (err) { toast(err.message, '⚠️'); }
+  });
+
+  const gLogin = $('#btn-google-login');
+  const gReg = $('#btn-google-reg');
+  
+  let tokenClient = null;
+
+  const startGoogleFlow = () => {
+    if (!window.__LS_GOOGLE_CLIENT_ID__) {
+      toast('Google Client ID bulunamadı', '⚠️');
+      return;
+    }
+    if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+      if (!tokenClient) {
+        tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: window.__LS_GOOGLE_CLIENT_ID__,
+          scope: 'email profile openid',
+          callback: async (resp) => {
+            if (resp && resp.access_token) {
+              try {
+                toast(window.LS.t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
+                const r = await api('/api/auth/google', {
+                  method: 'POST',
+                  body: { accessToken: resp.access_token }
+                });
+                if (r.token) {
+                  localStorage.setItem('ls_auth_token', r.token);
+                }
+                toast((window.LS.t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
+                document.dispatchEvent(new Event('ls:session'));
+                setTimeout(() => {
+                  location.href = getAuthRedirect(r.user?.role);
+                }, 400);
+              } catch (err) {
+                toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
+              }
+            }
+          }
+        });
+      }
+      tokenClient.requestAccessToken();
+    } else if (window.google && window.google.accounts && window.google.accounts.id) {
+      window.google.accounts.id.prompt();
+    } else {
+      toast('Google servisleri hazırlanıyor, lütfen 1 saniye sonra tekrar deneyin...', '⏳');
+    }
+  };
+
+  if (gLogin) gLogin.onclick = startGoogleFlow;
+  if (gReg) gReg.onclick = startGoogleFlow;
+
+  if (window.__LS_GOOGLE_CLIENT_ID__) {
+     const handleCredentialResponse = async (response) => {
+        try {
+          toast(window.LS.t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
+          const r = await api('/api/auth/google', {
+            method: 'POST',
+            body: { credential: response.credential }
+          });
+          if (r.token) {
+            localStorage.setItem('ls_auth_token', r.token);
+          }
+          toast((window.LS.t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
+          document.dispatchEvent(new Event('ls:session'));
+          setTimeout(() => {
+            location.href = getAuthRedirect(r.user?.role);
+          }, 400);
+        } catch (err) {
+          toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
+        }
+     };
+     
+     const initGsi = () => {
+       if (window.google && window.google.accounts && window.google.accounts.id) {
+         window.google.accounts.id.initialize({
+           client_id: window.__LS_GOOGLE_CLIENT_ID__,
+           callback: handleCredentialResponse,
+           auto_select: false,
+           use_fedcm_for_prompt: false
+         });
+         if (window.self === window.top) {
+           try {
+             window.google.accounts.id.prompt((notification) => {});
+           } catch (e) {}
+         }
+       }
+     };
+     
+     if (window.google && window.google.accounts) {
+       initGsi();
+     } else {
+       window.addEventListener('load', initGsi);
+     }
+  } else {
+     if (gLogin) gLogin.style.display = 'none';
+     if (gReg) gReg.style.display = 'none';
+     const orDividers = document.querySelectorAll('.auth-or');
+     orDividers.forEach(d => d.style.display = 'none');
+  }
+}

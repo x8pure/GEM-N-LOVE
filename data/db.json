@@ -5,7 +5,7 @@
       "email": "admin@loveshop.com.tr",
       "passwordHash": "d8489a0c4b604ca225c21cb0b582072de7bd3c06290576d80111e902d3f4aaa4",
       "name": "Mağaza Yönetimi",
-      "role": "customer",
+      "role": "admin",
       "createdAt": "2026-08-26T14:02:46.012Z",
       "addresses": []
     },
@@ -67,7 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 12
+      "tokenVersion": 17
     },
     {
       "id": "u9468e81a05d7",
@@ -90,12 +90,12 @@
       "longDescription": "",
       "price": 1699,
       "oldPrice": 2199,
-      "stock": 9,
+      "stock": 7,
       "rating": 0,
       "reviewCount": 0,
-      "featured": true,
+      "featured": false,
       "isNew": true,
-      "bestSeller": true,
+      "bestSeller": false,
       "image": "/uploads/imga421c009a412.webp",
       "gallery": [
         "/uploads/imga421c009a412.webp",
@@ -105,7 +105,8 @@
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-27T09:36:06.470Z"
+      "createdAt": "2026-08-27T09:36:06.470Z",
+      "highlights": []
     },
     {
       "id": "pe31257abd626",
@@ -363,8 +364,8 @@
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
-      "isNew": true,
-      "bestSeller": true,
+      "isNew": false,
+      "bestSeller": false,
       "image": "/uploads/img2dbde1404660.webp",
       "gallery": [
         "/uploads/img2dbde1404660.webp",
@@ -374,7 +375,35 @@
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-29T12:18:40.364Z"
+      "createdAt": "2026-08-29T12:18:40.364Z",
+      "highlights": []
+    },
+    {
+      "id": "p200924b29a1e",
+      "slug": "fetis-fantezi-pembe-peluslu-metal-kelepce",
+      "name": "Fetiş Fantezi Pembe Peluşlu Metal Kelepçe",
+      "category": "fetish-urunler",
+      "categoryName": "Fetish Ürünler",
+      "description": "Fetiş Fantezi Pembe Peluşlu Metal Kelepçe",
+      "longDescription": "LOVE. Fetiş Fantezi Pembe Peluşlu Metal Kelepçe, ilişki esnasında kontrol altında tutmayı sevenler, farklı pozisyonları keşfetmek veya BSDM gibi hakimiyet isteyenler için olarak üretilmiştir. Renkli ve yumuşak peluş kaplaması ile bileklere daha yumuşak temas eder. Boyutu ayarlanabilir ve tüm bilek kalınlıklarına uyumludur. Paket içeriğinde 2 anahtar mevcuttur. Ancak anahtarlar kaybolur korkusu yaşamanıza gerek yoktur, çünkü anahtarsız olarak özel düğmesi ile parmağınızla da açabilirsiniz.",
+      "price": 399,
+      "oldPrice": 459,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [],
+      "image": "/uploads/img93909a07615b.webp",
+      "gallery": [
+        "/uploads/img93909a07615b.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-31T10:01:32.840Z"
     }
   ],
   "categories": [
@@ -449,6 +478,15 @@
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-29T12:09:14.353Z"
+    },
+    {
+      "id": "ctc9c6a9a9ae12",
+      "slug": "fetish-urunler",
+      "name": "Fetish Ürünler",
+      "image": "/uploads/img93909a07615b.webp",
+      "featuredOnHome": false,
+      "homeOrder": 99,
+      "createdAt": "2026-08-31T10:00:44.715Z"
     }
   ],
   "orders": [
@@ -738,6 +776,99 @@
       },
       "createdAt": "2026-08-29T11:25:12.164Z",
       "note": ""
+    },
+    {
+      "id": "LS-1015",
+      "userId": "uad8ba2526165",
+      "userEmail": "cemal.ulas@gmail.com",
+      "customerName": "Cemal ulaş",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 1,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 1699,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1798,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-30T11:44:08.943Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1016",
+      "userId": "uad8ba2526165",
+      "userEmail": "cemal.ulas@gmail.com",
+      "customerName": "cemal.ulas",
+      "items": [
+        {
+          "productId": "p2484e3b314df",
+          "name": "3 in 1 Realistik Vajina",
+          "price": 1699,
+          "qty": 1,
+          "image": "/uploads/imga421c009a412.webp"
+        }
+      ],
+      "subtotal": 1699,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1798,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-30T11:48:55.979Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1017",
+      "userId": "uad8ba2526165",
+      "userEmail": "cemal.ulas@gmail.com",
+      "customerName": "Cemal Ulaş",
+      "items": [
+        {
+          "productId": "pe31257abd626",
+          "name": "Vibratör",
+          "price": 1299,
+          "qty": 1,
+          "image": "/uploads/img4196efd545f6.webp"
+        }
+      ],
+      "subtotal": 1299,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1398,
+      "coupon": null,
+      "status": "cancelled",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-30T16:52:22.283Z",
+      "note": ""
     }
   ],
   "coupons": [
@@ -808,16 +939,7 @@
       "createdAt": "2026-08-27T12:28:49.513Z"
     }
   ],
-  "contact": [
-    {
-      "id": "m5d7bf6037762",
-      "name": "Test",
-      "email": "ct@test.com",
-      "message": "Test mesaji",
-      "createdAt": "2026-08-27T12:28:49.555Z",
-      "read": false
-    }
-  ],
+  "contact": [],
   "settings": {
     "storeName": "Love.",
     "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
@@ -845,9 +967,9 @@
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 14
+      "order": 17
     },
-    "updatedAt": "2026-08-30T10:09:56.340Z",
-    "version": 163
+    "updatedAt": "2026-08-31T11:06:55.009Z",
+    "version": 251
   }
 }

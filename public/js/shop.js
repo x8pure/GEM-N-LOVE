@@ -1,5 +1,16 @@
 'use strict';
-(() => {
+import { initAccount, initProfile } from './modules/account.js';
+import { initCheckout, initThanks } from './modules/checkout.js';
+import { initSpatialAnimations, openSpatialCardZoom, closeSpatialCardZoom } from './modules/spatial.js';
+import { getLocalCart, setLocalCart, updateCartBadge, addToCart, initCart } from './modules/cart.js';
+import { performLogout, initAuth } from './modules/auth.js';
+import { api, getClientSid } from './modules/api.js';
+import { toast } from './modules/ui.js';
+import { initCoverflow } from './modules/coverflow.js';
+import { initContact } from './modules/contact.js';
+
+
+
   // Gracefully handle browser internal view-transition rejections in iframe environments
   if (typeof window !== 'undefined') {
     window.addEventListener('unhandledrejection', (e) => {
@@ -39,7 +50,7 @@
       'pd.noreviews': 'Bu ürün için henüz onaylanmış yorum yok. İlk yorumu sen yaz!', 'pd.reviewsfail': 'Yorumlar yüklenemedi.', 'pd.write': '✍️ Yorum Yaz',
       'rv.short': 'Lütfen en az 10 karakterlik bir yorum yaz', 'rv.ok': 'Yorumun alındı, onay sonrası yayınlanacak 💜',
       'cart.empty': 'Sepetin şimdilik boş.<br>Keşfetmeye hazır mısın?', 'cart.empty.btn': 'Mağazayı Keşfet',
-      'cart.summary': 'Sipariş Özeti', 'cart.freeship.left': '🚚 Ücretsiz kargoya {x} kaldı!', 'cart.freeship.won': '🎉 Ücretsiz kargo hakkı kazandın!',
+      'cart.summary': 'Sipariş Özeti', 'cart.freeship.left': 'Ücretsiz kargoya {x} kaldı!', 'cart.freeship.won': 'Ücretsiz kargo hakkı kazandın!',
       'cart.coupon.ph': 'Kupon kodu', 'cart.apply': 'Uygula', 'cart.coupon.is': 'Kupon: {code}', 'cart.coupon.ok': 'Kupon uygulandı',
       'cart.subtotal': 'Ara toplam', 'cart.shipping': 'Kargo', 'cart.free': 'Ücretsiz', 'cart.discount': 'İndirim', 'cart.total': 'Toplam',
       'cart.checkout': 'Ödemeye Geç →', 'cart.continue': 'Alışverişe Devam Et',
@@ -98,7 +109,7 @@
       'pd.noreviews': 'No approved reviews for this product yet. Be the first to write one!', 'pd.reviewsfail': 'Reviews could not be loaded.', 'pd.write': '✍️ Write a Review',
       'rv.short': 'Please write a review of at least 10 characters', 'rv.ok': 'Your review has been received and will be published after approval 💜',
       'cart.empty': 'Your cart is empty for now.<br>Ready to explore?', 'cart.empty.btn': 'Explore the Shop',
-      'cart.summary': 'Order Summary', 'cart.freeship.left': '🚚 {x} away from free shipping!', 'cart.freeship.won': '🎉 You unlocked free shipping!',
+      'cart.summary': 'Order Summary', 'cart.freeship.left': '{x} away from free shipping!', 'cart.freeship.won': 'You unlocked free shipping!',
       'cart.coupon.ph': 'Coupon code', 'cart.apply': 'Apply', 'cart.coupon.is': 'Coupon: {code}', 'cart.coupon.ok': 'Coupon applied',
       'cart.subtotal': 'Subtotal', 'cart.shipping': 'Shipping', 'cart.free': 'Free', 'cart.discount': 'Discount', 'cart.total': 'Total',
       'cart.checkout': 'Proceed to Checkout →', 'cart.continue': 'Continue Shopping',
@@ -148,7 +159,7 @@
     return s;
   }
 
-  window.LS = { fmt, t, lang: LANG, dateFmt };
+  window.LS = { fmt, t, lang: LANG, dateFmt, imgSrc, esc, stars };
 
   /* ---------- i18n: live-update static text nodes from SSR markers ---------- */
   document.documentElement.lang = LANG;
@@ -196,103 +207,33 @@
   try { sessionStorage.removeItem('ls_just_switched'); } catch (e) {}
 
   /* ---------- API helper ---------- */
-  function getClientSid() {
-    try {
-      let sid = localStorage.getItem('ls_sid');
-      if (!sid) {
-        sid = 'sid_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-        localStorage.setItem('ls_sid', sid);
-      }
-      try {
-        document.cookie = 'ls_sid=' + encodeURIComponent(sid) + '; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=31536000';
-      } catch {}
-      return sid;
-    } catch {
-      return '';
-    }
-  }
+  // getClientSid imported from modules/api.js
+  window.getClientSid = getClientSid;
 
   /* Cart local storage cache for instant rendering and resilient offline/iframe sync */
-  function getLocalCart() {
-    try {
-      const raw = localStorage.getItem('ls_cart_data');
-      return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
-  }
-  function setLocalCart(cart) {
-    try {
-      if (cart && Array.isArray(cart.items)) {
-        localStorage.setItem('ls_cart_data', JSON.stringify(cart));
-      } else {
-        localStorage.removeItem('ls_cart_data');
-      }
-    } catch {}
-  }
+  // getLocalCart imported from modules/cart.js
+  window.getLocalCart = getLocalCart;
+  // setLocalCart imported from modules/cart.js
+  window.setLocalCart = setLocalCart;
 
-  async function api(path, opts = {}) {
-    const sid = getClientSid();
-    const token = localStorage.getItem('ls_auth_token');
-    const customHeaders = {
-      'Content-Type': 'application/json',
-      ...(sid ? { 'x-ls-sid': sid } : {}),
-      ...(token ? { 'Authorization': 'Bearer ' + token, 'x-ls-token': token } : {}),
-      ...(opts.headers || {})
-    };
-    const res = await fetch(path, {
-      credentials: 'same-origin',
-      ...opts,
-      headers: customHeaders,
-      body: opts.body ? JSON.stringify(opts.body) : undefined
-    });
-    const serverSid = res.headers.get('x-ls-sid');
-    if (serverSid) {
-      try {
-        localStorage.setItem('ls_sid', serverSid);
-        document.cookie = 'ls_sid=' + encodeURIComponent(serverSid) + '; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=31536000';
-      } catch {}
-    }
-    let data;
-    try { data = await res.json(); } catch { data = { ok: false }; }
-    if (!res.ok) throw Object.assign(new Error(data.error || 'Hata olustu'), { data });
-    return data;
-  }
+  // api imported from modules/api.js
+  window.api = api;
   LS.api = api;
 
   /* ---------- global logout ---------- */
-  async function performLogout(redirectUrl = '/') {
-    try {
-      await api('/api/auth/logout', { method: 'POST' });
-    } catch (e) {}
-    try {
-      localStorage.removeItem('ls_auth_token');
-      localStorage.removeItem('ls_admin_token');
-      localStorage.removeItem('ls_token');
-      localStorage.removeItem('ls_user');
-      localStorage.removeItem('ls_sid');
-      sessionStorage.clear();
-      document.cookie = 'ls_sid=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
-      document.cookie = 'ls_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
-      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
-    } catch (e) {}
-    LS.session = null;
-    document.dispatchEvent(new Event('ls:logout'));
-    toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
-    setTimeout(() => {
-      window.location.replace(redirectUrl);
-    }, 200);
-  }
+  // performLogout imported from modules/auth.js
+  window.performLogout = performLogout;
   LS.logout = performLogout;
 
   /* ---------- toast ---------- */
-  function toast(msg, icon = '💖') {
-    const zone = $('#toast-zone') || document.body.insertAdjacentHTML('beforeend', '<div id="toast-zone"></div>') && $('#toast-zone');
-    const el = document.createElement('div');
-    el.className = 'toast';
-    el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
-    zone.appendChild(el);
-    setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 2600);
-  }
+  // toast function is now imported from modules/ui.js
+  window.toast = toast; // backward compatibility if needed
   LS.toast = toast;
+
+  window.openSpatialCardZoom = openSpatialCardZoom;
+  window.closeSpatialCardZoom = closeSpatialCardZoom;
+  LS.openSpatialCardZoom = openSpatialCardZoom;
+  LS.closeSpatialCardZoom = closeSpatialCardZoom;
 
   /* ---------- age gate ---------- */
   const gate = $(`#age-gate`);
@@ -308,8 +249,7 @@
     gate.classList.add(`passing`);
     document.body.classList.remove(`gate-active`);
     document.documentElement.classList.remove(`gate-active-init`);
-    setTimeout(() => {
-      gate.classList.add(`hidden`);
+    setTimeout(() => { gate.classList.add(`hidden`);
     }, 800);
   };
 
@@ -558,31 +498,8 @@
   });
 
   /* ---------- cart badge & magnetic micro-bounce ---------- */
-  function updateCartBadge(count, isNewAdd = false) {
-    const badges = $$('#cart-badge');
-    if (!badges.length) return;
-    const n = Math.max(0, parseInt(count, 10) || 0);
-    badges.forEach((b) => {
-      b.textContent = n;
-      b.style.display = 'flex';
-      if (isNewAdd) {
-        b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
-      }
-    });
-
-    if (isNewAdd) {
-      // Top cart button spring bounce
-      const topCartBtn = $('#nav-cart-btn, nav.top .cart-btn, nav.top a[href="/sepet"]');
-      if (topCartBtn) {
-        topCartBtn.classList.remove('cart-bounce');
-        void topCartBtn.offsetWidth;
-        topCartBtn.classList.add('cart-bounce');
-        setTimeout(() => topCartBtn.classList.remove('cart-bounce'), 750);
-      }
-    }
-  }
-  LS.updateCartBadge = updateCartBadge;
-
+  // updateCartBadge imported from modules/cart.js
+  window.updateCartBadge = updateCartBadge;
   /* ---------- Quick Search Modal (Instant 2026 UX) ---------- */
   function initQuickSearch() {
     const modal = $('#quick-search-modal');
@@ -635,7 +552,7 @@
         </div>
       `;
 
-      $$('.qs-chip', results).forEach((chip) => {
+      $('.qs-chip', results).forEach((chip) => {
         chip.addEventListener('click', () => {
           const q = chip.dataset.query;
           if (q) {
@@ -646,7 +563,7 @@
         });
       });
 
-      $$('.qs-cat-btn', results).forEach((btn) => {
+      $('.qs-cat-btn', results).forEach((btn) => {
         btn.addEventListener('click', () => {
           closeSearch();
         });
@@ -752,8 +669,7 @@
 
     input.addEventListener('input', () => {
       clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => {
-        doSearch(input.value);
+      searchTimer = setTimeout(() => { doSearch(input.value);
       }, 160);
     });
 
@@ -854,66 +770,8 @@
   document.addEventListener('ls:cart', refreshCartBadge);
   if ($('nav.top')) refreshCartBadge();
 
-  async function addToCart(productId, qty = 1, variant = 'standart', btn = null) {
-    if (!productId) return;
-    if (btn && btn.dataset.busy === '1') return;
-    if (btn) btn.dataset.busy = '1';
-
-    try {
-      // Haptic micro-feedback for mobile touch devices
-      try {
-        if (navigator && typeof navigator.vibrate === 'function') {
-          navigator.vibrate([18, 30, 20]);
-        }
-      } catch {}
-
-      const cleanQty = Math.max(1, parseInt(qty, 10) || 1);
-      const local = getLocalCart();
-      const currentItems = (local && Array.isArray(local.items)) ? local.items : [];
-      const currentCoupon = local?.coupon?.code || (typeof local?.coupon === 'string' ? local.coupon : undefined);
-
-      const res = await api('/api/cart/add', {
-        method: 'POST',
-        body: { productId, qty: cleanQty, variant, items: currentItems, coupon: currentCoupon }
-      });
-      
-      // In-place button feedback
-      if (btn) {
-        const isIconOnly = btn.classList.contains('action-btn') || btn.classList.contains('quick-add-btn') || btn.offsetWidth <= 52;
-        const origContent = btn.innerHTML;
-        const origWidth = btn.offsetWidth ? `${btn.offsetWidth}px` : '';
-
-        btn.classList.add('added');
-        if (isIconOnly) {
-          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-check-icon"><polyline points="20 6 9 17 4 12"/></svg>`;
-        } else {
-          if (origWidth) btn.style.minWidth = origWidth;
-          btn.innerHTML = `<span class="btn-added-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <span>${LANG === 'en' ? 'Added' : 'Eklendi'}</span></span>`;
-        }
-
-        setTimeout(() => {
-          btn.innerHTML = origContent;
-          btn.classList.remove('added');
-          if (!isIconOnly) btn.style.minWidth = '';
-          delete btn.dataset.busy;
-        }, 1350);
-      }
-
-      // On desktop (window > 860px), subtle toast notification
-      if (window.innerWidth > 860) {
-        toast(t('added'), '🛍️');
-      }
-
-      if (res && Array.isArray(res.items)) {
-        setLocalCart(res);
-        const n = res.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
-        updateCartBadge(n, true);
-      }
-    } catch (e) {
-      if (btn) delete btn.dataset.busy;
-      toast(e.message || 'Ürün sepete eklenemedi', '⚠️');
-    }
-  }
+  // addToCart imported from modules/cart.js
+  window.addToCart = addToCart;
   LS.addToCart = addToCart;
 
   /* ---------- reveal on scroll ---------- */
@@ -931,39 +789,7 @@
   LS.observe = refreshRevealObservers;
 
   /* ---------- 3D Card Parallax & Specular Sheen Physics ---------- */
-  function initTiltPhysics() {
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isTouch) return;
-
-    document.addEventListener('pointermove', (e) => {
-      const card = e.target.closest('.prod-card');
-      if (!card) return;
-      const media = card.querySelector('.prod-media');
-      if (!media) return;
-      const rect = media.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const px = (x / rect.width) * 100;
-      const py = (y / rect.height) * 100;
-
-      media.style.setProperty('--sheen-x', `${px.toFixed(1)}%`);
-      media.style.setProperty('--sheen-y', `${py.toFixed(1)}%`);
-
-      const cx = rect.width / 2;
-      const cy = rect.height / 2;
-      const rotY = ((x - cx) / cx) * 6;
-      const rotX = -((y - cy) / cy) * 6;
-      media.style.transform = `perspective(800px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
-    }, { passive: true });
-
-    document.addEventListener('pointerout', (e) => {
-      const card = e.target.closest('.prod-card');
-      if (!card || card.contains(e.relatedTarget)) return;
-      const media = card.querySelector('.prod-media');
-      if (media) media.style.transform = '';
-    });
-  }
-
+  // initTiltPhysics logic moved to modules/spatial.js
   /* ---------- product card template ---------- */
   function productCard(p) {
     const badges = [];
@@ -983,7 +809,6 @@
         </button>
       </div>
       <div class="prod-info">
-        <div class="prod-cat">${catName(p.category, p.categoryName)}</div>
         <a href="/urun/${p.slug}" class="prod-name">${p.name}</a>
         <div class="prod-rating">${stars(p.rating || 0)} <span>(${p.reviewCount || 0})</span></div>
         <div class="prod-price-row">
@@ -995,433 +820,10 @@
   }
   LS.productCard = productCard;
 
-  /* ================= 2026 SPATIAL CARD ZOOM (MORPHING CANVAS) ================= */
-  let activeOriginCard = null;
-  let activeZoomRequestId = 0;
-
-  async function openSpatialCardZoom(productIdOrSlug, originCard) {
-    if (!productIdOrSlug) return;
-    const overlay = $('#spatial-canvas-overlay');
-    const stage = $('#spatial-card-stage');
-    if (!overlay || !stage) return;
-
-    const reqId = ++activeZoomRequestId;
-    activeOriginCard = originCard;
-    document.body.style.overflow = 'hidden';
-
-    // Morph origin card if available
-    if (originCard) {
-      originCard.style.opacity = '0.4';
-      originCard.style.transform = 'scale(0.97)';
-      originCard.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-    }
-
-    stage.innerHTML = `
-      <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="Kapat">✕</button>
-      <div style="display:flex;align-items:center;justify-content:center;height:460px;width:100%;">
-        <div class="spinner"></div>
-      </div>
-    `;
-
-    overlay.classList.add('open');
-    overlay.setAttribute('aria-hidden', 'false');
-
-    try {
-      const cleanKey = String(productIdOrSlug || '').replace(/^\/urun\//, '').replace(/\/+$/, '').trim();
-      const res = await api('/api/products/' + encodeURIComponent(cleanKey));
-      if (reqId !== activeZoomRequestId) return;
-      const p = (res && res.product) ? res.product : res;
-      if (!p || !p.id) throw new Error('Ürün bulunamadı');
-
-      const inStock = p.stock > 0;
-      const stockBadge = inStock
-        ? `<span class="stock-pill in-stock">● ${LANG === 'en' ? 'In stock · Ships in 24h' : 'Stokta · 24 Saatte Kargoda'}</span>`
-        : `<span class="stock-pill out-stock">● ${LANG === 'en' ? 'Out of stock' : 'Tükendi'}</span>`;
-
-      const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
-      const hasMultipleImages = productGallery.length > 1;
-
-      // Compute Smart Dynamic Specs (Custom Highlights > Category Rules > Universal Safe Specs)
-      function getProductSpecs(prod) {
-        // 1. Admin Defined Highlights
-        if (Array.isArray(prod.highlights) && prod.highlights.length) {
-          const icons = [
-            '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-            '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
-            '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
-            '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>'
-          ];
-          return prod.highlights.slice(0, 4).map((text, i) => ({
-            icon: icons[i % icons.length],
-            text: String(text).trim()
-          }));
-        }
-
-        const cat = String(prod.category || '').toLowerCase();
-        const name = String(prod.name || '').toLowerCase();
-
-        // 2. Electronic / Vibrators / Masturbators / Dolls
-        if (cat.includes('vibrator') || cat.includes('masturbator') || cat.includes('vajina') || cat.includes('sisme') || name.includes('vibratör') || name.includes('şarjlı') || name.includes('motor')) {
-          return [
-            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Medical Silicone' : '%100 Medikal Silikon' },
-            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'IPX7 Waterproof' : 'IPX7 Su Geçirmez' },
-            { icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', text: LANG === 'en' ? 'Magnetic USB Charge' : 'Manyetik USB Şarj' },
-            { icon: '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>', text: LANG === 'en' ? '<40dB Whisper Motor' : '<40dB Fısıltı Motoru' }
-          ];
-        }
-
-        // 3. Cosmetics / Oils / Lubricants / Sprays / Care
-        if (cat.includes('kozmetik') || cat.includes('saglik') || name.includes('jel') || name.includes('yağ') || name.includes('sprey') || name.includes('krem') || name.includes('lube')) {
-          return [
-            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Dermatologically Tested' : 'Dermatolojik Test Edildi' },
-            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'Water Based & Safe pH' : 'Su Bazlı & Güvenli pH' },
-            { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', text: LANG === 'en' ? 'Condom & Skin Safe' : 'Cilt & Prezervatif Uyumlu' },
-            { icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>', text: LANG === 'en' ? 'Stain Free & Easy Clean' : 'Leke Bırakmaz & Kolay Temizlenir' }
-          ];
-        }
-
-        // 4. Lingerie / Costume / Fantasy
-        if (cat.includes('fantezi') || cat.includes('fantasy') || cat.includes('kostum') || cat.includes('giyim') || name.includes('çorap') || name.includes('gecelik') || name.includes('deri') || name.includes('dantel')) {
-          return [
-            { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', text: LANG === 'en' ? 'Soft Touch Fabric' : 'Hassas & Yumuşak Doku' },
-            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Flexible Ergonomic Fit' : 'Esnek & Rahat Kalıp' },
-            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'Breathable Textile' : 'Nefes Alan Kumaş' },
-            { icon: '<polyline points="20 6 9 17 4 12"/>', text: LANG === 'en' ? 'Premium Handcraft' : 'Kaliteli & Dayanıklı Dikiş' }
-          ];
-        }
-
-        // 5. Dildos / Anal / Non-electric Body Safe Products
-        if (cat.includes('dildo') || cat.includes('anal') || cat.includes('knot')) {
-          return [
-            { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? '%100 Body-Safe Material' : '%100 Vücut Dostu Materyal' },
-            { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? '100% Waterproof' : '%100 Su Geçirmez' },
-            { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', text: LANG === 'en' ? 'Seamless & Hypoallergenic' : 'Pürüzsüz & Hipoalerjenik' },
-            { icon: '<polyline points="20 6 9 17 4 12"/>', text: LANG === 'en' ? 'Easy to Sanitize' : 'Kolay Sterilize Edilir' }
-          ];
-        }
-
-        // 6. Universal Default Trust & Quality Specs
-        return [
-          { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı' },
-          { icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>', text: LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme' },
-          { icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', text: LANG === 'en' ? 'Fast 24h Dispatch' : '24 Saatte Hızlı Kargo' },
-          { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', text: LANG === 'en' ? 'Premium Quality Standard' : 'Yüksek Kalite Standardı' }
-        ];
-      }
-
-      const activeSpecs = getProductSpecs(p);
-
-      stage.innerHTML = `
-        <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-        <div class="spatial-grid">
-          <div class="spatial-visual-hero">
-            <img id="spatial-main-image" src="${imgSrc(p.image)}" alt="${p.name}">
-            <div class="spatial-badge-cluster">
-              ${p.bestSeller ? `<span>${t('badge.hot')}</span>` : ''}
-              ${p.isNew ? `<span>${t('badge.new')}</span>` : ''}
-              ${p.oldPrice ? `<span>${t('badge.sale')}</span>` : ''}
-            </div>
-            ${hasMultipleImages ? `
-              <div class="spatial-thumbs">
-                ${productGallery.map((img, idx) => `
-                  <button type="button" class="spatial-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" aria-label="${p.name} ${idx + 1}">
-                    <img src="${imgSrc(img)}" alt="${p.name} - ${idx + 1}">
-                  </button>
-                `).join('')}
-              </div>
-            ` : ''}
-          </div>
-
-          <div class="spatial-content-pane">
-            <div>
-              <div class="spatial-top-meta">
-                <span class="spatial-cat">${catName(p.category, p.categoryName)}</span>
-                <div class="spatial-rating-row">
-                  <span class="rating-stars">${stars(p.rating || 5)}</span>
-                  <span class="count">(${p.reviewCount || 0} ${t('pd.reviews')})</span>
-                </div>
-              </div>
-
-              <div class="spatial-title-group">
-                <h1>${p.name}</h1>
-                <div class="spatial-price-cluster">
-                  <span class="spatial-price">${fmt(p.price)}</span>
-                  ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
-                  ${stockBadge}
-                </div>
-              </div>
-
-              <p class="spatial-desc" style="margin-top:12px;">${p.description || ''}</p>
-            </div>
-
-            <!-- Dynamic Category & Product Specs Bar -->
-            <div class="spatial-spec-deck">
-              ${activeSpecs.map((spec) => `
-                <div class="spatial-spec-card">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${spec.icon}</svg>
-                  <span>${esc(spec.text)}</span>
-                </div>
-              `).join('')}
-            </div>
-
-            <!-- Discreet Privacy Reassurance -->
-            <div class="spatial-privacy-seal">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-              <div>
-                <strong>${LANG === 'en' ? '100% Discreet Packaging & Anonymous Payment' : '%100 Gizli Paketleme & Anonim Ödeme'}</strong>
-              </div>
-            </div>
-
-            <!-- Spatial Actions Deck -->
-            <div class="spatial-action-bar">
-              <div class="spatial-qty-picker">
-                <button type="button" class="spatial-qty-btn" id="spatial-qty-dec" aria-label="Azalt">−</button>
-                <span class="spatial-qty-val" id="spatial-qty-val">1</span>
-                <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
-              </div>
-              <button type="button" class="spatial-add-btn" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span>${LANG === 'en' ? 'Add to Cart' : 'Sepete Ekle'}</span>
-              </button>
-              <a href="/urun/${p.slug}" class="spatial-full-link">
-                <span>${LANG === 'en' ? 'Product Details →' : 'Ürün Detayları →'}</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // Spatial gallery thumbnail switcher
-      const spatialMain = $('#spatial-main-image', stage);
-      
-      // Mobile Pull-to-Zoom (Elastic Rubber-Band Effect)
-      const spatialVisual = $('.spatial-visual-hero', stage);
-      const spatialContent = $('.spatial-content-pane', stage);
-      const spatialThumbs = $('.spatial-thumbs', stage);
-      if (spatialVisual && spatialMain) {
-        let startY = 0;
-        let isPulling = false;
-        
-        spatialVisual.addEventListener('touchstart', (e) => {
-          // Sadece sayfa/modal başındayken aktif olsun
-          const stageEl = spatialVisual.closest('.spatial-card-stage');
-          const scrollTop = stageEl ? stageEl.scrollTop : window.scrollY;
-          if (scrollTop <= 10) {
-            startY = e.touches[0].clientY;
-            isPulling = true;
-            spatialMain.style.transition = 'none';
-            spatialMain.style.transformOrigin = 'center center';
-            if (spatialContent) {
-              spatialContent.style.transition = 'none';
-              // Bilgi kartını (yazılar + arkaplan) tek bir kütle yapmak için:
-              spatialContent.style.backgroundColor = 'var(--card-solid)';
-              spatialContent.style.position = 'relative';
-              spatialContent.style.zIndex = '10';
-            }
-            if (spatialThumbs) {
-              spatialThumbs.style.transition = 'none';
-            }
-            // Görselin aşağıya taşabilmesi için overflow'u serbest bırak
-            spatialVisual.style.overflow = 'visible';
-          }
-        }, { passive: true });
-
-        spatialVisual.addEventListener('touchmove', (e) => {
-          if (!isPulling) return;
-          const currentY = e.touches[0].clientY;
-          const deltaY = currentY - startY;
-          
-          if (deltaY > 0) {
-            e.preventDefault(); // Tarayıcının varsayılan aşağı kaydırma (pull-to-refresh) hareketini engeller
-            // Yaylanma direnci
-            let scale = 1 + (deltaY / 300);
-            if (scale > 1.3) {
-               scale = 1.3 + (scale - 1.3) * 0.3; 
-            }
-            spatialMain.style.transform = `scale(${scale})`;
-            
-            // Bilgi kartını görselin merkezden büyümesi kadar aşağı doğru kaydır (translateY)
-            if (spatialContent) {
-               const moveY = (spatialMain.offsetHeight * (scale - 1)) / 2;
-               spatialContent.style.transform = `translateY(${moveY}px)`;
-            }
-
-            // Küçük resimleri yumuşakça yok et (fade-out)
-            if (spatialThumbs) {
-               let opacity = 1 - (deltaY / 120);
-               spatialThumbs.style.opacity = Math.max(0, opacity);
-               spatialThumbs.style.pointerEvents = 'none';
-            }
-          } else {
-            isPulling = false;
-            // Kullanıcı yukarı kaydırmaya karar verirse efekti geri sar
-            if (spatialMain.style.transform !== '' && spatialMain.style.transform !== 'scale(1)') {
-                resetZoom();
-            }
-          }
-        }, { passive: false });
-
-        const resetZoom = () => {
-          if (isPulling || spatialMain.style.transform !== '') {
-            isPulling = false;
-            spatialMain.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-            spatialMain.style.transform = 'scale(1)';
-            
-            if (spatialContent) {
-              spatialContent.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-              spatialContent.style.transform = 'translateY(0)';
-            }
-
-            if (spatialThumbs) {
-              spatialThumbs.style.transition = 'opacity 0.4s ease';
-              spatialThumbs.style.opacity = '1';
-            }
-            
-            setTimeout(() => {
-              if (!isPulling) {
-                spatialMain.style.transition = '';
-                if (spatialContent) {
-                  spatialContent.style.transition = '';
-                  spatialContent.style.backgroundColor = '';
-                  spatialContent.style.position = '';
-                  spatialContent.style.zIndex = '';
-                }
-                if (spatialThumbs) {
-                  spatialThumbs.style.transition = '';
-                  spatialThumbs.style.opacity = '';
-                  spatialThumbs.style.pointerEvents = '';
-                }
-                spatialVisual.style.overflow = '';
-              }
-            }, 500);
-          }
-        };
-
-        spatialVisual.addEventListener('touchend', resetZoom);
-        spatialVisual.addEventListener('touchcancel', resetZoom);
-      }
-
-      $$('.spatial-thumb-btn', stage).forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const targetSrc = btn.dataset.thumbSrc;
-          if (spatialMain && targetSrc) {
-            spatialMain.src = imgSrc(targetSrc);
-            $$('.spatial-thumb-btn', stage).forEach((b) => {
-              b.classList.toggle('active', b === btn);
-              b.style.borderColor = (b === btn) ? 'var(--rose)' : 'var(--line)';
-            });
-          }
-        });
-      });
-
-      let currentQty = 1;
-      const qtyVal = $('#spatial-qty-val');
-      const addBtn = $('#spatial-add-btn');
-
-      $('#spatial-qty-dec')?.addEventListener('click', () => {
-        if (currentQty > 1) {
-          currentQty--;
-          if (qtyVal) qtyVal.textContent = currentQty;
-        }
-      });
-
-      $('#spatial-qty-inc')?.addEventListener('click', () => {
-        if (currentQty < (p.stock || 99)) {
-          currentQty++;
-          if (qtyVal) qtyVal.textContent = currentQty;
-        }
-      });
-
-      $('#spatial-stage-close')?.addEventListener('click', closeSpatialCardZoom);
-
-      addBtn?.addEventListener('click', async () => {
-        const targetPid = addBtn.dataset.productId || p.id;
-        await addToCart(targetPid, currentQty, 'standart', addBtn);
-      });
-
-    } catch (err) {
-      if (reqId !== activeZoomRequestId) return;
-      stage.innerHTML = `
-        <button type="button" class="spatial-stage-close" id="spatial-stage-close">✕</button>
-        <div class="empty-state" style="padding:60px 20px;">
-          <p>${err.message || 'Ürün detayları yüklenemedi.'}</p>
-        </div>`;
-      $('#spatial-stage-close')?.addEventListener('click', closeSpatialCardZoom);
-    }
-  }
-
-  function closeSpatialCardZoom() {
-    activeZoomRequestId++;
-    const overlay = $('#spatial-canvas-overlay');
-    if (overlay) {
-      overlay.classList.remove('open');
-      overlay.setAttribute('aria-hidden', 'true');
-    }
-    const stage = $('#spatial-card-stage');
-    if (stage) {
-      stage.innerHTML = '';
-    }
-    document.body.style.overflow = '';
-    if (activeOriginCard) {
-      activeOriginCard.style.opacity = '1';
-      activeOriginCard.style.transform = 'none';
-      activeOriginCard = null;
-    }
-  }
-
-  function initQuickDrawerListeners() {
-    if (initQuickDrawerListeners.initialized) return;
-    initQuickDrawerListeners.initialized = true;
-
-    $('#spatial-canvas-overlay')?.addEventListener('click', (e) => {
-      if (e.target === $('#spatial-canvas-overlay')) closeSpatialCardZoom();
-    });
-
-    // Global event delegation for cards and modal actions
-    document.addEventListener('click', (e) => {
-      // 1. Close modal immediately if clicking "Product Details" or any link inside spatial modal
-      const modalLink = e.target.closest('#spatial-card-stage a');
-      if (modalLink) {
-        closeSpatialCardZoom();
-        return;
-      }
-
-      // 2. Quick Add Button on cards
-      const addBtn = e.target.closest('[data-add]');
-      if (addBtn && !addBtn.closest('#spatial-card-stage')) {
-        e.preventDefault();
-        e.stopPropagation();
-        const pid = addBtn.dataset.add;
-        addToCart(pid, 1, 'standart', addBtn);
-        return;
-      }
-
-      // 3. Card click (media or title) — opens Spatial Morphing Stage Canvas
-      const cardLink = e.target.closest('.prod-card .prod-media, .prod-card .prod-name');
-      if (cardLink && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-        if (!location.pathname.startsWith('/urun/')) {
-          e.preventDefault();
-          e.stopPropagation();
-          const card = cardLink.closest('.prod-card');
-          const rawHref = cardLink.getAttribute('href') || '';
-          const hrefKey = rawHref.replace(/^\/urun\//, '').replace(/\/+$/, '').trim();
-          const pid = card?.dataset?.slug || cardLink.dataset?.slug || card?.dataset?.id || hrefKey;
-          if (pid) {
-            openSpatialCardZoom(pid, card);
-            return;
-          }
-        }
-      }
-    });
-
-    // ESC key closes spatial modal
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeSpatialCardZoom();
-    });
-  }
-
+  /* ================= 2026 SPATIAL CARD ZOOM ================= */
+  // Spatial zoom and tilt physics moved to modules/spatial.js
+  window.openSpatialCardZoom = openSpatialCardZoom;
+  window.closeSpatialCardZoom = closeSpatialCardZoom;
   /* ================= HOME ================= */
   async function initHome() {
     refreshRevealObservers();
@@ -1471,6 +873,7 @@
     if (LANG === 'en' && CAT_EN[slug]) return CAT_EN[slug];
     return name || CAT_EN[slug] || slug;
   }
+  window.LS.catName = catName;
   LS.catName = catName;
 
   /* ================= SHOP ================= */
@@ -1555,7 +958,7 @@
         ` : ''}
       </div>
       <div class="pd-info">
-        <div class="prod-cat">${catName(p.category, p.categoryName)}</div>
+        <div class="prod-cat"><a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="prod-cat-link">${catName(p.category, p.categoryName)}</a></div>
         <h1>${p.name}</h1>
         <div class="prod-rating">${stars(p.rating)} <span>· ${p.reviewCount} ${t('pd.reviews')}</span></div>
         <div class="pd-price"><span>${fmt(p.price)}</span>${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}</div>
@@ -1685,1100 +1088,21 @@
   }
 
   /* ================= CART ================= */
-  async function initCart() {
-    const root = $('#cart-root');
-    if (!root) return;
-    async function render() {
-      root.innerHTML = '<div class="spinner"></div>';
-      const local = getLocalCart();
-      let c = null;
-      if (local && Array.isArray(local.items) && local.items.length > 0) {
-        c = await api('/api/cart/calc', {
-          method: 'POST',
-          body: { items: local.items, coupon: local.coupon?.code || (typeof local.coupon === 'string' ? local.coupon : undefined) }
-        }).catch(() => local);
-      }
-
-      if (!c || !c.items || !c.items.length) {
-        setLocalCart(null);
-        updateCartBadge(0);
-        root.innerHTML = `<div class="empty-state"><div class="big">🛒</div><p>${t('cart.empty')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:18px">${t('cart.empty.btn')}</a></div>`;
-        return;
-      }
-
-      setLocalCart(c);
-      const badgeCount = c.items.reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
-      updateCartBadge(badgeCount);
-
-      const lines = c.items.map((i) => `
-        <div class="cart-line">
-          <img src="${i.image}?v=transparent2" alt="${i.name}">
-          <div>
-            <div class="cl-cat">${catName(i.category, i.categoryName)}</div>
-            <a class="cl-name" href="/urun/${i.slug}">${i.name}</a>
-            <div class="cl-price" style="margin-top:6px">${fmt(i.price)} <span class="muted" style="font-weight:400;font-size:12px">${t('cart.per')}</span></div>
-          </div>
-          <div class="cl-actions">
-            <div class="qty-picker">
-              <button data-dec="${i.productId}" type="button">−</button>
-              <input value="${i.qty}" readonly>
-              <button data-inc="${i.productId}" type="button">+</button>
-            </div>
-            <div class="cl-price">${fmt(i.price * i.qty)}</div>
-            <button class="cl-remove" data-del="${i.productId}">${t('cart.remove')}</button>
-          </div>
-        </div>`).join('');
-      const pct = Math.min(100, (c.subtotal / c.freeShippingThreshold) * 100);
-      root.innerHTML = `
-      <div class="cart-items">${lines}</div>
-      <div class="summary">
-        <h3>${t('cart.summary')}</h3>
-        ${c.subtotal < c.freeShippingThreshold
-          ? `<div class="free-ship-note">${t('cart.freeship.left', { x: '<b>' + fmt(c.freeShippingThreshold - c.subtotal) + '</b>' })}<div class="progress-bar"><i style="width:${pct}%"></i></div></div>`
-          : `<div class="free-ship-note">${t('cart.freeship.won')}</div>`}
-        <div class="coupon-row">
-          <input id="coupon-input" class="field-input" placeholder="${t('cart.coupon.ph')}" value="${c.coupon ? c.coupon.code : ''}" style="background:var(--card-2);border:1px solid var(--line);border-radius:100px;padding:11px 18px;color:var(--text);outline:none">
-          <button class="btn btn-ghost btn-sm" id="coupon-apply">${t('cart.apply')}</button>
-        </div>
-        ${c.coupon ? `<div class="sum-row" style="color:var(--ok)"><span>${t('cart.coupon.is', { code: c.coupon.code })}</span><span>-${fmt(c.discount)}</span></div>` : ''}
-        <div class="sum-row"><span>${t('cart.subtotal')}</span><span>${fmt(c.subtotal)}</span></div>
-        <div class="sum-row"><span>${t('cart.shipping')}</span><span>${c.shipping ? fmt(c.shipping) : t('cart.free')}</span></div>
-        ${c.discount ? `<div class="sum-row" style="color:var(--ok)"><span>${t('cart.discount')}</span><span>-${fmt(c.discount)}</span></div>` : ''}
-        <div class="sum-row total"><span>${t('cart.total')}</span><span>${fmt(c.total)}</span></div>
-        <a href="/odeme" class="btn btn-primary btn-block" style="margin-top:18px">${t('cart.checkout')}</a>
-        <a href="/magaza" class="btn btn-ghost btn-block" style="margin-top:10px">${t('cart.continue')}</a>
-      </div>`;
-
-      $$('[data-inc]').forEach((b) => b.addEventListener('click', async () => {
-        if (b.disabled) return;
-        b.disabled = true;
-        try {
-          const l = getLocalCart() || { items: [] };
-          const res = await api('/api/cart/update', {
-            method: 'POST',
-            body: {
-              productId: b.dataset.inc,
-              qty: +b.nextElementSibling.value + 1,
-              items: l.items,
-              coupon: l.coupon?.code || (typeof l.coupon === 'string' ? l.coupon : undefined)
-            }
-          });
-          if (res) {
-            setLocalCart(res);
-            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
-            updateCartBadge(n);
-          }
-          render();
-        } catch (err) {
-          b.disabled = false;
-          toast(err.message || 'Hata oluştu', '⚠️');
-        }
-      }));
-
-      $$('[data-dec]').forEach((b) => b.addEventListener('click', async () => {
-        if (b.disabled) return;
-        b.disabled = true;
-        const q = +b.nextElementSibling.value - 1;
-        try {
-          const l = getLocalCart() || { items: [] };
-          const currentCoupon = l.coupon?.code || (typeof l.coupon === 'string' ? l.coupon : undefined);
-          let res;
-          if (q < 1) {
-            res = await api('/api/cart/remove', {
-              method: 'POST',
-              body: { productId: b.dataset.dec, items: l.items, coupon: currentCoupon }
-            });
-          } else {
-            res = await api('/api/cart/update', {
-              method: 'POST',
-              body: { productId: b.dataset.dec, qty: q, items: l.items, coupon: currentCoupon }
-            });
-          }
-          if (res) {
-            setLocalCart(res);
-            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
-            updateCartBadge(n);
-          }
-          render();
-        } catch (err) {
-          b.disabled = false;
-          toast(err.message || 'Hata oluştu', '⚠️');
-        }
-      }));
-
-      $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-        if (b.disabled) return;
-        b.disabled = true;
-        try {
-          const l = getLocalCart() || { items: [] };
-          const currentCoupon = l.coupon?.code || (typeof l.coupon === 'string' ? l.coupon : undefined);
-          const res = await api('/api/cart/remove', {
-            method: 'POST',
-            body: { productId: b.dataset.del, items: l.items, coupon: currentCoupon }
-          });
-          if (res) {
-            setLocalCart(res);
-            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
-            updateCartBadge(n);
-          }
-          render();
-        } catch (err) {
-          b.disabled = false;
-          toast(err.message || 'Hata oluştu', '⚠️');
-        }
-      }));
-
-      const ca = $('#coupon-apply');
-      if (ca) ca.addEventListener('click', async () => {
-        const code = $('#coupon-input').value.trim().toUpperCase();
-        if (!code) return;
-        try {
-          const l = getLocalCart() || { items: [] };
-          const res = await api('/api/cart/coupon', {
-            method: 'POST',
-            body: { code, items: l.items }
-          });
-          toast(t('cart.coupon.ok'), '🎟️');
-          if (res) {
-            setLocalCart(res);
-            const n = (res.items || []).reduce((a, i) => a + (parseInt(i.qty, 10) || 0), 0);
-            updateCartBadge(n);
-          }
-          render();
-        } catch (e) { toast(e.message, '⚠️'); }
-      });
-    }
-    render();
-  }
+  // initCart imported from modules/cart.js
+  window.initCart = initCart;
+  
 
   /* ================= CHECKOUT ================= */
-  async function initCheckout() {
-    const root = $('#checkout-root');
-    if (!root) return;
-
-    const local = getLocalCart();
-    if (!local || !Array.isArray(local.items) || !local.items.length) {
-      location.href = '/sepet';
-      return;
-    }
-
-    const [c, s] = await Promise.all([
-      api('/api/cart/calc', {
-        method: 'POST',
-        body: { items: local.items, coupon: local.coupon?.code || (typeof local.coupon === 'string' ? local.coupon : undefined) }
-      }).catch(() => local),
-      api('/api/session').catch(() => ({ user: null }))
-    ]);
-
-    if (!c || !c.items || !c.items.length) {
-      setLocalCart(null);
-      updateCartBadge(0);
-      location.href = '/sepet';
-      return;
-    }
-    setLocalCart(c);
-    const u = s.user;
-    const addr = (u && u.addresses && u.addresses[0]) || null;
-    root.innerHTML = `
-    <div class="check-layout" style="grid-column:1/-1">
-      <div>
-        <div class="check-step">
-          <h3><span class="step-no">1</span> ${t('ck.step1')}</h3>
-          <div class="grid-2">
-            <div class="field"><label>${t('ck.name')}</label><input id="ck-name" value="${u ? u.name : ''}" placeholder="${t('ck.name.ph')}"></div>
-            <div class="field"><label>${t('ck.phone')}</label><input id="ck-phone" value="${addr ? addr.phone || '' : ''}" placeholder="${t('ck.phone.ph')}"></div>
-          </div>
-          <div class="checkbox-row"><input type="checkbox" id="ck-discreet" checked><label for="ck-discreet">${t('ck.discreet')}</label></div>
-          <div class="field" style="margin-top:14px"><label>${t('ck.note')}</label><input id="ck-note" placeholder="${t('ck.note.ph')}"></div>
-        </div>
-        <div class="check-step">
-          <h3><span class="step-no">2</span> ${t('ck.step2')}</h3>
-          <p class="muted" style="font-size:13px;margin-bottom:14px">${t('ck.step2.note')}</p>
-          <div class="pay-options">
-            <label class="pay-option"><input type="radio" name="pay" value="whatsapp" checked> ${t('ck.pay.wa')} <span class="muted" style="margin-left:auto;font-size:12px">${t('ck.pay.wa.sub')}</span></label>
-            <label class="pay-option"><input type="radio" name="pay" value="shop"> ${t('ck.pay.shop')} <span class="muted" style="margin-left:auto;font-size:12px">${t('ck.pay.shop.sub')}</span></label>
-          </div>
-          <div id="addr-block" style="margin-top:16px">
-            <div class="field"><label>${t('ck.address')}</label><textarea id="ck-address" placeholder="${t('ck.address.ph')}">${addr && !addr.full.startsWith('MAĞAZA') ? addr.full : ''}</textarea></div>
-            <div class="grid-2">
-              <div class="field"><label>${t('ck.city')}</label><input id="ck-city" value="${addr && addr.city ? addr.city : ''}" placeholder="${t('ck.city').replace(' *', '')}"></div>
-              <div class="field"><label>${t('ck.zip')}</label><input id="ck-zip" value="${addr && addr.zip ? addr.zip : ''}" placeholder="26000"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="summary">
-        <h3>${t('ck.summary')}</h3>
-        ${c.items.map((i) => `<div class="sum-row"><span>${i.name} ×${i.qty}</span><span>${fmt(i.price * i.qty)}</span></div>`).join('')}
-        <div class="sum-row"><span>${t('ck.shipping')}</span><span id="pay-ship">${c.shipping ? fmt(c.shipping) : t('ck.free')}</span></div>
-        ${c.discount ? `<div class="sum-row" style="color:var(--ok)"><span>${c.coupon ? c.coupon.code : ''}</span><span>-${fmt(c.discount)}</span></div>` : ''}
-        <div class="sum-row total"><span>${t('ck.summary.total')}</span><span id="pay-total">${fmt(c.total)}</span></div>
-        <button class="btn btn-primary btn-block" id="ck-submit" style="margin-top:18px">${t('ck.submit.wa')}</button>
-        <p style="font-size:11px;color:var(--muted);margin-top:12px;text-align:center">${t('ck.note.small')}</p>
-      </div>
-    </div>`;
-
-    function refreshPay() {
-      const m = document.querySelector('input[name=pay]:checked').value;
-      $('#addr-block').style.display = m === 'whatsapp' ? '' : 'none';
-      $('#pay-ship').textContent = m === 'shop' ? t('ck.ship.pickup') : (c.shipping ? fmt(c.shipping) : t('ck.free'));
-      $('#ck-submit').innerHTML = m === 'shop' ? t('ck.submit.shop') : t('ck.submit.wa');
-    }
-    $$('input[name=pay]').forEach((r) => r.addEventListener('change', refreshPay));
-    refreshPay();
-
-    $('#ck-submit').addEventListener('click', async () => {
-      const method = document.querySelector('input[name=pay]:checked').value;
-      const curLocal = getLocalCart();
-      const body = {
-        name: $('#ck-name').value.trim(), phone: $('#ck-phone').value.trim(),
-        payment: method, note: $('#ck-note').value.trim(),
-        discreet: $('#ck-discreet').checked,
-        items: (curLocal && Array.isArray(curLocal.items)) ? curLocal.items : [],
-        coupon: curLocal?.coupon?.code || (typeof curLocal?.coupon === 'string' ? curLocal.coupon : undefined)
-      };
-      if (method === 'whatsapp') {
-        body.address = $('#ck-address').value.trim();
-        body.city = $('#ck-city').value.trim();
-        body.zip = $('#ck-zip').value.trim();
-      }
-      if (!body.name || !body.phone) return toast(t('ck.required'), '⚠️');
-      if (method === 'whatsapp' && (!body.address || !body.city)) return toast(t('ck.addrreq'), '⚠️');
-      const btn = $('#ck-submit'); btn.disabled = true; btn.textContent = t('ck.preparing');
-      try {
-        const r = await api('/api/checkout', { method: 'POST', body });
-        setLocalCart(null);
-        updateCartBadge(0);
-        toast(r.pickup ? t('ck.ok.pickup') : t('ck.ok.ship'), '💖');
-        setTimeout(() => { location.href = '/tesekkurler/' + r.orderId; }, r.pickup ? 900 : 1200);
-      } catch (e) { btn.disabled = false; refreshPay(); toast(e.message, '⚠️'); }
-    });
-  }
-
-  /* ================= THANKS ================= */
-  async function initThanks() {
-    const el = $('#thanks-order');
-    if (!el) return;
-    const id = location.pathname.split('/').pop();
-    try {
-      const d = await api('/api/orders/' + id);
-      el.textContent = d.order.id;
-      const t = $('#thanks-total');
-      if (t) t.textContent = LS.t('thanks.amount') + fmt(d.order.total);
-    } catch { el.textContent = id; }
-  }
-
+  // initCheckout and initThanks imported from modules/checkout.js
+  window.initCheckout = initCheckout;
+  window.initThanks = initThanks;
   /* ================= AUTH ================= */
-    function initAuth() {
-    const getAuthRedirect = (role) => {
-      if (role === 'admin') return '/admin';
-      const params = new URLSearchParams(location.search);
-      const next = params.get('next') || params.get('redirect') || params.get('returnUrl');
-      if (next && next.startsWith('/') && !next.startsWith('//')) return next;
-      return '/';
-    };
-
-    const login = $('#login-form');
-    if (login) login.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        const r = await api('/api/auth/login', { method: 'POST', body: { email: $('#l-email').value.trim(), password: $('#l-pass').value } });
-        toast(LS.t('auth.hi', { name: r.user.name }), '👋');
-        document.dispatchEvent(new Event('ls:session'));
-        setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
-      } catch (err) { toast(err.message, '⚠️'); }
-    });
-    const reg = $('#register-form');
-    if (reg) reg.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        const r = await api('/api/auth/register', { method: 'POST', body: { name: $('#r-name').value.trim(), email: $('#r-email').value.trim(), password: $('#r-pass').value } });
-        toast(LS.t('auth.hi', { name: r.user.name }), '🎉');
-        document.dispatchEvent(new Event('ls:session'));
-        setTimeout(() => { location.href = getAuthRedirect(r.user?.role); }, 500);
-      } catch (err) { toast(err.message, '⚠️'); }
-    });
-
-    const gLogin = $('#btn-google-login');
-    const gReg = $('#btn-google-reg');
-    
-    let tokenClient = null;
-
-    const startGoogleFlow = () => {
-      if (!window.__LS_GOOGLE_CLIENT_ID__) {
-        toast('Google Client ID bulunamadı', '⚠️');
-        return;
-      }
-      if (window.google && window.google.accounts && window.google.accounts.oauth2) {
-        if (!tokenClient) {
-          tokenClient = window.google.accounts.oauth2.initTokenClient({
-            client_id: window.__LS_GOOGLE_CLIENT_ID__,
-            scope: 'email profile openid',
-            callback: async (resp) => {
-              if (resp && resp.access_token) {
-                try {
-                  toast(LS.t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
-                  const r = await api('/api/auth/google', {
-                    method: 'POST',
-                    body: { accessToken: resp.access_token }
-                  });
-                  if (r.token) {
-                    localStorage.setItem('ls_auth_token', r.token);
-                  }
-                  toast((LS.t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
-                  document.dispatchEvent(new Event('ls:session'));
-                  setTimeout(() => {
-                    location.href = getAuthRedirect(r.user?.role);
-                  }, 400);
-                } catch (err) {
-                  toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
-                }
-              }
-            }
-          });
-        }
-        tokenClient.requestAccessToken();
-      } else if (window.google && window.google.accounts && window.google.accounts.id) {
-        window.google.accounts.id.prompt();
-      } else {
-        toast('Google servisleri hazırlanıyor, lütfen 1 saniye sonra tekrar deneyin...', '⏳');
-      }
-    };
-
-    if (gLogin) gLogin.onclick = startGoogleFlow;
-    if (gReg) gReg.onclick = startGoogleFlow;
-
-    if (window.__LS_GOOGLE_CLIENT_ID__) {
-       const handleCredentialResponse = async (response) => {
-          try {
-            toast(LS.t('auth.google.wait') || 'Lütfen bekleyin...', '⏳');
-            const r = await api('/api/auth/google', {
-              method: 'POST',
-              body: { credential: response.credential }
-            });
-            if (r.token) {
-              localStorage.setItem('ls_auth_token', r.token);
-            }
-            toast((LS.t('auth.google.ok') || 'Giriş yapıldı'), '🎉');
-            document.dispatchEvent(new Event('ls:session'));
-            setTimeout(() => {
-              location.href = getAuthRedirect(r.user?.role);
-            }, 400);
-          } catch (err) {
-            toast(err.message || 'Google ile giriş yapılamadı', '⚠️');
-          }
-       };
-       
-       const initGsi = () => {
-         if (window.google && window.google.accounts && window.google.accounts.id) {
-           window.google.accounts.id.initialize({
-             client_id: window.__LS_GOOGLE_CLIENT_ID__,
-             callback: handleCredentialResponse,
-             auto_select: false,
-             use_fedcm_for_prompt: false
-           });
-
-           if (window.self === window.top) {
-             try {
-               window.google.accounts.id.prompt((notification) => {});
-             } catch (e) {}
-           }
-         }
-       };
-       
-       if (window.google && window.google.accounts) {
-         initGsi();
-       } else {
-         window.addEventListener('load', initGsi);
-       }
-    } else {
-       if (gLogin) gLogin.style.display = 'none';
-       if (gReg) gReg.style.display = 'none';
-       const orDividers = document.querySelectorAll('.auth-or');
-       orDividers.forEach(d => d.style.display = 'none');
-    }
-  }
-
-  /* ================= ACCOUNT & PROFILE DASHBOARD (OPTION 1) ================= */
-  async function renderLuxuryDashboard(rootEl, initialTab = 'orders') {
-    if (!rootEl) return;
-    rootEl.innerHTML = `<div class="spinner" style="grid-column: 1 / -1; margin: 40px auto;"></div>`;
-
-    const s = await api('/api/session').catch(() => ({ user: null }));
-    if (!s.user) { location.href = '/giris'; return; }
-
-    const ordersRes = await api('/api/orders/mine').catch(() => ({ orders: [] }));
-    const orders = ordersRes.orders || [];
-
-    // Parse URL hash if present
-    const hash = (location.hash || '').replace('#', '').toLowerCase();
-    let activeTab = initialTab;
-    if (['orders', 'siparisler', 'siparis'].includes(hash)) activeTab = 'orders';
-    else if (['address', 'adres', 'teslimat'].includes(hash)) activeTab = 'address';
-    else if (['profile', 'profil', 'bilgiler'].includes(hash)) activeTab = 'profile';
-    else if (['security', 'guvenlik', 'sifre'].includes(hash)) activeTab = 'security';
-
-    // User initials
-    const nameParts = (s.user.name || 'U').trim().split(/\s+/);
-    const initials = nameParts.length > 1
-      ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
-      : (nameParts[0].slice(0, 2)).toUpperCase();
-
-    const isAdmin = s.user.role === 'admin';
-    const roleBadge = isAdmin
-      ? `<span class="acc-role-badge admin">👑 ${t('acc.role_admin')}</span>`
-      : `<span class="acc-role-badge">✨ ${t('acc.role_user')}</span>`;
-
-    const a = (s.user.addresses && s.user.addresses[0]) || { label: 'Ev', full: '', city: '', zip: '', phone: '', discreet: true };
-
-    const statusTr = {
-      processing: t('st.processing'),
-      shipped: t('st.shipped'),
-      delivered: t('st.delivered'),
-      cancelled: t('st.cancelled')
-    };
-
-    rootEl.innerHTML = `
-      <!-- LEFT SIDEBAR -->
-      <aside class="acc-sidebar">
-        <div class="acc-user-card">
-          <div class="acc-avatar">${esc(initials)}</div>
-          <div class="acc-user-name">${esc(s.user.name)}</div>
-          <div class="acc-user-email">${esc(s.user.email)}</div>
-          ${roleBadge}
-        </div>
-
-        <nav class="acc-nav">
-          <button class="acc-nav-btn ${activeTab === 'orders' ? 'active' : ''}" data-tab="orders">
-            <span class="nav-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-              <span>${t('acc.tab.orders')}</span>
-            </span>
-            <span class="acc-nav-badge">${orders.length}</span>
-          </button>
-
-          <button class="acc-nav-btn ${activeTab === 'address' ? 'active' : ''}" data-tab="address">
-            <span class="nav-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              <span>${t('acc.tab.address')}</span>
-            </span>
-          </button>
-
-          <button class="acc-nav-btn ${activeTab === 'profile' ? 'active' : ''}" data-tab="profile">
-            <span class="nav-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span>${t('acc.tab.profile')}</span>
-            </span>
-          </button>
-
-          <button class="acc-nav-btn ${activeTab === 'security' ? 'active' : ''}" data-tab="security">
-            <span class="nav-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span>${t('acc.tab.security')}</span>
-            </span>
-          </button>
-
-          <div class="acc-nav-divider"></div>
-
-          <button class="acc-nav-btn acc-nav-logout" id="acc-logout-btn">
-            <span class="nav-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-              <span>${t('acc.tab.logout')}</span>
-            </span>
-          </button>
-        </nav>
-      </aside>
-
-      <!-- RIGHT MAIN CONTENT -->
-      <main class="acc-main">
-        <!-- TAB 1: ORDERS -->
-        <section class="acc-panel ${activeTab === 'orders' ? 'active' : ''}" id="panel-orders">
-          <div class="acc-metrics-strip">
-            <div class="acc-metric-card">
-              <div class="acc-metric-icon">📦</div>
-              <div class="acc-metric-info">
-                <div class="acc-metric-label">${t('acc.stat.orders')}</div>
-                <div class="acc-metric-value">${orders.length} ${t('shop.count', { n: '' }).trim()}</div>
-              </div>
-            </div>
-            <div class="acc-metric-card">
-              <div class="acc-metric-icon">🔒</div>
-              <div class="acc-metric-info">
-                <div class="acc-metric-label">${t('acc.stat.privacy')}</div>
-                <div class="acc-metric-value">%100 İsimsiz Paket</div>
-              </div>
-            </div>
-            <div class="acc-metric-card">
-              <div class="acc-metric-icon">💬</div>
-              <div class="acc-metric-info">
-                <div class="acc-metric-label">${t('acc.stat.support')}</div>
-                <div class="acc-metric-value">7/24 WhatsApp</div>
-              </div>
-            </div>
-          </div>
-
-          ${orders.length ? `
-            <div class="acc-orders-list">
-              ${orders.map((o) => {
-                const waText = encodeURIComponent(`Merhaba, ${o.id} numaralı siparişim hakkında bilgi almak istiyorum.`);
-                return `
-                <article class="acc-order-card">
-                  <header class="acc-order-header">
-                    <div class="acc-order-meta">
-                      <span class="acc-order-id">#${esc(o.id)}</span>
-                      <span class="acc-order-date">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                        ${dateFmt(o.createdAt)}
-                      </span>
-                    </div>
-                    <span class="status-pill st-${esc(o.status)}">
-                      ${o.status === 'processing' ? '⏳' : o.status === 'shipped' ? '🚚' : o.status === 'delivered' ? '✅' : '✕'}
-                      ${esc(statusTr[o.status] || o.status)}
-                    </span>
-                  </header>
-
-                  <div class="acc-order-body">
-                    ${(o.items || []).map((i) => `
-                      <div class="acc-order-item">
-                        <div class="acc-item-left">
-                          <img class="acc-item-thumb" src="${imgSrc(i.image)}" alt="${esc(i.name)}" loading="lazy">
-                          <div>
-                            <div class="acc-item-title">${esc(i.name)}</div>
-                            <div class="acc-item-qty">${i.qty} adet × ${fmt(i.price)}</div>
-                          </div>
-                        </div>
-                        <div class="acc-item-price">${fmt(i.price * i.qty)}</div>
-                      </div>
-                    `).join('')}
-                  </div>
-
-                  <footer class="acc-order-footer">
-                    <div class="acc-order-flags">
-                      <span class="acc-order-flag">💳 ${esc(o.payment || 'WhatsApp')}</span>
-                      ${o.discreet ? `<span class="acc-order-flag">🔒 ${t('acc.discreet')}</span>` : ''}
-                    </div>
-                    <div class="acc-order-actions-total">
-                      <a class="acc-wa-btn" href="https://wa.me/905436331325?text=${waText}" target="_blank" rel="noopener">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.698.077-2.072-.492-1.758-.727-2.887-2.518-2.975-2.634-.087-.116-.711-.945-.711-1.802 0-.857.449-1.277.608-1.45.16-.174.348-.217.464-.217.116 0 .232.001.333.006.107.005.25.04.39.377.145.348.493 1.202.536 1.29.043.087.072.188.014.304-.058.116-.087.188-.174.29-.087.101-.183.226-.261.304-.087.087-.178.182-.077.355.101.174.449.741.963 1.2 1.077.96 1.543.96 1.761 1.047.218.087.348.072.478-.073.13-.145.565-.652.71-.884.145-.232.29-.188.478-.116.188.072 1.203.565 1.406.667.203.101.339.152.39.239.051.087.051.507-.093.912z"/></svg>
-                        <span>${t('acc.ask_wa')}</span>
-                      </a>
-                      <div class="acc-order-total-block">
-                        <div class="acc-total-label">${t('cart.total')}</div>
-                        <div class="acc-total-value">${fmt(o.total)}</div>
-                      </div>
-                    </div>
-                  </footer>
-                </article>
-                `;
-              }).join('')}
-            </div>
-          ` : `
-            <div class="acc-card-panel" style="text-align:center; padding: 60px 24px;">
-              <div style="font-size: 54px; margin-bottom: 16px;">🛍️</div>
-              <h3 style="font-size: 22px; margin-bottom: 8px;">${t('acc.noorders')}</h3>
-              <p class="sub" style="max-width: 460px; margin: 0 auto 24px;">${t('acc.noorders.sub')}</p>
-              <a class="btn btn-primary" href="/magaza">${t('acc.start')} →</a>
-            </div>
-          `}
-        </section>
-
-        <!-- TAB 2: ADDRESS -->
-        <section class="acc-panel ${activeTab === 'address' ? 'active' : ''}" id="panel-address">
-          <div class="acc-card-panel">
-            <h3>📍 ${t('pf.title.address')}</h3>
-            <p class="sub">${t('pf.sub.address')}</p>
-
-            <div class="field">
-              <label>${t('pf.addr')}</label>
-              <textarea id="dash-ad-full" rows="3" placeholder="Mahalle, cadde, sokak, bina ve daire no...">${esc(a.full || '')}</textarea>
-            </div>
-
-            <div class="grid-3" style="margin-top: 14px;">
-              <div class="field">
-                <label>${t('pf.city')}</label>
-                <input id="dash-ad-city" value="${esc(a.city || '')}" placeholder="Örn: Eskişehir">
-              </div>
-              <div class="field">
-                <label>${t('pf.zip')}</label>
-                <input id="dash-ad-zip" value="${esc(a.zip || '')}" placeholder="Örn: 26100">
-              </div>
-              <div class="field">
-                <label>${t('pf.phone')}</label>
-                <input id="dash-ad-phone" value="${esc(a.phone || '')}" placeholder="05xx xxx xx xx">
-              </div>
-            </div>
-
-            <div class="checkbox-row" style="margin: 20px 0 24px;">
-              <input type="checkbox" id="dash-ad-discreet" ${a.discreet !== false ? 'checked' : ''}>
-              <label for="dash-ad-discreet">${t('pf.discreet')}</label>
-            </div>
-
-            <button class="btn btn-primary" id="dash-ad-save">
-              <span>💾 ${t('pf.saveaddr')}</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- TAB 3: PROFILE -->
-        <section class="acc-panel ${activeTab === 'profile' ? 'active' : ''}" id="panel-profile">
-          <div class="acc-card-panel">
-            <h3>👤 ${t('pf.title.acc')}</h3>
-            <p class="sub">${t('pf.sub.acc')}</p>
-
-            <div class="grid-2">
-              <div class="field">
-                <label>${t('pf.name')}</label>
-                <input id="dash-pf-name" value="${esc(s.user.name || '')}">
-              </div>
-              <div class="field">
-                <label>${t('pf.email')} (${LANG === 'tr' ? 'Salt-okunur' : 'Read-only'})</label>
-                <input value="${esc(s.user.email || '')}" disabled style="opacity: 0.6; cursor: not-allowed;">
-              </div>
-            </div>
-
-            <button class="btn btn-primary" id="dash-pf-save" style="margin-top: 20px;">
-              <span>💾 ${t('pf.save')}</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- TAB 4: SECURITY -->
-        <section class="acc-panel ${activeTab === 'security' ? 'active' : ''}" id="panel-security">
-          <div class="acc-card-panel">
-            <h3>🔒 ${t('pf.title.pass')}</h3>
-            <p class="sub">${t('pf.sub.pass')}</p>
-
-            <div class="grid-2">
-              <div class="field">
-                <label>${t('pf.new')}</label>
-                <input type="password" id="dash-pw-new" placeholder="${LANG === 'tr' ? 'En az 6 karakter' : 'Min. 6 characters'}">
-              </div>
-              <div class="field">
-                <label>${t('pf.new2')}</label>
-                <input type="password" id="dash-pw-new2" placeholder="${LANG === 'tr' ? 'Şifrenizi tekrar girin' : 'Confirm new password'}">
-              </div>
-            </div>
-
-            <button class="btn btn-primary" id="dash-pw-save" style="margin-top: 20px;">
-              <span>🔒 ${t('pf.update')}</span>
-            </button>
-          </div>
-        </section>
-      </main>
-    `;
-
-    // Interactive Tab Switching
-    const tabBtns = $$('.acc-nav-btn[data-tab]', rootEl);
-    const panels = $$('.acc-panel', rootEl);
-
-    const activateTab = (tab) => {
-      if (!tab) return;
-      let cleanTab = tab.replace(/^#/, '');
-      if (['orders', 'siparisler', 'siparis'].includes(cleanTab)) cleanTab = 'orders';
-      else if (['address', 'adres', 'adresim'].includes(cleanTab)) cleanTab = 'address';
-      else if (['profile', 'profil', 'bilgiler'].includes(cleanTab)) cleanTab = 'profile';
-      else if (['security', 'guvenlik', 'sifre'].includes(cleanTab)) cleanTab = 'security';
-
-      tabBtns.forEach((b) => b.classList.toggle('active', b.dataset.tab === cleanTab));
-      panels.forEach((p) => p.classList.toggle('active', p.id === `panel-${cleanTab}`));
-    };
-
-    tabBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
-        activateTab(tab);
-        try {
-          history.replaceState(null, '', `#${tab}`);
-        } catch {}
-      });
-    });
-
-    window.addEventListener('hashchange', () => {
-      if (location.hash) activateTab(location.hash);
-    });
-
-    // Save Address
-    $('#dash-ad-save', rootEl)?.addEventListener('click', async () => {
-      const btn = $('#dash-ad-save', rootEl);
-      try {
-        if (btn) btn.disabled = true;
-        await api('/api/account/address', {
-          method: 'POST',
-          body: {
-            label: 'Ev',
-            full: $('#dash-ad-full', rootEl).value.trim(),
-            city: $('#dash-ad-city', rootEl).value.trim(),
-            zip: $('#dash-ad-zip', rootEl).value.trim(),
-            phone: $('#dash-ad-phone', rootEl).value.trim(),
-            discreet: $('#dash-ad-discreet', rootEl).checked
-          }
-        });
-        toast(t('pf.addrok'), '📍');
-      } catch (err) {
-        toast(err.message, '⚠️');
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    });
-
-    // Save Profile
-    $('#dash-pf-save', rootEl)?.addEventListener('click', async () => {
-      const btn = $('#dash-pf-save', rootEl);
-      try {
-        if (btn) btn.disabled = true;
-        const newName = $('#dash-pf-name', rootEl).value.trim();
-        await api('/api/account', {
-          method: 'POST',
-          body: { name: newName }
-        });
-        const nameEl = $('.acc-user-name', rootEl);
-        if (nameEl) nameEl.textContent = newName;
-        toast(t('pf.ok'), '✅');
-      } catch (err) {
-        toast(err.message, '⚠️');
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    });
-
-    // Save Password
-    $('#dash-pw-save', rootEl)?.addEventListener('click', async () => {
-      const p1 = $('#dash-pw-new', rootEl).value;
-      const p2 = $('#dash-pw-new2', rootEl).value;
-      if (p1.length < 6) return toast(t('auth.pass6'), '⚠️');
-      if (p1 !== p2) return toast(t('auth.passmismatch'), '⚠️');
-      const btn = $('#dash-pw-save', rootEl);
-      try {
-        if (btn) btn.disabled = true;
-        await api('/api/account/password', {
-          method: 'POST',
-          body: { password: p1 }
-        });
-        toast(t('pf.passok'), '🔒');
-        $('#dash-pw-new', rootEl).value = '';
-        $('#dash-pw-new2', rootEl).value = '';
-      } catch (err) {
-        toast(err.message, '⚠️');
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    });
-
-    // Logout
-    $('#acc-logout-btn', rootEl)?.addEventListener('click', (e) => {
-      e.preventDefault();
-      performLogout('/');
-    });
-  }
-
-  async function initAccount() {
-    const root = $('#account-root');
-    if (!root) return;
-    await renderLuxuryDashboard(root, 'orders');
-  }
-
-  async function initProfile() {
-    const root = $('#profile-root');
-    if (!root) return;
-    await renderLuxuryDashboard(root, 'profile');
-  }
-
-  /* ================= CONTACT ================= */
-  function initContact() {
-    const f = $('#contact-form');
-    if (!f) return;
-    f.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        await api('/api/contact', { method: 'POST', body: { name: $('#c-name').value.trim(), email: $('#c-email').value.trim(), message: $('#c-msg').value.trim() } });
-        toast(t('contact.ok'), '✅');
-        f.reset();
-      } catch (err) { toast(err.message, '⚠️'); }
-    });
-  }
-
-  /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic Inertia Stage (2026) ================= */
-  async function initCoverflow(stage) {
-    let prods = [];
-    try { prods = (await api('/api/products?wheel=1&limit=8')).products; } catch {}
-    if (!prods.length) return;
-
-    stage.innerHTML = `
-      <div class="cf-ambient" id="cf-amb"></div>
-      <div class="cf-scene" id="cf-scene">
-        ${prods.map((p, i) => `
-        <div class="cf-pos" data-i="${i}">
-          <a class="cf-card" href="/urun/${p.slug}" data-slug="${p.slug}" aria-label="${p.name}">
-            <img src="${imgSrc(p.image)}" alt="${p.name}" draggable="false">
-            <div class="card-sheen"></div>
-            <span class="cf-cap">
-              <b>${p.name}</b>
-              <em>${fmt(p.price)}${p.oldPrice ? ' <s style="color:#78716C;font-size:10px;font-weight:500">' + fmt(p.oldPrice) + '</s>' : ''}</em>
-            </span>
-          </a>
-        </div>`).join('')}
-      </div>
-      <button class="cf-arrow cf-prev" id="cf-prev" aria-label="${t('cf.prev')}">←</button>
-      <button class="cf-arrow cf-next" id="cf-next" aria-label="${t('cf.next')}">→</button>
-      <div class="cf-bar">
-        <span class="cf-counter"><b id="cf-idx">01</b><em>/</em><span id="cf-total">${String(prods.length).padStart(2, '0')}</span></span>
-        <span class="cf-progress"><i id="cf-fill"></i></span>
-        <span class="cf-hint">${t('cf.hint')}</span>
-      </div>`;
-
-    const scene = $('#cf-scene', stage);
-    const positions = $$('.cf-pos', scene);
-    const cards = $$('.cf-card', stage);
-    const amb = $('#cf-amb', stage);
-    const fill = $('#cf-fill', stage);
-    const idxEl = $('#cf-idx', stage);
-    const N = prods.length;
-    const STEP = (Math.PI * 2) / N;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const AUTO_PER_MS = reduced ? 0 : 1 / 4500;
-
-    let center = 0;
-    let target = 0;
-    let velocity = 0;
-    let auto = !reduced;
-    let down = false, moved = 0, lastX = 0, lastTime = 0;
-    let focusIdx = -1;
-    let resumeTimer = null;
-    let gyroX = 0;
-    const colorCache = {};
-
-    prods.forEach((p) => { const im = new Image(); im.src = p.image; });
-
-    function wrapD(i) {
-      let d = i - center;
-      d -= Math.round(d / N) * N;
-      return d;
-    }
-
-    function tint(p) {
-      const key = p.image;
-      const apply = () => {
-        const t = colorCache[key];
-        if (t) amb.style.background = `radial-gradient(circle, ${t}, rgba(255,228,225,0) 70%)`;
-      };
-      if (colorCache[key]) { apply(); return; }
-      const im = new Image();
-      im.crossOrigin = 'anonymous';
-      im.onload = () => {
-        try {
-          const c = document.createElement('canvas');
-          c.width = c.height = 20;
-          const cx = c.getContext('2d');
-          cx.drawImage(im, 0, 0, 20, 20);
-          const d = cx.getImageData(0, 0, 20, 20).data;
-          let r = 0, g = 0, b = 0, n = 0;
-          for (let i = 0; i < d.length; i += 40) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
-          r = Math.round(175 + (r / n - 128) * 0.6);
-          g = Math.round(175 + (g / n - 128) * 0.6);
-          b = Math.round(175 + (b / n - 128) * 0.6);
-          colorCache[key] = `rgba(${r},${g},${b},.55)`;
-          if (focusIdx >= 0 && prods[focusIdx] === p) apply();
-        } catch {}
-      };
-      im.src = key;
-    }
-
-    if (window.DeviceOrientationEvent && !reduced) {
-      const handleOrientation = (e) => {
-        if (e.gamma !== null && e.gamma !== undefined) {
-          gyroX = Math.max(-20, Math.min(20, e.gamma)) * 0.12;
-        }
-      };
-      window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-    }
-
-    const smoothF = new Array(N).fill(0);
-    let lastLay = performance.now();
-
-    function layout(t) {
-      const nowT = t || performance.now();
-      const layDt = Math.min(64, Math.max(0, nowT - lastLay)); lastLay = nowT;
-      const fk = 1 - Math.exp(-9 * (layDt / 1000));
-      const breath = reduced ? 0 : (Math.sin(nowT / 1000 * 1.25) * 0.5 + 0.5);
-      const W = scene.clientWidth || 480;
-      const isMobile = W < 500;
-      const rx = W * (isMobile ? 0.32 : 0.36);
-      const rz = rx * (isMobile ? 1.05 : 1.12);
-      let best = -1, bestD = Infinity;
-
-      positions.forEach((pos, i) => {
-        let d = i - center;
-        d = d - Math.round(d / N) * N;
-        const theta = d * STEP;
-        const depth = (Math.cos(theta) + 1) / 2;
-        const fTarget = Math.max(0, 1 - Math.abs(d) / 0.5);
-        smoothF[i] += (fTarget - smoothF[i]) * fk;
-        const f = smoothF[i];
-        const x = Math.sin(theta) * rx + (f > 0.8 ? gyroX : 0);
-        const z = (Math.cos(theta) - 1) * rz;
-        const y = -(1 - depth) * (isMobile ? 16 : 22) - f * 6 * breath;
-        const rotY = -Math.sin(theta) * (isMobile ? 42 : 48);
-        const scale = (0.70 + depth * 0.30) * (1 + f * 0.024 * breath);
-
-        pos.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
-        pos.style.zIndex = Math.round(depth * 100);
-        pos.style.opacity = (0.50 + depth * 0.50).toFixed(2);
-        pos.style.filter = depth < 0.6 ? `blur(${(0.6 - depth) * 4}px)` : 'none';
-        pos.style.setProperty('--f', f.toFixed(3));
-
-        if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
-      });
-
-      if (best !== focusIdx) {
-        focusIdx = best;
-        idxEl.textContent = String((best + 1)).padStart(2, '0');
-        tint(prods[best]);
-      }
-    }
-
-    function barTick() {
-      const frac = ((center - Math.floor(center)) + 1) % 1;
-      fill.style.width = (Math.min(frac, 1 - frac) * 2 * 100).toFixed(1) + '%';
-    }
-
-    function pauseThenResume(sec) {
-      auto = false;
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { auto = !reduced; }, sec * 1000);
-    }
-
-    function go(dir) {
-      target = Math.round(center) + dir;
-      velocity = 0;
-      pauseThenResume(4.5);
-    }
-
-    let lastLoopTime = performance.now();
-    (function loop(t) {
-      const dt = Math.min(64, Math.max(0, t - lastLoopTime)); lastLoopTime = t;
-      if (!down) {
-        if (auto) {
-          center += AUTO_PER_MS * dt;
-          target = center;
-        } else {
-          if (Math.abs(velocity) > 0.0001) {
-            center += velocity;
-            velocity *= 0.92;
-            target = Math.round(center);
-          } else {
-            velocity = 0;
-            if (Math.abs(target - center) > 0.0002) {
-              const k = 1 - Math.exp(-8 * (dt / 1000));
-              center += (target - center) * k;
-            } else {
-              center = target;
-            }
-          }
-        }
-      }
-      layout(t);
-      barTick();
-      requestAnimationFrame(loop);
-    })(lastLoopTime);
-
-    const startDrag = (e) => {
-      down = true;
-      moved = 0;
-      velocity = 0;
-      lastX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
-      lastTime = performance.now();
-      scene.classList.add('drag');
-    };
-
-    const moveDrag = (e) => {
-      if (!down) return;
-      const currentX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
-      const now = performance.now();
-      const dx = currentX - lastX;
-      lastX = currentX;
-      lastTime = now;
-      moved += Math.abs(dx);
-
-      const sensitivity = Math.max(140, scene.clientWidth * 0.32);
-      const deltaCenter = -dx / sensitivity;
-      center += deltaCenter;
-      target = center;
-      velocity = deltaCenter;
-    };
-
-    const endDrag = () => {
-      if (!down) return;
-      down = false;
-      scene.classList.remove('drag');
-      if (Math.abs(velocity) > 0.002) {
-        velocity = Math.sign(velocity) * Math.min(Math.abs(velocity) * 1.2, 0.15);
-      } else {
-        velocity = 0;
-        target = Math.round(center);
-      }
-      pauseThenResume(3.5);
-    };
-
-    scene.addEventListener('pointerdown', startDrag);
-    window.addEventListener('pointermove', moveDrag);
-    window.addEventListener('pointerup', endDrag);
-    window.addEventListener('pointercancel', endDrag);
-
-    scene.addEventListener('touchstart', (e) => {
-      if (e.touches && e.touches.length === 1) startDrag(e);
-    }, { passive: true });
-
-    scene.addEventListener('touchmove', (e) => {
-      if (down && e.touches && e.touches.length === 1) moveDrag(e);
-    }, { passive: true });
-
-    scene.addEventListener('touchend', endDrag);
-    scene.addEventListener('touchcancel', endDrag);
-
-    cards.forEach((card, i) => {
-      card.addEventListener('pointermove', (e) => {
-        const rect = card.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        card.style.setProperty('--sheen-x', `${(x * 100).toFixed(1)}%`);
-        card.style.setProperty('--sheen-y', `${(y * 100).toFixed(1)}%`);
-      });
-
-      card.addEventListener('click', (e) => {
-        if (moved > 8) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        const d = wrapD(i);
-        if (Math.abs(d) > 0.4) {
-          e.preventDefault();
-          target = center + d;
-          velocity = 0;
-          pauseThenResume(4.5);
-        } else {
-          e.preventDefault();
-          const slug = card.getAttribute('data-slug') || (prods[i] && prods[i].slug);
-          if (slug && typeof openSpatialCardZoom === 'function') {
-            openSpatialCardZoom(slug, card);
-          }
-        }
-      });
-    });
-
-    $('#cf-next', stage)?.addEventListener('click', () => go(1));
-    $('#cf-prev', stage)?.addEventListener('click', () => go(-1));
-
-    stage.setAttribute('tabindex', '0');
-    stage.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    });
-
-    layout(performance.now());
-  }
-
+    // initAuth imported from modules/auth.js
+  // initAccount and initProfile imported from modules/account.js
+  window.initAccount = initAccount;
+  window.initProfile = initProfile;
+
+  
   /* ================= SOFT SPA NAVIGATION (Zero Flicker / Instant Smooth Transition) ================= */
   let isNavigating = false;
   async function navigateTo(url, pushState = true) {
@@ -2864,8 +1188,7 @@
       console.warn('Soft nav fallback:', err);
       location.href = url;
     } finally {
-      setTimeout(() => {
-        mainEl.classList.remove('is-transitioning');
+      setTimeout(() => { mainEl.classList.remove('is-transitioning');
         refreshRevealObservers();
         isNavigating = false;
       }, 40);
@@ -2918,7 +1241,7 @@
   }
 
   /* boot */
-  const globalInit = [initTiltPhysics, initQuickDrawerListeners, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
+  const globalInit = [initSpatialAnimations, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
   const pageInit = [initHome, initShop, initProduct, initReviewForm, initCart, initCheckout, initThanks, initAuth, initAccount, initProfile, initContact];
 
   function runBoot() {
@@ -2931,4 +1254,4 @@
   } else {
     runBoot();
   }
-})();
+

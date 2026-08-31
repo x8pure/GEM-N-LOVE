@@ -1,0 +1,59 @@
+
+  /* ---------- global logout ---------- */
+  async function performLogout(redirectUrl = '/') {
+    try {
+      await api('/api/auth/logout', { method: 'POST' });
+    } catch (e) {}
+    try {
+      localStorage.removeItem('ls_auth_token');
+      localStorage.removeItem('ls_admin_token');
+      localStorage.removeItem('ls_token');
+      localStorage.removeItem('ls_user');
+      localStorage.removeItem('ls_sid');
+      sessionStorage.clear();
+      document.cookie = 'ls_sid=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+      document.cookie = 'ls_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+      document.cookie = 'ls_auth_token=; Path=/; SameSite=Lax;' + (location.protocol === 'https:' ? ' Secure;' : '') + ' Max-Age=0';
+    } catch (e) {}
+    LS.session = null;
+    document.dispatchEvent(new Event('ls:logout'));
+    toast(LANG === 'tr' ? 'Başarıyla çıkış yapıldı' : 'Signed out successfully', '👋');
+    setTimeout
+      window.location.replace(redirectUrl);
+    }, 200);
+  }
+  LS.logout = performLogout;
+
+  /* ---------- toast ---------- */
+  // toast function is now imported from modules/ui.js
+  window.toast = toast; // backward compatibility if needed
+  LS.toast = toast;
+
+  /* ---------- age gate ---------- */
+  const gate = $(`#age-gate`);
+
+  const showGate = () => {
+    if (!gate) return;
+    gate.classList.remove(`hidden`, `passing`);
+    document.body.classList.add(`gate-active`);
+    document.documentElement.classList.add(`gate-active-init`);
+  };
+  const hideGate = () => {
+    if (!gate) return;
+    gate.classList.add(`passing`);
+    document.body.classList.remove(`gate-active`);
+    document.documentElement.classList.remove(`gate-active-init`);
+    setTimeout
+      gate.classList.add(`hidden`);
+    }, 800);
+  };
+
+  if (gate) {
+    const params = new URLSearchParams(location.search);
+    const forceShow = params.has('age') || params.has('gate') || params.has('preview') || params.has('yas');
+    if (localStorage.getItem(`ls_age_ok_v11`) === `1` && !forceShow) {
+      gate.classList.add(`hidden`);
+      document.body.classList.remove(`gate-active`);
+      document.documentElement.classList.remove(`gate-active-init`);
+    } else {
+      showGate();

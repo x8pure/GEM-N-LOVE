@@ -25,10 +25,12 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
-const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS || 'admin@loveshop.com.tr,x8pure@gmail.com,cemal.ulas@gmail.com')
+const DEFAULT_ADMIN_EMAILS = ['admin@loveshop.com.tr', 'x8pure@gmail.com', 'cemal.ulas@gmail.com'];
+const ENV_ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '')
   .split(',')
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
+const ADMIN_EMAILS: string[] = Array.from(new Set([...DEFAULT_ADMIN_EMAILS, ...ENV_ADMIN_EMAILS]));
 
 function isAdminEmail(email?: string | null): boolean {
   if (!email) return false;
@@ -138,7 +140,7 @@ function verifyAuthToken(tokenStr: string): { userId: string; role: string; toke
     const exp = parseInt(expStr, 10);
     const tokenVersion = parseInt(versionStr, 10) || 1;
     if (isNaN(exp) || Date.now() > exp) return null;
-    const expectedPayload = parts.length === 5 ? `${userId}:${role}:${tokenVersion}:${exp}` : `${userId}:${role}:${exp}`;
+    const expectedPayload = parts.length === 5 ? `${userId}:${role}:${versionStr}:${expStr}` : `${userId}:${role}:${expStr}`;
     const expected = crypto.createHmac('sha256', AUTH_SECRET).update(expectedPayload).digest('hex');
     if (sig.length === expected.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
       return { userId, role, tokenVersion };
@@ -213,34 +215,32 @@ function getSession(req: http.IncomingMessage, res?: http.ServerResponse) {
 
 function getAuthUser(req: http.IncomingMessage, sess?: any) {
   let user: any = null;
-  if (sess && sess.userId) {
-    user = db.users.find((x: any) => x.id === sess.userId) || null;
-  }
-  if (!user) {
-    const authHeader = req.headers['authorization'] || '';
-    const tokenHeader = req.headers['x-ls-token'] || req.headers['x-auth-token'] || '';
-    const cookieToken = getCookieValue(req, 'ls_token') || getCookieValue(req, 'ls_auth_token');
-    const bearer = typeof authHeader === 'string' && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
-    const tokenStr = bearer || (typeof tokenHeader === 'string' ? tokenHeader.trim() : '') || cookieToken || '';
-    if (tokenStr) {
-      const payload = verifyAuthToken(tokenStr);
-      if (payload && payload.userId) {
-        const found = db.users.find((x: any) => x.id === payload.userId) || null;
-        if (found) {
-          const userVersion = found.tokenVersion || 1;
-          if (payload.tokenVersion === userVersion) {
-            user = found;
-            if (sess) { sess.userId = user.id; }
-          }
+  const authHeader = req.headers['authorization'] || '';
+  const tokenHeader = req.headers['x-ls-token'] || req.headers['x-auth-token'] || '';
+  const cookieToken = getCookieValue(req, 'ls_token') || getCookieValue(req, 'ls_auth_token');
+  const bearer = typeof authHeader === 'string' && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  const tokenStr = bearer || (typeof tokenHeader === 'string' ? tokenHeader.trim() : '') || cookieToken || '';
+  if (tokenStr) {
+    const payload = verifyAuthToken(tokenStr);
+    if (payload && payload.userId) {
+      const found = db.users.find((x: any) => x.id === payload.userId) || null;
+      if (found) {
+        const userVersion = found.tokenVersion || 1;
+        if ((payload.tokenVersion || 1) === userVersion) {
+          user = found;
+          if (sess) { sess.userId = user.id; }
         }
       }
     }
+  }
+  if (!user && sess && sess.userId) {
+    user = db.users.find((x: any) => x.id === sess.userId) || null;
   }
   if (user) {
     const calculatedRole = isAdminEmail(user.email) ? 'admin' : 'customer';
     if (user.role !== calculatedRole) {
       user.role = calculatedRole;
-      save();
+      saveAsync().catch(() => {});
     }
   }
   return user;
@@ -367,7 +367,7 @@ const STR: Record<string, Record<string, string>> = {
     'contact.wa.t': 'WhatsApp Sipariş', 'contact.wa.s': 'Gizlilik esaslı, yargısız iletişim',
     'contact.store.t': 'Mağazamız', 'contact.phone.t': 'Telefon', 'contact.phone.s': '09:00–22:00 arası',
     'contact.map.h': '📍 Nasıl gelirsin?',
-    'contact.map.p': 'Doktorlar Caddesi\'nde, <b>Akbank şubesinin hemen yanı</b>, Ilgaz İş Hanı. Google Haritalar\'da <b>"Love Sex Shop Eskişehir"</b> diye arayın — vitrinsiz, tabela baskısı olmayan bir iş hanı dairesidir, gönül rahatlığıyla gelin.',
+    'contact.map.p': 'Doktorlar Caddesi\'nde, <b>Watsons Mağazası\'nın hemen yanı</b>, Ilgaz İş Hanı. Google Haritalar\'da <b>"Love Sex Shop Eskişehir"</b> diye arayın — vitrinsiz, tabela baskısı olmayan bir iş hanı dairesidir, gönül rahatlığıyla gelin.',
     'contact.map.btn': 'Google Haritalar\'da Aç →', 'contact.wa.btn': 'WhatsApp\'tan Sor',
     'contact.form.h': 'Form ile yaz', 'contact.form.name': 'İsim (opsiyonel)', 'contact.form.name.ph': 'İsterseniz boş bırakın',
     'contact.form.email': 'E-posta', 'contact.form.email.ph': 'yanıt için',
@@ -464,7 +464,7 @@ const STR: Record<string, Record<string, string>> = {
     'contact.wa.t': 'WhatsApp Orders', 'contact.wa.s': 'Privacy-first, judgement-free contact',
     'contact.store.t': 'Our Store', 'contact.phone.t': 'Phone', 'contact.phone.s': 'between 09:00–22:00',
     'contact.map.h': '📍 How to find us',
-    'contact.map.p': 'On Doktorlar Street, next to Akbank, Ilgaz Business Center.',
+    'contact.map.p': 'On Doktorlar Street, next to Watsons Store, Ilgaz Business Center.',
     'contact.map.btn': 'Open in Google Maps →', 'contact.wa.btn': 'Ask on WhatsApp',
     'contact.form.h': 'Write via form', 'contact.form.name': 'Name (optional)', 'contact.form.name.ph': 'Leave blank if you prefer',
     'contact.form.email': 'E-mail', 'contact.form.email.ph': 'so we can reply',
@@ -968,7 +968,7 @@ ${body}
 </div>
 
 <script>window.__LS_LANG__='${C.lang}';</script>
-<script defer src="/js/shop.js?v=${appVersion}"></script>
+<script type="module" src="/js/shop.js?v=${appVersion}"></script>
 </body>
 </html>`;
 }
@@ -986,7 +986,6 @@ const productCardSSR = (p: any, tr: any) => `
     </button>
   </div>
   <div class="prod-info">
-    <div class="prod-cat">${esc(p.categoryName)}</div>
     <a href="/urun/${esc(p.slug)}" class="prod-name">${esc(p.name)}</a>
     <div class="prod-rating">${stars(p.rating)} <span>(${p.reviewCount || 0})</span></div>
     <div class="prod-price-row"><span class="price">${fmt(p.price)}</span>${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}</div>
@@ -2630,10 +2629,18 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       if (pathname === '/profil') return pageProfile(req, res);
       if (pathname === '/hakkimizda') return pageAbout(req, res);
       if (pathname === '/iletisim') return pageContact(req, res);
-      if (pathname === '/admin') return pageAdmin(req, res);
+      if (pathname === '/admin' || pathname === '/admin/login') return pageAdmin(req, res);
 
-      if (pathname === '/gizlilik-politikasi' || pathname === '/privacy-policy') return pagePrivacy(req, res);
-      if (pathname === '/kullanim-kosullari' || pathname === '/terms-of-service') return pageTerms(req, res);
+      if (pathname === '/gizlilik' || pathname === '/gizlilik-politikasi' || pathname === '/privacy-policy') return pagePrivacy(req, res);
+      if (pathname === '/kullanim-kosullari' || pathname === '/terms-of-service' || pathname === '/mesafeli-satis' || pathname === '/mesafeli-satis-sozlesmesi') return pageTerms(req, res);
+      if (pathname === '/teslimat' || pathname === '/teslimat-ve-iade' || pathname === '/iade') {
+        res.writeHead(302, { Location: '/hakkimizda#gizlilik' });
+        return res.end();
+      }
+      if (pathname === '/sss' || pathname === '/faq') {
+        res.writeHead(302, { Location: '/hakkimizda#iade' });
+        return res.end();
+      }
 
       
     }
