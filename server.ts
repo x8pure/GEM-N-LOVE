@@ -292,7 +292,7 @@ const STR: Record<string, Record<string, string>> = {
     'nav.home': 'Anasayfa', 'nav.shop': 'Mağaza', 'nav.about': 'Hakkımızda', 'nav.contact': 'İletişim', 'nav.account': 'Hesabım',
     'nav.admin': 'Admin Panel', 'nav.cart': 'Sepet', 'nav.menu': 'Menü', 'nav.login': 'Giriş', 'nav.search': 'Ürün Ara', 'nav.search_short': 'Ara',
     'qs.ph': 'Ürün, kategori veya özellik ara...', 'qs.popular': 'Popüler Aramalar', 'qs.empty': 'Aramanızla eşleşen ürün bulunamadı.', 'qs.close': 'Kapat',
-    'foot.desc': ' — bedenini tanı, keyfini keşfet. 2026 tasarım anlayışıyla, saygı ve gizlilik esaslı online mağaza.',
+    'foot.desc': ' Erotik & Seks Shop — Eskişehir ve tüm Türkiye geneline %100 gizli paketleme, güvenli ödeme ve orijinal ürün güvencesiyle hizmet veren seçkin yetişkin mağazası.',
     'foot.h.shop': 'Mağaza', 'foot.all': 'Tüm Ürünler',
     'foot.about': 'Hakkımızda', 'foot.discreet': 'Gizli Paketleme', 'foot.returns': 'İade Politikası',
     'foot.contact': 'İletişim',
@@ -730,18 +730,21 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const tr = C.t;
   const dark = C.theme === 'dark';
   const appVersion = '1.0.9-' + Date.now();
-  const desc = opts.description || `${st.storeName}: gizli paketleme, güvenli ödeme, vücut dostu ürünler. 18+ yetkin yaşam mağazası.`;
+  const desc = opts.description || (C.lang === 'en' 
+    ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery.'
+    : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.');
   const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
   const ogImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveshop.com.tr/test.png');
 
-  // 2026 Structured Data (JSON-LD)
+  // 2026 Enhanced Structured Data (JSON-LD) for Local SEO & Search Intent
   const schemaGraph: any[] = [
     {
       "@type": "WebSite",
       "@id": "https://loveshop.com.tr/#website",
       "url": "https://loveshop.com.tr/",
-      "name": st.storeName || "Love.",
-      "description": "18+ Yetkin Yaşam Mağazası",
+      "name": "Love Erotik & Seks Shop Eskişehir",
+      "alternateName": ["Love Sex Shop", "Love Erotik Shop", "Love Seks Shop", "Love Shop"],
+      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. %100 gizli paketleme ve orijinal ürünler.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://loveshop.com.tr/magaza?q={search_term_string}",
@@ -751,16 +754,26 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
     {
       "@type": "Store",
       "@id": "https://loveshop.com.tr/#store",
-      "name": st.storeName || "Love.",
+      "name": "Love Erotik & Seks Shop Eskişehir",
+      "alternateName": ["Love Sex Shop", "Love Seks Shop", "Love Erotik Shop", "Love Shop"],
       "url": "https://loveshop.com.tr/",
       "logo": "https://loveshop.com.tr/test.png",
       "image": "https://loveshop.com.tr/test.png",
-      "description": "Gizli paketleme, güvenli teslimat, vücut dostu ürünler. 18+ yetkin yaşam mağazası.",
+      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. %100 gizli paketleme, aynı gün teslimat, orijinal ürünler.",
       "priceRange": "₺₺",
+      "telephone": st.supportPhone || "+90 543 633 13 25",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Eskişehir",
+        "streetAddress": "İsmet İnönü-1 Cad. Ilgaz İş Hanı No:19 Kat:1 Daire:2 (Watsons Yanı)",
+        "addressLocality": "Tepebaşı",
+        "addressRegion": "Eskişehir",
+        "postalCode": "26130",
         "addressCountry": "TR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 39.7767,
+        "longitude": 30.5206
       }
     }
   ];
@@ -1161,7 +1174,11 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   </div>
 </section>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'LOVE. — Premium Adult Store' : 'LOVE. — Premium Yetişkin Yaşam Mağazası', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'LOVE. — Premium Adult Store' : 'Love Seks Shop & Erotik Shop Eskişehir | %100 Gizli Teslimat', html, {
+    description: C.lang === 'en'
+      ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery in Turkey.'
+      : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.'
+  }, C));
 }
 
 function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -1190,7 +1207,9 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(tr('shop.title'), html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'Shop' : 'Tüm Ürünler — Seks Shop & Erotik Shop', html, {
+    description: 'Eskişehir Love Seks Shop & Erotik Shop online kataloğu. Kadın, erkek, çiftler için vücut dostu ürünler, kayganlaştırıcılar, iç giyim ve aksesuarlar.'
+  }, C));
 }
 
 function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: string) {
@@ -1468,7 +1487,9 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'About Us' : 'Hakkımızda', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'About Us' : 'Hakkımızda — Eskişehir Love Seks & Erotik Shop', html, {
+    description: 'Love Shop: Eskişehir ve Türkiye genelinde güvenli, kaliteli, vücut dostu ürünler sunan seçkin yetişkin yaşam ve seks shop mağazası. %100 gizlilik manifestosu.'
+  }, C));
 }
 
 
@@ -1550,7 +1571,9 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'Contact' : 'İletişim', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'Contact' : 'İletişim & Mağaza Adresi — Love Seks Shop Eskişehir', html, {
+    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. Doktorlar Caddesi Ilgaz İş Hanı Kat:1 D:2 (Watsons Yanı). 7/24 gizli WhatsApp hattı.'
+  }, C));
 }
 
 function pageAdmin(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -2664,6 +2687,54 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   ${db.products.map((p: any) => `<url><loc>https://loveshop.com.tr/urun/${esc(p.slug)}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`).join('')}
 </urlset>`;
         return res.end(sitemap);
+      }
+
+      // 301 Permanent Redirects (Fixing 404s for Google Index & Legacy Links)
+      if (pathname === '/love/iletisim' || pathname === '/love/iletisim/' || pathname === '/iletisim.html') {
+        res.writeHead(301, { Location: '/iletisim' });
+        return res.end();
+      }
+      if (pathname === '/love/hakkimizda' || pathname === '/love/hakkimizda/' || pathname === '/hakkimizda.html') {
+        res.writeHead(301, { Location: '/hakkimizda' });
+        return res.end();
+      }
+      if (pathname === '/love/magaza' || pathname === '/love/magaza/' || pathname === '/magaza.html' || pathname === '/urunler') {
+        res.writeHead(301, { Location: '/magaza' });
+        return res.end();
+      }
+      if (pathname.startsWith('/love/urun/')) {
+        const pSlug = pathname.replace(/^\/love\/urun\//, '');
+        res.writeHead(301, { Location: `/urun/${pSlug}` });
+        return res.end();
+      }
+      if (pathname.startsWith('/love/')) {
+        const sub = pathname.replace(/^\/love\//, '');
+        res.writeHead(301, { Location: sub ? `/${sub}` : '/' });
+        return res.end();
+      }
+      if (pathname === '/love') {
+        res.writeHead(301, { Location: '/' });
+        return res.end();
+      }
+      if (pathname === '/contact') {
+        res.writeHead(301, { Location: '/iletisim' });
+        return res.end();
+      }
+      if (pathname === '/about') {
+        res.writeHead(301, { Location: '/hakkimizda' });
+        return res.end();
+      }
+      if (pathname === '/shop') {
+        res.writeHead(301, { Location: '/magaza' });
+        return res.end();
+      }
+      if (pathname === '/cart') {
+        res.writeHead(301, { Location: '/sepet' });
+        return res.end();
+      }
+      if (pathname === '/checkout') {
+        res.writeHead(301, { Location: '/odeme' });
+        return res.end();
       }
 
       if (pathname === '/') return pageHome(req, res);
