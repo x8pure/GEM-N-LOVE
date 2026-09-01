@@ -801,9 +801,9 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(title)} — ${esc(st.storeName)}</title>
+<title>${esc(title)} | Premium Kişisel Bakım</title>
 <meta name="description" content="${esc(desc)}">
-<meta property="og:title" content="${esc(title)} — ${esc(st.storeName)}">
+<meta property="og:title" content="${esc(title)} | Premium Kişisel Bakım">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(ogImage)}">
 <meta property="og:url" content="${esc(canonicalUrl)}">
@@ -813,7 +813,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%230C0D10'/><text x='12' y='65' font-family='sans-serif' font-weight='900' font-size='38' fill='%23FFFFFF' letter-spacing='-1'>LOVE</text><circle cx='86' cy='60' r='7.5' fill='%23F43F5E'/></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='%23E63946'/></svg>">
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">

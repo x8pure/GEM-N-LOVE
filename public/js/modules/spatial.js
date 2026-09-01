@@ -199,25 +199,19 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
             </div>
 
             <div class="spatial-title-group">
-              <h1>${esc(p.name)}</h1>
+              <h1><a href="/urun/${p.slug}" style="text-decoration:none; color:inherit; display:block;">${esc(p.name)}</a></h1>
               <div class="spatial-price-cluster">
                 <span class="spatial-price">${fmt(p.price)}</span>
                 ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
+              </div>
+              <div class="spatial-stock-row" style="margin-top: 12px;">
                 ${stockBadge}
               </div>
+              <a href="/urun/${p.slug}" class="spatial-detail-link">
+                ${LANG === 'en' ? 'View All Features' : 'Tüm Özellikleri İncele'} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </a>
             </div>
 
-            <p class="spatial-desc">${p.description ? esc(p.description) : ''}</p>
-          </div>
-
-          <!-- Dynamic Category & Product Specs Bar -->
-          <div class="spatial-spec-deck">
-            ${activeSpecs.slice(0, 4).map((spec) => `
-              <div class="spatial-spec-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${spec.icon}</svg>
-                <span>${esc(spec.text)}</span>
-              </div>
-            `).join('')}
           </div>
 
           <!-- Discreet Privacy Reassurance -->
@@ -233,13 +227,10 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
               <span class="spatial-qty-val" id="spatial-qty-val">1</span>
               <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
             </div>
-            <button type="button" class="spatial-add-btn" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''}>
+            <button type="button" class="spatial-add-btn" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''} style="flex: 1;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               <span>${LANG === 'en' ? 'Add to Cart' : 'Sepete Ekle'}</span>
             </button>
-            <a href="/urun/${p.slug}" class="spatial-full-link">
-              <span>${LANG === 'en' ? 'Details →' : 'İncele →'}</span>
-            </a>
           </div>
         </div>
       </div>
@@ -270,7 +261,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           lastDeltaY = 0;
           
           spatialMain.style.transition = 'none';
-          spatialMain.style.transformOrigin = 'center center';
+          spatialMain.style.transformOrigin = 'top center';
           spatialMain.style.willChange = 'transform, filter';
           spatialMain.style.zIndex = '99';
           
@@ -293,16 +284,25 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
             spatialVisual.classList.add('is-pulling');
           }
           
-          // 3D Pop-out growth: image grows out of studio bounds
-          let scale = 1 + (deltaY / 200);
-          if (scale > 1.45) {
-            scale = 1.45 + (scale - 1.45) * 0.15; 
+          // Genuinely powerful 3D pop-out: Image decouples from container bounds and expands boldly
+          const maxAllowedScale = window.innerWidth < 400 ? 1.4 : (window.innerWidth < 600 ? 1.55 : 1.7);
+          
+          // Rubber-band math: easing curve instead of linear/pow clamp
+          let pullForce = deltaY / 120;
+          let scale = 1 + (Math.log10(1 + pullForce * 0.8) * 1.3);
+          
+          if (scale > maxAllowedScale) {
+            scale = maxAllowedScale + (scale - maxAllowedScale) * 0.12; 
           }
           currentScale = scale;
           
-          const translateY = deltaY * 0.22;
-          spatialMain.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-          spatialMain.style.filter = `drop-shadow(0 ${15 + deltaY * 0.2}px ${20 + deltaY * 0.3}px rgba(0,0,0,0.65))`;
+          if (stage) {
+            stage.classList.add('is-pulling-mode');
+          }
+          
+          // Pure optical enlargement from top-center, creating a smooth downward waterfall effect
+          spatialMain.style.transform = `scale(${scale})`;
+          spatialMain.style.filter = `drop-shadow(0 ${20 + deltaY * 0.35}px ${30 + deltaY * 0.4}px rgba(0,0,0,0.88))`;
           
           if (spatialGlow) {
             spatialGlow.style.transform = `translate(-50%, -50%) scale(${1 + (scale - 1) * 1.6})`;
@@ -335,6 +335,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           setTimeout(() => {
             if (!isPulling) {
               spatialVisual.classList.remove('is-pulling');
+              if (stage) stage.classList.remove('is-pulling-mode');
               spatialMain.style.transition = '';
               spatialMain.style.transform = '';
               spatialMain.style.willChange = '';
@@ -466,6 +467,13 @@ export function initSpatialAnimations() {
   $('#spatial-canvas-overlay')?.addEventListener('click', (e) => {
     if (e.target === $('#spatial-canvas-overlay')) closeSpatialCardZoom();
   });
+
+  const stageEl = $('#spatial-card-stage');
+  if (stageEl) {
+    stageEl.addEventListener('click', (e) => e.stopPropagation());
+    stageEl.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+    stageEl.addEventListener('touchend', (e) => e.stopPropagation(), { passive: true });
+  }
 
   // Global event delegation for cards and modal actions
   document.addEventListener('click', (e) => {
