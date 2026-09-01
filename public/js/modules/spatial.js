@@ -249,13 +249,14 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     const spatialMain = $('#spatial-main-image', stage);
     const spatialGlow = $('#spatial-ambient-glow', stage);
     
-    // Mobile 3D Pop-out Pull-to-Zoom (Image escapes card borders, info stays 100% static)
+    // Mobile 3D Pop-out Pull-to-Zoom (Image pops out of studio box OVER info card)
     const spatialVisual = $('.spatial-visual-hero', stage);
     const stageGrid = $('.spatial-grid', stage);
     
     if (spatialVisual && spatialMain) {
       let startY = 0;
       let currentScale = 1;
+      let lastDeltaY = 0;
       let isPulling = false;
       
       spatialVisual.addEventListener('touchstart', (e) => {
@@ -266,24 +267,17 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           startY = e.touches[0].clientY;
           isPulling = true;
           currentScale = 1;
+          lastDeltaY = 0;
           
           spatialMain.style.transition = 'none';
           spatialMain.style.transformOrigin = 'center center';
-          spatialMain.style.willChange = 'transform';
-          spatialMain.style.zIndex = '50';
+          spatialMain.style.willChange = 'transform, filter';
+          spatialMain.style.zIndex = '99';
           
           spatialVisual.style.overflow = 'visible';
-          
-          if (stageGrid) {
-            stageGrid.style.overflow = 'visible';
-          }
-          if (stage) {
-            stage.style.overflow = 'visible';
-          }
-          
-          if (spatialGlow) {
-            spatialGlow.style.transition = 'none';
-          }
+          if (stageGrid) stageGrid.style.overflow = 'visible';
+          if (stage) stage.style.overflow = 'visible';
+          if (spatialGlow) spatialGlow.style.transition = 'none';
         }
       }, { passive: true });
 
@@ -294,22 +288,25 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         
         if (deltaY > 0) {
           e.preventDefault();
+          lastDeltaY = deltaY;
           if (!spatialVisual.classList.contains('is-pulling')) {
             spatialVisual.classList.add('is-pulling');
           }
           
-          // 3D Pop-out growth
-          let scale = 1 + (deltaY / 230);
-          if (scale > 1.42) {
-            scale = 1.42 + (scale - 1.42) * 0.18; 
+          // 3D Pop-out growth: image grows out of studio bounds
+          let scale = 1 + (deltaY / 200);
+          if (scale > 1.45) {
+            scale = 1.45 + (scale - 1.45) * 0.15; 
           }
           currentScale = scale;
           
-          spatialMain.style.transform = `scale(${scale})`;
+          const translateY = deltaY * 0.22;
+          spatialMain.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+          spatialMain.style.filter = `drop-shadow(0 ${15 + deltaY * 0.2}px ${20 + deltaY * 0.3}px rgba(0,0,0,0.65))`;
           
           if (spatialGlow) {
-            spatialGlow.style.transform = `translate(-50%, -50%) scale(${1 + (scale - 1) * 1.5})`;
-            spatialGlow.style.opacity = `${Math.min(0.92, 0.4 + (scale - 1) * 0.85)}`;
+            spatialGlow.style.transform = `translate(-50%, -50%) scale(${1 + (scale - 1) * 1.6})`;
+            spatialGlow.style.opacity = '1';
           }
         } else {
           isPulling = false;
@@ -320,15 +317,17 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       }, { passive: false });
 
       const resetZoom = () => {
-        if (isPulling || currentScale > 1 || (spatialMain.style.transform && spatialMain.style.transform !== 'none')) {
+        if (isPulling || currentScale > 1 || lastDeltaY > 0) {
           isPulling = false;
           currentScale = 1;
-          
-          spatialMain.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-          spatialMain.style.transform = 'scale(1)';
+
+          // Spring back smoothly into original studio box
+          spatialMain.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.38s ease';
+          spatialMain.style.transform = 'scale(1) translateY(0)';
+          spatialMain.style.filter = '';
           
           if (spatialGlow) {
-            spatialGlow.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
+            spatialGlow.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease';
             spatialGlow.style.transform = 'translate(-50%, -50%) scale(1)';
             spatialGlow.style.opacity = '';
           }
@@ -340,22 +339,19 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
               spatialMain.style.transform = '';
               spatialMain.style.willChange = '';
               spatialMain.style.zIndex = '';
+              spatialMain.style.filter = '';
               
               spatialVisual.style.overflow = '';
-              
-              if (stageGrid) {
-                stageGrid.style.overflow = '';
-              }
-              if (stage) {
-                stage.style.overflow = '';
-              }
+              if (stageGrid) stageGrid.style.overflow = '';
+              if (stage) stage.style.overflow = '';
               
               if (spatialGlow) {
                 spatialGlow.style.transition = '';
                 spatialGlow.style.transform = '';
               }
+              lastDeltaY = 0;
             }
-          }, 420);
+          }, 400);
         }
       };
 

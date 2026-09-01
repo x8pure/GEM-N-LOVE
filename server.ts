@@ -813,7 +813,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%230C0D10'/><text x='12' y='65' font-family='sans-serif' font-weight='900' font-size='38' fill='%23FFFFFF' letter-spacing='-1'>LOVE</text><circle cx='86' cy='60' r='7.5' fill='%23F43F5E'/></svg>">
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
@@ -889,25 +889,78 @@ ${opts.noChrome ? body : `
   </div>
 
   <div class="mm-body">
-    <nav class="mm-pure-nav" aria-label="Ana Gezinme">
-      <a href="/" data-nav="/" class="mm-pure-link">${tr('nav.home')}</a>
-      <a href="/magaza" data-nav="/magaza" class="mm-pure-link">${tr('nav.shop')}</a>
-      <a href="/hakkimizda" data-nav="/hakkimizda" class="mm-pure-link">${tr('nav.about')}</a>
-      <a href="/iletisim" data-nav="/iletisim" class="mm-pure-link">${tr('nav.contact')}</a>
-      <a href="/hesap" data-nav="/hesap" class="mm-pure-link">${tr('nav.account')}</a>
-      <a href="/admin" id="mm-admin-link" data-nav="/admin" style="display:none;" class="mm-pure-link mm-pure-admin">
-        <span>👑 ${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
-      </a>
-    </nav>
+    <div class="mm-section mm-primary-section">
+      <nav class="mm-nav-list" aria-label="Ana Gezinme">
+        <a href="/" data-nav="/" class="mm-nav-item">
+          <span>${tr('nav.home')}</span>
+          <svg class="mm-nav-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+        <a href="/magaza" data-nav="/magaza" class="mm-nav-item">
+          <span>${tr('nav.shop')}</span>
+          <svg class="mm-nav-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+        <a href="/magaza?filter=new" data-nav="/magaza?filter=new" class="mm-nav-item">
+          <span>${C.lang === 'tr' ? 'Yeni Gelenler' : 'New Arrivals'}</span>
+          <span class="mm-nav-tag">${C.lang === 'tr' ? 'Yeni' : 'New'}</span>
+        </a>
+        <a href="/magaza?filter=bestsellers" data-nav="/magaza?filter=bestsellers" class="mm-nav-item">
+          <span>${C.lang === 'tr' ? 'Çok Satanlar' : 'Bestsellers'}</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="mm-divider"></div>
+
+    <div class="mm-section mm-secondary-section">
+      <nav class="mm-sub-list" aria-label="Ek Bağlantılar">
+        <a href="/hesap" data-nav="/hesap" class="mm-sub-item">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>${tr('nav.account')}</span>
+        </a>
+        <a href="/hakkimizda" data-nav="/hakkimizda" class="mm-sub-item">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>${tr('nav.about')}</span>
+        </a>
+        <a href="/iletisim" data-nav="/iletisim" class="mm-sub-item">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>${tr('nav.contact')}</span>
+        </a>
+        <a href="/admin" id="mm-admin-link" data-nav="/admin" style="display:none;" class="mm-sub-item mm-admin-item">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span>${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
+        </a>
+      </nav>
+    </div>
   </div>
 
   <div class="mm-footer">
-    <a class="mm-pure-wa" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
-      <span>${C.lang === 'tr' ? 'WhatsApp Canlı Destek' : 'WhatsApp Concierge'}</span>
-    </a>
-    <div class="mm-pure-note">
-      <span>🔒 %100 Gizli Paket • Hızlı Teslimat</span>
+    <div class="mm-controls-card">
+      <button type="button" id="mm-theme" class="mm-card-row" aria-label="Tema Değiştir">
+        <span class="mm-row-left">
+          <span class="mm-theme-icon-wrap">
+            ${dark ? '<svg class="icon-svg icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' : '<svg class="icon-svg icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}
+          </span>
+          <span class="mm-row-label">${C.lang === 'tr' ? 'Karanlık Görünüm' : 'Dark Appearance'}</span>
+        </span>
+        <span class="mm-switch-pill ${dark ? 'active' : ''}">
+          <span class="mm-switch-knob"></span>
+        </span>
+      </button>
+
+      <a class="mm-card-row mm-wa-row" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
+        <span class="mm-row-left">
+          <span class="mm-wa-icon-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+          </span>
+          <span class="mm-row-label">${C.lang === 'tr' ? 'Özel Danışman Destek' : 'Concierge WhatsApp'}</span>
+        </span>
+        <svg class="mm-row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+    </div>
+
+    <div class="mm-badge-row">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>${C.lang === 'tr' ? 'Tamamen Gizli Paketleme & Express Teslimat' : '100% Discreet Packaging & Express Delivery'}</span>
     </div>
   </div>
 </aside>
@@ -1108,7 +1161,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   </div>
 </section>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'Pleasure is yours — 18+ Adult Wellness Store' : 'Haz senin — 18+ Yetkin Yaşam Mağazası', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'LOVE. — Premium Adult Store' : 'LOVE. — Premium Yetişkin Yaşam Mağazası', html, {}, C));
 }
 
 function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {

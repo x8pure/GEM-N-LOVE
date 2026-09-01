@@ -185,6 +185,14 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     if (mmSwitch) {
       mmSwitch.classList.toggle('active', dark);
       mmSwitch.setAttribute('aria-checked', String(dark));
+      const iconWrap = mmSwitch.querySelector('.mm-theme-icon-wrap');
+      if (iconWrap) {
+        iconWrap.innerHTML = dark ? SUN_SVG : MOON_SVG;
+      }
+      const pill = mmSwitch.querySelector('.mm-switch-pill');
+      if (pill) {
+        pill.classList.toggle('active', dark);
+      }
     }
     const mmStatus = $('#mm-theme-status');
     if (mmStatus) {
