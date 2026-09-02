@@ -98,6 +98,15 @@ if (Array.isArray(db.users)) {
   if (userFixed) await saveAsync();
 }
 
+if (db.settings) {
+  const targetAddr = 'İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir';
+  if (!db.settings.address || !db.settings.address.includes('Tramvay') || db.settings.address.includes('No:19')) {
+    db.settings.address = targetAddr;
+    db.settings.mapsQuery = encodeURIComponent('Love Sex Shop Eskişehir Erotik Shop');
+    saveAsync().catch(() => {});
+  }
+}
+
 let sessions: Record<string, any> = {};
 try { sessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')); } catch { sessions = {}; }
 function persistSessions() {
@@ -365,10 +374,10 @@ const STR: Record<string, Record<string, string>> = {
     'contact.eb': '✦ Bize Yaz', 'contact.h1': 'Merhaba demenin yargısız yolu',
     'contact.p': 'Sorularınız anonim kalabilir; adınızı yazmak zorunda değilsiniz. WhatsApp\'tan 7/24, mağazamızdan birebir destek.',
     'contact.wa.t': 'WhatsApp Sipariş', 'contact.wa.s': 'Gizlilik esaslı, yargısız iletişim',
-    'contact.store.t': 'Mağazamız', 'contact.phone.t': 'Telefon', 'contact.phone.s': '09:00–22:00 arası',
-    'contact.map.h': '📍 Nasıl gelirsin?',
-    'contact.map.p': 'Doktorlar Caddesi\'nde, <b>Watsons Mağazası\'nın hemen yanı</b>, Ilgaz İş Hanı. Google Haritalar\'da <b>"Love Sex Shop Eskişehir"</b> diye arayın — vitrinsiz, tabela baskısı olmayan bir iş hanı dairesidir, gönül rahatlığıyla gelin.',
-    'contact.map.btn': 'Google Haritalar\'da Aç →', 'contact.wa.btn': 'WhatsApp\'tan Sor',
+    'contact.store.t': 'Mağaza Adresimiz', 'contact.phone.t': 'Telefon & Destek', 'contact.phone.s': '09:00–22:00 arası',
+    'contact.map.h': '📍 Kolay Yol Tarifi & Belirgin Noktalar',
+    'contact.map.p': 'İsmet İnönü-1 Caddesi üzerinde, <b>İsmet İnönü Tramvay Durağı\'nın tam karşısındayız</b>. Binamızın alt girişinde <b>Yves Rocher</b> mağazası ve <b>Shakespeare Coffee & Bistro</b> arka kapısı (girişte büyük yeşil Shakespeare tabelası) yer alır. Yanımızda <b>Watsons</b> mağazası bulunmaktadır. Ilgaz İş Hanı Kat:1 Daire:2 adresimize rahatça ve tam gizlilikle gelebilirsiniz.',
+    'contact.map.btn': 'Google Haritalar\'da Yol Tarifi Al →', 'contact.wa.btn': 'WhatsApp\'tan Konum İste',
     'contact.form.h': 'Form ile yaz', 'contact.form.name': 'İsim (opsiyonel)', 'contact.form.name.ph': 'İsterseniz boş bırakın',
     'contact.form.email': 'E-posta', 'contact.form.email.ph': 'yanıt için',
     'contact.form.msg': 'Mesajın', 'contact.form.msg.ph': 'Merak ettiğin her şey…', 'contact.form.btn': 'Gönder 💜',
@@ -764,10 +773,10 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       "telephone": st.supportPhone || "+90 543 633 13 25",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "İsmet İnönü-1 Cad. Ilgaz İş Hanı No:19 Kat:1 Daire:2 (Watsons Yanı)",
+        "streetAddress": "İsmet İnönü-1 Cd. No:52/2 Ilgaz İş Hanı Kat:1 Daire:2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı)",
         "addressLocality": "Tepebaşı",
         "addressRegion": "Eskişehir",
-        "postalCode": "26130",
+        "postalCode": "26170",
         "addressCountry": "TR"
       },
       "geo": {
@@ -826,7 +835,9 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='%23E63946'/></svg>">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/favicon.svg">
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
@@ -1546,18 +1557,39 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
   <p>${tr('contact.p')}</p>
   <div class="contact-cards" style="display:grid;gap:26px;margin-top:30px">
     <div class="feature"><div class="fi">💬</div><div><h4>${tr('contact.wa.t')}</h4><p><a href="${esc(st.whatsapp)}" target="_blank" rel="noopener" style="color:var(--rose);font-weight:600">+90 543 633 13 25</a><br><span class="muted" style="font-size:12px">${tr('contact.wa.s')}</span></p></div></div>
-    <div class="feature"><div class="fi">🏬</div><div><h4>${tr('contact.store.t')}</h4><p>${esc(st.address)}</p></div></div>
+    <div class="feature"><div class="fi">🏬</div><div><h4>${tr('contact.store.t')}</h4><p><strong>${esc(st.address)}</strong></p></div></div>
     <div class="feature"><div class="fi">📞</div><div><h4>${tr('contact.phone.t')}</h4><p>${esc(st.supportPhone)}<br><span class="muted" style="font-size:12px">${tr('contact.phone.s')}</span></p></div></div>
   </div>
-  <div class="check-step" style="margin-top:34px">
-    <h3>${tr('contact.map.h')}</h3>
-    <p style="margin-bottom:16px">${tr('contact.map.p')}</p>
+
+  <div class="check-step" style="margin-top:34px;background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-md);padding:24px">
+    <h3 style="margin-top:0">${tr('contact.map.h')}</h3>
+    <p style="margin-bottom:20px;line-height:1.6">${tr('contact.map.p')}</p>
+    
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);padding:14px 16px;border-radius:var(--r-sm)">
+        <div style="font-size:20px;margin-bottom:6px">🚊</div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:4px">Tramvay Durağı Karşısı</div>
+        <div style="font-size:13px;color:var(--muted)">İsmet İnönü-1 Tramvay Durağı'nın doğrudan tam karşısındaki bina.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);padding:14px 16px;border-radius:var(--r-sm)">
+        <div style="font-size:20px;margin-bottom:6px">🌿</div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:4px">Bina Giriş Belirteçleri</div>
+        <div style="font-size:13px;color:var(--muted)">Alt girişte <b>Yves Rocher</b> mağazası ve büyük yeşil <b>Shakespeare tabelası</b>.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);padding:14px 16px;border-radius:var(--r-sm)">
+        <div style="font-size:20px;margin-bottom:6px">🏢</div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:4px">Ilgaz İş Hanı Kat:1 D:2</div>
+        <div style="font-size:13px;color:var(--muted)">Watsons yanı, 1. kat. Vitrinsiz, tamamen konforlu ve %100 gizli ortam.</div>
+      </div>
+    </div>
+
     <iframe src="https://www.google.com/maps?q=${esc(st.mapsQuery)}&output=embed" style="width:100%;height:340px;border:1px solid var(--line);border-radius:var(--r-md)" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Love Sex Shop Eskişehir — Google Maps"></iframe>
     <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
       <a href="https://www.google.com/maps/search/?api=1&query=${esc(st.mapsQuery)}" target="_blank" rel="noopener" class="btn btn-primary">${tr('contact.map.btn')}</a>
       <a href="${esc(st.whatsapp)}" target="_blank" rel="noopener" class="btn btn-ghost">${tr('contact.wa.btn')}</a>
     </div>
   </div>
+
   <div class="check-step" style="margin-top:34px">
     <h3>${tr('contact.form.h')}</h3>
     <form id="contact-form">
@@ -1572,7 +1604,7 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'Contact' : 'İletişim & Mağaza Adresi — Love Seks Shop Eskişehir', html, {
-    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. Doktorlar Caddesi Ilgaz İş Hanı Kat:1 D:2 (Watsons Yanı). 7/24 gizli WhatsApp hattı.'
+    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. İsmet İnönü Tramvay Durağı Karşısı, Ilgaz İş Hanı Kat:1 D:2 (Yves Rocher & Watsons Yanı). 7/24 gizli WhatsApp hattı.'
   }, C));
 }
 
@@ -2657,10 +2689,10 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   }
   try {
     if (req.method === 'GET' || req.method === 'HEAD') {
-      if (pathname === '/favicon.ico') {
-        const fp = path.join(ROOT, 'public', 'favicon.ico');
-        if (fs.existsSync(fp)) return serveStatic(req, res, '/favicon.ico');
-        res.writeHead(204); return res.end();
+      if (pathname === '/favicon.ico' || pathname === '/apple-touch-icon.png') {
+        const fp = path.join(ROOT, 'public', pathname.replace(/^\//, ''));
+        if (fs.existsSync(fp)) return serveStatic(req, res, pathname);
+        return serveStatic(req, res, '/favicon.svg');
       }
       if (
         pathname.startsWith('/css/') ||
