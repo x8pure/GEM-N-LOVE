@@ -36,7 +36,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
   const STR = {
     tr: {
-      'nav.login': 'Giriş',
+      'nav.login': 'Giriş', 'nav.account': 'Hesabım',
       'added': 'Sepete eklendi',
       'badge.new': 'Yeni', 'badge.hot': 'Çok Satan', 'badge.sale': 'İndirim', 'quickadd': 'Sepete Ekle',
       'nl.bad': 'Geçerli bir e-posta girin', 'nl.ok': 'Aramıza hoş geldin! %10 indirim kodun mailinde.',
@@ -95,7 +95,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       'cf.hint': 'Sürükle · Dokun', 'cf.prev': 'Önceki ürün', 'cf.next': 'Sonraki ürün'
     },
     en: {
-      'nav.login': 'Sign in',
+      'nav.login': 'Sign in', 'nav.account': 'My Account',
       'added': 'Added to cart',
       'badge.new': 'New', 'badge.hot': 'Best Seller', 'badge.sale': 'Sale', 'quickadd': 'Add to Cart',
       'nl.bad': 'Please enter a valid e-mail', 'nl.ok': 'Welcome to the club! Your 10% discount code is in your inbox.',
@@ -304,6 +304,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     const slot = $('#nav-user');
     if (!slot) return;
     if (user) {
+      slot.classList.add('has-user');
       const displayName = user.name || user.email?.split('@')[0] || 'Kullanıcı';
       const initial = displayName.charAt(0).toUpperCase();
       const isAdmin = user.role === 'admin';
@@ -384,6 +385,16 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         </div>
       `;
 
+      // Update mobile menu account link
+      const mmAccLink = $('#mm-account-link');
+      const mmAccText = $('#mm-account-text');
+      const mmLogoutLink = $('#mm-logout-link');
+      if (mmAccLink) {
+        mmAccLink.setAttribute('href', '/hesap');
+        if (mmAccText) mmAccText.textContent = t('nav.account');
+      }
+      if (mmLogoutLink) mmLogoutLink.style.display = 'flex';
+
       const btn = $('#user-menu-btn', slot);
       const menu = $('#user-dropdown-menu', slot);
       const backdrop = $('#user-dropdown-backdrop', slot);
@@ -438,7 +449,16 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         document.addEventListener('keydown', onKeyDown);
       }
     } else {
+      slot.classList.remove('has-user');
       slot.innerHTML = `<a href="/giris" class="icon-btn" title="${t('nav.login')}">${USER_SVG}</a>`;
+      const mmAccLink = $('#mm-account-link');
+      const mmAccText = $('#mm-account-text');
+      const mmLogoutLink = $('#mm-logout-link');
+      if (mmAccLink) {
+        mmAccLink.setAttribute('href', '/giris');
+        if (mmAccText) mmAccText.textContent = t('nav.login');
+      }
+      if (mmLogoutLink) mmLogoutLink.style.display = 'none';
     }
   }
 
@@ -494,6 +514,14 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
           toggleDrawer(false);
         }
       });
+      const mmLogoutBtn = $('#mm-logout-link');
+      if (mmLogoutBtn) {
+        mmLogoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          toggleDrawer(false);
+          performLogout(location.pathname.startsWith('/hesap') || location.pathname.startsWith('/admin') ? '/' : location.pathname);
+        });
+      }
     }
     const updateNavSession = async () => {
       try {
@@ -516,7 +544,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   /* ---------- cart badge & magnetic micro-bounce ---------- */
   // updateCartBadge imported from modules/cart.js
   window.updateCartBadge = updateCartBadge;
-  /* ---------- Quick Search Modal (Instant 2026 UX) ---------- */
+  /* ---------- Quick Search Modal (Apple-Grade Fullscreen Search Curtain) ---------- */
   function initQuickSearch() {
     const modal = $('#quick-search-modal');
     const input = $('#qs-input');
@@ -533,63 +561,50 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     let currentQuery = '';
     let currentResultsList = [];
     let searchTimer = null;
-    let activeFetchAbort = null;
 
-    const trendingKeywords = LANG === 'en'
-      ? ['Vibrators', 'Massage Oils', 'For Couples', 'Costumes', 'Games', 'New Arrivals']
-      : ['Vibratör', 'Masaj Yağı', 'Çiftler İçin', 'Fantezi & Kostüm', 'Oyunlar', 'Yeni Gelenler'];
+    const quickLinks = LANG === 'en'
+      ? [
+          { label: 'Vibrators', query: 'Vibrator', url: '/magaza?kat=vibratori' },
+          { label: 'For Couples', query: 'For Couples', url: '/magaza?kat=ciftler' },
+          { label: 'Massage Oils & Cosmetics', query: 'Massage Oil', url: '/magaza?kat=kozmetik' },
+          { label: 'Fantasy & Costumes', query: 'Costumes', url: '/magaza?kat=fantasy' },
+          { label: 'Games & Accessories', query: 'Games', url: '/magaza?kat=oyunlar' },
+          { label: 'New Arrivals', query: 'New', url: '/magaza?filter=new' }
+        ]
+      : [
+          { label: 'Vibratörler', query: 'Vibratör', url: '/magaza?kat=vibratori' },
+          { label: 'Çiftler İçin', query: 'Çiftler İçin', url: '/magaza?kat=ciftler' },
+          { label: 'Masaj Yağları & Kozmetik', query: 'Masaj Yağı', url: '/magaza?kat=kozmetik' },
+          { label: 'Fantezi & Kostüm', query: 'Fantezi', url: '/magaza?kat=fantasy' },
+          { label: 'Oyunlar & Aksesuarlar', query: 'Oyunlar', url: '/magaza?kat=oyunlar' },
+          { label: 'Yeni Gelenler', query: 'Yeni', url: '/magaza?filter=new' }
+        ];
 
     function renderDefaultSearchState() {
       selectedIdx = -1;
       currentResultsList = [];
       results.innerHTML = `
-        <div class="qs-trending-wrap qs-fade-in">
-          <div class="qs-section-title">${LANG === 'en' ? 'Trending Searches' : 'Popüler Aramalar'}</div>
-          <div class="qs-trending-chips">
-            ${trendingKeywords.map((kw) => `<button type="button" class="qs-chip" data-query="${esc(kw)}">${esc(kw)}</button>`).join('')}
-          </div>
-        </div>
-        <div class="qs-trending-wrap qs-fade-in" style="margin-top:20px;">
-          <div class="qs-section-title">${LANG === 'en' ? 'Quick Categories' : 'Hızlı Kategoriler'}</div>
-          <div class="qs-quick-cats">
-            <a href="/magaza?kat=vibratori" class="qs-cat-btn">
-              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-              <span>${LANG === 'en' ? 'Vibrators' : 'Vibratörler'}</span>
-            </a>
-            <a href="/magaza?kat=ciftler" class="qs-cat-btn">
-              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-              <span>${LANG === 'en' ? 'For Couples' : 'Çiftler İçin'}</span>
-            </a>
-            <a href="/magaza?kat=kozmetik" class="qs-cat-btn">
-              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
-              <span>${LANG === 'en' ? 'Cosmetics & Oils' : 'Kozmetik & Masaj'}</span>
-            </a>
-            <a href="/magaza?kat=fantasy" class="qs-cat-btn">
-              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg></span>
-              <span>${LANG === 'en' ? 'Fantasy & Costume' : 'Fantezi & Kostüm'}</span>
-            </a>
-            <a href="/magaza?kat=oyunlar" class="qs-cat-btn">
-              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg></span>
-              <span>${LANG === 'en' ? 'Games & Accessories' : 'Oyunlar'}</span>
-            </a>
+        <div class="qs-quick-section qs-fade-in">
+          <div class="qs-section-heading">${LANG === 'en' ? 'Quick Links' : 'Hızlı Bağlantılar'}</div>
+          <div class="qs-apple-list">
+            ${quickLinks.map((item, idx) => `
+              <button type="button" class="qs-apple-link" data-query="${esc(item.query)}" data-url="${esc(item.url)}" data-idx="${idx}">
+                <span>${esc(item.label)}</span>
+                <span class="qs-apple-arrow">→</span>
+              </button>
+            `).join('')}
           </div>
         </div>
       `;
 
-      $$('.qs-chip', results).forEach((chip) => {
-        chip.addEventListener('click', () => {
-          const q = chip.dataset.query;
+      $$('.qs-apple-link', results).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const q = btn.dataset.query;
           if (q) {
             input.value = q;
             if (clearBtn) clearBtn.style.display = 'flex';
             doSearch(q, true);
           }
-        });
-      });
-
-      $$('.qs-cat-btn', results).forEach((btn) => {
-        btn.addEventListener('click', () => {
-          closeSearch();
         });
       });
     }
@@ -634,7 +649,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     });
 
     function updateActiveItem() {
-      const items = $$('.qs-item', results);
+      const items = $$('.qs-item, .qs-apple-link', results);
       items.forEach((item, idx) => {
         const isSelected = idx === selectedIdx;
         item.classList.toggle('selected', isSelected);
@@ -655,8 +670,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       }
       if (clearBtn) clearBtn.style.display = 'flex';
 
-      // Keep existing list and show subtle indicator instead of clearing whole DOM
-      const existingList = $('.qs-results-list', results);
+      const existingList = $('.qs-items-apple-list', results);
       if (!existingList && !results.querySelector('.qs-loading')) {
         results.innerHTML = `<div class="qs-loading"><div class="spinner"></div></div>`;
       } else if (existingList) {
@@ -675,20 +689,19 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         if (list.length === 0) {
           results.innerHTML = `
             <div class="qs-empty-state qs-fade-in">
-              <div style="display:flex;justify-content:center;margin-bottom:12px"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
-              <p><b>"${esc(q)}"</b> ${t('qs.empty')}</p>
-              <span style="font-size:12.5px;color:var(--muted);margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by category or another keyword.' : 'Kategori adı veya farklı bir anahtar kelime deneyebilirsiniz.'}</span>
+              <p><b>"${esc(q)}"</b> ${LANG === 'en' ? 'no products found' : 'için sonuç bulunamadı'}</p>
+              <span style="font-size:13px;color:#9CA3AF;margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by category or another keyword.' : 'Kategori adı veya farklı bir anahtar kelime deneyebilirsiniz.'}</span>
             </div>
           `;
           return;
         }
 
         results.innerHTML = `
-          <div class="qs-results-count qs-fade-in">
-            <span>${LANG === 'en' ? `${list.length} products found for` : `${list.length} ürün bulundu:`} <b>"${esc(q)}"</b></span>
-            <span class="qs-hint-esc">ESC ile kapat</span>
+          <div class="qs-results-meta qs-fade-in">
+            <span>${LANG === 'en' ? `${list.length} results for` : `${list.length} ürün bulundu:`} <b>"${esc(q)}"</b></span>
+            <span class="qs-hint-esc">ESC</span>
           </div>
-          <div class="qs-results-list qs-fade-in">
+          <div class="qs-items-apple-list qs-fade-in">
             ${list.map((p, idx) => `
               <a href="/urun/${esc(p.slug)}" class="qs-item" data-id="${p.id}" data-slug="${esc(p.slug)}" data-idx="${idx}">
                 <div class="qs-item-media">
@@ -711,12 +724,13 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
               </a>
             `).join('')}
           </div>
-          <a href="/magaza?q=${encodeURIComponent(q)}" class="qs-view-all-btn qs-fade-in">
-            ${LANG === 'en' ? 'View All in Catalog' : 'Tüm Sonuçları Katalogda Gör'} (${res.total || list.length}) →
+          <a href="/magaza?q=${encodeURIComponent(q)}" class="qs-view-all-apple-link qs-fade-in">
+            <span>${LANG === 'en' ? 'View all products in catalog' : 'Tüm sonuçları katalogda gör'} (${res.total || list.length})</span>
+            <span>→</span>
           </a>
         `;
 
-        $$('.qs-item, .qs-view-all-btn', results).forEach((link) => {
+        $$('.qs-item, .qs-view-all-apple-link', results).forEach((link) => {
           link.addEventListener('click', () => {
             closeSearch();
           });
@@ -749,21 +763,21 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         closeSearch();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        const items = $$('.qs-item', results);
+        const items = $$('.qs-item, .qs-apple-link', results);
         if (items.length > 0) {
           selectedIdx = (selectedIdx + 1) % items.length;
           updateActiveItem();
         }
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        const items = $$('.qs-item', results);
+        const items = $$('.qs-item, .qs-apple-link', results);
         if (items.length > 0) {
           selectedIdx = (selectedIdx - 1 + items.length) % items.length;
           updateActiveItem();
         }
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        const items = $$('.qs-item', results);
+        const items = $$('.qs-item, .qs-apple-link', results);
         if (selectedIdx >= 0 && items[selectedIdx]) {
           items[selectedIdx].click();
         } else {

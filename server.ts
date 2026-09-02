@@ -899,86 +899,89 @@ ${opts.noChrome ? body : `
       <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
       <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
       <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
-      <button id="burger" class="icon-btn" aria-label="Menü" title="Menü"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
+      <button id="burger" class="icon-btn burger-btn" aria-label="Menü" title="Menü">
+        <svg class="icon-svg icon-burger-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line class="burger-bar b-bar-1" x1="3" x2="21" y1="7" y2="7"/>
+          <line class="burger-bar b-bar-2" x1="3" x2="21" y1="17" y2="17"/>
+        </svg>
+      </button>
     </div>
   </div>
 </nav></header>
 <div class="mm-backdrop" id="mm-backdrop"></div>
 <aside class="mobile-menu" id="mobile-menu" aria-label="Mobil Gezinme Menüsü" role="dialog" aria-modal="true">
   <div class="mm-head">
-    <a href="/" class="brand">LOVE<span class="dot">.</span></a>
-    <button type="button" id="mm-close" class="icon-btn mm-close-btn" aria-label="Kapat">
+    <a href="/" class="brand mm-brand">LOVE<span class="dot">.</span></a>
+    <button type="button" id="mm-close" class="icon-btn mm-close-btn" aria-label="Kapat" title="Kapat">
       <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
 
   <div class="mm-body">
-    <div class="mm-section mm-primary-section">
-      <nav class="mm-nav-list" aria-label="Ana Gezinme">
-        <a href="/" data-nav="/" class="mm-nav-item">
+    <div class="mm-primary-section">
+      <nav class="mm-apple-nav" aria-label="Ana Gezinme">
+        <a href="/" data-nav="/" class="mm-apple-link" style="--i: 0">
           <span>${tr('nav.home')}</span>
-          <svg class="mm-nav-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </a>
-        <a href="/magaza" data-nav="/magaza" class="mm-nav-item">
+        <a href="/magaza" data-nav="/magaza" class="mm-apple-link" style="--i: 1">
           <span>${tr('nav.shop')}</span>
-          <svg class="mm-nav-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </a>
-        <a href="/magaza?filter=new" data-nav="/magaza?filter=new" class="mm-nav-item">
+        <a href="/magaza?filter=new" data-nav="/magaza?filter=new" class="mm-apple-link" style="--i: 2">
           <span>${C.lang === 'tr' ? 'Yeni Gelenler' : 'New Arrivals'}</span>
-          <span class="mm-nav-tag">${C.lang === 'tr' ? 'Yeni' : 'New'}</span>
         </a>
-        <a href="/magaza?filter=bestsellers" data-nav="/magaza?filter=bestsellers" class="mm-nav-item">
+        <a href="/magaza?filter=bestsellers" data-nav="/magaza?filter=bestsellers" class="mm-apple-link" style="--i: 3">
           <span>${C.lang === 'tr' ? 'Çok Satanlar' : 'Bestsellers'}</span>
         </a>
-      </nav>
-    </div>
-
-    <div class="mm-divider"></div>
-
-    <div class="mm-section mm-secondary-section">
-      <nav class="mm-sub-list" aria-label="Ek Bağlantılar">
-        <a href="/hesap" data-nav="/hesap" class="mm-sub-item">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>${tr('nav.account')}</span>
-        </a>
-        <a href="/hakkimizda" data-nav="/hakkimizda" class="mm-sub-item">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <a href="/hakkimizda" data-nav="/hakkimizda" class="mm-apple-link" style="--i: 4">
           <span>${tr('nav.about')}</span>
         </a>
-        <a href="/iletisim" data-nav="/iletisim" class="mm-sub-item">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <a href="/iletisim" data-nav="/iletisim" class="mm-apple-link" style="--i: 5">
           <span>${tr('nav.contact')}</span>
-        </a>
-        <a href="/admin" id="mm-admin-link" data-nav="/admin" style="display:none;" class="mm-sub-item mm-admin-item">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <span>${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
         </a>
       </nav>
     </div>
   </div>
 
   <div class="mm-footer">
-    <div class="mm-controls-card">
-      <button type="button" id="mm-theme" class="mm-card-row" aria-label="Tema Değiştir">
-        <span class="mm-row-left">
-          <span class="mm-theme-icon-wrap">
-            ${dark ? '<svg class="icon-svg icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>' : '<svg class="icon-svg icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}
-          </span>
-          <span class="mm-row-label">${C.lang === 'tr' ? 'Karanlık Görünüm' : 'Dark Appearance'}</span>
+    <div class="mm-apple-controls">
+      <a href="/giris" id="mm-account-link" class="mm-apple-ctrl-row">
+        <span class="mm-ctrl-text" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="mm-acc-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="mm-account-text">${tr('nav.login')}</span>
         </span>
+        <svg class="mm-ctrl-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+
+      <a href="/admin" id="mm-admin-link" class="mm-apple-ctrl-row" style="display:none;">
+        <span class="mm-ctrl-text" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="mm-acc-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>${C.lang === 'tr' ? 'Yönetim Paneli' : 'Admin Panel'}</span>
+        </span>
+        <svg class="mm-ctrl-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+
+      <button type="button" id="mm-logout-link" class="mm-apple-ctrl-row" style="display:none;">
+        <span class="mm-ctrl-text" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="mm-acc-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span>${C.lang === 'tr' ? 'Güvenli Çıkış' : 'Sign Out'}</span>
+        </span>
+      </button>
+
+      <button type="button" id="mm-lang" class="mm-apple-ctrl-row" aria-label="Dili Değiştir">
+        <span class="mm-ctrl-text">${C.lang === 'tr' ? 'Dil / Language' : 'Language / Dil'}</span>
+        <span class="mm-ctrl-val" style="font-weight:600;font-size:13px;color:var(--rose);">${C.lang === 'tr' ? 'English (EN)' : 'Türkçe (TR)'}</span>
+      </button>
+
+      <button type="button" id="mm-theme" class="mm-apple-ctrl-row" aria-label="Tema Değiştir">
+        <span class="mm-ctrl-text">${C.lang === 'tr' ? 'Karanlık Mod' : 'Dark Mode'}</span>
         <span class="mm-switch-pill ${dark ? 'active' : ''}">
           <span class="mm-switch-knob"></span>
         </span>
       </button>
 
-      <a class="mm-card-row mm-wa-row" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
-        <span class="mm-row-left">
-          <span class="mm-wa-icon-wrap">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
-          </span>
-          <span class="mm-row-label">${C.lang === 'tr' ? 'Özel Danışman Destek' : 'Concierge WhatsApp'}</span>
-        </span>
-        <svg class="mm-row-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      <a class="mm-apple-ctrl-row" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
+        <span class="mm-ctrl-text">${C.lang === 'tr' ? 'WhatsApp Canlı Destek' : 'WhatsApp Concierge'}</span>
+        <svg class="mm-ctrl-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
       </a>
     </div>
 
@@ -1018,20 +1021,29 @@ ${body}
   </div>
 </footer>
 
-<!-- Instant Quick Search Overlay / Modal -->
+<!-- Apple-Grade Fullscreen Search Curtain -->
 <div class="quick-search-modal" id="quick-search-modal" aria-hidden="true">
   <div class="qs-backdrop" id="qs-backdrop"></div>
-  <div class="qs-dialog" role="dialog" aria-modal="true" aria-label="Hızlı Ürün Arama">
-    <div class="qs-header">
-      <div class="qs-input-wrap">
-        <svg class="qs-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="search" id="qs-input" placeholder="${tr('qs.ph')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        <button type="button" class="qs-clear-btn" id="qs-clear-btn" style="display:none" aria-label="Temizle">✕</button>
-      </div>
-      <button type="button" class="qs-close-btn" id="qs-close-btn" aria-label="${tr('qs.close')}">${tr('qs.close')}</button>
+  <div class="qs-curtain-container" role="dialog" aria-modal="true" aria-label="Hızlı Ürün Arama">
+    <div class="qs-top-bar">
+      <a href="/" class="brand qs-top-brand">LOVE<span class="dot">.</span></a>
+      <button type="button" class="qs-close-btn" id="qs-close-btn" aria-label="${tr('qs.close')}" title="${tr('qs.close')}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="qs-body" id="qs-results">
-      <!-- Default Trending Searches or Live Results -->
+    
+    <div class="qs-main-content">
+      <div class="qs-input-row">
+        <svg class="qs-search-glyph" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="qs-input" placeholder="${C.lang === 'en' ? 'Search' : 'Ara'}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button type="button" class="qs-clear-btn" id="qs-clear-btn" style="display:none" aria-label="Temizle" title="Temizle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="qs-body" id="qs-results">
+        <!-- Default Apple Quick Links or Live Products List -->
+      </div>
     </div>
   </div>
 </div>`}
@@ -2688,6 +2700,59 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
     pathname = '/';
   }
   try {
+    // 301 Permanent Redirects (Fixing 404s for Google Index & Legacy Links across all methods)
+    if (pathname === '/love/iletisim' || pathname === '/love/iletisim/' || pathname === '/iletisim.html') {
+      res.writeHead(301, { Location: '/iletisim' });
+      return res.end();
+    }
+    if (pathname === '/love/hakkimizda' || pathname === '/love/hakkimizda/' || pathname === '/hakkimizda.html') {
+      res.writeHead(301, { Location: '/hakkimizda' });
+      return res.end();
+    }
+    if (pathname === '/love/magaza' || pathname === '/love/magaza/' || pathname === '/magaza.html' || pathname === '/urunler') {
+      res.writeHead(301, { Location: '/magaza' });
+      return res.end();
+    }
+    if (pathname.startsWith('/love/urun/')) {
+      const pSlug = pathname.replace(/^\/love\/urun\//, '');
+      res.writeHead(301, { Location: `/urun/${pSlug}` });
+      return res.end();
+    }
+    if (pathname.startsWith('/love/kategori/') || pathname.startsWith('/love/kat/')) {
+      const cSlug = pathname.replace(/^\/love\/(kategori|kat)\//, '');
+      res.writeHead(301, { Location: `/magaza?kat=${cSlug}` });
+      return res.end();
+    }
+    if (pathname.startsWith('/love/')) {
+      const sub = pathname.replace(/^\/love\//, '');
+      res.writeHead(301, { Location: sub ? `/${sub}` : '/' });
+      return res.end();
+    }
+    if (pathname === '/love') {
+      res.writeHead(301, { Location: '/' });
+      return res.end();
+    }
+    if (pathname === '/contact' || pathname === '/contact.html') {
+      res.writeHead(301, { Location: '/iletisim' });
+      return res.end();
+    }
+    if (pathname === '/about' || pathname === '/about.html') {
+      res.writeHead(301, { Location: '/hakkimizda' });
+      return res.end();
+    }
+    if (pathname === '/shop' || pathname === '/shop.html' || pathname === '/products') {
+      res.writeHead(301, { Location: '/magaza' });
+      return res.end();
+    }
+    if (pathname === '/cart') {
+      res.writeHead(301, { Location: '/sepet' });
+      return res.end();
+    }
+    if (pathname === '/checkout') {
+      res.writeHead(301, { Location: '/odeme' });
+      return res.end();
+    }
+
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (pathname === '/favicon.ico' || pathname === '/apple-touch-icon.png') {
         const fp = path.join(ROOT, 'public', pathname.replace(/^\//, ''));
@@ -2719,54 +2784,6 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   ${db.products.map((p: any) => `<url><loc>https://loveshop.com.tr/urun/${esc(p.slug)}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`).join('')}
 </urlset>`;
         return res.end(sitemap);
-      }
-
-      // 301 Permanent Redirects (Fixing 404s for Google Index & Legacy Links)
-      if (pathname === '/love/iletisim' || pathname === '/love/iletisim/' || pathname === '/iletisim.html') {
-        res.writeHead(301, { Location: '/iletisim' });
-        return res.end();
-      }
-      if (pathname === '/love/hakkimizda' || pathname === '/love/hakkimizda/' || pathname === '/hakkimizda.html') {
-        res.writeHead(301, { Location: '/hakkimizda' });
-        return res.end();
-      }
-      if (pathname === '/love/magaza' || pathname === '/love/magaza/' || pathname === '/magaza.html' || pathname === '/urunler') {
-        res.writeHead(301, { Location: '/magaza' });
-        return res.end();
-      }
-      if (pathname.startsWith('/love/urun/')) {
-        const pSlug = pathname.replace(/^\/love\/urun\//, '');
-        res.writeHead(301, { Location: `/urun/${pSlug}` });
-        return res.end();
-      }
-      if (pathname.startsWith('/love/')) {
-        const sub = pathname.replace(/^\/love\//, '');
-        res.writeHead(301, { Location: sub ? `/${sub}` : '/' });
-        return res.end();
-      }
-      if (pathname === '/love') {
-        res.writeHead(301, { Location: '/' });
-        return res.end();
-      }
-      if (pathname === '/contact') {
-        res.writeHead(301, { Location: '/iletisim' });
-        return res.end();
-      }
-      if (pathname === '/about') {
-        res.writeHead(301, { Location: '/hakkimizda' });
-        return res.end();
-      }
-      if (pathname === '/shop') {
-        res.writeHead(301, { Location: '/magaza' });
-        return res.end();
-      }
-      if (pathname === '/cart') {
-        res.writeHead(301, { Location: '/sepet' });
-        return res.end();
-      }
-      if (pathname === '/checkout') {
-        res.writeHead(301, { Location: '/odeme' });
-        return res.end();
       }
 
       if (pathname === '/') return pageHome(req, res);

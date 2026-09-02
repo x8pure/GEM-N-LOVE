@@ -46,7 +46,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 5
+      "tokenVersion": 7
     },
     {
       "id": "uad8ba2526165",
@@ -67,7 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 18
+      "tokenVersion": 31
     },
     {
       "id": "u9468e81a05d7",
@@ -76,6 +76,16 @@
       "name": "Mustafa Gül",
       "role": "customer",
       "createdAt": "2026-08-27T11:47:53.886Z",
+      "addresses": []
+    },
+    {
+      "id": "u164dff680af2",
+      "email": "test@loveshop.com.tr",
+      "passwordHash": "f1c6396f9a017e22c859019d4740290995b247d44a6738cde141a7e53ad3dd02",
+      "name": "Test Kullanıcı",
+      "role": "customer",
+      "tokenVersion": 1,
+      "createdAt": "2026-09-02T14:58:07.407Z",
       "addresses": []
     }
   ],
@@ -112,28 +122,31 @@
     {
       "id": "pe31257abd626",
       "slug": "vibrator",
-      "name": "Vibratör",
+      "name": "Bükülebilir Başlıklı Wand Vibratör Mor",
       "category": "vibratorler",
       "categoryName": "Vibratörler",
       "description": "",
-      "longDescription": "",
+      "longDescription": "Bükülebilir Başlıklı Wand Vibratör, kadınların cinsel zevkini artırmak için özel olarak tasarlanmıştır. Bu vibratör, 8 farklı hız ve 20 titreşim modu ile çeşitli uyarım seçenekleri sunar. Bükülebilir başlığı sayesinde G noktasını kolayca hedefler ve daha yoğun bir zevk sağlar.\n\n\nÖne Çıkan Özellikler:\n\n\n\n8 Farklı Hız: Zevkinize göre ayarlayabileceğiniz 8 farklı hız seçeneği.\n\n20 Titreşim Modu: Çeşitli titreşim modları ile farklı uyarım seçenekleri.\n\nBoyutlar: 21 cm uzunluk, 4.5 cm başlık genişliği, 5 cm başlık uzunluğu.\n\nUzun Pil Ömrü: 3 saate kadar kesintisiz kullanım süresi.\n\nHızlı Şarj: 45 dakikada tam şarj olma özelliği.\n\nSu Geçirmez: Su geçirmez yapısı sayesinde duşta veya banyoda da kullanılabilir.\n\nBu vibratör, güçlü titreşimleri ve ergonomik tasarımı ile cinsel deneyiminizi daha keyifli hale getirir. Bükülebilir Başlıklı Wand Vibratör, hem solo hem de partnerinizle birlikte kullanabileceğiniz mükemmel bir aksesuardır.",
       "price": 1299,
       "oldPrice": 1499,
       "stock": 9,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
-      "isNew": true,
+      "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/img4196efd545f6.webp",
+      "image": "/uploads/imgaba08e56526e.webp",
       "gallery": [
-        "/uploads/img4196efd545f6.webp"
+        "/uploads/imgaba08e56526e.webp",
+        "/uploads/imgd74a65edb29d.webp",
+        "/uploads/img4a49740ce022.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-27T09:58:40.588Z"
+      "createdAt": "2026-08-27T09:58:40.588Z",
+      "highlights": []
     },
     {
       "id": "pb8933905dc29",
@@ -145,7 +158,7 @@
       "longDescription": "Master Perfection Dildo Oscar - Ultra Yumuşak Dokulu Realistik Dildo Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
       "price": 2499,
       "oldPrice": 3259,
-      "stock": 8,
+      "stock": 7,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -231,17 +244,18 @@
       "featured": true,
       "isNew": true,
       "bestSeller": false,
-      "image": "/uploads/imge4386f83d8e6.webp",
+      "image": "/uploads/imgd808403a2654.webp",
       "gallery": [
-        "/uploads/imge4386f83d8e6.webp",
-        "/uploads/img599f75e25637.webp",
-        "/uploads/img1541febdeaaa.webp"
+        "/uploads/imgd808403a2654.webp",
+        "/uploads/imga2b266df5429.webp",
+        "/uploads/img366a0bf13dd8.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-29T11:36:01.379Z"
+      "createdAt": "2026-08-29T11:36:01.379Z",
+      "highlights": []
     },
     {
       "id": "pc8f905e761bf",
@@ -290,7 +304,7 @@
       "image": "/uploads/img499069f317db.webp",
       "gallery": [
         "/uploads/img499069f317db.webp",
-        "/uploads/img2fc48566e463.webp"
+        "/uploads/img425397d25202.webp"
       ],
       "tags": [],
       "variants": [
@@ -436,6 +450,94 @@
         "standart"
       ],
       "createdAt": "2026-08-31T13:25:55.023Z"
+    },
+    {
+      "id": "pde40a53a654a",
+      "slug": "shay-evo-skeleton-sex-doll-i-skeletli-tam-realistik-manken-165-cm",
+      "name": "Shay - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 165 CM",
+      "category": "realistik-mankenler",
+      "categoryName": "Realistik Mankenler",
+      "description": "EVO Skeleton (EVO İskelet)",
+      "longDescription": "Shay - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 165 CM\n \n\nTamamen gerçek boyutlarda bir manken size vahşi bir zaman göstermeye hazır!\nShay'in büyük göğüsleri, ince bir beli, çekici dudakları, çekici vajinası ve güzel bir poposu var. Gerçek bir kadınla seks yapmak gibi.\n\nShay, hangisini seçtiğinize bağlı olarak farklı bir his için tamamen ayrı 3 tünele sahiptir. Uyarıcı bir masaj için süper esnek bir vajina, gıdıklayıcı bir ağız ve derin bir anüs!\n\nMümkün olan en gerçekçi deneyim için aynı cilt görünümünü ve hissini vermek üzere son teknoloji TPE dokudan üretilmiştir. Göğüslerini sıkın, süper yumuşak, esnek tenini tutun, gözlerinizi kapattığınızda farkı bile anlayamazsınız.\n\nSüper gerçekçi dokulu duvarlarla dolu, cinsel ilişki hissini taklit eden, içeri kayan ve sıkışmasına izin veren ve her girişte sizi memnun eden inanılmaz gerçekçi bir stimülasyon sunar!\n\nShay'e bayılacaksınız, bu manken tüm vücudundan kalıplanmış geliştirilmiş EVO iskelet ile 165 cm boy ve 43 kiloya sahip, bu da onu serbest kullanım için yeterince dengeli hale getiriyor! Bu sayede kolayca istediğiniz pozisyona getirebilir hatta ayakta kalmasını sağlayabilirsiniz.",
+      "price": 145000,
+      "oldPrice": 179000,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [],
+      "image": "/uploads/img72f389902ea3.webp",
+      "gallery": [
+        "/uploads/img72f389902ea3.webp",
+        "/uploads/img34cded73b51c.webp",
+        "/uploads/img509861e553f2.webp",
+        "/uploads/img49a8f8a4487c.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-31T15:30:50.069Z"
+    },
+    {
+      "id": "p3698aca0e6ce",
+      "slug": "olga-realistik-anal-vajinal-2-in-1-titresimli-suni-kalca-vajina",
+      "name": "Olga - Realistik Anal Vajinal 2 in 1 Realistik Kalça 5.5 Kg",
+      "category": "ciftler",
+      "categoryName": "Realistik Vajinalar",
+      "description": "22 CM uzunlukta, 26 CM genişlikte , 17.5 CM yükseklikte ve 5.5 KG ağırlığındadır.",
+      "longDescription": "Premium Ass Masturbator Olga - Realistik Anal Vajinal 2 in 1 Titreşimli Suni Kalça Vajina\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek kadın ölçü kalıplarından üretilen gerçeğe yakın Premium Masturbator serisi ile eşsiz ve benzersiz deneyimin tadını çıkar!\n\nBu mükemmel gerçekçi seriye bir de hızı ayarlanabilir multi-speed titreşim eklendi! İster takarak kullan, ister takmadan kullan. Hayallerindeki hazzı titreşimle süslendir!\n\nBu ürünler Erotica markası ile Sens Tarafından, ultra yumuşak TPE malzemeden yapılmıştır ve hepsi, sonsuz okşama için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Olga'ya aşık olacaksınız!\n\nVücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek TPE malzemeden yapılmıştır.\nTamamen su geçirmez yapıda olan Premium Masturbator seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur. Bu sayede kolay temizlenebilir ve saklanabilir.\n\nGerçek bir kadın hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı iç tünel tırtıklı dokuları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve dar et dokusu, penis girişi sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda iç kanaldaki hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve dar doku yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSadece su bazlı kayganlaştırıcılar ile kullanılması, kullanımdan önce ve sonra temizlenmesi tavsiye edilir.\n\n22 CM uzunlukta, 26 CM genişlikte , 17.5 CM yükseklikte ve 5.5 KG ağırlığındadır.",
+      "price": 12000,
+      "oldPrice": 14999,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [],
+      "image": "/uploads/img0ec6574bd639.webp",
+      "gallery": [
+        "/uploads/img0ec6574bd639.webp",
+        "/uploads/img8971ca7a5e59.webp",
+        "/uploads/img90e7e810b8b5.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-31T15:44:19.614Z"
+    },
+    {
+      "id": "pd2d3abea895e",
+      "slug": "tina-evo-skeleton-sex-doll-i-skeletli-tam-realistik-manken-170-cm",
+      "name": "Tina - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 170 CM",
+      "category": "realistik-mankenler",
+      "categoryName": "Realistik Mankenler",
+      "description": "Tina - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 170 CM",
+      "longDescription": "Tina - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 170 CM\n \n\nTamamen gerçek boyutlarda bir manken size vahşi bir zaman göstermeye hazır!\nTina'nın büyük göğüsleri, ince bir beli, çekici dudakları, çekici vajinası ve güzel bir poposu var. Gerçek bir kadınla seks yapmak gibi.\n\nTina, hangisini seçtiğinize bağlı olarak farklı bir his için tamamen ayrı 3 tünele sahiptir. Uyarıcı bir masaj için süper esnek bir vajina, gıdıklayıcı bir ağız ve derin bir anüs!\n\nMümkün olan en gerçekçi deneyim için aynı cilt görünümünü ve hissini vermek üzere son teknoloji TPE dokudan üretilmiştir. Göğüslerini sıkın, süper yumuşak, esnek tenini tutun, gözlerinizi kapattığınızda farkı bile anlayamazsınız.\n\nSüper gerçekçi dokulu duvarlarla dolu, cinsel ilişki hissini taklit eden, içeri kayan ve sıkışmasına izin veren ve her girişte sizi memnun eden inanılmaz gerçekçi bir stimülasyon sunar!\n\nTina'ya bayılacaksınız, bu manken tüm vücudundan kalıplanmış geliştirilmiş EVO iskelet ile 170 cm boy ve 51 kiloya sahip, bu da onu serbest kullanım için yeterince dengeli hale getiriyor! Bu sayede kolayca istediğiniz pozisyona getirebilir hatta ayakta kalmasını sağlayabilirsiniz.\n\n\n \n\nEVO Skeleton (EVO İskelet):\n\nGeliştirilmiş (EVO) iskelet bebeğinizin omuzlarını silkmesini sağlayabilir. Daha gerçekçidir ve farklı pozları daha özgürce alabilir.\nOmurga daha esnektir, sola ve sağa eğilebilir, bu da dünya çapındaki bebek severlerin arzuladığı sıcak samimi zamanların yaratılmasına yardımcı olur.\nBacaklar W pozisyonuna veya kalçalara dokunmak için aşağıya doğru bükülebilir.\n\nPaket İçeriği:\nTina, makyajlı halde ve iç çamaşırı, ısıtıcı, eldivenler, tarak, temizlik kiti(vajina temizleyici, durulayıcı battaniye vb.) ürün içeriğine dahil olarak gelir.",
+      "price": 135000,
+      "oldPrice": 144000,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [],
+      "image": "/uploads/img3585fee7cfd7.webp",
+      "gallery": [
+        "/uploads/img3585fee7cfd7.webp",
+        "/uploads/imgdbfb4a8ad386.webp",
+        "/uploads/img3527cd8a5b5f.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-08-31T16:00:23.595Z"
     }
   ],
   "categories": [
@@ -443,9 +545,9 @@
       "id": "ct7842337befe2",
       "slug": "realistik-mankenler",
       "name": "Realistik Mankenler",
-      "image": "/uploads/img08ed92748370.webp",
+      "image": "/uploads/img68301019645d.webp",
       "featuredOnHome": true,
-      "homeOrder": 2,
+      "homeOrder": 3,
       "createdAt": "2026-08-27T09:43:58.140Z"
     },
     {
@@ -472,7 +574,7 @@
       "name": "Realistik Dildolar",
       "image": "/uploads/img9e03f59652d2.webp",
       "featuredOnHome": true,
-      "homeOrder": 4,
+      "homeOrder": 2,
       "createdAt": "2026-08-28T14:49:41.786Z"
     },
     {
@@ -489,15 +591,15 @@
       "slug": "erkekler",
       "name": "Erkek Cinsel Sağlık",
       "image": "/uploads/imga69c5630d16e.webp",
-      "featuredOnHome": true,
-      "homeOrder": 3,
+      "featuredOnHome": false,
+      "homeOrder": 99,
       "createdAt": "2026-08-28T16:22:49.472Z"
     },
     {
       "id": "ct602bf4ee7ca6",
       "slug": "erkek-ve-kadinlar",
       "name": "Anal Ürünler",
-      "image": "/uploads/imge4386f83d8e6.webp",
+      "image": "/uploads/img282fa0a7308f.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-29T11:34:20.348Z"
@@ -921,7 +1023,7 @@
       "discount": 0,
       "total": 2499,
       "coupon": null,
-      "status": "processing",
+      "status": "delivered",
       "payment": "WhatsApp ile Sipariş",
       "discreet": true,
       "phone": "05468696943",
@@ -952,7 +1054,7 @@
       "discount": 0,
       "total": 1798,
       "coupon": null,
-      "status": "shipped",
+      "status": "delivered",
       "payment": "WhatsApp ile Sipariş",
       "discreet": true,
       "phone": "05468696943",
@@ -962,6 +1064,37 @@
         "zip": ""
       },
       "createdAt": "2026-08-31T13:45:38.142Z",
+      "note": ""
+    },
+    {
+      "id": "LS-1020",
+      "userId": "uad8ba2526165",
+      "userEmail": "cemal.ulas@gmail.com",
+      "customerName": "cemal.ulas",
+      "items": [
+        {
+          "productId": "pb8933905dc29",
+          "name": "Oscar - Ultra Yumuşak Dokulu Realistik Dildo",
+          "price": 2499,
+          "qty": 1,
+          "image": "/uploads/img9e03f59652d2.webp"
+        }
+      ],
+      "subtotal": 2499,
+      "shipping": 0,
+      "discount": 0,
+      "total": 2499,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05468696943",
+      "address": {
+        "full": "İsmet İnönü 1 Caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-08-31T17:17:51.535Z",
       "note": ""
     }
   ],
@@ -1043,7 +1176,7 @@
     "supportEmail": "info@loveeroticshop.com",
     "supportPhone": "+90 543 633 13 25",
     "whatsapp": "https://wa.me/905436331325",
-    "address": "İsmet İnönü-1 Cd. 52/2 (Watsons Mağazası Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
+    "address": "İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
     "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
     "instagram": "@loveeroticshop",
     "wheelIds": [
@@ -1053,17 +1186,17 @@
       "p56895cc74a84",
       "pdf2748be251d",
       "pe6440906f9a6",
-      "p5bdb3e17409d",
-      "pbcfa6505bc8d"
+      "pbcfa6505bc8d",
+      "pd2d3abea895e"
     ]
   },
   "meta": {
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 19
+      "order": 20
     },
-    "updatedAt": "2026-08-31T14:18:25.884Z",
-    "version": 272
+    "updatedAt": "2026-09-02T14:58:07.407Z",
+    "version": 344
   }
 }

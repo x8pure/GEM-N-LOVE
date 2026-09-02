@@ -425,9 +425,6 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       const targetPid = addBtn.dataset.productId || p.id;
       if (targetPid) {
         await addToCart(targetPid, currentQty, 'standart', addBtn);
-        setTimeout(() => {
-          closeSpatialCardZoom();
-        }, 650);
       }
     });
   } catch (err) {
