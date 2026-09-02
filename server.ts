@@ -2690,10 +2690,14 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   let pathname = '/';
   try {
     url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+    let rawPath = url.pathname;
+    if (url.searchParams.has('__vpath')) {
+      rawPath = '/' + url.searchParams.get('__vpath');
+    }
     try {
-      pathname = decodeURI(url.pathname).replace(/\/+$/, '') || '/';
+      pathname = decodeURI(rawPath).replace(/\/+$/, '') || '/';
     } catch {
-      pathname = url.pathname.replace(/\/+$/, '') || '/';
+      pathname = rawPath.replace(/\/+$/, '') || '/';
     }
   } catch {
     url = new URL('/', 'http://localhost');
