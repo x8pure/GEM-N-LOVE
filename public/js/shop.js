@@ -529,57 +529,65 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
     if (!modal || !input || !results) return;
 
+    let selectedIdx = -1;
+    let currentQuery = '';
+    let currentResultsList = [];
+    let searchTimer = null;
+    let activeFetchAbort = null;
+
     const trendingKeywords = LANG === 'en'
       ? ['Vibrators', 'Massage Oils', 'For Couples', 'Costumes', 'Games', 'New Arrivals']
       : ['Vibratör', 'Masaj Yağı', 'Çiftler İçin', 'Fantezi & Kostüm', 'Oyunlar', 'Yeni Gelenler'];
 
     function renderDefaultSearchState() {
+      selectedIdx = -1;
+      currentResultsList = [];
       results.innerHTML = `
-        <div class="qs-trending-wrap">
+        <div class="qs-trending-wrap qs-fade-in">
           <div class="qs-section-title">${LANG === 'en' ? 'Trending Searches' : 'Popüler Aramalar'}</div>
           <div class="qs-trending-chips">
             ${trendingKeywords.map((kw) => `<button type="button" class="qs-chip" data-query="${esc(kw)}">${esc(kw)}</button>`).join('')}
           </div>
         </div>
-        <div class="qs-trending-wrap" style="margin-top:20px;">
+        <div class="qs-trending-wrap qs-fade-in" style="margin-top:20px;">
           <div class="qs-section-title">${LANG === 'en' ? 'Quick Categories' : 'Hızlı Kategoriler'}</div>
           <div class="qs-quick-cats">
             <a href="/magaza?kat=vibratori" class="qs-cat-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
               <span>${LANG === 'en' ? 'Vibrators' : 'Vibratörler'}</span>
             </a>
             <a href="/magaza?kat=ciftler" class="qs-cat-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
               <span>${LANG === 'en' ? 'For Couples' : 'Çiftler İçin'}</span>
             </a>
             <a href="/magaza?kat=kozmetik" class="qs-cat-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
               <span>${LANG === 'en' ? 'Cosmetics & Oils' : 'Kozmetik & Masaj'}</span>
             </a>
             <a href="/magaza?kat=fantasy" class="qs-cat-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg></span>
               <span>${LANG === 'en' ? 'Fantasy & Costume' : 'Fantezi & Kostüm'}</span>
             </a>
             <a href="/magaza?kat=oyunlar" class="qs-cat-btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg>
+              <span class="qs-cat-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg></span>
               <span>${LANG === 'en' ? 'Games & Accessories' : 'Oyunlar'}</span>
             </a>
           </div>
         </div>
       `;
 
-      $('.qs-chip', results).forEach((chip) => {
+      $$('.qs-chip', results).forEach((chip) => {
         chip.addEventListener('click', () => {
           const q = chip.dataset.query;
           if (q) {
             input.value = q;
-            if (clearBtn) clearBtn.style.display = 'block';
-            doSearch(q);
+            if (clearBtn) clearBtn.style.display = 'flex';
+            doSearch(q, true);
           }
         });
       });
 
-      $('.qs-cat-btn', results).forEach((btn) => {
+      $$('.qs-cat-btn', results).forEach((btn) => {
         btn.addEventListener('click', () => {
           closeSearch();
         });
@@ -620,41 +628,72 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     clearBtn?.addEventListener('click', () => {
       input.value = '';
       clearBtn.style.display = 'none';
+      currentQuery = '';
       renderDefaultSearchState();
       input.focus();
     });
 
-    let searchTimer = null;
-    async function doSearch(query) {
+    function updateActiveItem() {
+      const items = $$('.qs-item', results);
+      items.forEach((item, idx) => {
+        const isSelected = idx === selectedIdx;
+        item.classList.toggle('selected', isSelected);
+        if (isSelected) {
+          item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      });
+    }
+
+    async function doSearch(query, immediate = false) {
       const q = String(query || '').trim();
+      currentQuery = q;
+
       if (!q) {
         if (clearBtn) clearBtn.style.display = 'none';
         renderDefaultSearchState();
         return;
       }
-      if (clearBtn) clearBtn.style.display = 'block';
-      results.innerHTML = `<div class="qs-loading"><div class="spinner"></div></div>`;
+      if (clearBtn) clearBtn.style.display = 'flex';
+
+      // Keep existing list and show subtle indicator instead of clearing whole DOM
+      const existingList = $('.qs-results-list', results);
+      if (!existingList && !results.querySelector('.qs-loading')) {
+        results.innerHTML = `<div class="qs-loading"><div class="spinner"></div></div>`;
+      } else if (existingList) {
+        results.classList.add('qs-fetching');
+      }
 
       try {
         const res = await api('/api/products?q=' + encodeURIComponent(q) + '&limit=12');
+        if (currentQuery !== q) return; // Prevent race conditions on rapid typing
+        results.classList.remove('qs-fetching');
+
         const list = (res && Array.isArray(res.products)) ? res.products : [];
+        currentResultsList = list;
+        selectedIdx = -1;
+
         if (list.length === 0) {
           results.innerHTML = `
-            <div class="qs-empty-state">
-              <div style="display:flex;justify-content:center;margin-bottom:12px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+            <div class="qs-empty-state qs-fade-in">
+              <div style="display:flex;justify-content:center;margin-bottom:12px"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
               <p><b>"${esc(q)}"</b> ${t('qs.empty')}</p>
-              <span style="font-size:12px;color:var(--muted);margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by category or another keyword.' : 'Kategori adı veya farklı bir anahtar kelime deneyebilirsiniz.'}</span>
+              <span style="font-size:12.5px;color:var(--muted);margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by category or another keyword.' : 'Kategori adı veya farklı bir anahtar kelime deneyebilirsiniz.'}</span>
             </div>
           `;
           return;
         }
 
         results.innerHTML = `
-          <div class="qs-results-count">${LANG === 'en' ? `${list.length} products found for` : `${list.length} ürün bulundu:`} <b>"${esc(q)}"</b></div>
-          <div class="qs-results-list">
-            ${list.map((p) => `
-              <a href="/urun/${esc(p.slug)}" class="qs-item" data-id="${p.id}" data-slug="${esc(p.slug)}">
-                ${p.image ? `<img src="${imgSrc(p.image)}" alt="${esc(p.name)}" class="qs-item-img" loading="lazy">` : `<div class="qs-item-img" style="background:transparent"></div>`}
+          <div class="qs-results-count qs-fade-in">
+            <span>${LANG === 'en' ? `${list.length} products found for` : `${list.length} ürün bulundu:`} <b>"${esc(q)}"</b></span>
+            <span class="qs-hint-esc">ESC ile kapat</span>
+          </div>
+          <div class="qs-results-list qs-fade-in">
+            ${list.map((p, idx) => `
+              <a href="/urun/${esc(p.slug)}" class="qs-item" data-id="${p.id}" data-slug="${esc(p.slug)}" data-idx="${idx}">
+                <div class="qs-item-media">
+                  ${p.image ? `<img src="${imgSrc(p.image)}" alt="${esc(p.name)}" class="qs-item-img" loading="lazy">` : `<div class="qs-item-img" style="background:transparent"></div>`}
+                </div>
                 <div class="qs-item-info">
                   <div class="qs-item-cat">${esc(p.categoryName || p.category)}</div>
                   <div class="qs-item-name">${esc(p.name)}</div>
@@ -664,11 +703,15 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
                     ${p.stock > 0 ? `<span class="qs-item-stock">● ${LANG === 'en' ? 'In Stock' : 'Stokta'}</span>` : `<span class="qs-item-stock out">● ${LANG === 'en' ? 'Out of Stock' : 'Tükendi'}</span>`}
                   </div>
                 </div>
-                <div class="qs-item-arrow">→</div>
+                <div class="qs-item-action">
+                  <span class="qs-item-arrow">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </span>
+                </div>
               </a>
             `).join('')}
           </div>
-          <a href="/magaza?q=${encodeURIComponent(q)}" class="qs-view-all-btn">
+          <a href="/magaza?q=${encodeURIComponent(q)}" class="qs-view-all-btn qs-fade-in">
             ${LANG === 'en' ? 'View All in Catalog' : 'Tüm Sonuçları Katalogda Gör'} (${res.total || list.length}) →
           </a>
         `;
@@ -679,25 +722,56 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
           });
         });
       } catch (err) {
-        results.innerHTML = `<div class="qs-empty-state"><p>${err.message || 'Arama hatası oluştu.'}</p></div>`;
+        if (currentQuery === q) {
+          results.classList.remove('qs-fetching');
+          results.innerHTML = `<div class="qs-empty-state"><p>${err.message || 'Arama hatası oluştu.'}</p></div>`;
+        }
       }
     }
 
     input.addEventListener('input', () => {
       clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => { doSearch(input.value);
-      }, 160);
+      const val = input.value;
+      if (!val.trim()) {
+        if (clearBtn) clearBtn.style.display = 'none';
+        renderDefaultSearchState();
+      } else {
+        if (clearBtn) clearBtn.style.display = 'flex';
+        // 220ms debounce to prevent flicker on rapid typing
+        searchTimer = setTimeout(() => {
+          doSearch(val);
+        }, 220);
+      }
     });
 
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeSearch();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const items = $$('.qs-item', results);
+        if (items.length > 0) {
+          selectedIdx = (selectedIdx + 1) % items.length;
+          updateActiveItem();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const items = $$('.qs-item', results);
+        if (items.length > 0) {
+          selectedIdx = (selectedIdx - 1 + items.length) % items.length;
+          updateActiveItem();
+        }
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        const q = input.value.trim();
-        if (q) {
-          closeSearch();
-          location.href = '/magaza?q=' + encodeURIComponent(q);
+        const items = $$('.qs-item', results);
+        if (selectedIdx >= 0 && items[selectedIdx]) {
+          items[selectedIdx].click();
+        } else {
+          const q = input.value.trim();
+          if (q) {
+            closeSearch();
+            location.href = '/magaza?q=' + encodeURIComponent(q);
+          }
         }
       }
     });
