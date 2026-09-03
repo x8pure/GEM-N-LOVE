@@ -150,32 +150,31 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     const inStock = p.stock > 0;
     const stockBadge = inStock
-      ? `<span class="stock-pill in-stock">● ${LANG === 'en' ? 'In stock · Ships in 24h' : 'Stokta · 24 Saatte Kargoda'}</span>`
-      : `<span class="stock-pill out-stock">● ${LANG === 'en' ? 'Out of stock' : 'Tükendi'}</span>`;
+      ? `<span class="stock-pill in-stock">● ${LANG === 'en' ? 'In Stock · Ships in 24h' : 'Stokta · 24 Saatte Kargoda'}</span>`
+      : `<span class="stock-pill out-stock">● ${LANG === 'en' ? 'Out of Stock' : 'Tükendi'}</span>`;
 
     const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
     const hasMultipleImages = productGallery.length > 1;
-    const activeSpecs = getProductSpecs(p);
 
     stage.innerHTML = `
       <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
       <div class="spatial-grid">
         <div class="spatial-visual-hero">
           <div class="spatial-ambient-glow" id="spatial-ambient-glow"></div>
           <img id="spatial-main-image" src="${imgSrc(p.image)}" alt="${esc(p.name)}">
           <div class="spatial-badge-cluster">
-            ${p.bestSeller ? `<span>${t('badge.hot')}</span>` : ''}
             ${p.isNew ? `<span>${t('badge.new')}</span>` : ''}
             ${p.oldPrice ? `<span>${t('badge.sale')}</span>` : ''}
+            ${(!p.isNew && !p.oldPrice && p.bestSeller) ? `<span>${t('badge.hot')}</span>` : ''}
           </div>
           ${hasMultipleImages ? `
             <button type="button" class="spatial-nav-btn prev" id="spatial-nav-prev" aria-label="${LANG === 'en' ? 'Previous image' : 'Önceki Fotoğraf'}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
             <button type="button" class="spatial-nav-btn next" id="spatial-nav-next" aria-label="${LANG === 'en' ? 'Next image' : 'Sonraki Fotoğraf'}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
             <div class="spatial-dots" id="spatial-dots">
               ${productGallery.map((_, idx) => `
@@ -186,51 +185,63 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         </div>
 
         <div class="spatial-content-pane">
-          <div>
-            <div class="spatial-top-meta">
-              <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat" title="${catName(p.category, p.categoryName)}">
-                <span>${catName(p.category, p.categoryName)}</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </a>
-              <div class="spatial-rating-row">
-                <span class="rating-stars">${stars(p.rating || 5)}</span>
-                <span class="count">(${p.reviewCount || 0} ${t('pd.reviews')})</span>
-              </div>
+          <div class="spatial-top-meta">
+            <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat" title="${catName(p.category, p.categoryName)}">
+              <span>${catName(p.category, p.categoryName)}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <div class="spatial-rating-row">
+              <span class="rating-stars">${stars(p.rating || 5)}</span>
+              <span class="count">(${p.reviewCount || 0})</span>
             </div>
-
-            <div class="spatial-title-group">
-              <h1><a href="/urun/${p.slug}" style="text-decoration:none; color:inherit; display:block;">${esc(p.name)}</a></h1>
-              <div class="spatial-price-cluster">
-                <span class="spatial-price">${fmt(p.price)}</span>
-                ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
-              </div>
-              <div class="spatial-stock-row" style="margin-top: 12px;">
-                ${stockBadge}
-              </div>
-              <a href="/urun/${p.slug}" class="spatial-detail-link">
-                ${LANG === 'en' ? 'View All Features' : 'Tüm Özellikleri İncele'} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </a>
-            </div>
-
           </div>
 
-          <!-- Discreet Privacy Reassurance -->
-          <div class="spatial-privacy-seal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <strong>${LANG === 'en' ? '100% Discreet Packaging & Anonymous Payment' : '%100 Gizli Paketleme & Anonim Ödeme'}</strong>
+          <h1 class="spatial-title"><a href="/urun/${p.slug}">${esc(p.name)}</a></h1>
+
+          <div class="spatial-price-cluster">
+            <div class="spatial-price-values">
+              <span class="spatial-price">${fmt(p.price)}</span>
+              ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
+            </div>
+            <div class="spatial-live-presence">
+              <span class="pulse-indicator ${inStock ? 'live-green' : 'live-red'}"></span>
+              <span>${inStock ? (LANG === 'en' ? 'In Stock · 24h Dispatch' : 'Stokta · 24s Kargo') : (LANG === 'en' ? 'Out of Stock' : 'Tükendi')}</span>
+            </div>
           </div>
 
-          <!-- Spatial Actions Deck -->
+          <a href="/urun/${p.slug}" class="spatial-all-features-link">
+            <span>${LANG === 'en' ? 'Explore full specifications' : 'Tüm özellikleri keşfet'}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+
+          <!-- 2026 Apple Dynamic Island Action Pill -->
           <div class="spatial-action-bar">
-            <div class="spatial-qty-picker">
-              <button type="button" class="spatial-qty-btn" id="spatial-qty-dec" aria-label="Azalt">−</button>
-              <span class="spatial-qty-val" id="spatial-qty-val">1</span>
-              <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
+            <div class="spatial-dynamic-pill">
+              <div class="spatial-pill-stepper">
+                <button type="button" class="spatial-qty-btn" id="spatial-qty-dec" aria-label="Azalt">−</button>
+                <span class="spatial-qty-val" id="spatial-qty-val">1</span>
+                <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
+              </div>
+              <div class="spatial-pill-divider"></div>
+              <button type="button" class="spatial-pill-cta" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''}>
+                <svg class="pill-bag-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                <span class="pill-cta-label">${LANG === 'en' ? 'Add to Bag' : 'Sepete Ekle'}</span>
+                <span class="pill-cta-dot">·</span>
+                <span class="pill-cta-price" id="spatial-pill-price">${fmt(p.price)}</span>
+              </button>
             </div>
-            <button type="button" class="spatial-add-btn" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''} style="flex: 1;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              <span>${LANG === 'en' ? 'Add to Cart' : 'Sepete Ekle'}</span>
-            </button>
+
+            <div class="spatial-whisper">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>${LANG === 'en' ? '100% Discreet Packaging · Anonymous Delivery' : '%100 Gizli Paketleme · Anonim Teslimat'}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -240,14 +251,19 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     const spatialMain = $('#spatial-main-image', stage);
     const spatialGlow = $('#spatial-ambient-glow', stage);
     
-    // Mobile 3D Pop-out Pull-to-Zoom (Image pops out of studio box OVER info card)
+    // 2026 Apple Spatial Physics & Depth-of-Field Pull-to-Zoom
     const spatialVisual = $('.spatial-visual-hero', stage);
     const stageGrid = $('.spatial-grid', stage);
+    const contentPane = $('.spatial-content-pane', stage);
+    const closeBtn = $('#spatial-stage-close', stage);
+    const badgeCluster = $('.spatial-badge-cluster', stage);
     
     if (spatialVisual && spatialMain) {
+      let startX = 0;
       let startY = 0;
       let currentScale = 1;
       let lastDeltaY = 0;
+      let lastDeltaX = 0;
       let isPulling = false;
       
       spatialVisual.addEventListener('touchstart', (e) => {
@@ -255,58 +271,82 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         
         const scrollTop = stageGrid ? stageGrid.scrollTop : 0;
         if (scrollTop <= 5 && e.touches.length === 1) {
+          startX = e.touches[0].clientX;
           startY = e.touches[0].clientY;
           isPulling = true;
           currentScale = 1;
           lastDeltaY = 0;
+          lastDeltaX = 0;
           
           spatialMain.style.transition = 'none';
-          spatialMain.style.transformOrigin = 'top center';
+          spatialMain.style.transformOrigin = '50% 25%';
           spatialMain.style.willChange = 'transform, filter';
-          spatialMain.style.zIndex = '99';
-          
+          spatialMain.style.zIndex = '999';
           spatialVisual.style.overflow = 'visible';
+          spatialVisual.style.zIndex = '50';
           if (stageGrid) stageGrid.style.overflow = 'visible';
-          if (stage) stage.style.overflow = 'visible';
+          
           if (spatialGlow) spatialGlow.style.transition = 'none';
+          if (contentPane) contentPane.style.transition = 'none';
+          if (closeBtn) closeBtn.style.transition = 'none';
+          if (badgeCluster) badgeCluster.style.transition = 'none';
         }
       }, { passive: true });
 
       spatialVisual.addEventListener('touchmove', (e) => {
         if (!isPulling) return;
+        const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const deltaY = currentY - startY;
+        const deltaX = currentX - startX;
         
         if (deltaY > 0) {
           e.preventDefault();
           lastDeltaY = deltaY;
+          lastDeltaX = deltaX;
           if (!spatialVisual.classList.contains('is-pulling')) {
             spatialVisual.classList.add('is-pulling');
           }
-          
-          // Genuinely powerful 3D pop-out: Image decouples from container bounds and expands boldly
-          const maxAllowedScale = window.innerWidth < 400 ? 1.4 : (window.innerWidth < 600 ? 1.55 : 1.7);
-          
-          // Rubber-band math: easing curve instead of linear/pow clamp
-          let pullForce = deltaY / 120;
-          let scale = 1 + (Math.log10(1 + pullForce * 0.8) * 1.3);
-          
-          if (scale > maxAllowedScale) {
-            scale = maxAllowedScale + (scale - maxAllowedScale) * 0.12; 
-          }
-          currentScale = scale;
-          
-          if (stage) {
+          if (stage && !stage.classList.contains('is-pulling-mode')) {
             stage.classList.add('is-pulling-mode');
           }
           
-          // Pure optical enlargement from top-center, creating a smooth downward waterfall effect
-          spatialMain.style.transform = `scale(${scale})`;
-          spatialMain.style.filter = `drop-shadow(0 ${20 + deltaY * 0.35}px ${30 + deltaY * 0.4}px rgba(0,0,0,0.88))`;
+          // Eased rubber-band downward pull physics with enlarged dynamic zoom
+          // Şeffaf PNG ürün görseli z-index: 999 ile bilgi kartının üzerine çıkar ve devleşir (1.0 -> 1.68)
+          // Arka plandaki bilgi paneli sinematik blur (6px) ve hafif küçülmeyle (scale 0.95) arkaya itilir
+          const maxTravelY = 125;
+          const pullForce = deltaY * 0.52;
+          const moveY = Math.min(maxTravelY, pullForce / (1 + pullForce / (maxTravelY * 2.1)));
+          const progress = Math.min(1, moveY / maxTravelY);
+          
+          // Gerçek ve belirgin büyüme: 1.0 -> 1.68 (şeffaf görsel tüm detaylarıyla devleşir)
+          const scale = 1 + progress * 0.68;
+          currentScale = scale;
+          
+          // Direct downward enlargement on top of blurred content pane with rich realistic drop-shadow
+          spatialMain.style.transform = `translateY(${moveY.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+          spatialMain.style.filter = `drop-shadow(0 ${(18 + moveY * 0.35).toFixed(1)}px ${(32 + moveY * 0.45).toFixed(1)}px rgba(0,0,0,${(0.28 + progress * 0.26).toFixed(2)}))`;
           
           if (spatialGlow) {
-            spatialGlow.style.transform = `translate(-50%, -50%) scale(${1 + (scale - 1) * 1.6})`;
+            spatialGlow.style.transform = `translate(-50%, -50%) translateY(${(moveY * 0.4).toFixed(1)}px) scale(${(1 + progress * 0.45).toFixed(2)})`;
             spatialGlow.style.opacity = '1';
+          }
+
+          // 3D Depth of Field & Receding UI: Bilgi kartı sinematik bir derinlikle bulanıklaşır ve arkaya çekilir
+          if (contentPane) {
+            const blurPx = (progress * 6.0).toFixed(1);
+            const paneScale = (1 - progress * 0.05).toFixed(3);
+            const paneShift = (progress * 9).toFixed(1);
+            const paneOpacity = (1 - progress * 0.25).toFixed(2);
+            contentPane.style.filter = `blur(${blurPx}px)`;
+            contentPane.style.transform = `scale(${paneScale}) translateY(${paneShift}px)`;
+            contentPane.style.opacity = paneOpacity;
+          }
+          if (closeBtn) {
+            closeBtn.style.opacity = (1 - progress * 0.7).toFixed(2);
+          }
+          if (badgeCluster) {
+            badgeCluster.style.opacity = (1 - progress * 0.7).toFixed(2);
           }
         } else {
           isPulling = false;
@@ -321,13 +361,28 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           isPulling = false;
           currentScale = 1;
 
-          // Spring back smoothly into original studio box
-          spatialMain.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.38s ease';
-          spatialMain.style.transform = 'scale(1) translateY(0)';
+          // Apple spring physics: Smooth bounce back into calm position
+          const springTransition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.38s ease, opacity 0.32s ease';
+          spatialMain.style.transition = springTransition;
+          spatialMain.style.transform = 'translateY(0) scale(1)';
           spatialMain.style.filter = '';
           
+          if (contentPane) {
+            contentPane.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.38s ease, opacity 0.32s ease';
+            contentPane.style.filter = 'none';
+            contentPane.style.opacity = '1';
+            contentPane.style.transform = 'none';
+          }
+          if (closeBtn) {
+            closeBtn.style.transition = 'opacity 0.28s ease';
+            closeBtn.style.opacity = '1';
+          }
+          if (badgeCluster) {
+            badgeCluster.style.transition = 'opacity 0.28s ease';
+            badgeCluster.style.opacity = '1';
+          }
           if (spatialGlow) {
-            spatialGlow.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease';
+            spatialGlow.style.transition = springTransition;
             spatialGlow.style.transform = 'translate(-50%, -50%) scale(1)';
             spatialGlow.style.opacity = '';
           }
@@ -342,7 +397,22 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
               spatialMain.style.zIndex = '';
               spatialMain.style.filter = '';
               
+              if (contentPane) {
+                contentPane.style.transition = '';
+                contentPane.style.filter = '';
+                contentPane.style.opacity = '';
+                contentPane.style.transform = '';
+              }
+              if (closeBtn) {
+                closeBtn.style.transition = '';
+                closeBtn.style.opacity = '';
+              }
+              if (badgeCluster) {
+                badgeCluster.style.transition = '';
+                badgeCluster.style.opacity = '';
+              }
               spatialVisual.style.overflow = '';
+              spatialVisual.style.zIndex = '';
               if (stageGrid) stageGrid.style.overflow = '';
               if (stage) stage.style.overflow = '';
               
@@ -351,8 +421,9 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
                 spatialGlow.style.transform = '';
               }
               lastDeltaY = 0;
+              lastDeltaX = 0;
             }
-          }, 400);
+          }, 380);
         }
       };
 
@@ -401,18 +472,28 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     let currentQty = 1;
     const qtyVal = $('#spatial-qty-val', stage);
     const addBtn = $('#spatial-add-btn', stage);
+    const pillPrice = $('#spatial-pill-price', stage);
 
-    $('#spatial-qty-dec', stage)?.addEventListener('click', () => {
+    const updateQtyDisplay = () => {
+      if (qtyVal) qtyVal.textContent = currentQty;
+      if (pillPrice) pillPrice.textContent = fmt(p.price * currentQty);
+    };
+
+    $('#spatial-qty-dec', stage)?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (currentQty > 1) {
         currentQty--;
-        if (qtyVal) qtyVal.textContent = currentQty;
+        updateQtyDisplay();
       }
     });
 
-    $('#spatial-qty-inc', stage)?.addEventListener('click', () => {
+    $('#spatial-qty-inc', stage)?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (currentQty < (p.stock || 99)) {
         currentQty++;
-        if (qtyVal) qtyVal.textContent = currentQty;
+        updateQtyDisplay();
       }
     });
 
@@ -424,7 +505,17 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       if (!inStock) return;
       const targetPid = addBtn.dataset.productId || p.id;
       if (targetPid) {
+        addBtn.classList.add('is-loading');
         await addToCart(targetPid, currentQty, 'standart', addBtn);
+        addBtn.classList.remove('is-loading');
+        addBtn.classList.add('is-success');
+        const ctaLabel = $('.pill-cta-label', addBtn);
+        const originalLabel = ctaLabel ? ctaLabel.textContent : '';
+        if (ctaLabel) ctaLabel.textContent = LANG === 'en' ? 'Added ✓' : 'Eklendi ✓';
+        setTimeout(() => {
+          addBtn.classList.remove('is-success');
+          if (ctaLabel) ctaLabel.textContent = originalLabel;
+        }, 1800);
       }
     });
   } catch (err) {

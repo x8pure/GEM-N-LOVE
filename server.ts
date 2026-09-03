@@ -898,11 +898,11 @@ ${opts.noChrome ? body : `
       </button>
       <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
       <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
-      <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
+      <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg icon-bag-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12a1.8 1.8 0 0 1-1.8 1.8H7.8A1.8 1.8 0 0 1 6 20L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
       <button id="burger" class="icon-btn burger-btn" aria-label="Menü" title="Menü">
-        <svg class="icon-svg icon-burger-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line class="burger-bar b-bar-1" x1="3" x2="21" y1="7" y2="7"/>
-          <line class="burger-bar b-bar-2" x1="3" x2="21" y1="17" y2="17"/>
+        <svg class="icon-svg icon-burger-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line class="burger-bar b-bar-1" x1="4" x2="20" y1="8.5" y2="8.5"/>
+          <line class="burger-bar b-bar-2" x1="4" x2="20" y1="15.5" y2="15.5"/>
         </svg>
       </button>
     </div>
@@ -913,7 +913,7 @@ ${opts.noChrome ? body : `
   <div class="mm-head">
     <a href="/" class="brand mm-brand">LOVE<span class="dot">.</span></a>
     <button type="button" id="mm-close" class="icon-btn mm-close-btn" aria-label="Kapat" title="Kapat">
-      <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
 
@@ -1034,8 +1034,7 @@ ${body}
     
     <div class="qs-main-content">
       <div class="qs-input-row">
-        <svg class="qs-search-glyph" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="search" id="qs-input" placeholder="${C.lang === 'en' ? 'Search' : 'Ara'}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input type="text" id="qs-input" inputmode="search" placeholder="${C.lang === 'en' ? 'Search' : 'Ara'}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button type="button" class="qs-clear-btn" id="qs-clear-btn" style="display:none" aria-label="Temizle" title="Temizle">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -1062,12 +1061,22 @@ ${body}
 </html>`;
 }
 
-const productCardSSR = (p: any, tr: any) => `
+const productCardSSR = (p: any, tr: any) => {
+  const badges: string[] = [];
+  if (p.isNew) badges.push(`<span class="prod-tag tag-new">${tr('badge.new')}</span>`);
+  if (p.bestSeller) badges.push(`<span class="prod-tag tag-hot">${tr('badge.hot')}</span>`);
+
+  let discPct = 0;
+  if (p.oldPrice && p.oldPrice > p.price) {
+    discPct = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+  }
+
+  return `
 <article class="prod-card rv" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
     ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
     <div class="card-sheen"></div>
-    <div class="prod-badges">${p.isNew ? `<span class="badge new">${tr('badge.new')}</span>` : ''}${p.bestSeller ? `<span class="badge hot">${tr('badge.hot')}</span>` : ''}${p.oldPrice ? `<span class="badge sale">${tr('badge.sale')}</span>` : ''}</div>
+    ${badges.length ? `<div class="prod-tags-bottom">${badges.join('')}</div>` : ''}
   </a>
   <div class="prod-actions">
     <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${tr('quickadd')}" aria-label="${tr('quickadd')}">
@@ -1077,9 +1086,14 @@ const productCardSSR = (p: any, tr: any) => `
   <div class="prod-info">
     <a href="/urun/${esc(p.slug)}" class="prod-name">${esc(p.name)}</a>
     <div class="prod-rating">${stars(p.rating)} <span>(${p.reviewCount || 0})</span></div>
-    <div class="prod-price-row"><span class="price">${fmt(p.price)}</span>${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}</div>
+    <div class="prod-price-row">
+      <span class="price">${fmt(p.price)}</span>
+      ${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}
+      ${discPct > 0 ? `<span class="price-disc">-%${discPct}</span>` : ''}
+    </div>
   </div>
 </article>`;
+};
 
 /* ---------------- pages ---------------- */
 function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -1503,10 +1517,19 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
     <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></div><h4>${tr('about.v2.t')}</h4><p>${tr('about.v2.p')}</p></div>
     <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><circle cx="15" cy="15" r="7"/></svg></div><h4>${tr('about.v3.t')}</h4><p>${tr('about.v3.p')}</p></div>
   </div>
-  <div class="banner rv" style="margin-top:40px;text-align:center">
-    <h2 style="margin:0 auto">${tr('about.cta.h')}</h2>
-    <p style="margin:14px auto 28px">${esc(st.supportEmail)} · ${esc(st.supportPhone)}</p>
-    <a href="/iletisim" class="btn btn-primary">${tr('about.cta.btn')}</a>
+  <div class="banner rv" style="margin-top:40px;text-align:center;position:relative;z-index:1;isolation:isolate;">
+    <h2 style="margin:0 auto;position:relative;z-index:2;">${tr('about.cta.h')}</h2>
+    <p style="margin:14px auto 28px;position:relative;z-index:2;">${esc(st.supportEmail)} · ${esc(st.supportPhone)}</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:10;">
+      <a href="${esc(st.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener noreferrer" data-external="true" class="btn btn-wa" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0 1"/></svg>
+        ${C.lang === 'en' ? 'Chat on WhatsApp' : 'WhatsApp\'tan Yaz'}
+      </a>
+      <a href="tel:${st.supportPhone ? st.supportPhone.replace(/[^0-9+]/g, '') : '+905436331325'}" data-external="true" class="btn btn-primary" style="cursor:pointer;position:relative;z-index:10;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        ${C.lang === 'en' ? 'Call Now' : 'Hemen Ara'}
+      </a>
+    </div>
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });

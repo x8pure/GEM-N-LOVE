@@ -67,7 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 31
+      "tokenVersion": 34
     },
     {
       "id": "u9468e81a05d7",
@@ -84,9 +84,18 @@
       "passwordHash": "f1c6396f9a017e22c859019d4740290995b247d44a6738cde141a7e53ad3dd02",
       "name": "Test Kullanıcı",
       "role": "customer",
-      "tokenVersion": 1,
+      "tokenVersion": 9,
       "createdAt": "2026-09-02T14:58:07.407Z",
-      "addresses": []
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 caddesi 52/2",
+          "city": "Tepebaşı",
+          "zip": "",
+          "phone": "05436331325",
+          "discreet": true
+        }
+      ]
     }
   ],
   "products": [
@@ -129,7 +138,7 @@
       "longDescription": "Bükülebilir Başlıklı Wand Vibratör, kadınların cinsel zevkini artırmak için özel olarak tasarlanmıştır. Bu vibratör, 8 farklı hız ve 20 titreşim modu ile çeşitli uyarım seçenekleri sunar. Bükülebilir başlığı sayesinde G noktasını kolayca hedefler ve daha yoğun bir zevk sağlar.\n\n\nÖne Çıkan Özellikler:\n\n\n\n8 Farklı Hız: Zevkinize göre ayarlayabileceğiniz 8 farklı hız seçeneği.\n\n20 Titreşim Modu: Çeşitli titreşim modları ile farklı uyarım seçenekleri.\n\nBoyutlar: 21 cm uzunluk, 4.5 cm başlık genişliği, 5 cm başlık uzunluğu.\n\nUzun Pil Ömrü: 3 saate kadar kesintisiz kullanım süresi.\n\nHızlı Şarj: 45 dakikada tam şarj olma özelliği.\n\nSu Geçirmez: Su geçirmez yapısı sayesinde duşta veya banyoda da kullanılabilir.\n\nBu vibratör, güçlü titreşimleri ve ergonomik tasarımı ile cinsel deneyiminizi daha keyifli hale getirir. Bükülebilir Başlıklı Wand Vibratör, hem solo hem de partnerinizle birlikte kullanabileceğiniz mükemmel bir aksesuardır.",
       "price": 1299,
       "oldPrice": 1499,
-      "stock": 9,
+      "stock": 7,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -212,7 +221,7 @@
       "longDescription": "STAG 9000 %10 Sprey, etkin madde olarak her 1 mL'de 100 mg lidokain içeren topikal anestezik bir ilaçtır. Erkeklerde erken boşalma (prematür ejakülasyon) tedavisinde kullanılmak üzere geliştirilmiştir. Uygulama bölgesinde geçici duyarsızlaşma sağlayarak cinsel performans üzerinde daha fazla kontrol elde edilmesine yardımcı olur.\n\nPratik sprey formu sayesinde kolay uygulanabilen STAG 9000, hedef bölgeye doğrudan uygulanır ve kısa sürede lokal anestezik etki gösterir. Ürün, yalnızca haricen kullanım için tasarlanmış olup kullanım talimatlarına uygun şekilde uygulanmalıdır.",
       "price": 499,
       "oldPrice": 559,
-      "stock": 10,
+      "stock": 9,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -573,8 +582,8 @@
       "slug": "realistik-dildolar",
       "name": "Realistik Dildolar",
       "image": "/uploads/img9e03f59652d2.webp",
-      "featuredOnHome": true,
-      "homeOrder": 2,
+      "featuredOnHome": false,
+      "homeOrder": 99,
       "createdAt": "2026-08-28T14:49:41.786Z"
     },
     {
@@ -591,8 +600,8 @@
       "slug": "erkekler",
       "name": "Erkek Cinsel Sağlık",
       "image": "/uploads/imga69c5630d16e.webp",
-      "featuredOnHome": false,
-      "homeOrder": 99,
+      "featuredOnHome": true,
+      "homeOrder": 2,
       "createdAt": "2026-08-28T16:22:49.472Z"
     },
     {
@@ -1096,6 +1105,44 @@
       },
       "createdAt": "2026-08-31T17:17:51.535Z",
       "note": ""
+    },
+    {
+      "id": "LS-1021",
+      "userId": "u164dff680af2",
+      "userEmail": "test@loveshop.com.tr",
+      "customerName": "Test Kullanıcı",
+      "items": [
+        {
+          "productId": "pe31257abd626",
+          "name": "Bükülebilir Başlıklı Wand Vibratör Mor",
+          "price": 1299,
+          "qty": 2,
+          "image": "/uploads/imgaba08e56526e.webp"
+        },
+        {
+          "productId": "pdf2748be251d",
+          "name": "Stag 9000  Sprey",
+          "price": 499,
+          "qty": 1,
+          "image": "/uploads/imga69c5630d16e.webp"
+        }
+      ],
+      "subtotal": 3097,
+      "shipping": 0,
+      "discount": 0,
+      "total": 3097,
+      "coupon": null,
+      "status": "processing",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05436331325",
+      "address": {
+        "full": "İsmet İnönü 1 caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-09-02T15:01:00.260Z",
+      "note": ""
     }
   ],
   "coupons": [
@@ -1194,9 +1241,9 @@
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 20
+      "order": 21
     },
-    "updatedAt": "2026-09-02T14:58:07.407Z",
-    "version": 344
+    "updatedAt": "2026-09-03T11:39:21.142Z",
+    "version": 373
   }
 }

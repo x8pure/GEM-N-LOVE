@@ -492,7 +492,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       const isOpen = open !== undefined ? open : !mm.classList.contains('open');
       mm.classList.toggle('open', isOpen);
       if (mmBackdrop) mmBackdrop.classList.toggle('open', isOpen);
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+      document.documentElement.classList.toggle('mm-open', isOpen);
     };
 
     if (burger && mm) {
@@ -612,17 +612,21 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     function openSearch() {
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+      document.documentElement.classList.add('qs-open');
       if (!input.value.trim()) {
         renderDefaultSearchState();
       }
-      setTimeout(() => input.focus(), 60);
+      setTimeout(() => {
+        if (modal.classList.contains('open')) {
+          input.focus();
+        }
+      }, 100);
     }
 
     function closeSearch() {
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+      document.documentElement.classList.remove('qs-open');
       input.blur();
     }
 
@@ -897,15 +901,20 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   /* ---------- product card template ---------- */
   function productCard(p) {
     const badges = [];
-    if (p.isNew) badges.push(`<span class="badge new">${t('badge.new')}</span>`);
-    if (p.bestSeller) badges.push(`<span class="badge hot">${t('badge.hot')}</span>`);
-    if (p.oldPrice) badges.push(`<span class="badge sale">${t('badge.sale')}</span>`);
+    if (p.isNew) badges.push(`<span class="prod-tag tag-new">${t('badge.new')}</span>`);
+    if (p.bestSeller) badges.push(`<span class="prod-tag tag-hot">${t('badge.hot')}</span>`);
+
+    let discPct = 0;
+    if (p.oldPrice && p.oldPrice > p.price) {
+      discPct = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+    }
+
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
         ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
         <div class="card-sheen"></div>
-        <div class="prod-badges">${badges.join('')}</div>
+        ${badges.length ? `<div class="prod-tags-bottom">${badges.join('')}</div>` : ''}
       </a>
       <div class="prod-actions">
         <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${t('quickadd')}" aria-label="${t('quickadd')}">
@@ -918,6 +927,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         <div class="prod-price-row">
           <span class="price">${fmt(p.price)}</span>
           ${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}
+          ${discPct > 0 ? `<span class="price-disc">-%${discPct}</span>` : ''}
         </div>
       </div>
     </article>`;
@@ -1307,6 +1317,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       // Find closest anchor tag
       const link = e.target.closest('a');
       if (!link) return;
+      if (link.hasAttribute('data-external')) return;
 
       // Ignore special clicks (new tab, modifiers, download, external, mailto, tel)
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -1314,7 +1325,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       if (link.hasAttribute('download')) return;
 
       const href = link.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('https://wa.me')) return;
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('wa.me')) return;
 
       const dest = new URL(link.href, location.origin);
       if (dest.origin !== location.origin) return;
