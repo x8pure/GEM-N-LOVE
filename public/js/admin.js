@@ -1020,6 +1020,29 @@
         <button type="button" class="modal-close" id="pm-close-x" aria-label="Kapat">✕</button>
       </div>
       <div class="modal-body">
+        <!-- AI Wholesaler Copywriter & Polisher Bar -->
+        <div class="ai-polish-banner" id="pm-ai-box">
+          <div class="ai-polish-header">
+            <div class="ai-polish-title">
+              <span class="ai-sparkle">✨</span>
+              <span><b>Toptancı Metnini AI ile Dönüştür</b> (Kısa & Lüks Dil)</span>
+            </div>
+            <button type="button" class="btn-ai-subtle" id="pm-ai-toggle-btn">
+              <span id="pm-ai-toggle-icon">📋</span>
+              <span id="pm-ai-toggle-text">Ham Metin Yapıştır</span>
+            </button>
+          </div>
+          <div id="pm-ai-paste-zone" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,123,114,0.15)">
+            <div class="hint" style="margin-bottom:6px;font-size:11.5px">Toptancıdan kopyaladığınız ham metni buraya yapıştırın. Sistem gereksiz kelimeleri atıp kısa, akıcı ve lüks bir dile dönüştürecektir:</div>
+            <textarea id="pm-ai-raw-text" placeholder="Örn: Bükülebilir Başlıklı Wand Vibratör, kadınların cinsel zevkini artırmak için özel olarak tasarlanmıştır. Bu vibratör 8 farklı hız ve 20 titreşim modu sunar..." style="width:100%;min-height:85px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--text);font-size:12.5px;font-family:inherit;margin-bottom:8px"></textarea>
+            <div style="display:flex;justify-content:flex-end;gap:8px">
+              <button type="button" class="btn-ai-magic" id="pm-ai-run-paste-btn">
+                <span>⚡ Metni Dönüştür ve Forma Aktar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="grid-2">
           <div class="field"><label>Ürün Adı *</label><input id="pm-name" value="${esc(v.name)}"></div>
           <div class="field"><label>Kategori</label>
@@ -1043,7 +1066,16 @@
           <div class="hint">Boş bırakırsanız kategoriye göre otomatik akıllı rozetler atanır.</div>
         </div>
         
-        <div class="field"><label>Detaylı Ürün Açıklaması (Özellikler & Gizlilik)</label><textarea id="pm-long" style="min-height:120px">${esc(v.longDescription)}</textarea></div>
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label style="margin-bottom:0">Detaylı Ürün Açıklaması (Özellikler & Gizlilik)</label>
+            <button type="button" class="btn-ai-subtle" id="pm-ai-polish-inline-btn" title="Açıklamadaki ham toptancı metnini lüks e-ticaret diline dönüştürür">
+              <span>✨</span>
+              <span>Metni AI ile Cilala</span>
+            </button>
+          </div>
+          <textarea id="pm-long" style="min-height:120px">${esc(v.longDescription)}</textarea>
+        </div>
         
         <!-- Multi-photo management section -->
         <div class="field">
@@ -1093,6 +1125,102 @@
     m.addEventListener('click', (e) => {
       if (e.target === m) closeModal();
     });
+
+    // Attach AI Copywriter & Polisher Event Handlers
+    const aiToggleBtn = $('#pm-ai-toggle-btn', m);
+    const aiPasteZone = $('#pm-ai-paste-zone', m);
+    const aiRawText = $('#pm-ai-raw-text', m);
+    const aiRunPasteBtn = $('#pm-ai-run-paste-btn', m);
+    const aiPolishInlineBtn = $('#pm-ai-polish-inline-btn', m);
+
+    let isAiPasteOpen = false;
+    if (aiToggleBtn && aiPasteZone) {
+      aiToggleBtn.addEventListener('click', () => {
+        isAiPasteOpen = !isAiPasteOpen;
+        aiPasteZone.style.display = isAiPasteOpen ? 'block' : 'none';
+        $('#pm-ai-toggle-text', m).textContent = isAiPasteOpen ? 'Kapat' : 'Ham Metin Yapıştır';
+        if (isAiPasteOpen && aiRawText) aiRawText.focus();
+      });
+    }
+
+    const runAiPolish = async (rawInput, triggerBtn) => {
+      const name = $('#pm-name', m).value.trim();
+      const cat = $('#pm-cat', m).value;
+      const desc = $('#pm-desc', m).value.trim();
+      const long = $('#pm-long', m).value.trim();
+      const textToPolish = rawInput || long || desc || name;
+
+      if (!textToPolish) {
+        return toast('Lütfen dönüştürülecek bir ürün adı, açıklama veya ham metin girin.', true);
+      }
+
+      const origText = triggerBtn.innerHTML;
+      triggerBtn.disabled = true;
+      triggerBtn.innerHTML = '<span>⏳</span> <span>AI Düzenliyor...</span>';
+
+      try {
+        const res = await api('/api/admin/ai-polish', {
+          method: 'POST',
+          body: {
+            name: name,
+            category: cat,
+            rawText: textToPolish,
+            description: desc,
+            longDescription: long
+          }
+        });
+
+        if (res && res.data) {
+          const d = res.data;
+          if (d.name && (!name || name.length < 10 || rawInput)) {
+            $('#pm-name', m).value = d.name;
+            $('#pm-name', m).classList.add('field-flash-success');
+          }
+          if (d.description) {
+            $('#pm-desc', m).value = d.description;
+            $('#pm-desc', m).classList.add('field-flash-success');
+          }
+          if (Array.isArray(d.highlights) && d.highlights.length) {
+            $('#pm-highlights', m).value = d.highlights.join(', ');
+            $('#pm-highlights', m).classList.add('field-flash-success');
+          }
+          if (d.longDescription) {
+            $('#pm-long', m).value = d.longDescription;
+            $('#pm-long', m).classList.add('field-flash-success');
+          }
+
+          setTimeout(() => {
+            $$('.field-flash-success', m).forEach(el => el.classList.remove('field-flash-success'));
+          }, 1500);
+
+          if (isAiPasteOpen) {
+            isAiPasteOpen = false;
+            aiPasteZone.style.display = 'none';
+            $('#pm-ai-toggle-text', m).textContent = 'Ham Metin Yapıştır';
+            if (aiRawText) aiRawText.value = '';
+          }
+
+          toast('✨ Toptancı metni başarıyla lüks e-ticaret diline dönüştürüldü!');
+        }
+      } catch (err) {
+        toast(err.message || 'AI metin dönüştürme işlemi başarısız oldu.', true);
+      } finally {
+        triggerBtn.disabled = false;
+        triggerBtn.innerHTML = origText;
+      }
+    };
+
+    if (aiRunPasteBtn) {
+      aiRunPasteBtn.addEventListener('click', () => {
+        runAiPolish(aiRawText ? aiRawText.value.trim() : '', aiRunPasteBtn);
+      });
+    }
+
+    if (aiPolishInlineBtn) {
+      aiPolishInlineBtn.addEventListener('click', () => {
+        runAiPolish('', aiPolishInlineBtn);
+      });
+    }
 
     const drop = $('#pm-drop', m), fileIn = $('#pm-file', m), addPhotoBtn = $('#pm-add-photo-btn', m), grid = $('#pm-gallery-grid', m), countEl = $('#pm-photo-count', m);
     

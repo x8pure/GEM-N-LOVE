@@ -1930,8 +1930,9 @@ html.dark .price-disc { color: #fb7185; }
 
 .spatial-card-stage {
   position: relative;
-  width: min(1060px, 95vw);
-  max-height: min(780px, 92vh);
+  width: min(1200px, 94vw);
+  height: min(820px, 88vh);
+  max-height: 860px;
   background: var(--card-solid);
   border: 1px solid var(--line-strong);
   border-radius: 28px;
@@ -1979,10 +1980,10 @@ html.dark .price-disc { color: #fb7185; }
 
 .spatial-grid {
   display: grid;
-  grid-template-columns: 460px 1fr;
+  grid-template-columns: minmax(460px, 52%) 1fr;
   height: 100%;
-  min-height: 540px;
-  overflow-y: auto;
+  min-height: 560px;
+  overflow: hidden;
 }
 
 .spatial-visual-hero {
@@ -1994,6 +1995,7 @@ html.dark .price-disc { color: #fb7185; }
   padding: 28px 20px;
   overflow: hidden;
   border-right: 1px solid var(--line);
+  height: 100%;
 }
 html.dark .spatial-visual-hero {
   background: radial-gradient(circle at 50% 45%, #1d2024 0%, #111316 100%);
@@ -2159,12 +2161,31 @@ html:not(.dark) .spatial-dot {
 }
 
 .spatial-content-pane {
-  padding: 40px 44px 36px;
+  padding: 32px 36px 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 22px;
-  overflow-y: auto;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.spatial-scrollable-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 0;
+  padding-bottom: 0;
+  position: relative;
+}
+.spatial-top-meta,
+.spatial-title,
+.spatial-price-cluster,
+.spatial-trust-badge {
+  flex-shrink: 0;
 }
 
 .spatial-top-meta {
@@ -2346,12 +2367,9 @@ html.dark .spatial-live-presence {
 .spatial-desc {
   font-size: 14px;
   line-height: 1.65;
-  color: var(--muted);
-  margin: 10px 0 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  color: var(--text);
+  opacity: 0.88;
+  margin: 4px 0 2px;
 }
 
 /* Minimal Elite Spec Matrix - Clean Horizontal Chips */
@@ -2383,6 +2401,168 @@ html.dark .spatial-live-presence {
   height: 15px;
   stroke: var(--rose);
   flex-shrink: 0;
+}
+
+/* 2026 Minimalist Divider Accordion Group (Clean Architectural Flow) */
+.spatial-accordion-group {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  border-top: 1px solid var(--line);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.spatial-acc-item {
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 0 0 auto;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.spatial-acc-item.open {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.spatial-acc-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 2px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  gap: 12px;
+  transition: color 0.18s ease;
+  flex-shrink: 0;
+}
+.spatial-acc-btn:hover {
+  color: var(--rose);
+}
+.spatial-acc-title {
+  flex: 1;
+}
+.spatial-acc-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.spatial-acc-icon svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--muted);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.2s ease;
+}
+.spatial-acc-btn:hover .spatial-acc-icon svg {
+  stroke: var(--rose);
+}
+.spatial-acc-item.open .spatial-acc-btn .spatial-acc-title {
+  color: var(--rose);
+}
+.spatial-acc-item.open .spatial-acc-icon svg {
+  transform: rotate(45deg);
+  stroke: var(--rose);
+}
+.spatial-acc-body {
+  display: none;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.spatial-acc-item.open .spatial-acc-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.spatial-acc-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 6px;
+  padding-bottom: 20px;
+  scrollbar-width: thin;
+}
+.spatial-acc-content::-webkit-scrollbar {
+  width: 4px;
+}
+.spatial-acc-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.spatial-acc-content::-webkit-scrollbar-thumb {
+  background: var(--line-strong, rgba(0, 0, 0, 0.15));
+  border-radius: 999px;
+}
+html.dark .spatial-acc-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+}
+.spatial-acc-content::-webkit-scrollbar-thumb:hover {
+  background: var(--rose);
+}
+.spatial-acc-inner {
+  padding: 6px 2px 18px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.spatial-info-block {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text);
+  opacity: 0.95;
+}
+.spatial-info-lead {
+  white-space: pre-line;
+}
+.spatial-info-subcard {
+  padding: 14px 0 4px;
+  background: transparent;
+  border: none;
+  border-top: 1px dashed var(--line);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.spatial-info-subhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text);
+}
+.spatial-info-subhead svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--rose);
+  flex-shrink: 0;
+}
+.spatial-info-subtext {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
 }
 
 /* 2026 Apple Dynamic Island Action Pill Deck */
@@ -2559,62 +2739,65 @@ html.dark .spatial-whisper {
 
 /* ====================================================
    MOBILE TACTILE ARCHITECTURE (< 900px)
-   Elite Pure Apple Minimalist Floating Card
+   Elite Pure Apple Minimalist Floating / Full-Screen Stage
    ==================================================== */
 @media (max-width: 900px) {
   .spatial-canvas-overlay {
-    padding: 16px 12px;
+    padding: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 9, 8, 0.78);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    align-items: stretch;
+    justify-content: stretch;
+    background: rgba(10, 9, 8, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     box-sizing: border-box;
+    width: 100vw;
+    height: 100dvh;
   }
   .spatial-drag-handle {
     display: none;
   }
   .spatial-card-stage {
     width: 100%;
-    max-width: 416px;
-    height: min(84dvh, 710px);
-    min-height: 580px;
-    border-radius: 28px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    max-width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border: none;
     background: #ffffff;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-    transform: scale(0.97) translateY(8px);
+    box-shadow: none;
+    transform: translateY(16px);
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin: auto;
+    margin: 0;
     box-sizing: border-box;
   }
   html.dark .spatial-card-stage {
-    background: #181716;
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+    background: #121212;
+    border: none;
+    box-shadow: none;
   }
   .spatial-card-stage.is-pulling-mode {
-    overflow: hidden !important;
+    overflow: visible !important;
   }
   .spatial-canvas-overlay.open .spatial-card-stage {
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
   .spatial-stage-close {
-    top: 14px;
+    top: max(14px, env(safe-area-inset-top, 14px));
     right: 14px;
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.07);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     color: #1f1d1b;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2623,11 +2806,11 @@ html.dark .spatial-whisper {
   }
   html.dark .spatial-stage-close {
     background: #272422;
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.14);
     color: #ededf0;
   }
   .spatial-badge-cluster {
-    top: 14px;
+    top: max(14px, env(safe-area-inset-top, 14px));
     left: 14px;
     display: flex;
     flex-direction: row;
@@ -2654,17 +2837,19 @@ html.dark .spatial-whisper {
   .spatial-grid {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
     height: 100%;
+    max-height: 100%;
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
   }
   .spatial-visual-hero {
-    flex: 1 1 54%;
-    min-height: 290px;
-    padding: 16px;
+    flex: 0 0 clamp(250px, 45vh, 390px);
+    height: clamp(250px, 45vh, 390px);
+    min-height: clamp(250px, 45vh, 390px);
+    max-height: clamp(250px, 45vh, 390px);
+    padding: 20px 16px 14px;
     background: radial-gradient(circle at 50% 48%, #f5efe7 0%, #ece5d9 100%);
     border-right: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -2674,12 +2859,13 @@ html.dark .spatial-whisper {
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
-    border-radius: 28px 28px 0 0;
+    border-radius: 0;
     box-sizing: border-box;
     width: 100%;
+    z-index: 5;
   }
   html.dark .spatial-visual-hero {
-    background: radial-gradient(circle at 50% 48%, #252220 0%, #1a1817 100%);
+    background: radial-gradient(circle at 50% 48%, #1C1C1E 0%, #121212 100%);
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
   .spatial-card-stage.is-pulling-mode .spatial-grid {
@@ -2687,7 +2873,7 @@ html.dark .spatial-whisper {
   }
   .spatial-visual-hero.is-pulling {
     overflow: visible !important;
-    z-index: 50 !important;
+    z-index: 9999 !important;
   }
   .spatial-visual-hero.is-pulling .spatial-nav-btn,
   .spatial-visual-hero.is-pulling .spatial-dots {
@@ -2695,43 +2881,23 @@ html.dark .spatial-whisper {
     pointer-events: none !important;
   }
   .spatial-visual-hero img#spatial-main-image {
-    max-height: 86%;
+    max-height: 92%;
     width: auto;
-    max-width: 86%;
+    max-width: 92%;
     object-fit: contain;
     filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.18));
     user-select: none;
     -webkit-user-drag: none;
     touch-action: none;
+    position: relative;
+    z-index: 10;
   }
   .spatial-ambient-glow {
     width: 260px;
     height: 260px;
   }
   .spatial-nav-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    color: #1f1d1b;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 15;
-    cursor: pointer;
-  }
-  html.dark .spatial-nav-btn {
-    background: #272422;
-    border-color: rgba(255, 255, 255, 0.12);
-    color: #ededf0;
-  }
-  .spatial-nav-btn.prev {
-    left: 12px;
-  }
-  .spatial-nav-btn.next {
-    right: 12px;
+    display: none !important;
   }
   .spatial-dots {
     bottom: 12px;
@@ -2773,23 +2939,45 @@ html.dark .spatial-whisper {
   }
 
   .spatial-content-pane {
-    flex: 0 0 auto;
-    padding: 18px 22px 20px;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: calc(100% - clamp(250px, 45vh, 390px));
+    padding: 16px 20px max(12px, env(safe-area-inset-bottom, 12px));
     gap: 12px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     background: #ffffff;
     border: none;
-    border-radius: 0 0 28px 28px;
+    border-radius: 0;
     box-sizing: border-box;
     width: 100%;
-    overflow-x: hidden;
+    overflow: hidden;
     position: relative;
     z-index: 10;
     will-change: transform, filter, opacity;
   }
   html.dark .spatial-content-pane {
-    background: #181716;
+    background: #121212;
+  }
+
+  .spatial-top-meta,
+  .spatial-title,
+  .spatial-price-cluster,
+  .spatial-trust-badge {
+    flex-shrink: 0;
+  }
+
+  .spatial-scrollable-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    overflow: hidden;
+    padding-right: 0;
+    padding-bottom: 0;
   }
 
   .spatial-top-meta {
@@ -2906,13 +3094,20 @@ html.dark .spatial-whisper {
     flex-direction: column;
     width: 100%;
     gap: 8px;
-    padding-top: 14px;
+    padding: 12px 0 2px;
     margin: 0;
     border-top: 1px solid #efeae2;
     box-sizing: border-box;
+    position: sticky;
+    bottom: 0;
+    z-index: 25;
+    background: #ffffff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   html.dark .spatial-action-bar {
     border-top-color: rgba(255, 255, 255, 0.08);
+    background: #121212;
   }
   .spatial-dynamic-pill {
     height: 48px;
@@ -2925,52 +3120,53 @@ html.dark .spatial-whisper {
   }
 
   @media (max-width: 380px) {
-    .spatial-card-stage {
-      max-width: calc(100vw - 16px);
-      height: min(88dvh, 670px);
-      min-height: 550px;
-      border-radius: 24px;
-    }
     .spatial-visual-hero {
-      border-radius: 24px 24px 0 0;
-      min-height: 250px;
+      flex: 0 0 clamp(230px, 42vh, 320px);
+      height: clamp(230px, 42vh, 320px);
+      min-height: clamp(230px, 42vh, 320px);
+      max-height: clamp(230px, 42vh, 320px);
+      padding: 16px 12px 10px;
     }
     .spatial-content-pane {
-      padding: 14px 16px 16px;
-      border-radius: 0 0 24px 24px;
-      gap: 10px;
+      height: calc(100% - clamp(230px, 42vh, 320px));
+      padding: 12px 14px max(10px, env(safe-area-inset-bottom, 10px));
+      gap: 8px;
     }
     .spatial-title {
-      font-size: 17.5px;
+      font-size: 17px;
     }
     .spatial-price-cluster .spatial-price {
-      font-size: 20px;
+      font-size: 19px;
     }
     .spatial-dynamic-pill {
       height: 44px;
     }
     .spatial-pill-stepper {
-      width: 82px;
+      width: 78px;
     }
     .spatial-pill-cta {
-      font-size: 13px;
+      font-size: 12.5px;
     }
   }
 
   @media (max-height: 640px) {
-    .spatial-card-stage {
-      height: calc(100dvh - 20px);
-      min-height: 0;
-    }
     .spatial-visual-hero {
+      flex: 0 0 190px;
+      height: 190px;
       min-height: 190px;
+      max-height: 190px;
+      padding: 12px;
     }
     .spatial-content-pane {
-      padding: 10px 16px 12px;
-      gap: 8px;
+      height: calc(100% - 190px);
+      padding: 10px 14px max(8px, env(safe-area-inset-bottom, 8px));
+      gap: 6px;
     }
     .spatial-action-bar {
-      padding-top: 8px;
+      padding-top: 6px;
+    }
+    .spatial-dynamic-pill {
+      height: 42px;
     }
   }
 }
@@ -3177,7 +3373,7 @@ footer { border-top: 1px solid var(--line); padding: 50px 5vw 30px; background: 
 .shop-layout > * { min-width: 0; max-width: 100%; }
 .shop-layout aside.filters { min-width: 0; max-width: 100%; width: 100%; }
 .filters h4 { font-family: var(--font-display); font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; margin: 22px 0 12px; color: var(--muted); font-weight: 600; }
-.filter-chips { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; max-width: 100%; }
+.filter-chips { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; max-width: 100%; }
 .chip {
   padding: 8px 16px; border-radius: 100px; border: 1px solid var(--line-strong);
   background: rgba(255,255,255,.85); backdrop-filter: blur(6px); font-size: 12.5px; color: var(--text); transition: all .2s;
@@ -4760,6 +4956,7 @@ html.dark .acc-card-panel {
   }
   .shop-layout .filter-chips {
     display: flex !important;
+    flex-direction: row !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;

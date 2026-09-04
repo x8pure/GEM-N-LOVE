@@ -9,10 +9,28 @@ import seed, { getSvgForSlug } from './lib/seed.js';
 import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase, flushPendingSave, saveToCloudFirestore } from './lib/firebase.js';
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
+import { GoogleGenAI, Type } from '@google/genai';
 
 const isProd = process.env.NODE_ENV === 'production';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '56701005174-t1n68p29hirorldv6dis76rmij721c1t.apps.googleusercontent.com';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+let aiClient: GoogleGenAI | null = null;
+function getAiClient(): GoogleGenAI | null {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+  if (!aiClient) {
+    aiClient = new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
+  }
+  return aiClient;
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -825,6 +843,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(title)} | Premium Kişisel Bakım</title>
 <meta name="description" content="${esc(desc)}">
+<meta name="google-site-verification" content="googled2d4255e0f685daf">
+<meta property="og:site_name" content="Love Erotik & Seks Shop">
 <meta property="og:title" content="${esc(title)} | Premium Kişisel Bakım">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(ogImage)}">
@@ -2294,6 +2314,35 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     return json(res, 200, { ok: true });
   }
 
+  function fallbackPolishProduct(name: string, category: string, rawText: string) {
+    const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+    const cleanTitle = name || (lines[0] ? lines[0].slice(0, 65) : 'Özel Seri Ürün');
+    const lower = rawText.toLowerCase();
+
+    const highlights: string[] = [];
+    if (lower.includes('silikon') || lower.includes('medikal')) highlights.push('%100 Medikal Silikon');
+    if (lower.includes('hız') || lower.includes('kademe')) highlights.push('Çok Kademeli Hız Kontrolü');
+    if (lower.includes('titreşim') || lower.includes('mod')) highlights.push('Özelleştirilebilir Titreşim');
+    if (lower.includes('şarj') || lower.includes('manyetik') || lower.includes('pil')) highlights.push('Manyetik Hızlı Şarj');
+    if (lower.includes('su geçirmez') || lower.includes('ipx')) highlights.push('IPX Su Geçirmez Gövde');
+    if (lower.includes('esnek') || lower.includes('bükülebilir')) highlights.push('Ergonomik & Esnek Başlık');
+    if (highlights.length < 3) highlights.push('Gövde Uyumlu Ergonomi', 'Sessiz ve Güçlü Motor', 'Kolay Temizlenebilir');
+
+    const lead = `${cleanTitle}, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.`;
+    
+    const bulletItems = lines.filter(l => l.length > 5 && !l.toLowerCase().includes('bu vibratör') && !l.toLowerCase().includes('bu ürün')).slice(0, 6);
+    const bulletText = bulletItems.length 
+      ? `\n\nÖne Çıkan Özellikler:\n` + bulletItems.map(b => `• ${b.replace(/^[-•*:\d.]+\s*/, '')}`).join('\n')
+      : '';
+
+    return {
+      name: cleanTitle,
+      description: lead,
+      highlights: highlights.slice(0, 5),
+      longDescription: `${lead}${bulletText}`
+    };
+  }
+
   /* ================= ADMIN ================= */
   const adm = requireAdmin(req, res);
 
@@ -2467,6 +2516,84 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       for (const s of Object.values(sessions)) s.cart = (s.cart || []).filter((l: any) => l.productId !== id);
       persistSessions(); await saveAsync();
       return json(res, 200, { ok: true });
+    }
+
+    if (pathname === '/api/admin/ai-polish' && method === 'POST') {
+      const b = await readBody(req);
+      const rawText = String(b.rawText || b.text || b.longDescription || b.description || '').trim();
+      const name = String(b.name || '').trim();
+      const category = String(b.category || 'ciftler').trim();
+
+      if (!rawText && !name) {
+        return sendError(res, 400, 'Dönüştürülecek ürün adı veya metin girilmedi.');
+      }
+
+      const ai = getAiClient();
+      if (ai) {
+        try {
+          const prompt = `Aşağıda toptancıdan veya tedarikçiden gelen ham ürün bilgisi yer almaktadır.
+Lütfen bu metni Türkiye'nin en seçkin lüks yetişkin sağlık ve yaşam mağazası LOVE SHOP standartlarına uygun, cezbedici, net, toptancı tekrarlarından ve kaba ifadelerden arındırılmış bir e-ticaret metnine dönüştür.
+
+Kurallar:
+1. Ürün Adı: Net, estetik ve profesyonel olsun.
+2. Kısa Açıklama (description): 1-2 cümlelik vurucu, öz, merak uyandıran ve kart altında/özette kullanılabilecek şık bir tanıtım cümlesi.
+3. Öne Çıkan Özellikler (highlights): 4 ila 6 adet hap bilgi niteliğinde rozet özelliği (Örn: "%100 Medikal Silikon", "20 Titreşim Modu & 8 Hız", "Manyetik Şarj", "IPX7 Su Geçirmez").
+4. Detaylı Açıklama (longDescription): Girişte akıcı ve lüks 1-2 paragraf; ardından 'Öne Çıkan Özellikler:' başlığı altında madde imleriyle (•) toparlanmış teknik detaylar.
+
+Girdi Bilgileri:
+Ürün Adı: ${name || 'Belirtilmedi'}
+Kategori: ${category}
+Ham İçerik:
+${rawText || name}`;
+
+          const response = await ai.models.generateContent({
+            model: 'gemini-3.8-flash',
+            contents: prompt,
+            config: {
+              systemInstruction: "Sen lüks e-ticaret markaları için kıdemli bir ürün metin yazarı ve içerik mimarısın. Toptancı metinlerini temizler, lüks ve akıcı satış diline dönüştürürsün.",
+              responseMimeType: 'application/json',
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  name: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  highlights: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                  },
+                  longDescription: { type: Type.STRING }
+                },
+                required: ['name', 'description', 'highlights', 'longDescription']
+              }
+            }
+          });
+
+          const parsed = JSON.parse(response.text?.trim() || '{}');
+          if (parsed && (parsed.description || parsed.longDescription)) {
+            return json(res, 200, {
+              ok: true,
+              ai: true,
+              data: {
+                name: parsed.name || name,
+                description: parsed.description || '',
+                highlights: Array.isArray(parsed.highlights) ? parsed.highlights : [],
+                longDescription: parsed.longDescription || ''
+              }
+            });
+          }
+        } catch (err) {
+          console.error('[Admin AI Polish Error]', err);
+        }
+      }
+
+      // Smart Fallback
+      const fallback = fallbackPolishProduct(name, category, rawText);
+      return json(res, 200, {
+        ok: true,
+        ai: false,
+        fallback: true,
+        data: fallback
+      });
     }
 
     /* --- categories --- */
@@ -2793,7 +2920,8 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
         pathname.startsWith('/media/') ||
         pathname.startsWith('/assets/') ||
         pathname.startsWith('/public/') ||
-        /\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2|ttf|mp4|json)$/i.test(pathname)
+        pathname.startsWith('/google') ||
+        /\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2|ttf|mp4|json|html|txt)$/i.test(pathname)
       ) {
         return serveStatic(req, res, pathname.replace(/^\/public/, ''));
       }

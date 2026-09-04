@@ -1481,3 +1481,98 @@ img { max-width: 100%; display: block; }
   }
 }
 
+/* ================= AI COPYWRITER & POLISHER UI ================= */
+.ai-polish-banner {
+  background: linear-gradient(135deg, rgba(255, 123, 114, 0.08) 0%, rgba(167, 155, 196, 0.08) 100%);
+  border: 1px solid rgba(255, 123, 114, 0.25);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  transition: all .25s ease;
+}
+.ai-polish-banner:hover {
+  border-color: rgba(255, 123, 114, 0.4);
+  box-shadow: 0 4px 20px rgba(255, 123, 114, 0.1);
+}
+.ai-polish-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ai-polish-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text);
+}
+.ai-polish-title span.ai-sparkle {
+  font-size: 16px;
+  color: var(--rose);
+  animation: ai-pulse 2s infinite ease-in-out;
+}
+@keyframes ai-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px var(--rose-glow)); }
+  50% { transform: scale(1.18); filter: drop-shadow(0 0 10px var(--rose-glow)); }
+}
+
+.btn-ai-magic {
+  background: linear-gradient(135deg, #FF7B72 0%, #E63946 100%);
+  color: #FFFFFF !important;
+  border: none;
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px var(--rose-glow);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.btn-ai-magic:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 123, 114, 0.4);
+  filter: brightness(1.05);
+}
+.btn-ai-magic:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ai-subtle {
+  background: rgba(255, 123, 114, 0.1);
+  color: var(--rose) !important;
+  border: 1px solid rgba(255, 123, 114, 0.3);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.btn-ai-subtle:hover:not(:disabled) {
+  background: rgba(255, 123, 114, 0.2);
+  border-color: var(--rose);
+  transform: translateY(-1px);
+}
+.btn-ai-subtle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field-flash-success {
+  animation: field-flash 1.2s ease-out;
+}
+@keyframes field-flash {
+  0% { border-color: var(--ok) !important; box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.35) !important; background-color: rgba(52, 211, 153, 0.08) !important; }
+  100% { border-color: var(--line) !important; box-shadow: none !important; background-color: transparent !important; }
+}
+

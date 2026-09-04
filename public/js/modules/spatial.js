@@ -113,6 +113,116 @@ export function getProductSpecs(prod) {
   ];
 }
 
+// Compute Dynamic Category & Material Aware Care/Hygiene Guide
+export function getSpatialCareGuide(p) {
+  if (p.careGuide && typeof p.careGuide === 'object' && p.careGuide.text) {
+    return {
+      title: p.careGuide.title || (LANG === 'en' ? 'Usage & Care Guide' : 'Kullanım & Bakım Rehberi'),
+      text: p.careGuide.text,
+      icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>'
+    };
+  }
+  if (typeof p.careGuide === 'string' && p.careGuide.trim()) {
+    return {
+      title: LANG === 'en' ? 'Usage & Care Guide' : 'Kullanım & Bakım Rehberi',
+      text: p.careGuide.trim(),
+      icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>'
+    };
+  }
+
+  const cat = String(p.category || '').toLowerCase();
+  const name = String(p.name || '').toLowerCase();
+  const desc = String(p.description || '').toLowerCase();
+  const tags = Array.isArray(p.tags) ? p.tags.join(' ').toLowerCase() : '';
+  const mat = String(p.material || '').toLowerCase();
+  const allText = `${cat} ${name} ${desc} ${tags} ${mat}`;
+
+  // 1. Cosmetics / Oils / Lubricants / Sprays / Creams / Perfume / Gels
+  if (
+    cat.includes('kozmetik') || cat.includes('saglik') || cat.includes('kayganlastirici') || cat.includes('lubricant') ||
+    allText.includes('kayganlaştırıcı') || allText.includes('kayganlastirici') || allText.includes('masaj yağı') ||
+    allText.includes('masaj yagi') || allText.includes('sprey') || allText.includes('krem') || allText.includes('jel') ||
+    allText.includes('parfüm') || allText.includes('geciktirici') || allText.includes('temizleme solüsyonu')
+  ) {
+    return {
+      title: LANG === 'en' ? 'Usage, Application & Storage Guide' : 'Kullanım, Uygulama & Saklama Rehberi',
+      text: LANG === 'en'
+        ? 'Apply a sufficient amount gently to clean, dry skin. 100% compatible with condoms and adult wellness devices. Avoid direct contact with eyes. Keep lid tightly sealed and store at room temperature away from direct sunlight.'
+        : 'Yeterli miktarda ürünü temiz ve kuru bölgeye nazikçe uygulayınız. Kondom ve yetişkin ürünleri ile %100 uyumludur. Göz ile doğrudan temasından kaçınınız. Doğrudan güneş ışığından uzak, oda sıcaklığında (serin ve kuru ortamda) kapağı kapalı muhafaza ediniz.',
+      icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>'
+    };
+  }
+
+  // 2. Electronic / Vibrators / Masturbators / Rechargeable / Motorized
+  if (
+    cat.includes('vibrator') || cat.includes('masturbator') || cat.includes('vajina') || cat.includes('sisme') ||
+    allText.includes('vibratör') || allText.includes('vibrator') || allText.includes('şarjlı') || allText.includes('sarjli') ||
+    allText.includes('manyetik şarj') || allText.includes('usb') || allText.includes('titreşimli') || allText.includes('titresimli') ||
+    allText.includes('motor') || allText.includes('mastürbatör') || allText.includes('masturbator')
+  ) {
+    return {
+      title: LANG === 'en' ? 'Charging, Care & Waterproof Guide' : 'Şarj, Bakım & Su Koruması',
+      text: LANG === 'en'
+        ? 'Disconnect charging cable before cleaning. Clean the body with warm water and antibacterial soap or toy cleaner while protecting the charging port. Use only water-based lubricants to protect motor and silicone seals. Dry completely before storing in its pouch.'
+        : 'Temizleme ve şarj işlemlerinden önce şarj kablosunu çıkarınız. Şarj giriş portunu koruyarak cihaz gövdesini ılık su ve antibakteriyel sabun veya özel oyuncak temizleyicisi ile temizleyiniz. Motor ve silikon yalıtımını korumak için yalnızca su bazlı kayganlaştırıcılar ile kullanınız. Tamamen kuruduktan sonra kendi koruyucu kılıfında saklayınız.',
+      icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>'
+    };
+  }
+
+  // 3. Lingerie / Costume / Fantasy Wear / Leather & Lace Apparel
+  if (
+    cat.includes('fantezi') || cat.includes('fantasy') || cat.includes('kostum') || cat.includes('giyim') || cat.includes('lingerie') ||
+    allText.includes('çorap') || allText.includes('gecelik') || allText.includes('sütyen') || allText.includes('jartiyer') ||
+    allText.includes('kostüm') || allText.includes('dantel') || allText.includes('bodysuit') || allText.includes('tanga')
+  ) {
+    return {
+      title: LANG === 'en' ? 'Fabric Care & Washing Guide' : 'Kumaş, Yıkama & Bakım Talimatı',
+      text: LANG === 'en'
+        ? 'Hand wash at 30°C or use a delicate laundry bag to preserve delicate lace and elastic fibers. Do not bleach or tumble dry. Dry flat away from direct heat sources and do not iron.'
+        : 'Doku, dantel ve dikiş kalitesini uzun süre korumak için 30°C\'de elde veya çamaşır torbasında hassas programda yıkayınız. Ağartıcı veya çamaşır suyu kullanmayınız. Ütüleme yapmayınız ve doğrudan ısı kaynaklarından uzak, sererek kurutunuz.',
+      icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>'
+    };
+  }
+
+  // 4. Glass / Metal / Stainless Steel
+  if (
+    allText.includes('cam') || allText.includes('glass') || allText.includes('metal') || allText.includes('çelik') ||
+    allText.includes('paslanmaz') || allText.includes('stainless steel') || allText.includes('alüminyum')
+  ) {
+    return {
+      title: LANG === 'en' ? 'Sterilization & Compatibility Guide' : 'Sterilizasyon & Uyumluluk Rehberi',
+      text: LANG === 'en'
+        ? '100% non-porous surface can be safely sterilized with boiling water, antibacterial soap, or alcohol-free sanitizers. Fully compatible with water, silicone, and oil-based lubricants. Store in a padded pouch to protect against drops.'
+        : 'Gözeneksiz yapısı sayesinde kaynar su, antibakteriyel sabun veya alkolsüz dezenfektanlar ile kolayca %100 sterilize edilebilir. Su bazlı, silikon ve yağ bazlı tüm kayganlaştırıcı türleri ile tam uyumludur. Çizilme ve sert darbelere karşı koruyucu kılıfında saklayınız.',
+      icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>'
+    };
+  }
+
+  // 5. BDSM / Restraints / Bondage / Harness / Hardware
+  if (
+    cat.includes('bdsm') || cat.includes('fantezi-aksesuar') || allText.includes('kelepçe') || allText.includes('kelepce') ||
+    allText.includes('kırbaç') || allText.includes('tasma') || allText.includes('harness') || allText.includes('göz bandı') ||
+    allText.includes('bondage') || allText.includes('deri kelepçe')
+  ) {
+    return {
+      title: LANG === 'en' ? 'Material Care & Preservation' : 'Materyal Bakımı & Muhafaza',
+      text: LANG === 'en'
+        ? 'Wipe leather, vegan leather, and metal hardware with a soft, slightly damp cloth. Dry metal parts immediately to prevent tarnish. Store flat or hanging in a well-ventilated dry space.'
+        : 'Deri, suni deri ve metal aksamları nemli, yumuşak bir bezle silerek temizleyiniz. Metal parçaların korozyonunu önlemek için temizlik sonrası hemen kurulayınız. Nemden uzak, hava alan kuru bir alanda asarak veya sererek muhafaza ediniz.',
+      icon: '<polyline points="20 6 9 17 4 12"></polyline>'
+    };
+  }
+
+  // 6. Realistic / Silicone / Dildos / Anals / TPE (Default Body-Safe)
+  return {
+    title: LANG === 'en' ? 'Usage, Care & Hygiene Guide' : 'Kullanım, Bakım & Hijyen Rehberi',
+    text: LANG === 'en'
+      ? 'Wash thoroughly with warm water and antibacterial soap or toy cleaner before and after each use. Use only water-based lubricants to preserve silicone texture (silicone lubricants can damage the surface). Store in a dry, cool, dust-free environment.'
+      : 'Kullanım öncesi ve sonrası ılık su ve antibakteriyel sabun veya özel oyuncak temizleyicisi ile yıkayınız. Ürün dokusunu ve esnekliğini korumak için yalnızca su bazlı kayganlaştırıcılar ile kullanılması önerilir (silikon kayganlaştırıcılar dokuyu eritebilir). Serin, kuru ve toz tutmayan ortamda saklayınız.',
+    icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>'
+  };
+}
+
 let activeOriginCard = null;
 let activeZoomRequestId = 0;
 
@@ -156,6 +266,10 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
     const hasMultipleImages = productGallery.length > 1;
 
+    const descLead = p.description ? `<p class="spatial-desc">${esc(p.description)}</p>` : '';
+    const fullDesc = p.longDescription || p.description || '';
+    const careGuide = getSpatialCareGuide(p);
+
     stage.innerHTML = `
       <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -185,36 +299,87 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         </div>
 
         <div class="spatial-content-pane">
-          <div class="spatial-top-meta">
-            <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat" title="${catName(p.category, p.categoryName)}">
-              <span>${catName(p.category, p.categoryName)}</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </a>
-            <div class="spatial-rating-row">
-              <span class="rating-stars">${stars(p.rating || 5)}</span>
-              <span class="count">(${p.reviewCount || 0})</span>
+          <div class="spatial-scrollable-body">
+            <div class="spatial-top-meta">
+              <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat" title="${catName(p.category, p.categoryName)}">
+                <span>${catName(p.category, p.categoryName)}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </a>
+              <div class="spatial-rating-row">
+                <span class="rating-stars">${stars(p.rating || 5)}</span>
+                <span class="count">(${p.reviewCount || 0})</span>
+              </div>
+            </div>
+
+            <h1 class="spatial-title">${esc(p.name)}</h1>
+
+            <div class="spatial-price-cluster">
+              <div class="spatial-price-values">
+                <span class="spatial-price">${fmt(p.price)}</span>
+                ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
+              </div>
+              <div class="spatial-live-presence">
+                <span class="pulse-indicator ${inStock ? 'live-green' : 'live-red'}"></span>
+                <span>${inStock ? (LANG === 'en' ? 'In Stock · 24h Dispatch' : 'Stokta · 24s Kargo') : (LANG === 'en' ? 'Out of Stock' : 'Tükendi')}</span>
+              </div>
+            </div>
+            
+            <div class="spatial-trust-badge" style="font-size: 11.5px; color: var(--muted); margin-top: 10px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; font-weight: 500;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>${LANG === 'en' ? '100% Discreet Packaging · Anonymous Delivery' : '%100 Gizli Paketleme · Anonim Teslimat'}</span>
+            </div>
+
+            <!-- Interactive Accordion: Single Elegant 'Ürün Bilgileri' Section -->
+            <div class="spatial-accordion-group" id="spatial-details">
+              <div class="spatial-acc-item">
+                <button type="button" class="spatial-acc-btn" aria-expanded="false">
+                  <span class="spatial-acc-title">${LANG === 'en' ? 'Product Information & Guides' : 'Ürün Bilgileri & Detaylar'}</span>
+                  <span class="spatial-acc-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </span>
+                </button>
+                <div class="spatial-acc-body">
+                  <div class="spatial-acc-content">
+                    <div class="spatial-acc-inner">
+                      <!-- 1. Description & Specs -->
+                      <div class="spatial-info-block">
+                        <div class="spatial-info-lead">${esc(fullDesc)}</div>
+                      </div>
+                      <!-- 2. Discreet Packaging & Shipping Trust Badge -->
+                      <div class="spatial-info-subcard">
+                        <div class="spatial-info-subhead">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                          </svg>
+                          <span>${LANG === 'en' ? 'Discreet Packaging & Shipping Guarantee' : 'Gizli Paketleme & Kargo Güvencesi'}</span>
+                        </div>
+                        <p class="spatial-info-subtext">${LANG === 'en' ? 'All orders are shipped in 100% plain, sealed, opaque packaging with no logos, product names, or identifying labels. Your privacy is fully guaranteed. Credit card statements show a discreet merchant name. Shipped in 24 hours.' : 'Tüm siparişleriniz dışarıdan içeriği kesinlikle anlaşılamayan, üzerinde hiçbir logo veya marka ibaresi bulunmayan %100 gizli ve kilitli kutularda gönderilir. Kredi kartı ekstrenizde veya kargo fişinde ürün adı yazmaz. 24 saat içinde hızlı kargoya verilir.'}</p>
+                      </div>
+                      <!-- 3. Dynamic Category-Specific Usage, Care & Hygiene -->
+                      <div class="spatial-info-subcard">
+                        <div class="spatial-info-subhead">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            ${careGuide.icon}
+                          </svg>
+                          <span>${esc(careGuide.title)}</span>
+                        </div>
+                        <p class="spatial-info-subtext">${esc(careGuide.text)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <h1 class="spatial-title"><a href="/urun/${p.slug}">${esc(p.name)}</a></h1>
-
-          <div class="spatial-price-cluster">
-            <div class="spatial-price-values">
-              <span class="spatial-price">${fmt(p.price)}</span>
-              ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
-            </div>
-            <div class="spatial-live-presence">
-              <span class="pulse-indicator ${inStock ? 'live-green' : 'live-red'}"></span>
-              <span>${inStock ? (LANG === 'en' ? 'In Stock · 24h Dispatch' : 'Stokta · 24s Kargo') : (LANG === 'en' ? 'Out of Stock' : 'Tükendi')}</span>
-            </div>
-          </div>
-
-          <a href="/urun/${p.slug}" class="spatial-all-features-link">
-            <span>${LANG === 'en' ? 'Explore full specifications' : 'Tüm özellikleri keşfet'}</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </a>
-
-          <!-- 2026 Apple Dynamic Island Action Pill -->
+          <!-- Sticky Action Bar with Apple Dynamic Pill -->
           <div class="spatial-action-bar">
             <div class="spatial-dynamic-pill">
               <div class="spatial-pill-stepper">
@@ -234,14 +399,6 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
                 <span class="pill-cta-price" id="spatial-pill-price">${fmt(p.price)}</span>
               </button>
             </div>
-
-            <div class="spatial-whisper">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <span>${LANG === 'en' ? '100% Discreet Packaging · Anonymous Delivery' : '%100 Gizli Paketleme · Anonim Teslimat'}</span>
-            </div>
           </div>
         </div>
       </div>
@@ -258,6 +415,28 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     const closeBtn = $('#spatial-stage-close', stage);
     const badgeCluster = $('.spatial-badge-cluster', stage);
     
+    // Gallery Switcher Function
+    let activeImgIdx = 0;
+    const updateActiveImage = (newIdx) => {
+      if (!hasMultipleImages) return;
+      if (newIdx < 0) newIdx = productGallery.length - 1;
+      if (newIdx >= productGallery.length) newIdx = 0;
+      activeImgIdx = newIdx;
+      const targetImg = productGallery[activeImgIdx];
+      if (spatialMain && targetImg) {
+        spatialMain.style.opacity = '0.3';
+        spatialMain.style.transform = 'scale(0.96)';
+        setTimeout(() => {
+          spatialMain.src = imgSrc(targetImg);
+          spatialMain.style.opacity = '1';
+          spatialMain.style.transform = 'scale(1)';
+        }, 80);
+      }
+      $$('.spatial-dot', stage).forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === activeImgIdx);
+      });
+    };
+
     if (spatialVisual && spatialMain) {
       let startX = 0;
       let startY = 0;
@@ -265,15 +444,17 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       let lastDeltaY = 0;
       let lastDeltaX = 0;
       let isPulling = false;
+      let gestureMode = null; // 'pull' | 'swipe' | null
       
       spatialVisual.addEventListener('touchstart', (e) => {
-        if (e.target.closest('.spatial-nav-btn') || e.target.closest('.spatial-dots')) return;
+        if (e.target.closest('.spatial-dots')) return;
         
         const scrollTop = stageGrid ? stageGrid.scrollTop : 0;
         if (scrollTop <= 5 && e.touches.length === 1) {
           startX = e.touches[0].clientX;
           startY = e.touches[0].clientY;
-          isPulling = true;
+          isPulling = false;
+          gestureMode = null;
           currentScale = 1;
           lastDeltaY = 0;
           lastDeltaX = 0;
@@ -281,10 +462,6 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           spatialMain.style.transition = 'none';
           spatialMain.style.transformOrigin = '50% 25%';
           spatialMain.style.willChange = 'transform, filter';
-          spatialMain.style.zIndex = '999';
-          spatialVisual.style.overflow = 'visible';
-          spatialVisual.style.zIndex = '50';
-          if (stageGrid) stageGrid.style.overflow = 'visible';
           
           if (spatialGlow) spatialGlow.style.transition = 'none';
           if (contentPane) contentPane.style.transition = 'none';
@@ -294,13 +471,33 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       }, { passive: true });
 
       spatialVisual.addEventListener('touchmove', (e) => {
-        if (!isPulling) return;
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const deltaY = currentY - startY;
         const deltaX = currentX - startX;
         
-        if (deltaY > 0) {
+        // Determine gesture mode if not locked yet
+        if (!gestureMode && (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8)) {
+          if (Math.abs(deltaX) > Math.abs(deltaY) && hasMultipleImages) {
+            gestureMode = 'swipe';
+          } else if (deltaY > 6) {
+            gestureMode = 'pull';
+            isPulling = true;
+            spatialMain.style.zIndex = '9999';
+            spatialVisual.style.overflow = 'visible';
+            spatialVisual.style.zIndex = '9999';
+            if (stageGrid) stageGrid.style.overflow = 'visible';
+            if (stage) stage.style.overflow = 'visible';
+          }
+        }
+
+        if (gestureMode === 'swipe') {
+          e.preventDefault();
+          lastDeltaX = deltaX;
+          // Subtle horizontal rubber-band follow
+          const swipeShift = deltaX * 0.4;
+          spatialMain.style.transform = `translateX(${swipeShift.toFixed(1)}px)`;
+        } else if (gestureMode === 'pull' && deltaY > 0) {
           e.preventDefault();
           lastDeltaY = deltaY;
           lastDeltaX = deltaX;
@@ -311,33 +508,27 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
             stage.classList.add('is-pulling-mode');
           }
           
-          // Eased rubber-band downward pull physics with enlarged dynamic zoom
-          // Şeffaf PNG ürün görseli z-index: 999 ile bilgi kartının üzerine çıkar ve devleşir (1.0 -> 1.68)
-          // Arka plandaki bilgi paneli sinematik blur (6px) ve hafif küçülmeyle (scale 0.95) arkaya itilir
-          const maxTravelY = 125;
-          const pullForce = deltaY * 0.52;
-          const moveY = Math.min(maxTravelY, pullForce / (1 + pullForce / (maxTravelY * 2.1)));
-          const progress = Math.min(1, moveY / maxTravelY);
+          const maxTravelY = 220;
+          const pullForce = deltaY * 0.85;
+          const moveY = Math.min(maxTravelY, pullForce / (1 + pullForce / (maxTravelY * 1.8)));
+          const progress = Math.min(1, moveY / 110);
           
-          // Gerçek ve belirgin büyüme: 1.0 -> 1.68 (şeffaf görsel tüm detaylarıyla devleşir)
-          const scale = 1 + progress * 0.68;
+          const scale = 1 + progress * 1.15;
           currentScale = scale;
           
-          // Direct downward enlargement on top of blurred content pane with rich realistic drop-shadow
           spatialMain.style.transform = `translateY(${moveY.toFixed(1)}px) scale(${scale.toFixed(3)})`;
-          spatialMain.style.filter = `drop-shadow(0 ${(18 + moveY * 0.35).toFixed(1)}px ${(32 + moveY * 0.45).toFixed(1)}px rgba(0,0,0,${(0.28 + progress * 0.26).toFixed(2)}))`;
+          spatialMain.style.filter = `drop-shadow(0 ${(20 + moveY * 0.45).toFixed(1)}px ${(36 + moveY * 0.65).toFixed(1)}px rgba(0,0,0,${(0.32 + progress * 0.38).toFixed(2)}))`;
           
           if (spatialGlow) {
-            spatialGlow.style.transform = `translate(-50%, -50%) translateY(${(moveY * 0.4).toFixed(1)}px) scale(${(1 + progress * 0.45).toFixed(2)})`;
+            spatialGlow.style.transform = `translate(-50%, -50%) translateY(${(moveY * 0.45).toFixed(1)}px) scale(${(1 + progress * 0.8).toFixed(2)})`;
             spatialGlow.style.opacity = '1';
           }
 
-          // 3D Depth of Field & Receding UI: Bilgi kartı sinematik bir derinlikle bulanıklaşır ve arkaya çekilir
           if (contentPane) {
-            const blurPx = (progress * 6.0).toFixed(1);
-            const paneScale = (1 - progress * 0.05).toFixed(3);
-            const paneShift = (progress * 9).toFixed(1);
-            const paneOpacity = (1 - progress * 0.25).toFixed(2);
+            const blurPx = (progress * 8.0).toFixed(1);
+            const paneScale = (1 - progress * 0.06).toFixed(3);
+            const paneShift = (progress * 12).toFixed(1);
+            const paneOpacity = (1 - progress * 0.35).toFixed(2);
             contentPane.style.filter = `blur(${blurPx}px)`;
             contentPane.style.transform = `scale(${paneScale}) translateY(${paneShift}px)`;
             contentPane.style.opacity = paneOpacity;
@@ -348,17 +539,34 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           if (badgeCluster) {
             badgeCluster.style.opacity = (1 - progress * 0.7).toFixed(2);
           }
-        } else {
-          isPulling = false;
-          if (spatialMain.style.transform && spatialMain.style.transform !== 'none') {
-            resetZoom();
-          }
         }
       }, { passive: false });
 
-      const resetZoom = () => {
-        if (isPulling || currentScale > 1 || lastDeltaY > 0) {
+      const handleTouchEnd = () => {
+        if (gestureMode === 'swipe') {
+          spatialMain.style.transition = 'transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease';
+          if (lastDeltaX < -45) {
+            // Swiped Left -> Next image
+            updateActiveImage(activeImgIdx + 1);
+          } else if (lastDeltaX > 45) {
+            // Swiped Right -> Prev image
+            updateActiveImage(activeImgIdx - 1);
+          } else {
+            spatialMain.style.transform = 'none';
+          }
+          setTimeout(() => {
+            spatialMain.style.transform = '';
+            spatialMain.style.transition = '';
+            spatialMain.style.opacity = '1';
+          }, 240);
+          gestureMode = null;
+          lastDeltaX = 0;
+          return;
+        }
+
+        if (gestureMode === 'pull' || isPulling || currentScale > 1 || lastDeltaY > 0) {
           isPulling = false;
+          gestureMode = null;
           currentScale = 1;
 
           // Apple spring physics: Smooth bounce back into calm position
@@ -427,26 +635,12 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         }
       };
 
-      spatialVisual.addEventListener('touchend', resetZoom);
-      spatialVisual.addEventListener('touchcancel', resetZoom);
+      spatialVisual.addEventListener('touchend', handleTouchEnd);
+      spatialVisual.addEventListener('touchcancel', handleTouchEnd);
     }
 
-    // Gallery Arrow & Dot Navigation (Option 1)
+    // Gallery Dot Click & Desktop Arrow Navigation
     if (hasMultipleImages) {
-      let activeImgIdx = 0;
-      const updateActiveImage = (newIdx) => {
-        if (newIdx < 0) newIdx = productGallery.length - 1;
-        if (newIdx >= productGallery.length) newIdx = 0;
-        activeImgIdx = newIdx;
-        const targetImg = productGallery[activeImgIdx];
-        if (spatialMain && targetImg) {
-          spatialMain.src = imgSrc(targetImg);
-        }
-        $$('.spatial-dot', stage).forEach((dot, idx) => {
-          dot.classList.toggle('active', idx === activeImgIdx);
-        });
-      };
-
       $('#spatial-nav-prev', stage)?.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -499,6 +693,19 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     $('#spatial-stage-close', stage)?.addEventListener('click', closeSpatialCardZoom);
 
+    // Accordion item expand / collapse toggle handlers
+    $$('.spatial-acc-btn', stage).forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const item = btn.closest('.spatial-acc-item');
+        if (item) {
+          const isOpen = item.classList.toggle('open');
+          btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+      });
+    });
+
     addBtn?.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -518,6 +725,12 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         }, 1800);
       }
     });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('urun') !== (p.slug || p.id)) {
+      params.set('urun', p.slug || p.id);
+      window.history.pushState({ modal: 'spatial', id: p.id }, '', window.location.pathname + '?' + params.toString());
+    }
   } catch (err) {
     if (reqId !== activeZoomRequestId) return;
     stage.innerHTML = `
@@ -529,7 +742,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
   }
 }
 
-export function closeSpatialCardZoom() {
+export function closeSpatialCardZoom(skipHistoryUpdate = false) {
   activeZoomRequestId++;
   const overlay = $('#spatial-canvas-overlay');
   if (overlay) {
@@ -547,6 +760,14 @@ export function closeSpatialCardZoom() {
     activeOriginCard.style.transition = '';
     activeOriginCard = null;
   }
+  if (skipHistoryUpdate !== true) {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('urun')) {
+      params.delete('urun');
+      const qs = params.toString() ? '?' + params.toString() : '';
+      window.history.pushState({}, '', window.location.pathname + qs);
+    }
+  }
 }
 
 export function initSpatialAnimations() {
@@ -555,6 +776,22 @@ export function initSpatialAnimations() {
   $('#spatial-canvas-overlay')?.addEventListener('click', (e) => {
     if (e.target === $('#spatial-canvas-overlay')) closeSpatialCardZoom();
   });
+  
+  window.addEventListener('popstate', () => {
+    const params = new URLSearchParams(window.location.search);
+    const urun = params.get('urun');
+    if (urun) {
+      openSpatialCardZoom(urun, null);
+    } else {
+      closeSpatialCardZoom(true);
+    }
+  });
+
+  setTimeout(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urun = params.get('urun');
+    if (urun) openSpatialCardZoom(urun, null);
+  }, 150);
 
   const stageEl = $('#spatial-card-stage');
   if (stageEl) {
@@ -565,10 +802,13 @@ export function initSpatialAnimations() {
 
   // Global event delegation for cards and modal actions
   document.addEventListener('click', (e) => {
-    // 1. Close modal immediately if clicking "Product Details" or any link inside spatial modal
+    // 1. Close modal if clicking a navigation link inside spatial modal (e.g. category)
     const modalLink = e.target.closest('#spatial-card-stage a');
     if (modalLink) {
-      closeSpatialCardZoom();
+      const href = modalLink.getAttribute('href') || '';
+      if (!href.startsWith('#')) {
+        closeSpatialCardZoom();
+      }
       return;
     }
 
@@ -584,18 +824,24 @@ export function initSpatialAnimations() {
       return;
     }
 
-    // 3. Card click (media or title) — opens Spatial Morphing Stage Canvas
-    const cardLink = e.target.closest('.prod-card .prod-media, .prod-card .prod-name');
+    // 3. Card click (media or title) & Cart item click — opens Spatial Morphing Stage Canvas
+    const cardLink = e.target.closest('.prod-card .prod-media, .prod-card .prod-name, .cart-line-thumb, .cl-name');
     if (cardLink && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
       if (!location.pathname.startsWith('/urun/')) {
         e.preventDefault();
         e.stopPropagation();
-        const card = cardLink.closest('.prod-card');
+        const card = cardLink.closest('.prod-card, .cart-line');
         const rawHref = cardLink.getAttribute('href') || '';
         const hrefKey = rawHref.replace(/^\/urun\//, '').replace(/\/+$/, '').trim();
-        const pid = card?.dataset?.slug || cardLink.dataset?.slug || card?.dataset?.id || hrefKey;
+        const pid = card?.dataset?.slug || cardLink.dataset?.slug || card?.dataset?.pid || card?.dataset?.id || hrefKey;
         if (pid) {
-          openSpatialCardZoom(pid, card);
+          // If clicked from cart drawer/modal, close drawer first
+          const cartDrawer = $('#cart-drawer');
+          if (cartDrawer && cartDrawer.classList.contains('open')) {
+            cartDrawer.classList.remove('open');
+            document.body.classList.remove('drawer-open');
+          }
+          openSpatialCardZoom(pid, card.classList.contains('prod-card') ? card : null);
           return;
         }
       }

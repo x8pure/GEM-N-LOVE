@@ -734,7 +734,21 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
           </a>
         `;
 
-        $$('.qs-item, .qs-view-all-apple-link', results).forEach((link) => {
+        $$('.qs-item', results).forEach((link) => {
+          link.addEventListener('click', (e) => {
+            if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+              e.preventDefault();
+              e.stopPropagation();
+              const slug = link.dataset.slug || link.dataset.id;
+              closeSearch();
+              if (slug && typeof openSpatialCardZoom === 'function') {
+                openSpatialCardZoom(slug, null);
+              }
+            }
+          });
+        });
+
+        $$('.qs-view-all-apple-link', results).forEach((link) => {
           link.addEventListener('click', () => {
             closeSearch();
           });
