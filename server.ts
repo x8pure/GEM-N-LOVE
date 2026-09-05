@@ -10,6 +10,7 @@ import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFireba
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleGenAI, Type } from '@google/genai';
+import { GUIDES } from './data/guides.js';
 
 const isProd = process.env.NODE_ENV === 'production';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '56701005174-t1n68p29hirorldv6dis76rmij721c1t.apps.googleusercontent.com';
@@ -760,35 +761,52 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const desc = opts.description || (C.lang === 'en' 
     ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery.'
     : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.');
-  const canonicalUrl = opts.canonical || (`https://loveshop.com.tr${C.path || '/'}`);
-  const ogImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveshop.com.tr/test.png');
+  const canonicalUrl = opts.canonical || (`https://loveeroticshop.com${C.path || '/'}`);
+  const ogImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveeroticshop.com/test.png');
 
   // 2026 Enhanced Structured Data (JSON-LD) for Local SEO & Search Intent
   const schemaGraph: any[] = [
     {
       "@type": "WebSite",
-      "@id": "https://loveshop.com.tr/#website",
-      "url": "https://loveshop.com.tr/",
+      "@id": "https://loveeroticshop.com/#website",
+      "url": "https://loveeroticshop.com/",
       "name": "Love Erotik & Seks Shop Eskişehir",
-      "alternateName": ["Love Sex Shop", "Love Erotik Shop", "Love Seks Shop", "Love Shop"],
-      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. %100 gizli paketleme ve orijinal ürünler.",
+      "alternateName": ["Love Sex Shop", "Love Erotik Shop", "Love Seks Shop", "Love Shop", "Eskişehir Sex Shop", "Eskişehir Erotik Shop"],
+      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. %100 gizli paketleme, aynı gün 2-3 saatte kurye teslimat ve orijinal ürünler.",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://loveshop.com.tr/magaza?q={search_term_string}",
+        "target": "https://loveeroticshop.com/magaza?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     },
     {
       "@type": "Store",
-      "@id": "https://loveshop.com.tr/#store",
+      "@id": "https://loveeroticshop.com/#store",
       "name": "Love Erotik & Seks Shop Eskişehir",
-      "alternateName": ["Love Sex Shop", "Love Seks Shop", "Love Erotik Shop", "Love Shop"],
-      "url": "https://loveshop.com.tr/",
-      "logo": "https://loveshop.com.tr/test.png",
-      "image": "https://loveshop.com.tr/test.png",
-      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. %100 gizli paketleme, aynı gün teslimat, orijinal ürünler.",
+      "legalName": "Love Erotik Shop Eskişehir",
+      "alternateName": ["Love Sex Shop", "Love Seks Shop", "Love Erotik Shop", "Love Shop", "Eskişehir Sex Shop", "Eskişehir Erotik Shop"],
+      "url": "https://loveeroticshop.com/",
+      "logo": "https://loveeroticshop.com/test.png",
+      "image": "https://loveeroticshop.com/test.png",
+      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. Tepebaşı ve Odunpazarı içi 2-3 saatte özel gizli kurye teslimat, mağazadan randevusuz elden teslim alma, %100 orijinal, barkodlu ve faturalı ürünler.",
       "priceRange": "₺₺",
       "telephone": st.supportPhone || "+90 543 633 13 25",
+      "currenciesAccepted": "TRY",
+      "paymentAccepted": "Nakit, Kredi Kartı, Havale, EFT, Güvenli Online Ödeme",
+      "areaServed": [
+        { "@type": "City", "name": "Eskişehir" },
+        { "@type": "AdministrativeArea", "name": "Tepebaşı" },
+        { "@type": "AdministrativeArea", "name": "Odunpazarı" },
+        { "@type": "Country", "name": "Türkiye" }
+      ],
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "10:00",
+          "closes": "02:00"
+        }
+      ],
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "İsmet İnönü-1 Cd. No:52/2 Ilgaz İş Hanı Kat:1 Daire:2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı)",
@@ -801,7 +819,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
         "@type": "GeoCoordinates",
         "latitude": 39.7767,
         "longitude": 30.5206
-      }
+      },
+      "hasMap": "https://maps.google.com/?q=39.7767,30.5206"
     }
   ];
 
@@ -809,7 +828,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
     const prod = opts.product;
     schemaGraph.push({
       "@type": "Product",
-      "@id": `https://loveshop.com.tr/urun/${prod.slug}#product`,
+      "@id": `https://loveeroticshop.com/urun/${prod.slug || prod.id}#product`,
       "name": prod.name,
       "description": prod.desc || prod.name,
       "image": prod.image ? [prod.image] : [],
@@ -820,17 +839,81 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       },
       "offers": {
         "@type": "Offer",
-        "url": `https://loveshop.com.tr/urun/${prod.slug}`,
+        "url": `https://loveeroticshop.com/urun/${prod.slug || prod.id}`,
         "priceCurrency": "TRY",
         "price": prod.price,
         "availability": (prod.stock ?? 1) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        "itemCondition": "https://schema.org/NewCondition"
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": {
+          "@type": "Organization",
+          "name": "Love Erotik Shop Eskişehir"
+        }
       },
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": prod.rating || 5.0,
         "reviewCount": prod.reviewCount || 12
       }
+    });
+
+    schemaGraph.push({
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "https://loveeroticshop.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Mağaza", "item": "https://loveeroticshop.com/magaza" },
+        { "@type": "ListItem", "position": 3, "name": prod.name, "item": `https://loveeroticshop.com/urun/${prod.slug || prod.id}` }
+      ]
+    });
+  }
+
+  if (opts.breadcrumbs && Array.isArray(opts.breadcrumbs)) {
+    schemaGraph.push({
+      "@type": "BreadcrumbList",
+      "itemListElement": opts.breadcrumbs.map((b: any, idx: number) => ({
+        "@type": "ListItem",
+        "position": idx + 1,
+        "name": b.name,
+        "item": b.url
+      }))
+    });
+  }
+
+  if (opts.article) {
+    const art = opts.article;
+    schemaGraph.push({
+      "@type": "Article",
+      "headline": art.title,
+      "description": art.summary,
+      "author": {
+        "@type": "Organization",
+        "name": "Love. Sağlık ve Ürün Standartları Masası",
+        "url": "https://loveeroticshop.com/hakkimizda"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Love Erotik & Seks Shop Eskişehir",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://loveeroticshop.com/test.png"
+        }
+      },
+      "datePublished": art.date,
+      "dateModified": art.date,
+      "mainEntityOfPage": `https://loveeroticshop.com/rehber/${art.slug}`
+    });
+  }
+
+  if (opts.faq && Array.isArray(opts.faq)) {
+    schemaGraph.push({
+      "@type": "FAQPage",
+      "mainEntity": opts.faq.map((item: any) => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.a
+        }
+      }))
     });
   }
 
@@ -952,6 +1035,9 @@ ${opts.noChrome ? body : `
         <a href="/magaza?filter=bestsellers" data-nav="/magaza?filter=bestsellers" class="mm-apple-link" style="--i: 3">
           <span>${C.lang === 'tr' ? 'Çok Satanlar' : 'Bestsellers'}</span>
         </a>
+        <a href="/rehber" data-nav="/rehber" class="mm-apple-link" style="--i: 3.5">
+          <span>${C.lang === 'tr' ? 'Rehber & Sağlık' : 'Guides & Health'}</span>
+        </a>
         <a href="/hakkimizda" data-nav="/hakkimizda" class="mm-apple-link" style="--i: 4">
           <span>${tr('nav.about')}</span>
         </a>
@@ -1022,6 +1108,7 @@ ${body}
     </div>
     <nav class="foot-links">
       <a href="/magaza">${tr('foot.all')}</a>
+      <a href="/rehber">${C.lang === 'en' ? 'Guides' : 'Rehber & Sağlık'}</a>
       <a href="/hakkimizda">${tr('foot.about')}</a>
       <a href="/hakkimizda#gizlilik">${tr('foot.discreet')}</a>
       <a href="/hakkimizda#iade">${tr('foot.returns')}</a>
@@ -1238,11 +1325,31 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     </form>
   </div>
 </section>`;
+  const homeFaqs = [
+    {
+      q: "Eskişehir içi kurye teslimatı ne kadar sürede ulaşır?",
+      a: "Tepebaşı, Odunpazarı ve tüm Eskişehir merkez mahallelerine siparişleriniz özel gizli kuryemiz ile 2 ila 3 saat içerisinde doğrudan adresinize teslim edilir."
+    },
+    {
+      q: "Paketlemede sipariş içeriği veya firma adı belli olur mu?",
+      a: "%100 çift katlı koruyucu, dışarıdan içi görünmeyen mühürlü nötr ambalaj kullanılır. Paketin üzerinde 'erotik shop', 'seks shop' veya ürün adı yazmaz."
+    },
+    {
+      q: "Banka ve kredi kartı ekstresinde ne yazar?",
+      a: "Ödeme dökümünde cinsel sağlık veya yetişkin mağazası çağrışımı yapan hiçbir ibare yer almaz, standart nötr ticari unvan görünür."
+    },
+    {
+      q: "Mağazadan elden teslim alabilir miyim?",
+      a: "Evet. İsmet İnönü-1 Caddesi Ilgaz İş Hanı Kat:1 Daire:2 adresindeki mağazamızı ziyaret ederek ürünleri inceleyip elden teslim alabilirsiniz."
+    }
+  ];
+
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'LOVE. — Premium Adult Store' : 'Love Seks Shop & Erotik Shop Eskişehir | %100 Gizli Teslimat', html, {
     description: C.lang === 'en'
       ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery in Turkey.'
-      : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.'
+      : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.',
+    faq: homeFaqs
   }, C));
 }
 
@@ -1289,7 +1396,7 @@ function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: 
   const pageTitle = p ? p.name : (C.lang === 'en' ? 'Product' : 'Ürün');
   const desc = p ? (p.desc || p.name) : undefined;
   const ogImage = p ? p.image : undefined;
-  const canonical = p ? `https://loveshop.com.tr/urun/${p.slug}` : undefined;
+  const canonical = p ? `https://loveeroticshop.com/urun/${p.slug}` : undefined;
   const html = `<div id="product-root"><div class="spinner"></div></div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(pageTitle, html, { product: p, description: desc, ogImage, canonical }, C));
@@ -1521,6 +1628,135 @@ function pageProfile(req: http.IncomingMessage, res: http.ServerResponse) {
     'Expires': '0'
   });
   res.end(layout(tr('profile.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/hesap">${tr('account.title')}</a> / ${tr('profile.title')}</div><h1>${tr('profile.title')}</h1></div><div class="acc-layout" id="profile-root"><div class="spinner"></div></div>`, {}, C));
+}
+
+
+/* ---------------- EEAT Guide Pages ---------------- */
+function pageGuides(req: http.IncomingMessage, res: http.ServerResponse) {
+  const C = pageCtx(req);
+  const guides = GUIDES;
+  const html = `
+<div class="rich">
+  <div class="guide-breadcrumbs">
+    <a href="/">Ana Sayfa</a> <span>/</span> <span class="current">Rehber & Cinsel Sağlık</span>
+  </div>
+  <span class="eyebrow">BİLGİ & UZMANLIK MERKEZİ (EEAT)</span>
+  <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1;margin:12px 0 16px;">Rehber & Cinsel Sağlık</h1>
+  <p style="font-size:16px;line-height:1.7;max-width:700px;color:var(--muted)">Eskişehir Love Shop uzmanları tarafından hazırlanan; doğru ürün seçimi, medikal standartlar, geciktirici ve kayganlaştırıcı rehberleri, gizli paketleme ve ürün hijyeni hakkında kapsamlı makaleler.</p>
+
+  <div class="guide-grid">
+    ${guides.map(g => `
+      <a href="/rehber/${g.slug}" class="guide-card">
+        <div>
+          <span class="guide-card-tag">${esc(g.category)}</span>
+          <h2 class="guide-card-title">${esc(g.title)}</h2>
+          <p class="guide-card-desc">${esc(g.summary)}</p>
+        </div>
+        <div class="guide-card-meta">
+          <span>${esc(g.readTime)} · ${g.date}</span>
+          <span class="guide-card-arrow">
+            Rehberi Oku
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </span>
+        </div>
+      </a>
+    `).join('')}
+  </div>
+
+  <div class="banner rv" style="margin-top:40px;text-align:center;position:relative;z-index:1;isolation:isolate;">
+    <h2 style="margin:0 auto;position:relative;z-index:2;">Eskişehir İçi 2-3 Saatte Kapınızda</h2>
+    <p style="margin:14px auto 28px;position:relative;z-index:2;color:var(--muted)">Aklınıza takılan tüm sorular için WhatsApp danışma hattımızdan %100 gizlilik garantisiyle bilgi alabilirsiniz.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:10;">
+      <a href="/magaza" class="btn btn-primary" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">Tüm Orijinal Ürünler</a>
+      <a href="${esc(db.settings.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener noreferrer" class="btn btn-wa" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">WhatsApp Danışma Hattı</a>
+    </div>
+  </div>
+</div>`;
+
+  const faqs = guides.flatMap(g => g.faqs).slice(0, 5);
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(layout('Rehber & Cinsel Sağlık — Uzman Bilgi ve Gizli Teslimat', html, {
+    description: "Eskişehir cinsel sağlık ve yetişkin ürünleri rehberi. Geciktirici kullanımı, kayganlaştırıcı seçimi, gizli paketleme ve hijyen standartları.",
+    breadcrumbs: [
+      { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+      { name: 'Rehber & Cinsel Sağlık', url: 'https://loveeroticshop.com/rehber' }
+    ],
+    faq: faqs
+  }, C));
+}
+
+function pageGuideDetail(req: http.IncomingMessage, res: http.ServerResponse, slug: string) {
+  const C = pageCtx(req);
+  const guide = GUIDES.find(g => g.slug === slug);
+  if (!guide) {
+    res.writeHead(302, { Location: '/rehber' });
+    return res.end();
+  }
+
+  const html = `
+<div class="rich">
+  <div class="guide-breadcrumbs">
+    <a href="/">Ana Sayfa</a> <span>/</span> <a href="/rehber">Rehber</a> <span>/</span> <span class="current">${esc(guide.title)}</span>
+  </div>
+
+  <div class="guide-meta-pill">${esc(guide.category)} &bull; ${esc(guide.readTime)}</div>
+
+  <h1 style="font-family:var(--font-display);font-size:clamp(28px,3.8vw,46px);line-height:1.15;margin:8px 0 20px;">${esc(guide.title)}</h1>
+
+  <div class="guide-author-badge">
+    <div class="guide-author-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div style="color:var(--text);font-weight:600;">Love. Sağlık ve Ürün Standartları Masası</div>
+      <div style="font-size:12px;">Medikal İçerik ve Yerel Teslimat Denetimi &bull; Güncelleme: ${guide.date}</div>
+    </div>
+  </div>
+
+  <div class="guide-body" style="font-size:15.5px;line-height:1.75;">
+    ${guide.contentHtml}
+  </div>
+
+  ${guide.tags && guide.tags.length > 0 ? `
+    <div class="guide-tags-row">
+      ${guide.tags.map(t => `<span class="guide-tag">#${esc(t)}</span>`).join('')}
+    </div>
+  ` : ''}
+
+  ${guide.faqs && guide.faqs.length > 0 ? `
+    <div class="guide-faq-section">
+      <h2 style="font-family:var(--font-display);margin-bottom:16px;">Sıkça Sorulan Sorular</h2>
+      ${guide.faqs.map(f => `
+        <div class="guide-faq-item">
+          <h3 class="guide-faq-q">${esc(f.q)}</h3>
+          <p class="guide-faq-a">${esc(f.a)}</p>
+        </div>
+      `).join('')}
+    </div>
+  ` : ''}
+
+  <div class="banner rv" style="margin-top:44px;text-align:center;position:relative;z-index:1;isolation:isolate;">
+    <h2 style="margin:0 auto;position:relative;z-index:2;">Orijinal ve Güvenilir Ürünleri Keşfedin</h2>
+    <p style="margin:14px auto 28px;position:relative;z-index:2;color:var(--muted)">Eskişehir içi 2-3 saatte özel kurye veya tüm Türkiye'ye %100 gizli kargo ile sipariş verin.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:10;">
+      <a href="/magaza" class="btn btn-primary" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">Kataloğu İncele</a>
+      <a href="${esc(db.settings.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener noreferrer" class="btn btn-wa" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">WhatsApp Sipariş & Destek</a>
+    </div>
+  </div>
+</div>`;
+
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(layout(`${guide.title} — Love Rehber`, html, {
+    description: guide.summary,
+    canonical: `https://loveeroticshop.com/rehber/${guide.slug}`,
+    breadcrumbs: [
+      { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+      { name: 'Rehber', url: 'https://loveeroticshop.com/rehber' },
+      { name: guide.title, url: `https://loveeroticshop.com/rehber/${guide.slug}` }
+    ],
+    article: guide,
+    faq: guide.faqs
+  }, C));
 }
 
 function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -2935,16 +3171,80 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       }
       
       if (pathname === '/robots.txt') {
-        res.setHeader('Content-Type', 'text/plain');
-        return res.end("User-agent: *\nDisallow: /admin\nDisallow: /api/\nSitemap: https://loveshop.com.tr/sitemap.xml\n");
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        return res.end(`User-agent: *
+Allow: /
+Allow: /magaza
+Allow: /urun/
+Allow: /rehber
+Allow: /rehber/
+Allow: /hakkimizda
+Allow: /iletisim
+Allow: /css/
+Allow: /js/
+Allow: /assets/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /sepet
+Disallow: /odeme
+Disallow: /hesap
+Disallow: /profil
+
+Sitemap: https://loveeroticshop.com/sitemap.xml
+`);
       }
       if (pathname === '/sitemap.xml') {
-        res.setHeader('Content-Type', 'application/xml');
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        const host = req.headers.host || 'loveeroticshop.com';
+        const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
+        const baseUrl = host.includes('localhost') ? `${proto}://${host}` : 'https://loveeroticshop.com';
+        const today = new Date().toISOString().split('T')[0];
+
+        const staticUrls = [
+          { loc: `${baseUrl}/`, priority: '1.0', changefreq: 'daily' },
+          { loc: `${baseUrl}/magaza`, priority: '0.9', changefreq: 'daily' },
+          { loc: `${baseUrl}/rehber`, priority: '0.9', changefreq: 'weekly' },
+          { loc: `${baseUrl}/hakkimizda`, priority: '0.7', changefreq: 'monthly' },
+          { loc: `${baseUrl}/iletisim`, priority: '0.7', changefreq: 'monthly' },
+          { loc: `${baseUrl}/gizlilik-politikasi`, priority: '0.5', changefreq: 'monthly' },
+          { loc: `${baseUrl}/kullanim-kosullari`, priority: '0.5', changefreq: 'monthly' }
+        ];
+
+        const catUrls = allCategories().map((c: any) => ({
+          loc: `${baseUrl}/magaza?kategori=${encodeURIComponent(c.slug)}`,
+          priority: '0.85',
+          changefreq: 'weekly'
+        }));
+
+        const guideUrls = GUIDES.map(g => ({
+          loc: `${baseUrl}/rehber/${g.slug}`,
+          priority: '0.85',
+          changefreq: 'weekly',
+          lastmod: g.date
+        }));
+
+        const prodUrls = (db.products || []).map((p: any) => ({
+          loc: `${baseUrl}/urun/${esc(p.slug || p.id)}`,
+          priority: '0.8',
+          changefreq: 'daily',
+          lastmod: today,
+          image: p.image,
+          name: p.name
+        }));
+
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://loveshop.com.tr/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
-  <url><loc>https://loveshop.com.tr/magaza</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  ${db.products.map((p: any) => `<url><loc>https://loveshop.com.tr/urun/${esc(p.slug)}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`).join('')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${staticUrls.map(u => `  <url><loc>${u.loc}</loc><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${catUrls.map(u => `  <url><loc>${u.loc}</loc><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${guideUrls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${prodUrls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>${u.image ? `
+    <image:image><image:loc>${esc(u.image)}</image:loc><image:title>${esc(u.name)}</image:title></image:image>` : ''}
+  </url>`).join('\n')}
 </urlset>`;
         return res.end(sitemap);
       }
@@ -2963,6 +3263,9 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       if (pathname === '/kayit') return pageRegister(req, res);
       if (pathname === '/hesap') return pageAccount(req, res);
       if (pathname === '/profil') return pageProfile(req, res);
+      if (pathname === '/rehber') return pageGuides(req, res);
+      const guideMatch = pathname.match(/^\/rehber\/([^/]+)$/);
+      if (guideMatch) return pageGuideDetail(req, res, decodeURIComponent(guideMatch[1]));
       if (pathname === '/hakkimizda') return pageAbout(req, res);
       if (pathname === '/iletisim') return pageContact(req, res);
       if (pathname === '/admin' || pathname === '/admin/login') return pageAdmin(req, res);

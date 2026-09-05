@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Allow: /magaza
+Allow: /urun/
+Allow: /rehber
+Allow: /rehber/
+Allow: /hakkimizda
+Allow: /iletisim
+Allow: /css/
+Allow: /js/
+Allow: /assets/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /sepet
+Disallow: /odeme
+Disallow: /hesap
+Disallow: /profil
+
+Sitemap: https://loveeroticshop.com/sitemap.xml
