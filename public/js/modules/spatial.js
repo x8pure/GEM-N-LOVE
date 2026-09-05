@@ -50,10 +50,10 @@ export function initTiltPhysics() {
 export function getProductSpecs(prod) {
   if (Array.isArray(prod.highlights) && prod.highlights.length) {
     const icons = [
-      '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-      '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
-      '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
-      '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>'
+      '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>',
+      '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>',
+      '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>',
+      '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>'
     ];
     return prod.highlights.slice(0, 4).map((text, i) => ({
       icon: icons[i % icons.length],
@@ -64,53 +64,118 @@ export function getProductSpecs(prod) {
   const cat = String(prod.category || '').toLowerCase();
   const name = String(prod.name || '').toLowerCase();
 
-  // Electronic / Vibrators / Masturbators / Dolls
-  if (cat.includes('vibrator') || cat.includes('masturbator') || cat.includes('vajina') || cat.includes('sisme') || name.includes('vibratör') || name.includes('şarjlı') || name.includes('motor')) {
+  // Electronic / Vibrators / Masturbators / Dolls / Rechargeable
+  if (cat.includes('vibrator') || cat.includes('masturbator') || cat.includes('vajina') || cat.includes('sisme') || name.includes('vibratör') || name.includes('şarjlı') || name.includes('motor') || name.includes('masaj')) {
     return [
-      { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Medical Silicone' : '%100 Medikal Silikon' },
-      { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'IPX7 Waterproof' : 'IPX7 Su Geçirmez' },
-      { icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', text: LANG === 'en' ? 'Magnetic USB Charge' : 'Manyetik USB Şarj' },
-      { icon: '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>', text: LANG === 'en' ? '<40dB Whisper Motor' : '<40dB Fısıltı Motoru' }
+      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? 'Medical Silicone' : '%100 Medikal Silikon' },
+      { icon: '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>', text: LANG === 'en' ? 'IPX7 Waterproof' : 'IPX7 Su Geçirmez' },
+      { icon: '<rect x="4" y="6.5" width="13" height="11" rx="2.5"/><path d="M20 10v4M10.5 9.5 9 12h3.5l-1.5 2.5"/>', text: LANG === 'en' ? 'Magnetic Fast Charge' : 'Manyetik Hızlı Şarj' },
+      { icon: '<path d="M3 12h2M7.5 8v8M12 5v14M16.5 8v8M21 12h-2"/>', text: LANG === 'en' ? '<40dB Whisper Motor' : '<40dB Fısıltı Motoru' }
     ];
   }
 
-  // Cosmetics / Oils / Lubricants / Sprays / Care
-  if (cat.includes('kozmetik') || cat.includes('saglik') || name.includes('jel') || name.includes('yağ') || name.includes('sprey') || name.includes('krem') || name.includes('lube')) {
+  // Cosmetics / Oils / Lubricants / Sprays / Care / Gels
+  if (cat.includes('kozmetik') || cat.includes('saglik') || name.includes('jel') || name.includes('yağ') || name.includes('sprey') || name.includes('krem') || name.includes('lube') || name.includes('stag') || name.includes('geciktirici')) {
     return [
-      { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Dermatologically Tested' : 'Dermatolojik Test Edildi' },
-      { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'Water Based & Safe pH' : 'Su Bazlı & Güvenli pH' },
-      { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', text: LANG === 'en' ? 'Condom & Skin Safe' : 'Cilt & Prezervatif Uyumlu' },
-      { icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>', text: LANG === 'en' ? 'Stain Free & Easy Clean' : 'Leke Bırakmaz & Kolay Temizlenir' }
+      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? 'Dermatologically Tested' : 'Dermatolojik Onaylı' },
+      { icon: '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>', text: LANG === 'en' ? 'Skin-Friendly Formula' : 'Ciltle Uyumlu Formül' },
+      { icon: '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>', text: LANG === 'en' ? 'Fast & Long-Lasting' : 'Hızlı & Uzun Etki' },
+      { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Stain-Free & Clean' : 'Leke Bırakmaz & Temiz' }
     ];
   }
 
   // Lingerie / Costume / Fantasy
   if (cat.includes('fantezi') || cat.includes('fantasy') || cat.includes('kostum') || cat.includes('giyim') || name.includes('çorap') || name.includes('gecelik') || name.includes('deri') || name.includes('dantel')) {
     return [
-      { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', text: LANG === 'en' ? 'Soft Touch Fabric' : 'Hassas & Yumuşak Doku' },
-      { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? 'Flexible Ergonomic Fit' : 'Esnek & Rahat Kalıp' },
-      { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? 'Breathable Textile' : 'Nefes Alan Kumaş' },
-      { icon: '<polyline points="20 6 9 17 4 12"/>', text: LANG === 'en' ? 'Premium Handcraft' : 'Kaliteli & Dayanıklı Dikiş' }
+      { icon: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/>', text: LANG === 'en' ? 'Soft Touch Fabric' : 'Hassas & İpeksi Doku' },
+      { icon: '<path d="M7 4H4v3M20 7V4h-3M4 17v3h3M17 20h3v-3"/>', text: LANG === 'en' ? 'Ergonomic Elastic Fit' : 'Esnek & Rahat Kalıp' },
+      { icon: '<path d="M12 4v4M7 7l3 3M17 7l-3 3M4 16c2.5-2 5.5-2 8 0s5.5 2 8 0"/>', text: LANG === 'en' ? 'Breathable Fabric' : 'Nefes Alan Kumaş' },
+      { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Reinforced Stitching' : 'Dayanıklı Özel Dikiş' }
     ];
   }
 
   // Dildos / Anal / Non-electric Body Safe Products
   if (cat.includes('dildo') || cat.includes('anal') || cat.includes('knot')) {
     return [
-      { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? '%100 Body-Safe Material' : '%100 Vücut Dostu Materyal' },
-      { icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', text: LANG === 'en' ? '100% Waterproof' : '%100 Su Geçirmez' },
-      { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', text: LANG === 'en' ? 'Seamless & Hypoallergenic' : 'Pürüzsüz & Hipoalerjenik' },
-      { icon: '<polyline points="20 6 9 17 4 12"/>', text: LANG === 'en' ? 'Easy to Sanitize' : 'Kolay Sterilize Edilir' }
+      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? 'Body-Safe Material' : '%100 Vücut Dostu' },
+      { icon: '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>', text: LANG === 'en' ? '100% Waterproof' : '%100 Su Geçirmez' },
+      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="M7.5 12h9M12 7.5v9"/>', text: LANG === 'en' ? 'Smooth & Hypoallergenic' : 'Pürüzsüz & Hipoalerjenik' },
+      { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Easy Sterilization' : 'Kolay Temizlenebilir' }
     ];
   }
 
   // Universal Default Trust & Quality Specs
   return [
-    { icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', text: LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı' },
-    { icon: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>', text: LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme' },
-    { icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', text: LANG === 'en' ? 'Fast 24h Dispatch' : '24 Saatte Hızlı Kargo' },
-    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', text: LANG === 'en' ? 'Premium Quality Standard' : 'Yüksek Kalite Standardı' }
+    { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı' },
+    { icon: '<rect x="3.5" y="6.5" width="17" height="13" rx="2.5"/><path d="M3.5 11h17M12 6.5v13"/>', text: LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme' },
+    { icon: '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>', text: LANG === 'en' ? 'Fast 24h Dispatch' : '24 Saatte Hızlı Kargo' },
+    { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Premium Grade Standard' : 'Yüksek Kalite Standardı' }
   ];
+}
+
+// Compute Dynamic Context-Aware Highlight Badge (No generic "Orijinal Formül" on devices/dolls)
+export function getSpatialHighlightBadge(p) {
+  const cat = String(p.category || '').toLowerCase();
+  const name = String(p.name || '').toLowerCase();
+  const desc = String(p.description || '').toLowerCase();
+  const tags = Array.isArray(p.tags) ? p.tags.join(' ').toLowerCase() : '';
+  const allText = `${cat} ${name} ${desc} ${tags}`;
+
+  // 1. Realistic / Dolls / Silicone Torso / Pocket Masturbator
+  if (
+    cat.includes('vajina') || cat.includes('sisme') || cat.includes('masturbator') ||
+    allText.includes('realistik') || allText.includes('manken') || allText.includes('vajina') ||
+    allText.includes('mastürbatör') || allText.includes('cep tipi') || allText.includes('tpe')
+  ) {
+    return LANG === 'en' ? '★ Ultra-Realistic Texture' : '★ Gerçekçi Medikal Doku';
+  }
+
+  // 2. Electronic / Vibrator / Rechargeable / Massager
+  if (
+    cat.includes('vibrator') || allText.includes('vibratör') || allText.includes('şarjlı') ||
+    allText.includes('titreşimli') || allText.includes('motor') || allText.includes('masaj') ||
+    allText.includes('emme') || allText.includes('klitoris')
+  ) {
+    return LANG === 'en' ? '★ Whisper-Quiet Motor' : '★ Fısıltı Sessiz Motor';
+  }
+
+  // 3. Cosmetics / Gels / Sprays / Creams / Delay / Performance
+  if (
+    cat.includes('kozmetik') || cat.includes('saglik') || cat.includes('kayganlastirici') ||
+    allText.includes('sprey') || allText.includes('krem') || allText.includes('jel') ||
+    allText.includes('damla') || allText.includes('geciktirici') || allText.includes('lube') ||
+    allText.includes('yağ') || allText.includes('stag')
+  ) {
+    if (allText.includes('geciktirici') || allText.includes('stag') || allText.includes('performans')) {
+      return LANG === 'en' ? '★ Maximum Potency' : '★ Maksimum Etki';
+    }
+    return LANG === 'en' ? '★ Verified Formula' : '★ Orijinal Formül';
+  }
+
+  // 4. Lingerie / Costume / Fantasy Wear
+  if (
+    cat.includes('fantezi') || cat.includes('fantasy') || cat.includes('kostum') ||
+    cat.includes('giyim') || allText.includes('dantel') || allText.includes('gecelik') ||
+    allText.includes('çorap') || allText.includes('babydoll')
+  ) {
+    return LANG === 'en' ? '★ Soft Silk Fit' : '★ İpeksi Esnek Kalıp';
+  }
+
+  // 5. BDSM / Leather / Restraints
+  if (
+    cat.includes('bdsm') || allText.includes('kelepçe') || allText.includes('deri') ||
+    allText.includes('kırbaç') || allText.includes('harness')
+  ) {
+    return LANG === 'en' ? '★ Reinforced Durability' : '★ Güçlendirilmiş Materyal';
+  }
+
+  // 6. Dildo / Anal / Non-electric Body-Safe
+  if (cat.includes('dildo') || cat.includes('anal') || allText.includes('dildo') || allText.includes('anal')) {
+    return LANG === 'en' ? '★ 100% Body-Safe' : '★ %100 Vücut Dostu';
+  }
+
+  // 7. General / Editorial Default
+  return LANG === 'en' ? '★ Editor\'s Choice' : '★ Editörün Seçimi';
 }
 
 // Compute Dynamic Category & Material Aware Care/Hygiene Guide
@@ -225,6 +290,8 @@ export function getSpatialCareGuide(p) {
 
 let activeOriginCard = null;
 let activeZoomRequestId = 0;
+let activePlaylist = [];
+let activeCategory = null;
 
 export async function openSpatialCardZoom(productIdOrSlug, originCard) {
   if (!productIdOrSlug) return;
@@ -234,6 +301,15 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
   const reqId = ++activeZoomRequestId;
   activeOriginCard = originCard;
   document.body.style.overflow = 'hidden';
+  
+  // Conditionally show/hide outer arrows
+  const prevBtn = $('#spatial-outer-prev');
+  const nextBtn = $('#spatial-outer-next');
+  if (prevBtn && nextBtn) {
+    // We can always show arrows now because it pulls from category, unless we have no playlist yet?
+    // Let's just always show them if we are in spatial view, except if we literally have 0 siblings.
+    // We will update their visibility after fetching.
+  }
 
   // Morph origin card if available
   if (originCard) {
@@ -242,14 +318,20 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     originCard.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
   }
 
-  stage.innerHTML = `
-    <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">✕</button>
-    <div style="display:flex;align-items:center;justify-content:center;height:460px;width:100%;">
-      <div class="spinner"></div>
-    </div>
-  `;
-  overlay.classList.add('open');
-  overlay.setAttribute('aria-hidden', 'false');
+  const isAlreadyOpen = overlay.classList.contains('open') && stage.querySelector('.spatial-grid');
+  if (isAlreadyOpen) {
+    const grid = stage.querySelector('.spatial-grid');
+    if (grid) grid.style.opacity = '0.3';
+  } else {
+    stage.innerHTML = `
+      <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">✕</button>
+      <div style="display:flex;align-items:center;justify-content:center;height:460px;width:100%;">
+        <div class="spinner"></div>
+      </div>
+    `;
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
 
   try {
     const cleanKey = String(productIdOrSlug || '').replace(/^\/urun\//, '').replace(/\/+$/, '').trim();
@@ -257,6 +339,33 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     if (reqId !== activeZoomRequestId) return;
     const p = (res && res.product) ? res.product : res;
     if (!p || !p.id) throw new Error('Ürün bulunamadı');
+    
+    // Auto-fetch playlist for infinite browsing
+    if (p.category && activeCategory !== p.category) {
+      try {
+        const catRes = await api('/api/products?limit=100&cat=' + encodeURIComponent(p.category));
+        if (catRes && catRes.products) {
+          activePlaylist = catRes.products;
+          activeCategory = p.category;
+        }
+      } catch (e) { console.error('Playlist fetch error:', e); }
+    } else if (!p.category) {
+      activePlaylist = [];
+      activeCategory = null;
+    }
+    
+    // Update outer arrows visibility based on playlist length
+    const prevBtn = $('#spatial-outer-prev');
+    const nextBtn = $('#spatial-outer-next');
+    if (prevBtn && nextBtn) {
+      if (activePlaylist && activePlaylist.length > 1) {
+        prevBtn.style.display = 'flex';
+        nextBtn.style.display = 'flex';
+      } else {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+      }
+    }
 
     const inStock = p.stock > 0;
     const stockBadge = inStock
@@ -268,13 +377,23 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     const descLead = p.description ? `<p class="spatial-desc">${esc(p.description)}</p>` : '';
     const fullDesc = p.longDescription || p.description || '';
+    const activeSpecs = getProductSpecs(p);
     const careGuide = getSpatialCareGuide(p);
+    const highlightBadge = getSpatialHighlightBadge(p);
+    
+    let mainTitle = p.name;
+    let subTitle = '';
+    if (p.name.includes(' - ')) {
+      const parts = p.name.split(' - ');
+      mainTitle = parts[0];
+      subTitle = parts.slice(1).join(' - ');
+    }
 
     stage.innerHTML = `
       <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
-      <div class="spatial-grid">
+      <div class="spatial-grid ${isAlreadyOpen ? 'crossfade-in' : ''}">
         <div class="spatial-visual-hero">
           <div class="spatial-ambient-glow" id="spatial-ambient-glow"></div>
           <img id="spatial-main-image" src="${imgSrc(p.image)}" alt="${esc(p.name)}">
@@ -300,82 +419,53 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
         <div class="spatial-content-pane">
           <div class="spatial-scrollable-body">
-            <div class="spatial-top-meta">
-              <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat" title="${catName(p.category, p.categoryName)}">
+            <div class="spatial-top-meta-editorial">
+              <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat-editorial" title="${catName(p.category, p.categoryName)}">
                 <span>${catName(p.category, p.categoryName)}</span>
+              </a>
+              <div class="spatial-stock-whisper">
+                <span class="pulse-indicator ${inStock ? 'live-green' : 'live-red'}"></span>
+                <span>${inStock ? (LANG === 'en' ? 'In Stock' : 'Stokta') : (LANG === 'en' ? 'Out of Stock' : 'Tükendi')}</span>
+              </div>
+            </div>
+
+            <div class="spatial-title-editorial">
+              <h1 class="spatial-title-main">${esc(mainTitle)}</h1>
+              ${subTitle ? `<span class="spatial-title-sub">${esc(subTitle)}</span>` : ''}
+            </div>
+
+            <div class="spatial-editorial-price-box">
+              <div class="spatial-price-group-ed">
+                <span class="spatial-price-ed">${fmt(p.price)}</span>
+                ${p.oldPrice ? `<span class="spatial-price-old-ed">${fmt(p.oldPrice)}</span>` : ''}
+              </div>
+              <div class="spatial-highlight-whisper">
+                ${esc(highlightBadge)}
+              </div>
+            </div>
+
+            <!-- 2026 Swiss Typographic Spec-List (Option 3) -->
+            <div class="spatial-spec-deck spatial-swiss-list">
+              ${activeSpecs.slice(0, 4).map((spec) => `
+                <div class="spatial-swiss-item">
+                  <div class="spatial-swiss-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${spec.icon}</svg>
+                  </div>
+                  <span>${esc(spec.text)}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Unified Editorial Guarantee Row -->
+            <div class="spatial-trust-ribbon">
+              <div class="spatial-trust-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>${LANG === 'en' ? 'Original Product · Discreet Packaging' : 'Orijinal Ürün · Gizli Paketleme'}</span>
+              </div>
+              <a href="/urun/${p.slug || p.id}" class="spatial-all-features-link">
+                <span>${LANG === 'en' ? 'Full Details' : 'Tüm Detaylar'}</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
               </a>
-              <div class="spatial-rating-row">
-                <span class="rating-stars">${stars(p.rating || 5)}</span>
-                <span class="count">(${p.reviewCount || 0})</span>
-              </div>
-            </div>
-
-            <h1 class="spatial-title">${esc(p.name)}</h1>
-
-            <div class="spatial-price-cluster">
-              <div class="spatial-price-values">
-                <span class="spatial-price">${fmt(p.price)}</span>
-                ${p.oldPrice ? `<span class="spatial-price-old">${fmt(p.oldPrice)}</span>` : ''}
-              </div>
-              <div class="spatial-live-presence">
-                <span class="pulse-indicator ${inStock ? 'live-green' : 'live-red'}"></span>
-                <span>${inStock ? (LANG === 'en' ? 'In Stock · 24h Dispatch' : 'Stokta · 24s Kargo') : (LANG === 'en' ? 'Out of Stock' : 'Tükendi')}</span>
-              </div>
-            </div>
-            
-            <div class="spatial-trust-badge" style="font-size: 11.5px; color: var(--muted); margin-top: 10px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; font-weight: 500;">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <span>${LANG === 'en' ? '100% Discreet Packaging · Anonymous Delivery' : '%100 Gizli Paketleme · Anonim Teslimat'}</span>
-            </div>
-
-            <!-- Interactive Accordion: Single Elegant 'Ürün Bilgileri' Section -->
-            <div class="spatial-accordion-group" id="spatial-details">
-              <div class="spatial-acc-item">
-                <button type="button" class="spatial-acc-btn" aria-expanded="false">
-                  <span class="spatial-acc-title">${LANG === 'en' ? 'Product Information & Guides' : 'Ürün Bilgileri & Detaylar'}</span>
-                  <span class="spatial-acc-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </span>
-                </button>
-                <div class="spatial-acc-body">
-                  <div class="spatial-acc-content">
-                    <div class="spatial-acc-inner">
-                      <!-- 1. Description & Specs -->
-                      <div class="spatial-info-block">
-                        <div class="spatial-info-lead">${esc(fullDesc)}</div>
-                      </div>
-                      <!-- 2. Discreet Packaging & Shipping Trust Badge -->
-                      <div class="spatial-info-subcard">
-                        <div class="spatial-info-subhead">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                          </svg>
-                          <span>${LANG === 'en' ? 'Discreet Packaging & Shipping Guarantee' : 'Gizli Paketleme & Kargo Güvencesi'}</span>
-                        </div>
-                        <p class="spatial-info-subtext">${LANG === 'en' ? 'All orders are shipped in 100% plain, sealed, opaque packaging with no logos, product names, or identifying labels. Your privacy is fully guaranteed. Credit card statements show a discreet merchant name. Shipped in 24 hours.' : 'Tüm siparişleriniz dışarıdan içeriği kesinlikle anlaşılamayan, üzerinde hiçbir logo veya marka ibaresi bulunmayan %100 gizli ve kilitli kutularda gönderilir. Kredi kartı ekstrenizde veya kargo fişinde ürün adı yazmaz. 24 saat içinde hızlı kargoya verilir.'}</p>
-                      </div>
-                      <!-- 3. Dynamic Category-Specific Usage, Care & Hygiene -->
-                      <div class="spatial-info-subcard">
-                        <div class="spatial-info-subhead">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            ${careGuide.icon}
-                          </svg>
-                          <span>${esc(careGuide.title)}</span>
-                        </div>
-                        <p class="spatial-info-subtext">${esc(careGuide.text)}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -387,7 +477,6 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
                 <span class="spatial-qty-val" id="spatial-qty-val">1</span>
                 <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
               </div>
-              <div class="spatial-pill-divider"></div>
               <button type="button" class="spatial-pill-cta" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''}>
                 <svg class="pill-bag-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -415,22 +504,38 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     const closeBtn = $('#spatial-stage-close', stage);
     const badgeCluster = $('.spatial-badge-cluster', stage);
     
-    // Gallery Switcher Function
+    // Gallery Switcher Function with Directional Kinetic Glide
     let activeImgIdx = 0;
-    const updateActiveImage = (newIdx) => {
+    const updateActiveImage = (newIdx, direction = 0) => {
       if (!hasMultipleImages) return;
       if (newIdx < 0) newIdx = productGallery.length - 1;
       if (newIdx >= productGallery.length) newIdx = 0;
+      if (newIdx === activeImgIdx && direction === 0) return;
+      
+      const prevIdx = activeImgIdx;
       activeImgIdx = newIdx;
       const targetImg = productGallery[activeImgIdx];
+      
       if (spatialMain && targetImg) {
-        spatialMain.style.opacity = '0.3';
-        spatialMain.style.transform = 'scale(0.96)';
+        const outShift = direction !== 0 ? (direction > 0 ? -28 : 28) : 0;
+        const inShift = direction !== 0 ? (direction > 0 ? 28 : -28) : 0;
+        
+        spatialMain.style.transition = 'transform 0.16s cubic-bezier(0.4, 0, 1, 1), opacity 0.16s ease';
+        spatialMain.style.opacity = '0.2';
+        spatialMain.style.transform = `translateX(${outShift}px) scale(0.95)`;
+        
         setTimeout(() => {
           spatialMain.src = imgSrc(targetImg);
+          spatialMain.style.transition = 'none';
+          spatialMain.style.transform = `translateX(${inShift}px) scale(0.95)`;
+          
+          // Force layout reflow
+          void spatialMain.offsetWidth;
+          
+          spatialMain.style.transition = 'transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease';
           spatialMain.style.opacity = '1';
-          spatialMain.style.transform = 'scale(1)';
-        }, 80);
+          spatialMain.style.transform = 'translateX(0) scale(1)';
+        }, 160);
       }
       $$('.spatial-dot', stage).forEach((dot, idx) => {
         dot.classList.toggle('active', idx === activeImgIdx);
@@ -544,21 +649,20 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
       const handleTouchEnd = () => {
         if (gestureMode === 'swipe') {
-          spatialMain.style.transition = 'transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease';
-          if (lastDeltaX < -45) {
-            // Swiped Left -> Next image
-            updateActiveImage(activeImgIdx + 1);
-          } else if (lastDeltaX > 45) {
-            // Swiped Right -> Prev image
-            updateActiveImage(activeImgIdx - 1);
+          if (lastDeltaX < -35) {
+            // Swiped Left -> Next image (moves from right to left)
+            updateActiveImage(activeImgIdx + 1, 1);
+          } else if (lastDeltaX > 35) {
+            // Swiped Right -> Prev image (moves from left to right)
+            updateActiveImage(activeImgIdx - 1, -1);
           } else {
+            spatialMain.style.transition = 'transform 0.24s cubic-bezier(0.16, 1, 0.3, 1)';
             spatialMain.style.transform = 'none';
+            setTimeout(() => {
+              spatialMain.style.transform = '';
+              spatialMain.style.transition = '';
+            }, 240);
           }
-          setTimeout(() => {
-            spatialMain.style.transform = '';
-            spatialMain.style.transition = '';
-            spatialMain.style.opacity = '1';
-          }, 240);
           gestureMode = null;
           lastDeltaX = 0;
           return;
@@ -644,13 +748,13 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       $('#spatial-nav-prev', stage)?.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        updateActiveImage(activeImgIdx - 1);
+        updateActiveImage(activeImgIdx - 1, -1);
       });
 
       $('#spatial-nav-next', stage)?.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        updateActiveImage(activeImgIdx + 1);
+        updateActiveImage(activeImgIdx + 1, 1);
       });
 
       $$('.spatial-dot', stage).forEach((dot) => {
@@ -658,7 +762,10 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
           e.preventDefault();
           e.stopPropagation();
           const idx = parseInt(dot.dataset.dotIdx, 10);
-          if (!isNaN(idx)) updateActiveImage(idx);
+          if (!isNaN(idx)) {
+            const dir = idx > activeImgIdx ? 1 : -1;
+            updateActiveImage(idx, dir);
+          }
         });
       });
     }
@@ -693,17 +800,34 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     $('#spatial-stage-close', stage)?.addEventListener('click', closeSpatialCardZoom);
 
-    // Accordion item expand / collapse toggle handlers
-    $$('.spatial-acc-btn', stage).forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const item = btn.closest('.spatial-acc-item');
-        if (item) {
-          const isOpen = item.classList.toggle('open');
-          btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    // Clicking 'Tüm Detaylar' navigates to product page
+    $('.spatial-all-features-link', stage)?.addEventListener('click', function(e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      
+      // Clean up the URL before navigating, so clicking 'Back' doesn't reopen modal
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete('modal');
+      cleanUrl.searchParams.delete('id');
+      cleanUrl.searchParams.delete('urun'); // just in case
+      window.history.replaceState({}, '', cleanUrl.toString());
+
+      const btn = this;
+      btn.classList.add('is-loading');
+      btn.style.pointerEvents = 'none';
+      const label = btn.querySelector('span');
+      if (label) label.textContent = LANG === 'en' ? 'Loading...' : 'Yükleniyor...';
+      const svg = btn.querySelector('svg');
+      if (svg) svg.style.display = 'none';
+      
+      // Fallback reset in case navigation is cancelled or bfcache restores it
+      setTimeout(() => {
+        if (document.body.contains(btn)) {
+          btn.classList.remove('is-loading');
+          btn.style.pointerEvents = '';
+          if (label) label.textContent = LANG === 'en' ? 'Full Details' : 'Tüm Detaylar';
+          if (svg) svg.style.display = '';
         }
-      });
+      }, 1500);
     });
 
     addBtn?.addEventListener('click', async (e) => {
@@ -711,15 +835,20 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       e.stopPropagation();
       if (!inStock) return;
       const targetPid = addBtn.dataset.productId || p.id;
+      const pillContainer = addBtn.closest('.spatial-dynamic-pill');
       if (targetPid) {
         addBtn.classList.add('is-loading');
-        await addToCart(targetPid, currentQty, 'standart', addBtn);
+        await addToCart(targetPid, currentQty, 'standart', null);
         addBtn.classList.remove('is-loading');
+        
+        if (pillContainer) pillContainer.classList.add('is-success');
         addBtn.classList.add('is-success');
         const ctaLabel = $('.pill-cta-label', addBtn);
         const originalLabel = ctaLabel ? ctaLabel.textContent : '';
         if (ctaLabel) ctaLabel.textContent = LANG === 'en' ? 'Added ✓' : 'Eklendi ✓';
+        
         setTimeout(() => {
+          if (pillContainer) pillContainer.classList.remove('is-success');
           addBtn.classList.remove('is-success');
           if (ctaLabel) ctaLabel.textContent = originalLabel;
         }, 1800);
@@ -728,8 +857,13 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('urun') !== (p.slug || p.id)) {
+      const wasAlreadyInModal = params.has('urun');
       params.set('urun', p.slug || p.id);
-      window.history.pushState({ modal: 'spatial', id: p.id }, '', window.location.pathname + '?' + params.toString());
+      if (wasAlreadyInModal) {
+        window.history.replaceState({ modal: 'spatial', id: p.id }, '', window.location.pathname + '?' + params.toString());
+      } else {
+        window.history.pushState({ modal: 'spatial', id: p.id }, '', window.location.pathname + '?' + params.toString());
+      }
     }
   } catch (err) {
     if (reqId !== activeZoomRequestId) return;
@@ -783,6 +917,18 @@ export function initSpatialAnimations() {
     if (urun) {
       openSpatialCardZoom(urun, null);
     } else {
+      closeSpatialCardZoom(true);
+    }
+  });
+
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted && $('#spatial-canvas-overlay')?.classList.contains('open')) {
+      closeSpatialCardZoom(true);
+    }
+  });
+
+  document.addEventListener('spa:navigated', () => {
+    if ($('#spatial-canvas-overlay')?.classList.contains('open')) {
       closeSpatialCardZoom(true);
     }
   });
@@ -848,8 +994,52 @@ export function initSpatialAnimations() {
     }
   });
 
-  // ESC key closes spatial modal
+  // Global outer arrow navigation logic (Smart Playlist)
+  const navigateToSibling = (direction) => {
+    if (!$('#spatial-canvas-overlay')?.classList.contains('open')) return;
+    if (!activePlaylist || activePlaylist.length < 2) return; // Need a playlist
+    
+    // Find current product in the playlist
+    const currentId = new URLSearchParams(window.location.search).get('urun') || new URLSearchParams(window.location.search).get('id');
+    if (!currentId) return;
+    
+    const currentIndex = activePlaylist.findIndex(p => p.slug === currentId || String(p.id) === String(currentId));
+    if (currentIndex === -1) return;
+    
+    let nextIndex = currentIndex + direction;
+    if (nextIndex < 0) nextIndex = activePlaylist.length - 1; // loop around
+    if (nextIndex >= activePlaylist.length) nextIndex = 0; // loop around
+    
+    const nextProduct = activePlaylist[nextIndex];
+    if (nextProduct) {
+      // Restore previous origin card styles before switching
+      if (activeOriginCard) {
+        activeOriginCard.style.opacity = '';
+        activeOriginCard.style.transform = '';
+      }
+      
+      const pid = nextProduct.slug || nextProduct.id;
+      if (pid) {
+        // Find if this new product happens to have a card in the DOM to act as the new origin
+        const potentialOrigin = document.querySelector(`.prod-card[data-slug="${pid}"], .prod-card[data-id="${pid}"]`);
+        openSpatialCardZoom(pid, potentialOrigin || null);
+      }
+    }
+  };
+
+  $('#spatial-outer-prev')?.addEventListener('click', (e) => {
+    e.stopPropagation(); // prevent overlay click
+    navigateToSibling(-1);
+  });
+  $('#spatial-outer-next')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navigateToSibling(1);
+  });
+
+  // ESC key and arrow keys
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeSpatialCardZoom();
+    if (e.key === 'ArrowLeft') navigateToSibling(-1);
+    if (e.key === 'ArrowRight') navigateToSibling(1);
   });
 }

@@ -1070,6 +1070,14 @@ ${body}
 
 <!-- Spatial Card Zoom / Morphing Canvas Modal (2026 E-Commerce Award Winner) -->
 <div class="spatial-canvas-overlay" id="spatial-canvas-overlay" aria-hidden="true">
+  <!-- Outer Navigation Arrows (Sonsuz Hızlı Gözat) -->
+  <button type="button" class="spatial-nav-arrow spatial-outer-prev" id="spatial-outer-prev" aria-label="Önceki Ürün">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" /></svg>
+  </button>
+  <button type="button" class="spatial-nav-arrow spatial-outer-next" id="spatial-outer-next" aria-label="Sonraki Ürün">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+  </button>
+
   <div class="spatial-card-stage" id="spatial-card-stage" role="dialog" aria-modal="true" aria-label="Product Showcase">
     <!-- Populated with FLIP spring animation by shop.js -->
   </div>

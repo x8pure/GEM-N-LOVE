@@ -1311,6 +1311,9 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
       // Close mobile menu if open
       $('#mobile-menu')?.classList.remove('open');
+      
+      // Dispatch event for modals/overlays to know navigation completed
+      document.dispatchEvent(new CustomEvent('spa:navigated'));
 
     } catch (err) {
       console.warn('Soft nav fallback:', err);
