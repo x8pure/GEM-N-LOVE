@@ -377,126 +377,557 @@
     });
   }
 
-  /* ================= DASHBOARD ================= */
+  /* ================= 2026 DRIBBBLE BENTO GRID & CHARTING ENGINE ================= */
+  function renderSparklineSvg(values, color = '#FF4D6D', width = 105, height = 36) {
+    if (!values || !values.length) {
+      return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><line x1="0" y1="${height/2}" x2="${width}" y2="${height/2}" stroke="${color}" stroke-opacity="0.3" stroke-dasharray="3 3"/></svg>`;
+    }
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = (max - min) || 1;
+    const pad = 4;
+    const pts = values.map((v, i) => {
+      const x = (i / (values.length - 1 || 1)) * width;
+      const y = height - pad - ((v - min) / range) * (height - pad * 2);
+      return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+    });
+
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[Math.min(pts.length - 1, i + 2)];
+      const cp1x = p1.x + (p2.x - p0.x) * 0.16;
+      const cp1y = p1.y + (p2.y - p0.y) * 0.16;
+      const cp2x = p2.x - (p3.x - p1.x) * 0.16;
+      const cp2y = p2.y - (p3.y - p1.y) * 0.16;
+      d += ` C ${Math.round(cp1x*10)/10} ${Math.round(cp1y*10)/10} ${Math.round(cp2x*10)/10} ${Math.round(cp2y*10)/10} ${p2.x} ${p2.y}`;
+    }
+
+    const areaD = `${d} L ${pts[pts.length - 1].x} ${height} L 0 ${height} Z`;
+    const gradId = 'spk-g-' + Math.random().toString(36).slice(2, 7);
+
+    return `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="overflow:visible">
+      <defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${color}" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="${color}" stop-opacity="0.0" />
+        </linearGradient>
+      </defs>
+      <path d="${areaD}" fill="url(#${gradId})" />
+      <path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="${pts[pts.length - 1].x}" cy="${pts[pts.length - 1].y}" r="3" fill="${color}" />
+    </svg>`;
+  }
+
+  function initSplineChart(containerEl, days30) {
+    let activeRange = 7;
+
+    function render() {
+      const data = days30.slice(-activeRange);
+      const values = data.map((d) => d.value);
+      const orders = data.map((d) => d.orders || 0);
+      const totalRev = values.reduce((a, b) => a + b, 0);
+      const totalOrd = orders.reduce((a, b) => a + b, 0);
+      const avgDaily = activeRange > 0 ? totalRev / activeRange : 0;
+      const maxVal = Math.max(...values, 100);
+      const peakIdx = values.indexOf(Math.max(...values));
+      const peakDay = data[peakIdx] || { label: '—', value: 0 };
+
+      const elRev = $('#sm-total-rev', containerEl);
+      const elAvg = $('#sm-daily-avg', containerEl);
+      const elPeak = $('#sm-peak-val', containerEl);
+      const elOrd = $('#sm-total-ord', containerEl);
+      if (elRev) elRev.textContent = fmt(totalRev);
+      if (elAvg) elAvg.textContent = fmt(avgDaily);
+      if (elPeak) elPeak.textContent = `${fmt(peakDay.value)} (${peakDay.label})`;
+      if (elOrd) elOrd.textContent = `${totalOrd} sipariş`;
+
+      const W = 800;
+      const H = 220;
+      const padTop = 20;
+      const padBottom = 32;
+      const padLeft = 14;
+      const padRight = 14;
+      const chartW = W - padLeft - padRight;
+      const chartH = H - padTop - padBottom;
+
+      const ceilMax = Math.ceil(maxVal * 1.18);
+      const pts = data.map((d, i) => {
+        const x = padLeft + (i / (data.length - 1 || 1)) * chartW;
+        const y = padTop + chartH - (d.value / ceilMax) * chartH;
+        return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, data: d };
+      });
+
+      let pathD = `M ${pts[0].x} ${pts[0].y}`;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[Math.max(0, i - 1)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(pts.length - 1, i + 2)];
+        const cp1x = p1.x + (p2.x - p0.x) * 0.18;
+        const cp1y = p1.y + (p2.y - p0.y) * 0.18;
+        const cp2x = p2.x - (p3.x - p1.x) * 0.18;
+        const cp2y = p2.y - (p3.y - p1.y) * 0.18;
+        pathD += ` C ${Math.round(cp1x*10)/10} ${Math.round(cp1y*10)/10} ${Math.round(cp2x*10)/10} ${Math.round(cp2y*10)/10} ${p2.x} ${p2.y}`;
+      }
+      const areaD = `${pathD} L ${pts[pts.length - 1].x} ${H - padBottom} L ${pts[0].x} ${H - padBottom} Z`;
+
+      const gridLines = [0, 0.33, 0.66, 1].map((p) => {
+        const y = padTop + chartH * (1 - p);
+        const val = Math.round(ceilMax * p);
+        return `
+        <line x1="${padLeft}" y1="${y}" x2="${W - padRight}" y2="${y}" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4 4" />
+        <text x="${padLeft}" y="${y - 4}" fill="currentColor" opacity="0.35" font-size="10" font-family="var(--font-display)">${val ? fmt(val).replace('₺','').trim() + ' ₺' : '0 ₺'}</text>`;
+      }).join('');
+
+      const step = activeRange === 30 ? 5 : (activeRange === 14 ? 2 : 1);
+      const xLabels = pts.filter((_, idx) => idx % step === 0 || idx === pts.length - 1).map((p) => `
+        <text x="${p.x}" y="${H - 8}" text-anchor="middle" fill="currentColor" opacity="0.5" font-size="11" font-weight="500">${p.data.label}</text>
+      `).join('');
+
+      const svgWrap = $('#chart-svg-target', containerEl);
+      if (!svgWrap) return;
+      svgWrap.innerHTML = `
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="spline-fill-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF4D6D" stop-opacity="0.38" />
+            <stop offset="65%" stop-color="#FF4D6D" stop-opacity="0.08" />
+            <stop offset="100%" stop-color="#FF4D6D" stop-opacity="0.0" />
+          </linearGradient>
+          <filter id="spline-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FF4D6D" flood-opacity="0.45" />
+          </filter>
+        </defs>
+        ${gridLines}
+        <path d="${areaD}" fill="url(#spline-fill-grad)" />
+        <path d="${pathD}" fill="none" stroke="#FF4D6D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#spline-glow)" />
+        ${xLabels}
+        <line id="chart-ch" x1="0" y1="${padTop}" x2="0" y2="${H - padBottom}" stroke="#FF4D6D" stroke-width="1.5" stroke-dasharray="3 3" opacity="0" />
+        <circle id="chart-marker-halo" cx="0" cy="0" r="10" fill="#FF4D6D" fill-opacity="0.25" opacity="0" />
+        <circle id="chart-marker" cx="0" cy="0" r="4.5" fill="#FFFFFF" stroke="#FF4D6D" stroke-width="2.5" opacity="0" />
+      </svg>
+      <div class="chart-tooltip" id="chart-tt"></div>`;
+
+      const svgEl = svgWrap.querySelector('svg');
+      const tt = $('#chart-tt', containerEl);
+      const ch = $('#chart-ch', containerEl);
+      const marker = $('#chart-marker', containerEl);
+      const halo = $('#chart-marker-halo', containerEl);
+
+      function onMove(e) {
+        const rect = svgEl.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const relX = (clientX - rect.left) / rect.width;
+        const svgX = relX * W;
+
+        let nearest = pts[0];
+        let minDist = Infinity;
+        for (const p of pts) {
+          const dist = Math.abs(p.x - svgX);
+          if (dist < minDist) {
+            minDist = dist;
+            nearest = p;
+          }
+        }
+        if (!nearest) return;
+
+        ch.setAttribute('x1', nearest.x);
+        ch.setAttribute('x2', nearest.x);
+        ch.setAttribute('opacity', '0.8');
+
+        marker.setAttribute('cx', nearest.x);
+        marker.setAttribute('cy', nearest.y);
+        marker.setAttribute('opacity', '1');
+
+        halo.setAttribute('cx', nearest.x);
+        halo.setAttribute('cy', nearest.y);
+        halo.setAttribute('opacity', '1');
+
+        tt.style.opacity = '1';
+        tt.innerHTML = `
+          <div class="tt-date">📅 ${nearest.data.label} (${nearest.data.shortLabel})</div>
+          <div class="tt-rev">${fmt(nearest.data.value)}</div>
+          <div class="tt-ord">📦 ${nearest.data.orders || 0} Sipariş</div>
+        `;
+
+        const ttX = (nearest.x / W) * rect.width;
+        const ttY = (nearest.y / H) * rect.height;
+        const clampedX = Math.max(10, Math.min(rect.width - 155, ttX - 75));
+        tt.style.transform = `translate(${clampedX}px, ${Math.max(8, ttY - 80)}px)`;
+      }
+
+      function onLeave() {
+        if (ch) ch.setAttribute('opacity', '0');
+        if (marker) marker.setAttribute('opacity', '0');
+        if (halo) halo.setAttribute('opacity', '0');
+        if (tt) tt.style.opacity = '0';
+      }
+
+      svgEl.addEventListener('mousemove', onMove);
+      svgEl.addEventListener('mouseleave', onLeave);
+      svgEl.addEventListener('touchmove', onMove, { passive: true });
+      svgEl.addEventListener('touchend', onLeave);
+    }
+
+    $$('.range-tab', containerEl).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        $$('.range-tab', containerEl).forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeRange = Number(btn.dataset.range);
+        render();
+      });
+    });
+
+    render();
+  }
+
+  function renderDonutVisual(containerEl, categoriesDetailed) {
+    if (!categoriesDetailed || !categoriesDetailed.length) {
+      containerEl.innerHTML = '<div class="empty" style="padding:40px 0"><div class="big">📭</div>Henüz kategori satış verisi oluşmadı</div>';
+      return;
+    }
+
+    const totalQty = categoriesDetailed.reduce((a, b) => a + b.qty, 0) || 1;
+    const r = 52;
+    const circ = 2 * Math.PI * r;
+    let accumOffset = 0;
+
+    const arcs = categoriesDetailed.map((c) => {
+      const pct = c.qty / totalQty;
+      const strokeLen = pct * circ;
+      const offset = circ - accumOffset;
+      accumOffset += strokeLen;
+      return `
+        <circle cx="70" cy="70" r="${r}" fill="transparent" stroke="${c.color}" stroke-width="16"
+          stroke-dasharray="${strokeLen} ${circ - strokeLen}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" />
+      `;
+    }).join('');
+
+    const legendList = categoriesDetailed.map((c) => `
+      <div class="cat-item-row">
+        <div class="cat-item-left">
+          <span class="cat-dot" style="background:${c.color}"></span>
+          <span class="cat-item-name">${esc(c.name)}</span>
+        </div>
+        <div class="cat-item-right">
+          <span class="cat-item-pct">%${c.percentage}</span>
+          <span class="cat-item-val">${c.qty} adet</span>
+        </div>
+      </div>
+    `).join('');
+
+    containerEl.innerHTML = `
+    <div class="donut-container">
+      <div class="donut-top-visual">
+        <svg width="140" height="140" viewBox="0 0 140 140" style="transform: rotate(-90deg); overflow: visible">
+          <circle cx="70" cy="70" r="${r}" fill="transparent" stroke="var(--card-2)" stroke-width="16" />
+          ${arcs}
+        </svg>
+        <div class="donut-center-info">
+          <span class="donut-center-val">${totalQty}</span>
+          <span class="donut-center-lbl">Satılan Ürün</span>
+        </div>
+      </div>
+      <div class="cat-breakdown-list">
+        ${legendList}
+      </div>
+    </div>`;
+  }
+
+  /* ================= DASHBOARD CONTROLLER ================= */
   async function viewDashboard() {
-    mount('dashboard', '<div style="text-align:center;padding:50px" class="loading">Veriler yükleniyor…</div>');
-    let d;
-    try { d = (await api('/api/admin/stats')).stats; } catch (e) { return toast(e.message, true); }
-    const maxDay = Math.max(...d.days.map((x) => x.value), 1);
-    const cats = Object.entries(d.catDist).sort((a, b) => b[1] - a[1]);
-    const maxCat = Math.max(...cats.map((c) => c[1]), 1);
-    const aov = d.orders ? d.revenue / d.orders : 0;
+    mount('dashboard', '<div style="text-align:center;padding:50px" class="loading">Bento Grid ve analitik verileri derleniyor…</div>');
+    let d, ordersRes;
+    try {
+      [d, ordersRes] = await Promise.all([
+        api('/api/admin/stats').then((r) => r.stats),
+        api('/api/admin/orders').catch(() => ({ orders: [] }))
+      ]);
+    } catch (e) { return toast(e.message, true); }
+
+    const days30 = d.days30 || [];
+    const revHistory = days30.map((x) => x.value);
+    const ordHistory = days30.map((x) => x.orders);
+    const recentOrders = (ordersRes.orders || []).slice(0, 6);
+    const aov = d.aov || (d.orders ? d.revenue / d.orders : 0);
+
+    const AVATAR_COLORS = [
+      'linear-gradient(135deg, #FF4D6D 0%, #FFA07A 100%)',
+      'linear-gradient(135deg, #A78BFA 0%, #818CF8 100%)',
+      'linear-gradient(135deg, #38BDF8 0%, #34D399 100%)',
+      'linear-gradient(135deg, #FBBF24 0%, #F87171 100%)',
+      'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)'
+    ];
 
     mount('dashboard', `
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="sc-top">
-          <div class="sc-icon">💰</div>
-          <span class="sc-trend trend-up">＋%14.8 Canlı</span>
+    <!-- TOP ROW: BENTO 4x KPI CARDS WITH LIVE SPARKLINES -->
+    <div class="bento-grid">
+      <!-- KPI 1: REVENUE -->
+      <div class="bento-card kpi-card bento-span-3">
+        <div class="kpi-top">
+          <div class="kpi-icon-wrap" style="color:var(--rose)">💰</div>
+          <span class="kpi-badge up">▲ %${d.revGrowth >= 0 ? '+' : ''}${d.revGrowth} Haftalık</span>
         </div>
-        <div class="sc-val">${fmt(d.revenue)}</div>
-        <div class="sc-lbl">Net Mağaza Cirosu</div>
-        <div class="sc-sub">Ort. Sepet (AOV): <b>${fmt(aov)}</b></div>
+        <div class="kpi-mid">
+          <div>
+            <div class="kpi-val">${fmt(d.revenue)}</div>
+            <div class="kpi-label">Toplam Net Ciro</div>
+          </div>
+          <div class="kpi-spark-wrap">
+            ${renderSparklineSvg(revHistory.slice(-14), '#FF4D6D', 105, 38)}
+          </div>
+        </div>
+        <div class="kpi-foot">
+          <span>Ortalama Sepet (AOV):</span>
+          <b>${fmt(aov)}</b>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="sc-top">
-          <div class="sc-icon">📦</div>
-          <span class="sc-trend trend-up">Aktif</span>
+
+      <!-- KPI 2: ORDERS -->
+      <div class="bento-card kpi-card bento-span-3">
+        <div class="kpi-top">
+          <div class="kpi-icon-wrap" style="color:#A78BFA">📦</div>
+          <span class="kpi-badge neutral">▲ %${d.ordGrowth >= 0 ? '+' : ''}${d.ordGrowth} Hacim</span>
         </div>
-        <div class="sc-val">${d.orders}</div>
-        <div class="sc-lbl">Toplam Sipariş Adedi</div>
-        <div class="sc-sub">Bekleyen inceleme: <b>${d.pendingReviews}</b></div>
+        <div class="kpi-mid">
+          <div>
+            <div class="kpi-val">${d.orders}</div>
+            <div class="kpi-label">Toplam Sipariş</div>
+          </div>
+          <div class="kpi-spark-wrap">
+            ${renderSparklineSvg(ordHistory.slice(-14), '#A78BFA', 105, 38)}
+          </div>
+        </div>
+        <div class="kpi-foot">
+          <span>Hazırlanan / Kargolanacak:</span>
+          <b>${d.pendingOrders || 0} sipariş</b>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="sc-top">
-          <div class="sc-icon">👥</div>
-          <span class="sc-trend trend-up">Büyüyor</span>
+
+      <!-- KPI 3: CUSTOMERS -->
+      <div class="bento-card kpi-card bento-span-3">
+        <div class="kpi-top">
+          <div class="kpi-icon-wrap" style="color:#38BDF8">👥</div>
+          <span class="kpi-badge up">● Aktif Portföy</span>
         </div>
-        <div class="sc-val">${d.customers}</div>
-        <div class="sc-lbl">Kayıtlı Müşteri</div>
-        <div class="sc-sub">Bülten abonesi: <b>${d.newsletter}</b></div>
+        <div class="kpi-mid">
+          <div>
+            <div class="kpi-val">${d.customers}</div>
+            <div class="kpi-label">Kayıtlı Müşteri</div>
+          </div>
+          <div class="kpi-spark-wrap">
+            ${renderSparklineSvg([1, 2, 2, 3, 4, 5, d.customers], '#38BDF8', 105, 38)}
+          </div>
+        </div>
+        <div class="kpi-foot">
+          <span>Bülten Aboneleri:</span>
+          <b>${d.newsletter} üye</b>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="sc-top">
-          <div class="sc-icon">🛍️</div>
-          <span class="sc-trend ${d.lowStock.length ? 'trend-down' : 'trend-up'}">${d.lowStock.length ? d.lowStock.length + ' Kritik' : 'Stabil'}</span>
+
+      <!-- KPI 4: INVENTORY & HEALTH -->
+      <div class="bento-card kpi-card bento-span-3">
+        <div class="kpi-top">
+          <div class="kpi-icon-wrap" style="color:#34D399">🛍️</div>
+          <span class="kpi-badge ${d.lowStock.length ? 'warn' : 'up'}">${d.lowStock.length ? d.lowStock.length + ' Azalan' : '✓ Dengeli'}</span>
         </div>
-        <div class="sc-val">${d.products}</div>
-        <div class="sc-lbl">Yayındaki Ürünler</div>
-        <div class="sc-sub">Stok uyarıları: <b>${d.lowStock.length ? d.lowStock.length + ' ürün azaldı' : 'Tümü dolu'}</b></div>
+        <div class="kpi-mid">
+          <div>
+            <div class="kpi-val">${d.products}</div>
+            <div class="kpi-label">Aktif Katalog Ürünü</div>
+          </div>
+          <div class="kpi-spark-wrap">
+            ${renderSparklineSvg([d.products, d.products, d.products, d.products], '#34D399', 105, 38)}
+          </div>
+        </div>
+        <div class="kpi-foot">
+          <span>Kritik Stok Uyarısı:</span>
+          <b style="${d.lowStock.length ? 'color:var(--err)' : ''}">${d.lowStock.length ? d.lowStock.length + ' ürün kaldı' : 'Tam Stok'}</b>
+        </div>
       </div>
     </div>
 
-    <div class="row-2">
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Haftalık Gelir Performansı</h2>
-          <span class="muted" style="font-size:12px">Son 7 gün ciro grafiği</span>
-        </div>
-        <div class="panel-body">
-          <div class="bar-chart">
-            ${d.days.map((x) => `
-            <div class="bar-col" title="${x.label}: ${fmt(x.value)}">
-              <b>${x.value ? fmt(x.value).replace('₺', '').trim() : ''}</b>
-              <div class="bar" style="height:${Math.max(6, (x.value / maxDay) * 82)}%"></div>
-              <span>${x.label}</span>
-            </div>`).join('')}
+    <!-- MIDDLE ROW: INTERACTIVE SPLINE CHART (SPAN 8) & DONUT (SPAN 4) -->
+    <div class="bento-grid">
+      <!-- MAIN SPLINE CHART -->
+      <div class="bento-card bento-span-8" id="spline-chart-panel">
+        <div class="bento-card-header">
+          <div class="bento-card-title">
+            <h2>Hasılat & Büyüme Analitiği</h2>
+            <span>Etkileşimli akıcı spline ciro eğrisi ve sipariş yoğunluğu</span>
+          </div>
+          <div class="range-tabs">
+            <button type="button" class="range-tab active" data-range="7">7 Gün</button>
+            <button type="button" class="range-tab" data-range="14">14 Gün</button>
+            <button type="button" class="range-tab" data-range="30">30 Gün</button>
           </div>
         </div>
+
+        <div class="spline-metrics-bar">
+          <div class="sm-item">
+            <span class="sm-label">Dönem Cirosu</span>
+            <span class="sm-value" id="sm-total-rev">₺0</span>
+          </div>
+          <div class="sm-item">
+            <span class="sm-label">Günlük Ortalama</span>
+            <span class="sm-value" id="sm-daily-avg">₺0</span>
+          </div>
+          <div class="sm-item">
+            <span class="sm-label">Dönem Zirvesi</span>
+            <span class="sm-value" id="sm-peak-val">₺0</span>
+          </div>
+          <div class="sm-item">
+            <span class="sm-label">Dönem Siparişleri</span>
+            <span class="sm-value" id="sm-total-ord" style="color:var(--ok)">0 sipariş</span>
+          </div>
+        </div>
+
+        <div class="chart-svg-container" id="chart-svg-target"></div>
       </div>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Kategori Satış Hacmi</h2>
-          <span class="muted" style="font-size:12px">Adet bazlı dağılım</span>
-        </div>
-        <div class="panel-body">
-          <div class="kv-list">
-            ${cats.length ? cats.map(([name, v]) => `
-            <div class="kv-row">
-              <span class="kv-name">${esc(name)}</span>
-              <div class="kv-bar"><i style="width:${Math.round((v / maxCat) * 100)}%"></i></div>
-              <span class="kv-val">${v} adet</span>
-            </div>`).join('')
-      : '<div class="empty"><div class="big">📭</div>Henüz satış verisi kaydedilmedi</div>'}
+
+      <!-- DONUT CATEGORY BREAKDOWN -->
+      <div class="bento-card bento-span-4">
+        <div class="bento-card-header">
+          <div class="bento-card-title">
+            <h2>Kategori Dağılımı</h2>
+            <span>Satış hacminin departmanlara göre payı</span>
           </div>
         </div>
+        <div id="donut-target" style="height:100%"></div>
       </div>
     </div>
 
-    <div class="row-2" style="margin-top:24px">
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Son Gelen Siparişler</h2>
-          <a href="#/orders" class="btn btn-ghost btn-sm">Tümünü İncele →</a>
+    <!-- BOTTOM ROW: REALTIME ORDER FEED (SPAN 7) & OPS RADAR (SPAN 5) -->
+    <div class="bento-grid">
+      <!-- REALTIME ORDER FEED -->
+      <div class="bento-card bento-span-7">
+        <div class="bento-card-header">
+          <div class="bento-card-title">
+            <h2>Canlı Sipariş Akışı</h2>
+            <span>Son işlemler, teslimat adımları ve müşteri rotası</span>
+          </div>
+          <a href="#/orders" class="btn btn-ghost btn-sm">Tüm Siparişler →</a>
         </div>
-        <div class="panel-body flush">
-          <table class="tbl"><thead><tr><th>Sipariş No</th><th>Müşteri</th><th>Tutar</th><th>Durum</th></tr></thead><tbody id="dash-orders"></tbody></table>
+
+        <div class="feed-list" id="dash-order-feed">
+          ${recentOrders.length ? recentOrders.map((o, idx) => {
+            const initials = (o.customerName || 'Müşteri').split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+            const avBg = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+            return `
+            <div class="feed-item" data-ord-id="${esc(o.id)}">
+              <div class="feed-user">
+                <div class="feed-avatar" style="background:${avBg}">${initials}</div>
+                <div class="feed-meta">
+                  <div class="feed-name ${privacyMode ? 'privacy-masked' : ''}">${esc(o.customerName)}</div>
+                  <div class="feed-id-time">
+                    <span class="mono">${esc(o.id)}</span>
+                    <span>·</span>
+                    <span>${dShort(o.createdAt)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="pill s-${o.status}">${STATUS[o.status]}</span>
+                <span class="feed-price">${fmt(o.total)}</span>
+              </div>
+            </div>`;
+          }).join('') : '<div class="empty" style="padding:40px 0"><div class="big">📭</div>Henüz sipariş kaydı bulunmuyor</div>'}
         </div>
       </div>
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Kritik Stok Bildirimleri</h2>
-          <span class="muted" style="font-size:12px">≤ 5 adet kalanlar</span>
+
+      <!-- OPS RADAR & FAST SHORTCUTS -->
+      <div class="bento-card bento-span-5">
+        <div class="bento-card-header">
+          <div class="bento-card-title">
+            <h2>Operasyon Radarı & Hızlı Eylemler</h2>
+            <span>Altyapı sağlığı ve acil aksiyon paneli</span>
+          </div>
         </div>
-        <div class="panel-body flush">
-          <table class="tbl"><thead><tr><th>Ürün Adı</th><th>Kalan Stok</th></tr></thead><tbody>
-            ${d.lowStock.length ? d.lowStock.map((p) => `<tr><td><b>${esc(p.name)}</b></td><td class="${p.stock === 0 ? 'no-stock' : 'low-stock'}">${p.stock === 0 ? '⚠️ TÜKENDİ' : p.stock + ' adet kaldı'}</td></tr>`).join('') : '<tr><td colspan="2"><div class="empty">Tüm stok seviyeleri sağlıklı 🎉</div></td></tr>'}
-          </tbody></table>
+
+        <div class="ops-grid">
+          <div class="health-radar-box">
+            <div class="hr-info">
+              <span class="hr-title">Altyapı & Veritabanı Senkronizasyonu</span>
+              <span class="hr-status">● Cloud Firestore Canlı</span>
+            </div>
+            <span class="hr-badge">%99.9 Uptime</span>
+          </div>
+
+          <!-- Quick Actions Grid -->
+          <div class="quick-action-btns">
+            <a href="#/products" class="action-btn-chip" id="qa-add-prod">
+              <span class="ic">🛍️</span>
+              <span>＋ Yeni Ürün</span>
+            </a>
+            <a href="#/coupons" class="action-btn-chip">
+              <span class="ic">🎟️</span>
+              <span>Yeni Kupon</span>
+            </a>
+            <button type="button" class="action-btn-chip" id="qa-cmd">
+              <span class="ic">⚡</span>
+              <span>Komutlar (⌘K)</span>
+            </button>
+            <a href="/" target="_blank" class="action-btn-chip">
+              <span class="ic">🏬</span>
+              <span>Mağaza Önizle</span>
+            </a>
+          </div>
+
+          <!-- Low Stock Alert Radar -->
+          <div style="margin-top:4px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span style="font-size:12px;font-weight:600;color:var(--muted)">Kritik Stok Uyarısı (≤5)</span>
+              <a href="#/products" style="font-size:11.5px;color:var(--rose)">Kataloğu Yönet</a>
+            </div>
+            ${d.lowStock.length ? `
+            <div style="display:flex;flex-direction:column;gap:6px">
+              ${d.lowStock.slice(0, 3).map((p) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card-2);border-radius:10px;font-size:12.5px;border:1px solid var(--line)">
+                  <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">${esc(p.name)}</span>
+                  <span class="${p.stock === 0 ? 'no-stock' : 'low-stock'}" style="font-size:11.5px;font-weight:700">${p.stock === 0 ? 'TÜKENDİ ⚠️' : p.stock + ' adet'}</span>
+                </div>
+              `).join('')}
+            </div>` : '<div style="font-size:12px;color:var(--ok);padding:10px 12px;background:var(--card-2);border-radius:10px;border:1px solid var(--line)">✓ Tüm envanter stok seviyeleri sağlıklı</div>'}
+          </div>
         </div>
       </div>
     </div>`);
 
-    try {
-      const orders = (await api('/api/admin/orders')).orders.slice(0, 5);
-      $('#dash-orders').innerHTML = orders.length ? orders.map((o) => `
-        <tr>
-          <td class="mono">${esc(o.id)}</td>
-          <td><span class="${privacyMode ? 'privacy-masked' : ''}">${esc(o.customerName)}</span><div class="muted" style="font-size:11px">${dShort(o.createdAt)}</div></td>
-          <td><b>${fmt(o.total)}</b></td>
-          <td><span class="pill s-${o.status}">${STATUS[o.status]}</span></td>
-        </tr>`).join('')
-        : '<tr><td colspan="4"><div class="empty">Henüz sipariş yok</div></td></tr>';
-    } catch (e) { }
+    // Initialize Interactive Spline Chart
+    initSplineChart($('#spline-chart-panel'), days30);
+
+    // Initialize Donut Chart
+    renderDonutVisual($('#donut-target'), d.categoriesDetailed || []);
+
+    // Bind Feed Items to Order Modal
+    $$('#dash-order-feed [data-ord-id]').forEach((item) => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.ordId;
+        const target = (ordersRes.orders || []).find((x) => x.id === id);
+        if (target) openOrderModal(target);
+      });
+    });
+
+    // Bind Quick Action buttons
+    const qaCmd = $('#qa-cmd');
+    if (qaCmd) qaCmd.addEventListener('click', openCommandPalette);
+
+    const qaAdd = $('#qa-add-prod');
+    if (qaAdd) {
+      qaAdd.addEventListener('click', (e) => {
+        e.preventDefault();
+        location.hash = '#/products';
+        setTimeout(() => {
+          const btn = $('#prod-add');
+          if (btn) btn.click();
+        }, 120);
+      });
+    }
   }
 
   /* ================= ORDERS ================= */
@@ -512,6 +943,7 @@
         <option value="cancelled">İptal</option>
       </select>
       <button class="btn btn-ghost" id="ord-export" style="margin-left:auto">📥 Siparişleri CSV İndir</button>
+      <button class="btn btn-ghost" id="ord-clear-all" style="color:var(--rose,#ff3366);border-color:rgba(255,51,102,0.3)">🗑️ Tümünü Temizle</button>
     </div>
     <div class="panel"><div class="panel-body flush">
       <div class="tbl-wrap">
@@ -554,10 +986,21 @@
           <select data-status="${esc(o.id)}" style="background:var(--card-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
             ${['processing', 'shipped', 'delivered', 'cancelled'].map((s) => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${STATUS[s]}</option>`).join('')}
           </select>
+          <button class="btn-icon" data-del="${esc(o.id)}" title="Siparişi Sil" style="color:var(--rose,#ff3366);margin-left:4px">🗑️</button>
         </td>
       </tr>`).join('') : '<tr><td colspan="8"><div class="empty">Aramaya uygun sipariş bulunamadı</div></td></tr>';
 
       $$('[data-view]').forEach((b) => b.addEventListener('click', () => openOrderModal(all.find((o) => o.id === b.dataset.view))));
+      $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+        const id = b.dataset.del;
+        if (!confirm(`${id} numaralı siparişi silmek istediğinize emin misiniz?`)) return;
+        try {
+          await api('/api/admin/orders/' + encodeURIComponent(id), { method: 'DELETE' });
+          toast('Sipariş başarıyla silindi');
+          all = all.filter((x) => x.id !== id);
+          draw();
+        } catch (e) { toast(e.message, true); }
+      }));
       $$('[data-status]').forEach((sel) => sel.addEventListener('change', async () => {
         try {
           await api('/api/admin/orders/' + encodeURIComponent(sel.dataset.status), { method: 'POST', body: { status: sel.value } });
@@ -578,6 +1021,20 @@
       ];
       exportCSV(`loveshop-siparisler-${new Date().toISOString().slice(0,10)}.csv`, rows);
     });
+
+    const clearAllBtn = $('#ord-clear-all');
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener('click', async () => {
+        if (!all.length) return toast('Temizlenecek sipariş bulunmuyor.');
+        if (!confirm('DİKKAT: Listedeki tüm siparişler kalıcı olarak silinecektir. Emin misiniz?')) return;
+        try {
+          await api('/api/admin/orders/clear-all', { method: 'POST' });
+          toast('Tüm sipariş geçmişi temizlendi 🗑️');
+          all = [];
+          draw();
+        } catch (e) { toast(e.message, true); }
+      });
+    }
 
     $('#ord-q').addEventListener('input', draw);
     $('#ord-status').addEventListener('change', draw);
@@ -654,6 +1111,7 @@
         </dl>
       </div>
       <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="om-delete-order" style="color:var(--rose,#ff3366);margin-right:auto">🗑️ Siparişi Sil</button>
         <button type="button" class="btn btn-ghost" data-cancel="true">Kapat</button>
         <button type="button" class="btn btn-primary" id="om-save-track">Kargo Bilgisini Kaydet</button>
       </div>
@@ -677,6 +1135,19 @@
     m.addEventListener('click', (e) => { if (e.target === m) closeModal(); });
 
     $('#ord-print-btn', m).addEventListener('click', () => window.print());
+
+    const delOrderBtn = $('#om-delete-order', m);
+    if (delOrderBtn) {
+      delOrderBtn.addEventListener('click', async () => {
+        if (!confirm(`${o.id} numaralı siparişi silmek istediğinize emin misiniz?`)) return;
+        try {
+          await api('/api/admin/orders/' + encodeURIComponent(o.id), { method: 'DELETE' });
+          toast('Sipariş başarıyla silindi');
+          closeModal();
+          viewOrders();
+        } catch (e) { toast(e.message, true); }
+      });
+    }
 
     $('#om-save-track', m).addEventListener('click', async () => {
       const carrier = $('#om-carrier', m).value.trim();

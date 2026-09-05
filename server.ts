@@ -44,7 +44,7 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
-const DEFAULT_ADMIN_EMAILS = ['admin@loveshop.com.tr', 'x8pure@gmail.com', 'cemal.ulas@gmail.com'];
+const DEFAULT_ADMIN_EMAILS = ['cemal.ulas@gmail.com'];
 const ENV_ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '')
   .split(',')
   .map((e) => e.trim().toLowerCase())
@@ -2595,21 +2595,74 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
     if (pathname === '/api/admin/stats' && method === 'GET') {
       const revenueOrders = db.orders.filter((o: any) => o.status !== 'cancelled');
-      const days = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
+      const now = new Date();
+      
+      // Calculate 30-day historical data
+      const days30 = [];
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(); d.setDate(now.getDate() - i);
         const key = d.toISOString().slice(0, 10);
-        const total = revenueOrders.filter((o: any) => o.createdAt.slice(0, 10) === key).reduce((a: number, o: any) => a + o.total, 0);
-        days.push({ label: d.toLocaleDateString('tr-TR', { weekday: 'short' }), value: total });
+        const dayOrders = revenueOrders.filter((o: any) => (o.createdAt || '').slice(0, 10) === key);
+        const total = dayOrders.reduce((a: number, o: any) => a + (o.total || 0), 0);
+        days30.push({
+          date: key,
+          label: d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }),
+          shortLabel: d.toLocaleDateString('tr-TR', { weekday: 'short' }),
+          value: Math.round(total * 100) / 100,
+          orders: dayOrders.length
+        });
       }
+      
+      // Last 7 days for backwards compatibility
+      const days = days30.slice(23).map((x) => ({ label: x.shortLabel, value: x.value }));
+
+      // Calculate 7-day growth vs previous 7 days
+      const last7Revenue = days30.slice(23).reduce((acc, d) => acc + d.value, 0);
+      const prev7Revenue = days30.slice(16, 23).reduce((acc, d) => acc + d.value, 0);
+      const revGrowth = prev7Revenue > 0 
+        ? Math.round(((last7Revenue - prev7Revenue) / prev7Revenue) * 100) 
+        : (last7Revenue > 0 ? 100 : 0);
+
+      const last7Orders = days30.slice(23).reduce((acc, d) => acc + d.orders, 0);
+      const prev7Orders = days30.slice(16, 23).reduce((acc, d) => acc + d.orders, 0);
+      const ordGrowth = prev7Orders > 0 
+        ? Math.round(((last7Orders - prev7Orders) / prev7Orders) * 100) 
+        : (last7Orders > 0 ? 100 : 0);
+
+      // Category distribution
       const catDist: Record<string, number> = {};
+      const catRevenue: Record<string, number> = {};
       for (const p of db.products) {
-        for (const o of revenueOrders) for (const i of o.items) if (i.productId === p.id) catDist[p.categoryName] = (catDist[p.categoryName] || 0) + i.qty;
+        for (const o of revenueOrders) {
+          for (const i of o.items) {
+            if (i.productId === p.id) {
+              const cat = p.categoryName || 'Diğer';
+              catDist[cat] = (catDist[cat] || 0) + i.qty;
+              catRevenue[cat] = (catRevenue[cat] || 0) + (i.price * i.qty);
+            }
+          }
+        }
       }
+
+      const totalItemsSold = Object.values(catDist).reduce((a, b) => a + b, 0) || 1;
+      const palette = ['#FF4D6D', '#A78BFA', '#38BDF8', '#34D399', '#FBBF24', '#F472B6'];
+      const categoriesDetailed = Object.entries(catDist)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, qty], idx) => ({
+          name,
+          qty,
+          revenue: Math.round((catRevenue[name] || 0) * 100) / 100,
+          percentage: Math.round((qty / totalItemsSold) * 100),
+          color: palette[idx % palette.length]
+        }));
+
+      const totalRevenue = Math.round(revenueOrders.reduce((a: number, o: any) => a + o.total, 0) * 100) / 100;
+      const aov = db.orders.length > 0 ? Math.round((totalRevenue / db.orders.length) * 100) / 100 : 0;
+
       return json(res, 200, {
         ok: true,
         stats: {
-          revenue: Math.round(revenueOrders.reduce((a: number, o: any) => a + o.total, 0) * 100) / 100,
+          revenue: totalRevenue,
           orders: db.orders.length,
           customers: db.users.filter((u: any) => u.role === 'customer').length,
           products: db.products.length,
@@ -2617,7 +2670,13 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
           pendingOrders: db.orders.filter((o: any) => o.status === 'processing').length,
           pendingReviews: db.reviews.filter((r: any) => !r.approved).length,
           lowStock: db.products.filter((p: any) => p.stock <= 5),
-          days, catDist
+          days,
+          days30,
+          revGrowth,
+          ordGrowth,
+          aov,
+          catDist,
+          categoriesDetailed
         }
       });
     }
@@ -2652,6 +2711,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (b.adminNote !== undefined) o.adminNote = String(b.adminNote).trim();
       await saveAsync();
       return json(res, 200, { ok: true, order: o });
+    }
+    if (pathname === '/api/admin/orders/clear-all' && method === 'POST') {
+      const deletedCount = db.orders.length;
+      db.orders = [];
+      await saveAsync();
+      return json(res, 200, { ok: true, message: 'Tüm siparişler başarıyla temizlendi.', deletedCount });
     }
     if (oUp && method === 'DELETE') {
       const idx = db.orders.findIndex((x: any) => x.id === decodeURIComponent(oUp[1]));
@@ -3079,6 +3144,13 @@ ${rawText || name}`;
 
 /* ---------------- router ---------------- */
 export const handler = async (req: http.IncomingMessage, res: http.ServerResponse) => {
+  // A+ Security Headers for Defense-in-Depth
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=()');
+
   await ensureCloudDatabaseReady();
   let url: URL;
   let pathname = '/';
@@ -3308,7 +3380,7 @@ if (!process.env.VERCEL) {
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`LOVE SHOP ready on http://0.0.0.0:${PORT}`);
     console.log(`Admin paneli: http://localhost:${PORT}/admin`);
-    console.log(`Admin girişi -> admin@loveshop.com.tr / loveshop2026`);
+    console.log(`Admin yetkili e-posta: cemal.ulas@gmail.com`);
   });
 }
 
