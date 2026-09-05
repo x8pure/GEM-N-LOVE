@@ -300,6 +300,11 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
   if (!overlay || !stage) return;
   const reqId = ++activeZoomRequestId;
   activeOriginCard = originCard;
+  const scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.width = '100%';
+  document.body.dataset.scrollY = scrollY;
   document.body.style.overflow = 'hidden';
   
   // Conditionally show/hide outer arrows
@@ -456,6 +461,10 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
               `).join('')}
             </div>
 
+                      </div>
+
+          <!-- Sticky Action Bar with Apple Dynamic Pill -->
+          <div class="spatial-action-bar">
             <!-- Unified Editorial Guarantee Row -->
             <div class="spatial-trust-ribbon">
               <div class="spatial-trust-badge">
@@ -467,10 +476,6 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
               </a>
             </div>
-          </div>
-
-          <!-- Sticky Action Bar with Apple Dynamic Pill -->
-          <div class="spatial-action-bar">
             <div class="spatial-dynamic-pill">
               <div class="spatial-pill-stepper">
                 <button type="button" class="spatial-qty-btn" id="spatial-qty-dec" aria-label="Azalt">−</button>
@@ -887,7 +892,14 @@ export function closeSpatialCardZoom(skipHistoryUpdate = false) {
   if (stage) {
     stage.innerHTML = '';
   }
+  const scrollY = document.body.dataset.scrollY;
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
   document.body.style.overflow = '';
+  if (scrollY) {
+    window.scrollTo(0, parseInt(scrollY || '0', 10));
+  }
   if (activeOriginCard) {
     activeOriginCard.style.opacity = '';
     activeOriginCard.style.transform = '';
