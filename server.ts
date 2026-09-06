@@ -3315,14 +3315,20 @@ Sitemap: https://loveeroticshop.com/sitemap.xml
           lastmod: g.date
         }));
 
-        const prodUrls = (db.products || []).map((p: any) => ({
-          loc: `${baseUrl}/urun/${esc(p.slug || p.id)}`,
-          priority: '0.8',
-          changefreq: 'daily',
-          lastmod: today,
-          image: p.image,
-          name: p.name
-        }));
+        const prodUrls = (db.products || []).map((p: any) => {
+          let fullImg = p.image || '';
+          if (fullImg && !fullImg.startsWith('http://') && !fullImg.startsWith('https://')) {
+            fullImg = `${baseUrl}${fullImg.startsWith('/') ? '' : '/'}${fullImg}`;
+          }
+          return {
+            loc: `${baseUrl}/urun/${esc(p.slug || p.id)}`,
+            priority: '0.8',
+            changefreq: 'daily',
+            lastmod: today,
+            image: fullImg,
+            name: p.name
+          };
+        });
 
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
