@@ -43,13 +43,13 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       'shop.all': 'Tümü', 'shop.count': '{n} ürün', 'shop.empty': 'Aradığın kriterlere uyan ürün bulunamadı.<br>Filtreleri değiştirmeyi dene.',
       'pd.crumb.home': 'Anasayfa', 'pd.crumb.shop': 'Mağaza', 'pd.reviews': 'değerlendirme',
       'pd.notfound': 'Ürün bulunamadı.', 'pd.notfound.btn': 'Mağazaya Dön',
-      'pd.add': '🛍️ Sepete Ekle', 'pd.buy': 'Hemen Al',
+      'pd.add': 'Sepete Ekle', 'pd.buy': 'Hemen Al',
       'pd.stock.in': 'Stokta, 24 saat içinde kargoda', 'pd.stock.low': 'Son {n} adet — elini çabuk tut!', 'pd.stock.out': 'Tükendi',
-      'pd.trust1': '📦 Gizli paketleme — dışarıdan içerik anlaşılmaz', 'pd.trust2': '🚚 750 TL üzeri ücretsiz kargo',
-      'pd.trust3': '🔒 Güvenli ve anonim ödeme', 'pd.trust4': '↩️ Hijyen nedeniyle iade yok, hasarlı üründe yenisi gönderilir',
+      'pd.trust1': 'Gizli paketleme — dışarıdan içerik anlaşılmaz', 'pd.trust2': '750 TL üzeri ücretsiz kargo',
+      'pd.trust3': 'Güvenli ve anonim ödeme', 'pd.trust4': 'Hijyen nedeniyle iade yok, hasarlı üründe yenisi gönderilir',
       'pd.tab.detail': 'Detaylar', 'pd.tab.reviews': 'Yorumlar', 'pd.similar': 'Benzer Ürünler', 'pd.all': 'Tümü →',
-      'pd.noreviews': 'Bu ürün için henüz onaylanmış yorum yok. İlk yorumu sen yaz!', 'pd.reviewsfail': 'Yorumlar yüklenemedi.', 'pd.write': '✍️ Yorum Yaz',
-      'rv.short': 'Lütfen en az 10 karakterlik bir yorum yaz', 'rv.ok': 'Yorumun alındı, onay sonrası yayınlanacak 💜',
+      'pd.noreviews': 'Bu ürün için henüz onaylanmış yorum yok. İlk yorumu sen yaz!', 'pd.reviewsfail': 'Yorumlar yüklenemedi.', 'pd.write': 'Yorum Yaz',
+      'rv.short': 'Lütfen en az 10 karakterlik bir yorum yaz', 'rv.ok': 'Yorumun alındı, onay sonrası yayınlanacak.',
       'cart.empty': 'Sepetin şimdilik boş.<br>Keşfetmeye hazır mısın?', 'cart.empty.btn': 'Mağazayı Keşfet',
       'cart.summary': 'Sipariş Özeti', 'cart.freeship.left': 'Ücretsiz kargoya {x} kaldı!', 'cart.freeship.won': 'Ücretsiz kargo hakkı kazandın!',
       'cart.coupon.ph': 'Kupon kodu', 'cart.apply': 'Uygula', 'cart.coupon.is': 'Kupon: {code}', 'cart.coupon.ok': 'Kupon uygulandı',
@@ -60,23 +60,23 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       'ck.discreet': 'Gizli paketleme istiyorum (dış pakette içerik/mağaza adı yer almaz)',
       'ck.note': 'Sipariş Notu (opsiyonel)', 'ck.note.ph': 'Örn: telefonla ulaşabileceğiniz saat',
       'ck.step2': 'Sipariş & Ödeme Şekli',
-      'ck.step2.note': 'Online ödeme altyapımız bulunmuyor. Siparişini <b>WhatsApp üzerinden</b> tamamlıyoruz — en gizli ve pratik yol bu. 💜',
-      'ck.pay.wa': '💬 WhatsApp ile Sipariş', 'ck.pay.wa.sub': 'sepet özetin medyana hazırlanır',
-      'ck.pay.shop': '🏬 Mağazadan Teslim & Ödeme', 'ck.pay.shop.sub': 'Ilgaz İş Hanı · Tepebaşı',
+      'ck.step2.note': 'Online ödeme altyapımız bulunmuyor. Siparişini <b>WhatsApp üzerinden</b> tamamlıyoruz — en gizli ve pratik yol bu.',
+      'ck.pay.wa': 'WhatsApp ile Sipariş', 'ck.pay.wa.sub': 'sepet özetin medyana hazırlanır',
+      'ck.pay.shop': 'Mağazadan Teslim & Ödeme', 'ck.pay.shop.sub': 'Ilgaz İş Hanı · Tepebaşı',
       'ck.address': 'Adres *', 'ck.address.ph': 'Mahalle, cadde, no, daire...', 'ck.city': 'Şehir *', 'ck.zip': 'Posta Kodu',
       'ck.summary': 'Özet', 'ck.shipping': 'Kargo', 'ck.summary.total': 'Toplam',
-      'ck.submit.wa': '💬 Siparişi WhatsApp\u2019a Taşı', 'ck.submit.shop': '🏬 Mağazadan Teslim Sipariş Ver',
+      'ck.submit.wa': 'Siparişi WhatsApp’a Taşı', 'ck.submit.shop': 'Mağazadan Teslim Sipariş Ver',
       'ck.ship.pickup': 'Yok — mağazadan teslim', 'ck.free': 'Ücretsiz',
       'ck.required': 'Ad soyad ve telefon zorunludur', 'ck.addrreq': 'Kargo için adres ve şehir zorunludur', 'ck.preparing': 'Hazırlanıyor…',
       'ck.note.small': '18+ satış politikamız gereği bilgileriniz şifreli iletilir.<br>Ödeme yalnızca WhatsApp üzerinden veya mağazamızda alınır.',
-      'ck.ok.pickup': 'Siparişin alındı! Seni mağazada bekliyoruz 🏬', 'ck.ok.ship': 'Siparişin alındı! WhatsApp\u2019a yönlendiriliyorsun 🎉',
+      'ck.ok.pickup': 'Siparişin alındı! Seni mağazada bekliyoruz.', 'ck.ok.ship': 'Siparişin alındı! WhatsApp’a yönlendiriliyorsun.',
       'thanks.amount': 'Tutar: ',
       'auth.hi': 'Hoş geldin, {name}', 'auth.pass6': 'Şifre en az 6 karakter olmalı', 'auth.passmismatch': 'Şifreler eşleşmiyor',
-      'auth.age': '18 yaşından büyük olduğunuzu onaylamalısınız', 'auth.created': 'Hesabın oluşturuldu 💜',
+      'auth.age': '18 yaşından büyük olduğunuzu onaylamalısınız', 'auth.created': 'Hesabın oluşturuldu.',
       'auth.google.login': 'Google ile Giriş Yap', 'auth.google.reg': 'Google ile Kayıt Ol',
-      'auth.google.wait': 'Google bağlantısı kuruluyor…', 'auth.google.ok': 'Google ile başarıyla giriş yapıldı 💜',
-      'acc.orders': '📦 Siparişlerim', 'acc.profile': '👤 Profilim', 'acc.logout': '🚪 Çıkış Yap',
-      'acc.hello': 'Merhaba, {name} 💜',
+      'auth.google.wait': 'Google bağlantısı kuruluyor…', 'auth.google.ok': 'Google ile başarıyla giriş yapıldı.',
+      'acc.orders': 'Siparişlerim', 'acc.profile': 'Profilim', 'acc.logout': 'Çıkış Yap',
+      'acc.hello': 'Merhaba, {name}',
       'acc.tab.orders': 'Siparişlerim', 'acc.tab.address': 'Kayıtlı Adresim', 'acc.tab.profile': 'Profil Bilgileri', 'acc.tab.security': 'Şifre & Güvenlik', 'acc.tab.logout': 'Güvenli Çıkış',
       'acc.role_admin': 'Yönetici', 'acc.role_user': 'Yetkin Üye (18+)',
       'acc.stat.orders': 'Toplam Sipariş', 'acc.stat.privacy': 'Gizlilik Güvencesi', 'acc.stat.support': 'Doğrudan Destek',
@@ -91,7 +91,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       'pf.title.address': 'Teslimat & Kargo Adresi', 'pf.sub.address': 'Siparişlerinizin ulaştırılacağı birincil kargo adresinizi yönetin.',
       'pf.title.pass': 'Şifre & Güvenlik', 'pf.sub.pass': 'Hesap güvenliğiniz için güçlü bir şifre belirleyin.',
       'pf.ok': 'Profil güncellendi', 'pf.addrok': 'Adres kaydedildi', 'pf.passok': 'Şifre güncellendi',
-      'contact.ok': 'Mesajın alındı, 24 saat içinde dönüş yapacağız 💌',
+      'contact.ok': 'Mesajın alındı, 24 saat içinde dönüş yapacağız.',
       'cf.hint': 'Sürükle · Dokun', 'cf.prev': 'Önceki ürün', 'cf.next': 'Sonraki ürün'
     },
     en: {
@@ -102,13 +102,13 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       'shop.all': 'All', 'shop.count': '{n} products', 'shop.empty': 'No products match your criteria.<br>Try changing the filters.',
       'pd.crumb.home': 'Home', 'pd.crumb.shop': 'Shop', 'pd.reviews': 'reviews',
       'pd.notfound': 'Product not found.', 'pd.notfound.btn': 'Back to Shop',
-      'pd.add': '🛍️ Add to Cart', 'pd.buy': 'Buy Now',
+      'pd.add': 'Add to Cart', 'pd.buy': 'Buy Now',
       'pd.stock.in': 'In stock, ships within 24 hours', 'pd.stock.low': 'Only {n} left — hurry!', 'pd.stock.out': 'Out of stock',
-      'pd.trust1': '📦 Discreet packaging — contents never visible from outside', 'pd.trust2': '🚚 Free shipping over 750 TL',
-      'pd.trust3': '🔒 Secure & anonymous payment', 'pd.trust4': '↩️ No returns for hygiene; damaged items are replaced',
+      'pd.trust1': 'Discreet packaging — contents never visible from outside', 'pd.trust2': 'Free shipping over 750 TL',
+      'pd.trust3': 'Secure & anonymous payment', 'pd.trust4': 'No returns for hygiene; damaged items are replaced',
       'pd.tab.detail': 'Details', 'pd.tab.reviews': 'Reviews', 'pd.similar': 'Similar Products', 'pd.all': 'All →',
-      'pd.noreviews': 'No approved reviews for this product yet. Be the first to write one!', 'pd.reviewsfail': 'Reviews could not be loaded.', 'pd.write': '✍️ Write a Review',
-      'rv.short': 'Please write a review of at least 10 characters', 'rv.ok': 'Your review has been received and will be published after approval 💜',
+      'pd.noreviews': 'No approved reviews for this product yet. Be the first to write one!', 'pd.reviewsfail': 'Reviews could not be loaded.', 'pd.write': 'Write a Review',
+      'rv.short': 'Please write a review of at least 10 characters', 'rv.ok': 'Your review has been received and will be published after approval.',
       'cart.empty': 'Your cart is empty for now.<br>Ready to explore?', 'cart.empty.btn': 'Explore the Shop',
       'cart.summary': 'Order Summary', 'cart.freeship.left': '{x} away from free shipping!', 'cart.freeship.won': 'You unlocked free shipping!',
       'cart.coupon.ph': 'Coupon code', 'cart.apply': 'Apply', 'cart.coupon.is': 'Coupon: {code}', 'cart.coupon.ok': 'Coupon applied',
@@ -119,23 +119,23 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       'ck.discreet': 'I want discreet packaging (no store/product name on the outside)',
       'ck.note': 'Order Note (optional)', 'ck.note.ph': 'e.g.: a time window we can reach you by phone',
       'ck.step2': 'Order & Payment Method',
-      'ck.step2.note': 'We have no online payment infrastructure. Orders are completed <b>via WhatsApp</b> — the most private and practical way. 💜',
-      'ck.pay.wa': '💬 Order via WhatsApp', 'ck.pay.wa.sub': 'your cart summary is prepared for you',
-      'ck.pay.shop': '🏬 Pick Up & Pay in Store', 'ck.pay.shop.sub': 'Ilgaz İş Hanı · Tepebaşı',
+      'ck.step2.note': 'We have no online payment infrastructure. Orders are completed <b>via WhatsApp</b> — the most private and practical way.',
+      'ck.pay.wa': 'Order via WhatsApp', 'ck.pay.wa.sub': 'your cart summary is prepared for you',
+      'ck.pay.shop': 'Pick Up & Pay in Store', 'ck.pay.shop.sub': 'Ilgaz İş Hanı · Tepebaşı',
       'ck.address': 'Address *', 'ck.address.ph': 'Neighborhood, street, no, apartment...', 'ck.city': 'City *', 'ck.zip': 'Postal Code',
       'ck.summary': 'Summary', 'ck.shipping': 'Shipping', 'ck.summary.total': 'Total',
-      'ck.submit.wa': '💬 Send Order to WhatsApp', 'ck.submit.shop': '🏬 Place Store Pickup Order',
+      'ck.submit.wa': 'Send Order to WhatsApp', 'ck.submit.shop': 'Place Store Pickup Order',
       'ck.ship.pickup': 'None — store pickup', 'ck.free': 'Free',
       'ck.required': 'Full name and phone are required', 'ck.addrreq': 'Address and city are required for shipping', 'ck.preparing': 'Preparing…',
       'ck.note.small': 'Per our 18+ sales policy, your details are transmitted encrypted.<br>Payment is accepted only via WhatsApp or at our store.',
-      'ck.ok.pickup': 'Order received! We\u2019ll be waiting for you at the store 🏬', 'ck.ok.ship': 'Order received! Redirecting you to WhatsApp 🎉',
+      'ck.ok.pickup': 'Order received! We’ll be waiting for you at the store.', 'ck.ok.ship': 'Order received! Redirecting you to WhatsApp.',
       'thanks.amount': 'Amount: ',
       'auth.hi': 'Welcome, {name}', 'auth.pass6': 'Password must be at least 6 characters', 'auth.passmismatch': 'Passwords do not match',
-      'auth.age': 'You must confirm that you are over 18', 'auth.created': 'Your account has been created 💜',
+      'auth.age': 'You must confirm that you are over 18', 'auth.created': 'Your account has been created.',
       'auth.google.login': 'Continue with Google', 'auth.google.reg': 'Sign up with Google',
-      'auth.google.wait': 'Connecting to Google…', 'auth.google.ok': 'Signed in with Google successfully 💜',
-      'acc.orders': '📦 My Orders', 'acc.profile': '👤 My Profile', 'acc.logout': '🚪 Sign Out',
-      'acc.hello': 'Hello, {name} 💜',
+      'auth.google.wait': 'Connecting to Google…', 'auth.google.ok': 'Signed in with Google successfully.',
+      'acc.orders': 'My Orders', 'acc.profile': 'My Profile', 'acc.logout': 'Sign Out',
+      'acc.hello': 'Hello, {name}',
       'acc.tab.orders': 'My Orders', 'acc.tab.address': 'Delivery Address', 'acc.tab.profile': 'Profile Information', 'acc.tab.security': 'Password & Security', 'acc.tab.logout': 'Sign Out',
       'acc.role_admin': 'Admin', 'acc.role_user': 'Verified Member (18+)',
       'acc.stat.orders': 'Total Orders', 'acc.stat.privacy': 'Privacy Guarantee', 'acc.stat.support': 'Direct Support',
@@ -316,7 +316,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         <button type="button" class="user-btn ${isAdmin ? 'is-admin' : ''}" id="user-menu-btn" aria-haspopup="true" aria-expanded="false" title="${esc(displayName)}${isAdmin ? ' (Yönetici)' : ''}">
           <span class="user-btn-avatar">
             ${avatarHtml}
-            ${isAdmin ? '<span class="user-btn-crown" title="Yönetici">🛡️</span>' : '<span class="user-btn-online" title="Aktif Oturum"></span>'}
+            ${isAdmin ? '<span class="user-btn-crown" title="Yönetici"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--rose)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>' : '<span class="user-btn-online" title="Aktif Oturum"></span>'}
           </span>
           <span class="user-btn-name">${esc(displayName)}</span>
           <svg class="user-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -912,36 +912,62 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
   /* ---------- 3D Card Parallax & Specular Sheen Physics ---------- */
   // initTiltPhysics logic moved to modules/spatial.js
+  function cleanEditorialTitle(name) {
+    if (!name) return '';
+    const s = name.trim();
+    if (s.includes('3 in 1')) return '3 in 1 Realistik';
+    if (s.toLowerCase().includes('wand vibratör')) return 'Wand Vibratör';
+    if (s.toLowerCase().startsWith('oscar')) return 'Oscar Realistik';
+    if (s.toLowerCase().startsWith('steve')) return 'Steve Realistik';
+    if (s.toLowerCase().includes('stag 9000')) return 'Stag 9000 Sprey';
+    if (s.toLowerCase().includes('anal plug')) return 'LOVE. Anal Plug';
+    if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
+    if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
+    if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
+    if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
+
+    let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();
+    clean = clean.replace(/\b\d+(\.\d+)?\s*(ml|gr|g|cm|mm|adet|li|'li|’li|lü|'lü)\b/gi, '')
+                 .replace(/telefon\s+kontrollü/gi, '')
+                 .replace(/ultra\s+yumuşak\s+dokulu/gi, '')
+                 .replace(/bükülebilir\s+başlıklı/gi, '')
+                 .replace(/hareketli/gi, '')
+                 .replace(/özel\s+geliştirilmiş/gi, '')
+                 .replace(/şarjlı/gi, '')
+                 .replace(/su\s+bazlı/gi, '')
+                 .replace(/realistik/gi, '')
+                 .replace(/\s{2,}/g, ' ')
+                 .trim();
+
+    const words = clean.split(/\s+/).filter(Boolean);
+    if (words.length > 3) {
+      return words.slice(0, 3).join(' ');
+    }
+    return clean || name;
+  }
+
   /* ---------- product card template ---------- */
   function productCard(p) {
-    const badges = [];
-    if (p.isNew) badges.push(`<span class="prod-tag tag-new">${t('badge.new')}</span>`);
-    if (p.bestSeller) badges.push(`<span class="prod-tag tag-hot">${t('badge.hot')}</span>`);
-
-    let discPct = 0;
-    if (p.oldPrice && p.oldPrice > p.price) {
-      discPct = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
-    }
+    const displayName = cleanEditorialTitle(p.name);
+    const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
+    const priceHtml = `<span class="price"><span class="cur">₺</span><span class="val">${rawNum}</span></span>`;
 
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
         ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
         <div class="card-sheen"></div>
-        ${badges.length ? `<div class="prod-tags-bottom">${badges.join('')}</div>` : ''}
       </a>
-      <div class="prod-actions">
-        <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${t('quickadd')}" aria-label="${t('quickadd')}">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
-      </div>
       <div class="prod-info">
-        <a href="/urun/${p.slug}" class="prod-name">${p.name}</a>
-        <div class="prod-rating">${stars(p.rating || 0)} <span>(${p.reviewCount || 0})</span></div>
+        <a href="/urun/${p.slug}" class="prod-name" title="${esc(p.name)}">${esc(displayName)}</a>
         <div class="prod-price-row">
-          <span class="price">${fmt(p.price)}</span>
-          ${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}
-          ${discPct > 0 ? `<span class="price-disc">-%${discPct}</span>` : ''}
+          ${priceHtml}
+          <button type="button" class="editorial-add-btn action-btn" data-add="${p.id}" title="${t('quickadd')}" aria-label="${t('quickadd')}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
         </div>
       </div>
     </article>`;
@@ -956,18 +982,22 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   async function initHome() {
     refreshRevealObservers();
     const featured = $('#featured-grid');
-    if (featured) {
+    if (featured && featured.children.length === 0) {
       const data = await api('/api/products?featured=1&limit=10').catch(() => ({ products: [] }));
-      featured.innerHTML = data.products.slice(0, 10).map(productCard).join('');
-      refreshRevealObservers();
+      if (data.products && data.products.length) {
+        featured.innerHTML = data.products.slice(0, 10).map(productCard).join('');
+        refreshRevealObservers();
+      }
     }
     const wheel = $('#cf-stage');
     if (wheel) initCoverflow(wheel);
     const best = $('#new-grid');
-    if (best) {
-      const data = await api('/api/products?sort=new&limit=5').catch(() => ({ products: [] }));
-      best.innerHTML = data.products.slice(0, 5).map(productCard).join('');
-      refreshRevealObservers();
+    if (best && best.children.length === 0) {
+      const data = await api('/api/products?sort=new&limit=6').catch(() => ({ products: [] }));
+      if (data.products && data.products.length) {
+        best.innerHTML = data.products.slice(0, 6).map(productCard).join('');
+        refreshRevealObservers();
+      }
     }
     const nlForm = $('#nl-form');
     if (nlForm && !nlForm.dataset.bound) {
@@ -1040,7 +1070,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       if (count) count.textContent = t('shop.count', { n: data.total });
       root.innerHTML = data.products.length
         ? `<div class="prod-grid">${data.products.map(productCard).join('')}</div>`
-        : `<div class="empty-state"><div class="big">🔍</div><p>${t('shop.empty')}</p></div>`;
+        : `<div class="empty-state"><div class="big"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><p>${t('shop.empty')}</p></div>`;
       $$('article', root).forEach((el) => { el.classList.add('vis'); });
     }
     load();
@@ -1053,8 +1083,9 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     const parts = location.pathname.split('/').filter(Boolean);
     const rawSlug = parts.pop() || '';
     const slug = decodeURIComponent(rawSlug).replace(/\/+$/, '').trim();
+    const notFoundSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
     if (!slug || slug === 'urun') {
-      root.innerHTML = `<div class="empty-state"><div class="big">💔</div><p>${t('pd.notfound')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:16px">${t('pd.notfound.btn')}</a></div>`;
+      root.innerHTML = `<div class="empty-state"><div class="big">${notFoundSvg}</div><p>${t('pd.notfound')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:16px">${t('pd.notfound.btn')}</a></div>`;
       return;
     }
     let p;
@@ -1063,7 +1094,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       p = res.product || res;
       if (!p || !p.id) throw new Error('notfound');
     } catch {
-      root.innerHTML = `<div class="empty-state"><div class="big">💔</div><p>${t('pd.notfound')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:16px">${t('pd.notfound.btn')}</a></div>`;
+      root.innerHTML = `<div class="empty-state"><div class="big">${notFoundSvg}</div><p>${t('pd.notfound')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:16px">${t('pd.notfound.btn')}</a></div>`;
       return;
     }
     document.title = p.name + ' — LOVE SHOP';

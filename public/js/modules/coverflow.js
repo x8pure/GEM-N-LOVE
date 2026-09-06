@@ -6,6 +6,40 @@ const LANG = window.__LS_LANG__ || 'tr';
 const fmt = (n) => new Intl.NumberFormat(LANG === 'en' ? 'en-US' : 'tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
 const t = (...args) => window.LS.t(...args);
 
+function cleanEditorialTitle(name) {
+  if (!name) return '';
+  const s = name.trim();
+  if (s.includes('3 in 1')) return '3 in 1 Realistik';
+  if (s.toLowerCase().includes('wand vibratör')) return 'Wand Vibratör';
+  if (s.toLowerCase().startsWith('oscar')) return 'Oscar Realistik';
+  if (s.toLowerCase().startsWith('steve')) return 'Steve Realistik';
+  if (s.toLowerCase().includes('stag 9000')) return 'Stag 9000 Sprey';
+  if (s.toLowerCase().includes('anal plug')) return 'LOVE. Anal Plug';
+  if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
+  if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
+  if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
+  if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
+
+  let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();
+  clean = clean.replace(/\b\d+(\.\d+)?\s*(ml|gr|g|cm|mm|adet|li|'li|’li|lü|'lü)\b/gi, '')
+               .replace(/telefon\s+kontrollü/gi, '')
+               .replace(/ultra\s+yumuşak\s+dokulu/gi, '')
+               .replace(/bükülebilir\s+başlıklı/gi, '')
+               .replace(/hareketli/gi, '')
+               .replace(/özel\s+geliştirilmiş/gi, '')
+               .replace(/şarjlı/gi, '')
+               .replace(/su\s+bazlı/gi, '')
+               .replace(/realistik/gi, '')
+               .replace(/\s{2,}/g, ' ')
+               .trim();
+
+  const words = clean.split(/\s+/).filter(Boolean);
+  if (words.length > 3) {
+    return words.slice(0, 3).join(' ');
+  }
+  return clean || name;
+}
+
 export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic Inertia Stage (2026) ================= */
   async function initCoverflow(stage) {
     let prods = [];
@@ -15,24 +49,27 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
     stage.innerHTML = `
       <div class="cf-ambient" id="cf-amb"></div>
       <div class="cf-scene" id="cf-scene">
-        ${prods.map((p, i) => `
+        ${prods.map((p, i) => {
+          const displayName = cleanEditorialTitle(p.name);
+          const rawNum = new Intl.NumberFormat(LANG === 'en' ? 'en-US' : 'tr-TR', { maximumFractionDigits: 0 }).format(Math.round(p.price));
+          return `
         <div class="cf-pos" data-i="${i}">
           <a class="cf-card" href="/urun/${p.slug}" data-slug="${p.slug}" aria-label="${p.name}">
             <img src="${imgSrc(p.image)}" alt="${p.name}" draggable="false">
             <div class="card-sheen"></div>
             <span class="cf-cap">
-              <b>${p.name}</b>
-              <em>${fmt(p.price)}${p.oldPrice ? ' <s style="color:#78716C;font-size:10px;font-weight:500">' + fmt(p.oldPrice) + '</s>' : ''}</em>
+              <b>${displayName}</b>
+              <span class="cf-price"><span class="cur">₺</span><span class="val">${rawNum}</span></span>
             </span>
           </a>
-        </div>`).join('')}
+        </div>`;
+        }).join('')}
       </div>
       <button class="cf-arrow cf-prev" id="cf-prev" aria-label="${t('cf.prev')}">←</button>
       <button class="cf-arrow cf-next" id="cf-next" aria-label="${t('cf.next')}">→</button>
-      <div class="cf-bar">
+      <div class="cf-bar" aria-label="Slider navigation">
         <span class="cf-counter"><b id="cf-idx">01</b><em>/</em><span id="cf-total">${String(prods.length).padStart(2, '0')}</span></span>
         <span class="cf-progress"><i id="cf-fill"></i></span>
-        <span class="cf-hint">${t('cf.hint')}</span>
       </div>`;
 
     const scene = $('#cf-scene', stage);
@@ -44,7 +81,6 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
     const N = prods.length;
     const STEP = (Math.PI * 2) / N;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const AUTO_PER_MS = reduced ? 0 : 1 / 4500;
 
     let center = 0;
     let target = 0;
@@ -53,7 +89,7 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
     let down = false, moved = 0, lastX = 0, lastTime = 0;
     let focusIdx = -1;
     let resumeTimer = null;
-    let gyroX = 0;
+    let autoStepTimer = null;
     const colorCache = {};
 
     prods.forEach((p) => { const im = new Image(); im.src = p.image; });
@@ -92,15 +128,6 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
       im.src = key;
     }
 
-    if (window.DeviceOrientationEvent && !reduced) {
-      const handleOrientation = (e) => {
-        if (e.gamma !== null && e.gamma !== undefined) {
-          gyroX = Math.max(-20, Math.min(20, e.gamma)) * 0.12;
-        }
-      };
-      window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-    }
-
     const smoothF = new Array(N).fill(0);
     let lastLay = performance.now();
 
@@ -108,7 +135,6 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
       const nowT = t || performance.now();
       const layDt = Math.min(64, Math.max(0, nowT - lastLay)); lastLay = nowT;
       const fk = 1 - Math.exp(-9 * (layDt / 1000));
-      const breath = reduced ? 0 : (Math.sin(nowT / 1000 * 1.25) * 0.5 + 0.5);
       const W = scene.clientWidth || 480;
       const isMobile = W < 500;
       const rx = W * (isMobile ? 0.32 : 0.36);
@@ -123,11 +149,11 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
         const fTarget = Math.max(0, 1 - Math.abs(d) / 0.5);
         smoothF[i] += (fTarget - smoothF[i]) * fk;
         const f = smoothF[i];
-        const x = Math.sin(theta) * rx + (f > 0.8 ? gyroX : 0);
+        const x = Math.sin(theta) * rx;
         const z = (Math.cos(theta) - 1) * rz;
-        const y = -(1 - depth) * (isMobile ? 16 : 22) - f * 6 * breath;
+        const y = -(1 - depth) * (isMobile ? 16 : 22);
         const rotY = -Math.sin(theta) * (isMobile ? 42 : 48);
-        const scale = (0.70 + depth * 0.30) * (1 + f * 0.024 * breath);
+        const scale = (0.70 + depth * 0.30);
 
         pos.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
         pos.style.zIndex = Math.round(depth * 100);
@@ -145,50 +171,75 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
       }
     }
 
-    function barTick() {
-      const frac = ((center - Math.floor(center)) + 1) % 1;
-      fill.style.width = (Math.min(frac, 1 - frac) * 2 * 100).toFixed(1) + '%';
+    const STEP_DURATION = 2800; // 2.8s dynamic pace
+    let stepStartTime = performance.now();
+
+    function barTick(t) {
+      if (!auto || down) {
+        fill.style.width = '0%';
+        return;
+      }
+      const elapsed = Math.min(STEP_DURATION, Math.max(0, (t || performance.now()) - stepStartTime));
+      const pct = (elapsed / STEP_DURATION) * 100;
+      fill.style.width = pct.toFixed(1) + '%';
     }
+
+    function scheduleAuto() {
+      if (reduced) return;
+      clearTimeout(autoStepTimer);
+      stepStartTime = performance.now();
+      autoStepTimer = setTimeout(() => {
+        if (!down && auto) {
+          target = Math.round(center) + 1;
+          velocity = 0;
+        }
+        scheduleAuto();
+      }, STEP_DURATION);
+    }
+    scheduleAuto();
 
     function pauseThenResume(sec) {
       auto = false;
       clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { auto = !reduced; }, sec * 1000);
+      clearTimeout(autoStepTimer);
+      fill.style.width = '0%';
+      resumeTimer = setTimeout(() => {
+        auto = !reduced;
+        scheduleAuto();
+      }, sec * 1000);
     }
 
     function go(dir) {
       target = Math.round(center) + dir;
       velocity = 0;
-      pauseThenResume(4.5);
+      pauseThenResume(3.5);
     }
 
     let lastLoopTime = performance.now();
     (function loop(t) {
       const dt = Math.min(64, Math.max(0, t - lastLoopTime)); lastLoopTime = t;
       if (!down) {
-        if (auto) {
-          center += AUTO_PER_MS * dt;
-          target = center;
+        if (Math.abs(velocity) > 0.0001) {
+          center += velocity;
+          velocity *= 0.92;
+          target = Math.round(center);
         } else {
-          if (Math.abs(velocity) > 0.0001) {
-            center += velocity;
-            velocity *= 0.92;
-            target = Math.round(center);
+          velocity = 0;
+          if (Math.abs(target - center) > 0.0002) {
+            const k = 1 - Math.exp(-8 * (dt / 1000));
+            center += (target - center) * k;
           } else {
-            velocity = 0;
-            if (Math.abs(target - center) > 0.0002) {
-              const k = 1 - Math.exp(-8 * (dt / 1000));
-              center += (target - center) * k;
-            } else {
-              center = target;
-            }
+            center = target;
           }
         }
       }
       layout(t);
-      barTick();
+      barTick(t);
       requestAnimationFrame(loop);
     })(lastLoopTime);
+
+    stage.addEventListener('mouseenter', () => { auto = false; clearTimeout(autoStepTimer); fill.style.width = '0%'; });
+    stage.addEventListener('mouseleave', () => { if (!reduced) { auto = true; scheduleAuto(); } });
 
     const startDrag = (e) => {
       down = true;

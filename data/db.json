@@ -67,16 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 38
-    },
-    {
-      "id": "u9468e81a05d7",
-      "email": "mmustafa445588@gmail.com",
-      "passwordHash": "51a53d5dc1be744302d534e2ce86c1c5eae3453fad56f22ec1950265185bba19",
-      "name": "Mustafa Gül",
-      "role": "customer",
-      "createdAt": "2026-08-27T11:47:53.886Z",
-      "addresses": []
+      "tokenVersion": 41
     },
     {
       "id": "u164dff680af2",
@@ -939,7 +930,16 @@
       "createdAt": "2026-08-27T12:28:49.513Z"
     }
   ],
-  "contact": [],
+  "contact": [
+    {
+      "id": "m64b45e29ce00",
+      "name": "IpmWfbogNeqmnjqViKxhqp",
+      "email": "uzo.s.if.e.so60@gmail.com",
+      "message": "OlIHLInzWGbxfXUDMDufACGi",
+      "createdAt": "2026-09-06T06:54:32.790Z",
+      "read": false
+    }
+  ],
   "settings": {
     "storeName": "Love.",
     "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
@@ -969,7 +969,7 @@
       "product": 0,
       "order": 23
     },
-    "updatedAt": "2026-09-05T14:54:02.679Z",
-    "version": 398
+    "updatedAt": "2026-09-06T12:05:10.847Z",
+    "version": 440
   }
 }

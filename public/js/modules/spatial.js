@@ -300,12 +300,16 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
   if (!overlay || !stage) return;
   const reqId = ++activeZoomRequestId;
   activeOriginCard = originCard;
-  const scrollY = window.scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.width = '100%';
-  document.body.dataset.scrollY = scrollY;
-  document.body.style.overflow = 'hidden';
+
+  // Only freeze background body and record initial page scroll if modal is not already open
+  if (!overlay.classList.contains('open')) {
+    const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.dataset.scrollY = String(scrollY);
+    document.body.style.overflow = 'hidden';
+  }
   
   // Conditionally show/hide outer arrows
   const prevBtn = $('#spatial-outer-prev');
@@ -898,7 +902,16 @@ export function closeSpatialCardZoom(skipHistoryUpdate = false) {
   document.body.style.width = '';
   document.body.style.overflow = '';
   if (scrollY) {
-    window.scrollTo(0, parseInt(scrollY || '0', 10));
+    const targetY = parseInt(scrollY || '0', 10);
+    const htmlEl = document.documentElement;
+    const prevScrollBehavior = htmlEl.style.scrollBehavior;
+    htmlEl.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: targetY, left: 0, behavior: 'instant' });
+    requestAnimationFrame(() => {
+      htmlEl.style.scrollBehavior = prevScrollBehavior || '';
+      document.body.style.scrollBehavior = '';
+    });
   }
   if (activeOriginCard) {
     activeOriginCard.style.opacity = '';

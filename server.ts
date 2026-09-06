@@ -349,37 +349,37 @@ const STR: Record<string, Record<string, string>> = {
     'sec.rev.eb': 'Misafirlerimiz', 'sec.rev.h2': 'Kapı kapalı, <em class="em-rose">memnuniyet</em> açık', 'sec.rev.empty': 'İlk yorum sizden gelsin.',
     'nl.eb': 'Kulüp Love', 'nl.h2': 'İlk siparişe %10 <em class="em-rose">indirim</em>',
     'nl.p': 'Bültene katıl; yeniliklerden, gizli indirimlerden ilk sen haberdar ol. Spam yok, söz.',
-    'nl.ph': 'e-posta adresin', 'nl.btn': 'Katıl ✦',
+    'nl.ph': 'e-posta adresin', 'nl.btn': 'Katıl',
     'badge.new': 'Yeni', 'badge.hot': 'Çok Satan', 'badge.sale': 'İndirim', 'quickadd': 'Sepete Ekle', 'quickview': 'Hızlı Bakış',
-    'curator.trigger': '✦ Sana Özel Deneyim Bulucu',
+    'curator.trigger': 'Sana Özel Deneyim Bulucu',
     'curator.title': 'Kişisel Deneyim & Hediye Küratörü',
     'curator.sub': 'Sadece 2 soruda arzularına ve ritmine en uygun özel seçkiyi keşfet.',
     'curator.bundle': 'Paket Olarak Sepete Ekle (%15 İndirimli)',
     'shop.crumb.home': 'Anasayfa', 'shop.title': 'Mağaza',
     'shop.desc': '{n} özenle seçilmiş ürün — hepsi vücut dostu, hepsi sessiz kargoda.',
-    'shop.search': '🔍 Ürün ara…', 'shop.cat': 'Kategori', 'shop.all': 'Tümü',
+    'shop.search': 'Ürün ara…', 'shop.cat': 'Kategori', 'shop.all': 'Tümü',
     'shop.sort.def': 'Sırala: Önerilen', 'shop.sort.new': 'En Yeniler', 'shop.sort.asc': 'Fiyat: Düşükten Yükseğe',
     'shop.sort.desc': 'Fiyat: Yüksekten Düşüğe', 'shop.sort.rate': 'En Yüksek Puan',
-    'rv.title': 'Yorum Yaz ✍️', 'rv.rating': 'Puanın', 'rv.comment': 'Yorumun (en az 10 karakter)', 'rv.ph': 'Deneyimini paylaş…',
+    'rv.title': 'Yorum Yaz', 'rv.rating': 'Puanın', 'rv.comment': 'Yorumun (en az 10 karakter)', 'rv.ph': 'Deneyimini paylaş…',
     'rv.submit': 'Gönder', 'rv.note': 'Yorumlar onay sonrası yayınlanır ·', 'rv.back': 'Ürüne dön',
     'cart.title': 'Sepetim', 'cart.crumb': 'Sepet',
     'checkout.title': 'Ödeme', 'checkout.crumb': 'Ödeme',
-    'login.title': 'Tekrar hoş geldin 👋', 'login.sub': 'Hesabına giriş yap, siparişlerini takip et.',
+    'login.title': 'Tekrar hoş geldin', 'login.sub': 'Hesabına giriş yap, siparişlerini takip et.',
     'login.email': 'E-posta', 'login.pass': 'Şifre', 'login.btn': 'Giriş Yap', 'login.alt': 'Hesabın yok mu?', 'login.altLink': 'Kayıt ol',
     'auth.or': 'veya e-posta ile',
     'auth.google.login': 'Google ile Giriş Yap',
     'auth.google.reg': 'Google ile Kayıt Ol',
     'auth.google.sec': 'Google ile Hızlı & Güvenli Giriş',
-    'reg.title': 'Aramıza katıl 💜', 'reg.sub': 'Üye ol, sipariş takibi ve özel indirimlerden faydalan.',
+    'reg.title': 'Aramıza katıl', 'reg.sub': 'Üye ol, sipariş takibi ve özel indirimlerden faydalan.',
     'reg.name': 'Ad Soyad', 'reg.email': 'E-posta', 'reg.pass': 'Şifre', 'reg.pass2': 'Şifre (Tekrar)',
     'reg.age': '18 yaşından büyük olduğumu onaylıyorum. Gizlilik politikasını okudum.',
     'reg.btn': 'Hesap Oluştur', 'reg.alt': 'Zaten üye misin?', 'reg.altLink': 'Giriş yap',
     'account.title': 'Hesabım', 'profile.title': 'Profilim',
-    'about.eb': '✦ Hikayemiz',
+    'about.eb': 'Hikayemiz',
     'about.h1': 'Utancı geride bıraktık. <em class="em-rose">Keyfi</em> öne aldık.',
     'about.p1': 'Love Shop, "ayıp" kelimesinin alışveriş deneyimini kirletmesine izin vermeyen bir ekip tarafından kuruldu. Bizim için bedenini tanımak, keyfini keşfetmek ve kendini sevmek bir lüks değil; temel bir hak.',
     'about.p2': '2026\'nın ödüllü web tasarım dilini — koyu, duyusal, akışkan — Türkiye\'deki ilk "gururla gezilebilir" yetişkin mağazasıyla buluşturduk.',
-    'about.priv.h': 'Gizlilik Manifestosu 🔒',
+    'about.priv.h': 'Gizlilik Manifestosu',
     'about.priv.p': 'Gizlilik bizim için pazarlama sloganı değil, mimari bir karar:',
     'about.priv.list': '• <b>Paket:</b> Düz kraft kutu. Üzerinde logo yok, ürün adı yok, iade adresi bile jenerik.<br>• <b>Ekstre:</b> Kart hareketinde yalnızca "LS TR Bilişim" yazar.<br>• <b>Veri:</b> Sipariş geçmişin yalnızca sen ve bizim gördüğümüz şifreli bir altyapıda durur. Asla üçüncü taraflarla paylaşılmaz.<br>• <b>Gezinti:</b> Çerezlerimiz yalnızca sepetin hatırlaması için var; reklam izleme yok.',
     'about.ret.h': 'İade & Garanti',
@@ -390,16 +390,16 @@ const STR: Record<string, Record<string, string>> = {
     'about.v2.t': 'Güvenlik', 'about.v2.p': 'CE belgesiz, fitalatlı, malzemesi belirsiz hiçbir ürün raflarımıza giremez.',
     'about.v3.t': 'Kapsayıcılık', 'about.v3.p': 'Ürün dilimiz ve görsellerimiz tüm cinsiyetlere ve tüm ilişkilere açık.',
     'about.cta.h': 'Sorun mu var? Yargısız dinliyoruz.', 'about.cta.btn': 'İletişime Geç',
-    'contact.eb': '✦ Bize Yaz', 'contact.h1': 'Merhaba demenin yargısız yolu',
+    'contact.eb': 'Bize Yaz', 'contact.h1': 'Merhaba demenin yargısız yolu',
     'contact.p': 'Sorularınız anonim kalabilir; adınızı yazmak zorunda değilsiniz. WhatsApp\'tan 7/24, mağazamızdan birebir destek.',
     'contact.wa.t': 'WhatsApp Sipariş', 'contact.wa.s': 'Gizlilik esaslı, yargısız iletişim',
     'contact.store.t': 'Mağaza Adresimiz', 'contact.phone.t': 'Telefon & Destek', 'contact.phone.s': '09:00–22:00 arası',
-    'contact.map.h': '📍 Kolay Yol Tarifi & Belirgin Noktalar',
+    'contact.map.h': 'Kolay Yol Tarifi & Belirgin Noktalar',
     'contact.map.p': 'İsmet İnönü-1 Caddesi üzerinde, <b>İsmet İnönü Tramvay Durağı\'nın tam karşısındayız</b>. Binamızın alt girişinde <b>Yves Rocher</b> mağazası ve <b>Shakespeare Coffee & Bistro</b> arka kapısı (girişte büyük yeşil Shakespeare tabelası) yer alır. Yanımızda <b>Watsons</b> mağazası bulunmaktadır. Ilgaz İş Hanı Kat:1 Daire:2 adresimize rahatça ve tam gizlilikle gelebilirsiniz.',
     'contact.map.btn': 'Google Haritalar\'da Yol Tarifi Al →', 'contact.wa.btn': 'WhatsApp\'tan Konum İste',
     'contact.form.h': 'Form ile yaz', 'contact.form.name': 'İsim (opsiyonel)', 'contact.form.name.ph': 'İsterseniz boş bırakın',
     'contact.form.email': 'E-posta', 'contact.form.email.ph': 'yanıt için',
-    'contact.form.msg': 'Mesajın', 'contact.form.msg.ph': 'Merak ettiğin her şey…', 'contact.form.btn': 'Gönder 💜',
+    'contact.form.msg': 'Mesajın', 'contact.form.msg.ph': 'Merak ettiğin her şey…', 'contact.form.btn': 'Gönder',
     '404.h': '404 — Bu sayfayı biz de arıyoruz', '404.p': 'Ama kaybolmuş bir şeyler bulabilirsin:', '404.home': 'Anasayfa', '404.shop': 'Mağaza',
     'thanks.total': 'Tutar:', 'thanks.continue': 'Alışverişe Devam',
     'thanks.h.pickup': 'Siparişin hazır!', 'thanks.h.ship': 'Neredeyse bitti!',
@@ -423,7 +423,7 @@ const STR: Record<string, Record<string, string>> = {
     'foot.contact': 'Contact',
     'foot.rights': ' — 18+ content. All rights reserved.',
     'foot.pay.wa': 'WhatsApp Orders', 'foot.pay.shop': 'Pay in Store', 'foot.pay.discreet': 'Discreet Packaging',
-    'hero.eyebrow': '✦ 18+ · Discreet Packaging · Anonymous Payment',
+    'hero.eyebrow': '18+ · Discreet Packaging · Anonymous Payment',
     'hero.h1': 'Pleasure is yours.<br><em class="em-rose">Explore. Feel. Live.</em>',
     'hero.p': 'Body-safe, award-winning designs; delivered to your door with total privacy, judgement-free and fast. The finest way to shop, with 2026\'s best web experience.',
     'hero.cta.shop': 'Explore the Shop →', 'hero.cta.why': 'Why Us?',
@@ -434,7 +434,7 @@ const STR: Record<string, Record<string, string>> = {
     'sec.cats.link': 'Catalog', 'cats.products': 'PRODUCTS', 'bento.explore': 'Explore →',
     'bcta.kicker': 'The full catalog', 'bcta.h3': 'All Categories', 'bcta.count': '{cats} CATEGORIES · {prods} PRODUCTS',
     'sec.feat.eb': 'Featured', 'sec.feat.h2': 'This month\'s <em class="em-rose">favorites</em>', 'sec.feat.link': 'See All →',
-    'banner.eb': '✦ The Love Shop Promise',
+    'banner.eb': 'The Love Shop Promise',
     'banner.h2': 'Every parcel arrives like an unopened <em class="em-rose">secret</em>. Only you know what\'s inside.',
     'banner.p': 'No logo on the outer box, no product name, no store name. Your statement simply reads "LS TR Bilişim". Even the courier never knows.',
     'banner.btn': 'Privacy Manifesto',
@@ -446,37 +446,37 @@ const STR: Record<string, Record<string, string>> = {
     'sec.rev.eb': 'Our Guests', 'sec.rev.h2': 'Door closed, <em class="em-rose">satisfaction</em> open', 'sec.rev.empty': 'Be the first to review.',
     'nl.eb': 'Club Love', 'nl.h2': '10% off your <em class="em-rose">first order</em>',
     'nl.p': 'Join the list; hear about novelties and secret sales first. No spam, promise.',
-    'nl.ph': 'your e-mail address', 'nl.btn': 'Join ✦',
+    'nl.ph': 'your e-mail address', 'nl.btn': 'Join',
     'badge.new': 'New', 'badge.hot': 'Best Seller', 'badge.sale': 'Sale', 'quickadd': 'Add to Cart', 'quickview': 'Quick View',
-    'curator.trigger': '✦ Curated Mood Finder',
+    'curator.trigger': 'Curated Mood Finder',
     'curator.title': 'Personal Experience & Gift Curator',
     'curator.sub': 'Discover the perfect pieces tailored to your rhythm in just 2 questions.',
     'curator.bundle': 'Add Curated Bundle to Cart (15% Off)',
     'shop.crumb.home': 'Home', 'shop.title': 'Shop',
     'shop.desc': '{n} carefully curated products — all body-safe, all shipped silently.',
-    'shop.search': '🔍 Search products…', 'shop.cat': 'Category', 'shop.all': 'All',
+    'shop.search': 'Search products…', 'shop.cat': 'Category', 'shop.all': 'All',
     'shop.sort.def': 'Sort: Recommended', 'shop.sort.new': 'Newest First', 'shop.sort.asc': 'Price: Low to High',
     'shop.sort.desc': 'Price: High to Low', 'shop.sort.rate': 'Highest Rated',
-    'rv.title': 'Write a Review ✍️', 'rv.rating': 'Your rating', 'rv.comment': 'Your review (min. 10 characters)', 'rv.ph': 'Share your experience…',
+    'rv.title': 'Write a Review', 'rv.rating': 'Your rating', 'rv.comment': 'Your review (min. 10 characters)', 'rv.ph': 'Share your experience…',
     'rv.submit': 'Submit', 'rv.note': 'Reviews are published after approval ·', 'rv.back': 'Back to product',
     'cart.title': 'My Cart', 'cart.crumb': 'Cart',
     'checkout.title': 'Checkout', 'checkout.crumb': 'Checkout',
-    'login.title': 'Welcome back 👋', 'login.sub': 'Sign in to your account and track your orders.',
+    'login.title': 'Welcome back', 'login.sub': 'Sign in to your account and track your orders.',
     'login.email': 'E-mail', 'login.pass': 'Password', 'login.btn': 'Sign In', 'login.alt': 'No account yet?', 'login.altLink': 'Register',
     'auth.or': 'or with email',
     'auth.google.login': 'Continue with Google',
     'auth.google.reg': 'Sign up with Google',
     'auth.google.sec': 'Fast & secure one-click sign in with Google',
-    'reg.title': 'Join us 💜', 'reg.sub': 'Become a member to track orders and enjoy exclusive discounts.',
+    'reg.title': 'Join us', 'reg.sub': 'Become a member to track orders and enjoy exclusive discounts.',
     'reg.name': 'Full Name', 'reg.email': 'E-mail', 'reg.pass': 'Password', 'reg.pass2': 'Password (Again)',
     'reg.age': 'I confirm I am over 18. I have read the privacy policy.',
     'reg.btn': 'Create Account', 'reg.alt': 'Already a member?', 'reg.altLink': 'Sign in',
     'account.title': 'My Account', 'profile.title': 'My Profile',
-    'about.eb': '✦ Our Story',
+    'about.eb': 'Our Story',
     'about.h1': 'We left the shame behind. We put <em class="em-rose">pleasure</em> first.',
     'about.p1': 'Love Shop was founded by a team that refuses to let the word "taboo" poison the shopping experience.',
     'about.p2': 'We paired the award-winning web design language of 2026 with Turkey\'s first adult store you can browse with pride.',
-    'about.priv.h': 'Privacy Manifesto 🔒',
+    'about.priv.h': 'Privacy Manifesto',
     'about.priv.p': 'Privacy is not a marketing slogan for us; it is an architectural decision:',
     'about.priv.list': '• <b>Package:</b> Plain kraft box. No logo, no product name.<br>• <b>Statement:</b> Your card statement reads "LS TR Bilişim".<br>• <b>Data:</b> Encrypted and private.',
     'about.ret.h': 'Returns & Warranty',
@@ -487,16 +487,16 @@ const STR: Record<string, Record<string, string>> = {
     'about.v2.t': 'Safety', 'about.v2.p': 'CE-certified body-safe materials only.',
     'about.v3.t': 'Inclusivity', 'about.v3.p': 'Open to all identities and preferences.',
     'about.cta.h': 'Having questions? We listen without judgement.', 'about.cta.btn': 'Get in Touch',
-    'contact.eb': '✦ Write to Us', 'contact.h1': 'The judgement-free way to say hello',
+    'contact.eb': 'Write to Us', 'contact.h1': 'The judgement-free way to say hello',
     'contact.p': 'Your questions can stay anonymous. 24/7 via WhatsApp, or in person at our store.',
     'contact.wa.t': 'WhatsApp Orders', 'contact.wa.s': 'Privacy-first, judgement-free contact',
     'contact.store.t': 'Our Store', 'contact.phone.t': 'Phone', 'contact.phone.s': 'between 09:00–22:00',
-    'contact.map.h': '📍 How to find us',
+    'contact.map.h': 'How to find us',
     'contact.map.p': 'On Doktorlar Street, next to Watsons Store, Ilgaz Business Center.',
     'contact.map.btn': 'Open in Google Maps →', 'contact.wa.btn': 'Ask on WhatsApp',
     'contact.form.h': 'Write via form', 'contact.form.name': 'Name (optional)', 'contact.form.name.ph': 'Leave blank if you prefer',
     'contact.form.email': 'E-mail', 'contact.form.email.ph': 'so we can reply',
-    'contact.form.msg': 'Your message', 'contact.form.msg.ph': 'Anything you\'re curious about…', 'contact.form.btn': 'Send 💜',
+    'contact.form.msg': 'Your message', 'contact.form.msg.ph': 'Anything you\'re curious about…', 'contact.form.btn': 'Send',
     '404.h': '404 — Page not found', '404.p': 'Let\'s head back:', '404.home': 'Home', '404.shop': 'Shop',
     'thanks.total': 'Amount:', 'thanks.continue': 'Continue Shopping',
     'thanks.h.pickup': 'Your order is ready!', 'thanks.h.ship': 'Almost done!',
@@ -936,7 +936,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@500;600;700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -1176,35 +1176,60 @@ ${body}
 </html>`;
 }
 
-const productCardSSR = (p: any, tr: any) => {
-  const badges: string[] = [];
-  if (p.isNew) badges.push(`<span class="prod-tag tag-new">${tr('badge.new')}</span>`);
-  if (p.bestSeller) badges.push(`<span class="prod-tag tag-hot">${tr('badge.hot')}</span>`);
+function cleanEditorialTitle(name: string): string {
+  if (!name) return '';
+  const s = name.trim();
+  if (s.includes('3 in 1')) return '3 in 1 Realistik';
+  if (s.toLowerCase().includes('wand vibratör')) return 'Wand Vibratör';
+  if (s.toLowerCase().startsWith('oscar')) return 'Oscar Realistik';
+  if (s.toLowerCase().startsWith('steve')) return 'Steve Realistik';
+  if (s.toLowerCase().includes('stag 9000')) return 'Stag 9000 Sprey';
+  if (s.toLowerCase().includes('anal plug')) return 'LOVE. Anal Plug';
+  if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
+  if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
+  if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
+  if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
 
-  let discPct = 0;
-  if (p.oldPrice && p.oldPrice > p.price) {
-    discPct = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+  let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();
+  clean = clean.replace(/telefon\s+kontrollü/gi, '')
+               .replace(/ultra\s+yumuşak\s+dokulu/gi, '')
+               .replace(/bükülebilir\s+başlıklı/gi, '')
+               .replace(/hareketli/gi, '')
+               .replace(/özel\s+geliştirilmiş/gi, '')
+               .replace(/şarjlı/gi, '')
+               .replace(/su\s+bazlı/gi, '')
+               .replace(/realistik/gi, '')
+               .replace(/\s{2,}/g, ' ')
+               .trim();
+
+  const words = clean.split(' ').filter(Boolean);
+  if (words.length > 3) {
+    return words.slice(0, 2).join(' ');
   }
+  return clean || name;
+}
+
+const productCardSSR = (p: any, tr: any) => {
+  const displayName = cleanEditorialTitle(p.name);
+  const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
+  const priceHtml = `<span class="price"><span class="cur">₺</span><span class="val">${rawNum}</span></span>`;
 
   return `
 <article class="prod-card rv" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
     ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
     <div class="card-sheen"></div>
-    ${badges.length ? `<div class="prod-tags-bottom">${badges.join('')}</div>` : ''}
   </a>
-  <div class="prod-actions">
-    <button type="button" class="action-btn quick-add-btn" data-add="${p.id}" title="${tr('quickadd')}" aria-label="${tr('quickadd')}">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-    </button>
-  </div>
   <div class="prod-info">
-    <a href="/urun/${esc(p.slug)}" class="prod-name">${esc(p.name)}</a>
-    <div class="prod-rating">${stars(p.rating)} <span>(${p.reviewCount || 0})</span></div>
+    <a href="/urun/${esc(p.slug)}" class="prod-name" title="${esc(p.name)}">${esc(displayName)}</a>
     <div class="prod-price-row">
-      <span class="price">${fmt(p.price)}</span>
-      ${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}
-      ${discPct > 0 ? `<span class="price-disc">-%${discPct}</span>` : ''}
+      ${priceHtml}
+      <button type="button" class="editorial-add-btn action-btn" data-add="${p.id}" title="${tr('quickadd')}" aria-label="${tr('quickadd')}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
     </div>
   </div>
 </article>`;
@@ -1234,13 +1259,12 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
-  const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
+  const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6);
   const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 6);
   const html = `
 <section class="hero">
   <div class="hero-bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
   <div class="hero-content">
-    <span class="eyebrow">${tr('hero.eyebrow')}</span>
     <h1>${tr('hero.h1')}</h1>
     <p>${tr('hero.p')}</p>
     <div class="hero-cta">
@@ -1253,11 +1277,8 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     <div class="cf-stage" id="cf-stage" aria-label="Featured product showcase"></div>
   </div>
 </section>
-<div class="marquee"><div class="marquee-track">
-  ${Array(2).fill([tr('mq.1'), tr('mq.2'), tr('mq.3'), tr('mq.4'), tr('mq.5'), tr('mq.6')].join(' <b>✦</b> ') + ' <b>✦</b>').map((s) => `<span>${s}</span>`).join('')}
-</div></div>
 <section class="block">
-  <div class="section-head rv"><div><span class="eyebrow"><span class="dot-em"></span>${tr('sec.cats.eb')}</span><h2>${tr('sec.cats.h2')}</h2><p>${tr('sec.cats.p', { n: C.num(totalCount) })}</p></div><a href="/magaza" class="link-more">${tr('sec.cats.link')}</a></div>
+  <div class="section-head rv"><div><h2>${tr('sec.cats.h2')}</h2><p>${tr('sec.cats.p', { n: C.num(totalCount) })}</p></div><a href="/magaza" class="link-more">${tr('sec.cats.link')}</a></div>
   <div class="bento">${top.map((c, i) => {
     const parts = c.name.split(' ');
     const nm = parts[0] + (parts.length > 1 ? ` <em>${parts.slice(1).join(' ')}</em>` : '');
@@ -1282,23 +1303,22 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     </a>
   </div>
 </section>
-<section class="block" style="padding-top:20px">
-  <div class="section-head rv"><div><span class="eyebrow"><span class="dot-em"></span>${tr('sec.feat.eb')}</span><h2>${tr('sec.feat.h2')}</h2></div><a href="/magaza" class="link-more">${tr('sec.feat.link')}</a></div>
+<section class="block">
+  <div class="section-head rv"><div><h2>${tr('sec.feat.h2')}</h2></div><a href="/magaza" class="link-more">${tr('sec.feat.link')}</a></div>
   <div class="prod-grid" id="featured-grid">${featured.map((p: any) => productCardSSR(p, tr)).join('')}</div>
 </section>
-<section class="block" style="padding-top:0">
+<section class="block">
   <div class="banner rv">
-    <span class="eyebrow">${tr('banner.eb')}</span>
     <h2>${tr('banner.h2')}</h2>
     <p>${tr('banner.p')}</p>
     <a href="/hakkimizda#gizlilik" class="btn btn-gold">${tr('banner.btn')}</a>
   </div>
 </section>
-<section class="block" style="padding-top:0">
-  <div class="section-head rv"><div><span class="eyebrow"><span class="dot-em"></span>${tr('sec.new.eb')}</span><h2>${tr('sec.new.h2')}</h2></div><a href="/magaza?sort=yeni" class="link-more">${tr('sec.new.link')}</a></div>
+<section class="block">
+  <div class="section-head rv"><div><h2>${tr('sec.new.h2')}</h2></div><a href="/magaza?sort=yeni" class="link-more">${tr('sec.new.link')}</a></div>
   <div class="prod-grid" id="new-grid">${news.map((p: any) => productCardSSR(p, tr)).join('')}</div>
 </section>
-<section class="block" style="padding-top:0">
+<section class="block">
   <div class="features">
     <div class="feature rv"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div><div><h4>${tr('f1.t')}</h4><p>${tr('f1.p')}</p></div></div>
     <div class="feature rv rv-d1"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><h4>${tr('f2.t')}</h4><p>${tr('f2.p')}</p></div></div>
@@ -1306,17 +1326,16 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     <div class="feature rv rv-d3"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div><div><h4>${tr('f4.t')}</h4><p>${tr('f4.p')}</p></div></div>
   </div>
 </section>
-<section class="block" style="padding-top:0">
-  <div class="section-head rv"><div><span class="eyebrow"><span class="dot-em"></span>${tr('sec.rev.eb')}</span><h2>${tr('sec.rev.h2')}</h2></div></div>
+<section class="block">
+  <div class="section-head rv"><div><h2>${tr('sec.rev.h2')}</h2></div></div>
   <div class="review-grid">${reviews.map((r: any) => {
     const p = db.products.find((x: any) => x.id === r.productId);
     return `<div class="review-card rv"><div class="stars">${stars(r.rating)}</div><p>"${esc(r.text)}"</p><small>— ${esc(r.userName)} · ${esc(p ? p.name : 'Product')}</small></div>`;
   }).join('') || `<div class="empty-state"><div class="big">💬</div><p>${tr('sec.rev.empty')}</p></div>`}
   </div>
 </section>
-<section class="block" style="padding-top:0">
+<section class="block">
   <div class="newsletter rv">
-    <span class="eyebrow"><span class="dot-em"></span>${tr('nl.eb')}</span>
     <h2>${tr('nl.h2')}</h2>
     <p>${tr('nl.p')}</p>
     <form class="nl-form" id="nl-form">
@@ -1855,9 +1874,9 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
   <h2 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1">${tr('contact.h1')}</h2>
   <p>${tr('contact.p')}</p>
   <div class="contact-cards" style="display:grid;gap:26px;margin-top:30px">
-    <div class="feature"><div class="fi">💬</div><div><h4>${tr('contact.wa.t')}</h4><p><a href="${esc(st.whatsapp)}" target="_blank" rel="noopener" style="color:var(--rose);font-weight:600">+90 543 633 13 25</a><br><span class="muted" style="font-size:12px">${tr('contact.wa.s')}</span></p></div></div>
-    <div class="feature"><div class="fi">🏬</div><div><h4>${tr('contact.store.t')}</h4><p><strong>${esc(st.address)}</strong></p></div></div>
-    <div class="feature"><div class="fi">📞</div><div><h4>${tr('contact.phone.t')}</h4><p>${esc(st.supportPhone)}<br><span class="muted" style="font-size:12px">${tr('contact.phone.s')}</span></p></div></div>
+    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg></div><div><h4>${tr('contact.wa.t')}</h4><p><a href="${esc(st.whatsapp)}" target="_blank" rel="noopener" style="color:var(--rose);font-weight:600">+90 543 633 13 25</a><br><span class="muted" style="font-size:12px">${tr('contact.wa.s')}</span></p></div></div>
+    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M10 12h4"/></svg></div><div><h4>${tr('contact.store.t')}</h4><p><strong>${esc(st.address)}</strong></p></div></div>
+    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><h4>${tr('contact.phone.t')}</h4><p>${esc(st.supportPhone)}<br><span class="muted" style="font-size:12px">${tr('contact.phone.s')}</span></p></div></div>
   </div>
 
   <div class="check-step" style="margin-top:34px;background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-md);padding:24px">
@@ -1866,17 +1885,17 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
     
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px">
       <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);padding:14px 16px;border-radius:var(--r-sm)">
-        <div style="font-size:20px;margin-bottom:6px">🚊</div>
+        <div style="margin-bottom:8px;color:var(--text)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg></div>
         <div style="font-weight:600;font-size:14px;margin-bottom:4px">Tramvay Durağı Karşısı</div>
         <div style="font-size:13px;color:var(--muted)">İsmet İnönü-1 Tramvay Durağı'nın doğrudan tam karşısındaki bina.</div>
       </div>
       <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);padding:14px 16px;border-radius:var(--r-sm)">
-        <div style="font-size:20px;margin-bottom:6px">🌿</div>
+        <div style="margin-bottom:8px;color:var(--text)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
         <div style="font-weight:600;font-size:14px;margin-bottom:4px">Bina Giriş Belirteçleri</div>
         <div style="font-size:13px;color:var(--muted)">Alt girişte <b>Yves Rocher</b> mağazası ve büyük yeşil <b>Shakespeare tabelası</b>.</div>
       </div>
       <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);padding:14px 16px;border-radius:var(--r-sm)">
-        <div style="font-size:20px;margin-bottom:6px">🏢</div>
+        <div style="margin-bottom:8px;color:var(--text)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg></div>
         <div style="font-weight:600;font-size:14px;margin-bottom:4px">Ilgaz İş Hanı Kat:1 D:2</div>
         <div style="font-size:13px;color:var(--muted)">Watsons yanı, 1. kat. Vitrinsiz, tamamen konforlu ve %100 gizli ortam.</div>
       </div>

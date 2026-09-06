@@ -15,7 +15,7 @@
     localStorage.setItem('adm_theme', t);
     document.documentElement.setAttribute('data-theme', t);
     const btn = $('#theme-toggle');
-    if (btn) btn.innerHTML = t === 'dark' ? '🌙' : '☀️';
+    if (btn) btn.innerHTML = t === 'dark' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
     toast(`Tema değiştirildi: ${t === 'dark' ? 'Koyu Lüks' : 'Açık'}`);
   }
 
@@ -26,7 +26,7 @@
     const btn = $('#privacy-toggle');
     if (btn) {
       btn.classList.toggle('active', val);
-      btn.innerHTML = val ? '🔒 Gizlilik Açık' : '👁️ Gizlilik Modu';
+      btn.innerHTML = val ? 'Gizlilik Açık' : 'Gizlilik Modu';
     }
     document.body.classList.toggle('privacy-active', val);
     const hash = (location.hash || '#/dashboard').split('/')[1] || 'dashboard';
@@ -55,7 +55,8 @@
     let zone = $('#toast-zone'); if (!zone) { document.body.insertAdjacentHTML('beforeend', '<div id="toast-zone"></div>'); zone = $('#toast-zone'); }
     const el = document.createElement('div');
     el.className = 'toast' + (err ? ' err' : '');
-    el.innerHTML = `<span>${err ? '⚠️' : '✅'}</span><span>${esc(msg)}</span>`;
+    const ic = err ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    el.innerHTML = `<span>${ic}</span><span>${esc(msg)}</span>`;
     zone.appendChild(el);
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 2600);
   }
@@ -65,7 +66,7 @@
     m.className = 'modal-back open';
     m.style.zIndex = '99999';
     m.innerHTML = `<div class="modal" style="max-width:400px;text-align:center;padding:24px">
-      <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+      <div style="display:flex;justify-content:center;margin-bottom:12px;color:var(--rose)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Silme Onayı</h3>
       <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.5">${esc(msg)}</p>
       <div style="display:flex;gap:12px;justify-content:center">
@@ -185,22 +186,22 @@
       </div>
       <div class="nav-section-title">Yönetim</div>
       <nav class="adm-nav">
-        <a href="#/dashboard" class="${active === 'dashboard' ? 'on' : ''}"><span class="ic">📊</span>Panel</a>
-        <a href="#/orders" class="${active === 'orders' ? 'on' : ''}"><span class="ic">📦</span>Siparişler${badge.orders ? `<span class="pill">${badge.orders}</span>` : ''}</a>
-        <a href="#/products" class="${active === 'products' ? 'on' : ''}"><span class="ic">🛍️</span>Ürünler</a>
-        <a href="#/categories" class="${active === 'categories' ? 'on' : ''}"><span class="ic">🗂️</span>Kategoriler</a>
-        <a href="#/reviews" class="${active === 'reviews' ? 'on' : ''}"><span class="ic">⭐</span>Yorumlar${badge.reviews ? `<span class="pill">${badge.reviews}</span>` : ''}</a>
+        <a href="#/dashboard" class="${active === 'dashboard' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>Panel</a>
+        <a href="#/orders" class="${active === 'orders' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>Siparişler${badge.orders ? `<span class="pill">${badge.orders}</span>` : ''}</a>
+        <a href="#/products" class="${active === 'products' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>Ürünler</a>
+        <a href="#/categories" class="${active === 'categories' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>Kategoriler</a>
+        <a href="#/reviews" class="${active === 'reviews' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Yorumlar${badge.reviews ? `<span class="pill">${badge.reviews}</span>` : ''}</a>
       </nav>
       <div class="nav-section-title">Pazarlama & Kullanıcı</div>
       <nav class="adm-nav">
-        <a href="#/coupons" class="${active === 'coupons' ? 'on' : ''}"><span class="ic">🎟️</span>Kuponlar</a>
-        <a href="#/users" class="${active === 'users' ? 'on' : ''}"><span class="ic">👥</span>Kullanıcılar</a>
-        <a href="#/messages" class="${active === 'messages' ? 'on' : ''}"><span class="ic">💌</span>Mesajlar</a>
-        <a href="#/settings" class="${active === 'settings' ? 'on' : ''}"><span class="ic">⚙️</span>Ayarlar</a>
+        <a href="#/coupons" class="${active === 'coupons' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="12" y1="6" x2="12" y2="18" stroke-dasharray="2 2"/></svg></span>Kuponlar</a>
+        <a href="#/users" class="${active === 'users' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Kullanıcılar</a>
+        <a href="#/messages" class="${active === 'messages' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>Mesajlar</a>
+        <a href="#/settings" class="${active === 'settings' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>Ayarlar</a>
       </nav>
       <div class="sidebar-foot">
-        <a href="/" class="mini" target="_blank">🏬 Mağazayı Önizle</a>
-        <a href="#" class="mini" id="adm-logout">🚪 Güvenli Çıkış</a>
+        <a href="/" class="mini" target="_blank">Mağazayı Önizle</a>
+        <a href="#" class="mini" id="adm-logout">Güvenli Çıkış</a>
       </div>
     </aside>
     <main class="admin-main">
@@ -210,9 +211,9 @@
           <span class="pulse-badge">Canlı Sistem</span>
         </div>
         <div class="topbar-right">
-          <button class="cmd-trigger" id="cmd-btn" title="Hızlı Komut Paleti (Ctrl+K / Cmd+K)">🔍 <span>Ara / Komutlar</span> <kbd>⌘K</kbd></button>
-          <button class="privacy-toggle-btn ${privacyMode ? 'active' : ''}" id="privacy-toggle" title="Müşteri verilerini gizle/göster">${privacyMode ? '🔒 Gizlilik Açık' : '👁️ Gizlilik'}</button>
-          <button class="theme-toggle-btn" id="theme-toggle" title="Koyu / Açık Tema">${currentTheme === 'dark' ? '🌙' : '☀️'}</button>
+          <button class="cmd-trigger" id="cmd-btn" title="Hızlı Komut Paleti (Ctrl+K / Cmd+K)"><span>Ara / Komutlar</span> <kbd>⌘K</kbd></button>
+          <button class="privacy-toggle-btn ${privacyMode ? 'active' : ''}" id="privacy-toggle" title="Müşteri verilerini gizle/göster">${privacyMode ? 'Gizlilik Açık' : 'Gizlilik Modu'}</button>
+          <button class="theme-toggle-btn" id="theme-toggle" title="Koyu / Açık Tema">${currentTheme === 'dark' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'}</button>
           <a class="view-store" href="/" target="_blank">↗ Mağaza</a>
           <div class="adm-avatar" id="adm-avatar" title="${window.__me ? window.__me.name : 'Admin'}">A</div>
         </div>
