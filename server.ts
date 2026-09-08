@@ -1253,9 +1253,10 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
       homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99
     };
   });
-  const homeFeatured = allCats.filter((c) => c.featuredOnHome).sort((a, b) => (a.homeOrder || 99) - (b.homeOrder || 99) || b.count - a.count);
-  const homeRemaining = allCats.filter((c) => !homeFeatured.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
-  const top = [...homeFeatured, ...homeRemaining].slice(0, 4);
+  const exactSlugs = ['vibratorler', 'erkekler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'realistik-dildolar'];
+  const topCats = exactSlugs.map(slug => allCats.find(c => c.slug === slug)).filter(Boolean);
+  const homeRemaining = allCats.filter((c) => !topCats.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
+  const top = [...topCats, ...homeRemaining].slice(0, 7);
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
@@ -1282,18 +1283,18 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   <div class="bento">${top.map((c, i) => {
     const parts = c.name.split(' ');
     const nm = parts[0] + (parts.length > 1 ? ` <em>${parts.slice(1).join(' ')}</em>` : '');
-    const area = ['a','b','c','d'][i] || 'a';
+    const area = ['a','b','c','d','e','f','h'][i] || 'a';
     return `
     <a class="bento-card bento-card-${area} rv rv-d${i + 1}" href="/magaza?kat=${c.slug}">
       <span class="bento-rank">0${i + 1}</span>
-      <img class="bento-bg" src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy">
+      <span class="bento-arrow-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
+      <div class="bento-img-wrap"><img class="bento-bg" src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy"></div>
       <div class="bento-meta"><h3>${nm}</h3><span class="bcount">${c.count} ${tr('cats.products')}</span></div>
-      <span class="bento-go">${tr('bento.explore')}</span>
     </a>`;
   }).join('')}
-    <a class="bento-card bento-cta bento-card-e rv rv-d${top.length + 1}" href="/magaza">
+    <a class="bento-card bento-cta bento-card-g rv rv-d${top.length + 1}" href="/magaza">
       <span class="cta-glow" aria-hidden="true"></span>
-      <span class="cta-arrows" aria-hidden="true">→ → →</span>
+      <span class="bento-arrow-icon cta-corner-arrow" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
       <span class="cta-inner">
         <em class="cta-kicker">${tr('bcta.kicker')}</em>
         <h3>${tr('bcta.h3')}<span class="dot-rose">.</span></h3>

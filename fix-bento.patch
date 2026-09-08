@@ -1,0 +1,26 @@
+--- public/css/shop.css
++++ public/css/shop.css
+@@ -1717,6 +1717,14 @@
+   filter: drop-shadow(0 20px 32px rgba(41, 37, 36, 0.15));
+ }
+ 
++.bento-card-f .bento-bg,
++.bento-card-e .bento-bg {
++  max-width: 78%;
++  max-height: 85%;
++  transform: translateY(-4px);
++  filter: drop-shadow(0 15px 24px rgba(41, 37, 36, 0.12));
++}
++
+ /* Stag Spray (02) & Specific cards image alignment to avoid text overlap */
+ .bento-card-b .bento-img-wrap,
+ .bento-card-c .bento-img-wrap,
+@@ -1742,7 +1750,7 @@
+ }
+ 
+ .bento-meta {
+-  position: absolute;
++  position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 100%;

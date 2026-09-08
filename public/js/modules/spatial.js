@@ -622,19 +622,21 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
             stage.classList.add('is-pulling-mode');
           }
           
-          const maxTravelY = 220;
-          const pullForce = deltaY * 0.85;
-          const moveY = Math.min(maxTravelY, pullForce / (1 + pullForce / (maxTravelY * 1.8)));
-          const progress = Math.min(1, moveY / 110);
+          // Pure Tactile Pull-to-Zoom: Bolds and expands the product image powerfully
+          const maxTravelY = 120;
+          const pullForce = deltaY * 0.7;
+          const moveY = Math.min(maxTravelY, pullForce / (1 + pullForce / (maxTravelY * 2.2)));
+          const progress = Math.min(1, deltaY / 130);
           
-          const scale = 1 + progress * 1.15;
+          // Confident, rich zoom magnification (1.00x -> 1.75x) with center-focused transform
+          const scale = 1 + Math.pow(progress, 0.85) * 0.78;
           currentScale = scale;
           
           spatialMain.style.transform = `translateY(${moveY.toFixed(1)}px) scale(${scale.toFixed(3)})`;
-          spatialMain.style.filter = `drop-shadow(0 ${(20 + moveY * 0.45).toFixed(1)}px ${(36 + moveY * 0.65).toFixed(1)}px rgba(0,0,0,${(0.32 + progress * 0.38).toFixed(2)}))`;
+          spatialMain.style.filter = `drop-shadow(0 ${(18 + progress * 24).toFixed(1)}px ${(32 + progress * 36).toFixed(1)}px rgba(0,0,0,${(0.28 + progress * 0.42).toFixed(2)}))`;
           
           if (spatialGlow) {
-            spatialGlow.style.transform = `translate(-50%, -50%) translateY(${(moveY * 0.45).toFixed(1)}px) scale(${(1 + progress * 0.8).toFixed(2)})`;
+            spatialGlow.style.transform = `translate(-50%, -50%) translateY(${(moveY * 0.35).toFixed(1)}px) scale(${(1 + progress * 1.2).toFixed(2)})`;
             spatialGlow.style.opacity = '1';
           }
 
