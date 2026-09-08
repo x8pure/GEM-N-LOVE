@@ -6,7 +6,7 @@ import { getLocalCart, setLocalCart, updateCartBadge, addToCart, initCart } from
 import { performLogout, initAuth } from './modules/auth.js';
 import { api, getClientSid } from './modules/api.js';
 import { toast } from './modules/ui.js';
-import { initCoverflow } from './modules/coverflow.js';
+import { initCoverflow, destroyCoverflow } from './modules/coverflow.js';
 import { initContact } from './modules/contact.js';
 import { initAutoCropNormalizer } from './modules/autocrop.js';
 
@@ -1642,12 +1642,82 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   window.initProfile = initProfile;
 
   
-  /* ================= SOFT SPA NAVIGATION (Zero Flicker / Instant Smooth Transition) ================= */
-  let isNavigating = false;
+  /* ================= 2026 INSTANT SPA ROUTER & ZERO-JITTER SCROLL ENGINE ================= */
+  let activeNavAbort = null;
   const scrollPositions = new Map();
 
+  // Configure native manual scroll restoration to eliminate browser scroll fighting
+  if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
+  // Persist current scroll position on unload and pagehide
+  const persistScroll = () => {
+    try {
+      const key = 'ls_scr_' + location.pathname + location.search;
+      sessionStorage.setItem(key, String(window.scrollY || window.pageYOffset || 0));
+    } catch (e) {}
+  };
+  window.addEventListener('beforeunload', persistScroll, { passive: true });
+  window.addEventListener('pagehide', persistScroll, { passive: true });
+
+  function restoreReloadScroll() {
+    try {
+      const key = 'ls_scr_' + location.pathname + location.search;
+      const saved = sessionStorage.getItem(key);
+      if (saved !== null) {
+        const y = parseInt(saved, 10);
+        if (y > 0) {
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+            setTimeout(() => {
+              const currentY = window.scrollY || window.pageYOffset || 0;
+              if (Math.abs(currentY - y) > 40) {
+                window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+              }
+            }, 80);
+          });
+        }
+      }
+    } catch (e) {}
+  }
+
+  function updateActiveNavIndicators(targetPath) {
+    $$('nav.top .nav-links a').forEach((a) => {
+      const navPath = a.getAttribute('data-nav') || a.getAttribute('href');
+      if (navPath) {
+        const isActive = navPath === '/' ? targetPath === '/' : targetPath.startsWith(navPath);
+        a.classList.toggle('active', isActive);
+      }
+    });
+    initMobileBottomNav();
+  }
+
+  function runRouteInit(pathname) {
+    refreshRevealObservers();
+    if (pathname === '/' || pathname === '') {
+      initHome();
+    } else if (pathname === '/magaza' || pathname.startsWith('/magaza')) {
+      initShop();
+    } else if (pathname.startsWith('/urun/')) {
+      initProduct();
+      initReviewForm();
+    } else if (pathname === '/sepet') {
+      initCart();
+    } else if (pathname === '/odeme') {
+      initCheckout();
+    } else if (pathname === '/siparis-onay' || pathname.startsWith('/siparis-onay')) {
+      initThanks();
+    } else if (pathname === '/giris' || pathname === '/kayit' || pathname === '/hesap') {
+      initAuth();
+      initAccount();
+      initProfile();
+    } else if (pathname === '/iletisim') {
+      initContact();
+    }
+  }
+
   async function navigateTo(url, pushState = true) {
-    if (isNavigating) return;
     const targetUrl = new URL(url, location.origin);
     if (targetUrl.origin !== location.origin) {
       location.href = url;
@@ -1658,7 +1728,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       return;
     }
 
-    // Always immediately close any open spatial card modal
+    // Immediately close any open modal
     closeSpatialCardZoom();
 
     const mainEl = $('#app-main');
@@ -1667,7 +1737,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       return;
     }
 
-    // If user clicked link to the exact current page (e.g. Logo / Home while already on Home)
+    // Clicking link to the exact current page
     if (pushState && targetUrl.pathname === location.pathname && targetUrl.search === location.search && !targetUrl.hash) {
       mainEl.classList.add('is-transitioning');
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -1675,26 +1745,37 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       setTimeout(() => {
         mainEl.classList.remove('is-transitioning');
         refreshRevealObservers();
-      }, 160);
+      }, 150);
       return;
     }
 
     // Save current scroll position before navigating away
     if (pushState) {
-      scrollPositions.set(location.pathname + location.search, window.scrollY);
+      scrollPositions.set(location.pathname + location.search, window.scrollY || window.pageYOffset || 0);
     }
 
-    isNavigating = true;
+    // Cancel in-flight previous request if user clicks fast between tabs
+    if (activeNavAbort) {
+      try { activeNavAbort.abort(); } catch (e) {}
+      activeNavAbort = null;
+    }
+
+    const abortCtrl = new AbortController();
+    activeNavAbort = abortCtrl;
+
+    // Instant UI feedback on navigation tabs
+    updateActiveNavIndicators(targetUrl.pathname);
     mainEl.classList.add('is-transitioning');
 
     try {
       const resp = await fetch(url, {
+        signal: abortCtrl.signal,
         headers: {
           'X-Requested-With': 'SPA',
           'x-ls-sid': getClientSid()
         }
       });
-      if (!resp.ok) throw new Error('Page fetch failed');
+      if (!resp.ok) throw new Error('Page fetch failed: ' + resp.status);
       const htmlText = await resp.text();
       const doc = new DOMParser().parseFromString(htmlText, 'text/html');
       const newMain = doc.querySelector('#app-main');
@@ -1704,6 +1785,9 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         return;
       }
 
+      // Cleanup previous active loops/components
+      destroyCoverflow();
+
       if (pushState) {
         history.pushState({}, '', url);
       }
@@ -1711,28 +1795,19 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       // Update document title & metadata
       if (doc.title) document.title = doc.title;
 
-      // Update active nav link states
-      $$('nav.top .nav-links a').forEach((a) => {
-        const navPath = a.getAttribute('data-nav') || a.getAttribute('href');
-        if (navPath) {
-          const isActive = navPath === '/' ? targetUrl.pathname === '/' : targetUrl.pathname.startsWith(navPath);
-          a.classList.toggle('active', isActive);
-        }
-      });
-
-      // Update mobile bottom nav active state
-      initMobileBottomNav();
-
-      // Update cart count or badges
+      // Update cart badges
       refreshCartBadge();
 
-      // Swap content
+      // Swap content cleanly
       mainEl.innerHTML = newMain.innerHTML;
 
       // Scroll handling: restore position on back/forward, or scroll to top on new page
       if (pushState) {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         resetNavScrolled();
+        try {
+          sessionStorage.setItem('ls_scr_' + targetUrl.pathname + targetUrl.search, '0');
+        } catch (e) {}
       } else {
         const savedY = scrollPositions.get(targetUrl.pathname + targetUrl.search);
         if (typeof savedY === 'number') {
@@ -1742,30 +1817,30 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         }
       }
 
-      // Trigger scroll reveal for newly injected content
-      refreshRevealObservers();
-
-      // Re-run page initializers for the active route
-      const pageHandlers = [initHome, initShop, initProduct, initReviewForm, initCart, initCheckout, initThanks, initAuth, initAccount, initProfile, initContact];
-      pageHandlers.forEach((f) => {
-        try { f(); } catch (err) { console.error(err); }
-      });
+      // Run route specific initializers
+      runRouteInit(targetUrl.pathname);
 
       // Close mobile menu if open
       $('#mobile-menu')?.classList.remove('open');
       
-      // Dispatch event for modals/overlays to know navigation completed
+      // Dispatch event for modals/overlays
       document.dispatchEvent(new CustomEvent('spa:navigated'));
 
     } catch (err) {
+      if (err.name === 'AbortError') {
+        // Silently ignore superseded rapid navigation
+        return;
+      }
       console.warn('Soft nav fallback:', err);
       location.href = url;
     } finally {
-      setTimeout(() => {
-        mainEl.classList.remove('is-transitioning');
-        refreshRevealObservers();
-        isNavigating = false;
-      }, 50);
+      if (activeNavAbort === abortCtrl) {
+        activeNavAbort = null;
+        setTimeout(() => {
+          mainEl.classList.remove('is-transitioning');
+          refreshRevealObservers();
+        }, 40);
+      }
     }
   }
 
@@ -1774,7 +1849,6 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     initSpaLinks.initialized = true;
 
     document.addEventListener('click', (e) => {
-      // Find closest anchor tag
       const link = e.target.closest('a');
       if (!link) return;
       if (link.hasAttribute('data-external')) return;
@@ -1802,9 +1876,6 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       if (dest.origin !== location.origin) return;
       if (dest.pathname.startsWith('/admin') || dest.pathname.startsWith('/api/')) return;
 
-      // Prevent concurrent navigation race conditions
-      if (isNavigating) return;
-
       // If user is clicking category chip inside shop page and already in /magaza, let shop filter handle it
       if (location.pathname === '/magaza' && dest.pathname === '/magaza' && dest.searchParams.has('kat')) {
         const cat = dest.searchParams.get('kat');
@@ -1828,11 +1899,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
   /* boot */
   const globalInit = [initAutoCropNormalizer, initSpatialAnimations, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
-  const pageInit = [initHome, initShop, initProduct, initReviewForm, initCart, initCheckout, initThanks, initAuth, initAccount, initProfile, initContact];
 
   function runBoot() {
     globalInit.forEach((f) => { try { f(); } catch (e) { console.error(e); } });
-    pageInit.forEach((f) => { try { f(); } catch (e) { console.error(e); } });
+    runRouteInit(location.pathname);
+    restoreReloadScroll();
   }
 
   if (document.readyState === 'loading') {
