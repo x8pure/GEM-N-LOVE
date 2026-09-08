@@ -1754,9 +1754,9 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
 }
 
 .bento-card-h .bento-bg {
-  max-height: 74%;
-  max-width: 58%;
-  transform: translateY(-6px);
+  max-height: 85%;
+  max-width: 75%;
+  transform: translateY(0);
 }
 /* Stag Spray (02) & Specific cards image alignment to avoid text overlap */
 .bento-card-b .bento-img-wrap,
