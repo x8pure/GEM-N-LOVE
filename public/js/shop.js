@@ -462,6 +462,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     }
   }
 
+  let resetNavScrolled = () => {};
   const nav = $('nav.top');
   const hdr = $('header');
   if (nav) {
@@ -479,6 +480,12 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         if (hdr) hdr.classList.remove('scrolled');
         document.body.classList.remove('scrolled');
       }
+    };
+    resetNavScrolled = () => {
+      isNavScrolled = false;
+      nav.classList.remove('scrolled');
+      if (hdr) hdr.classList.remove('scrolled');
+      document.body.classList.remove('scrolled');
     };
     addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -950,7 +957,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   function productCard(p) {
     const displayName = cleanEditorialTitle(p.name);
     const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
-    const priceHtml = `<span class="price"><span class="cur">₺</span><span class="val">${rawNum}</span></span>`;
+    const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
 
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
@@ -974,6 +981,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   }
   LS.productCard = productCard;
 
+  function featuredCard(p) {
+    return productCard(p);
+  }
+  LS.featuredCard = featuredCard;
+
   /* ================= 2026 SPATIAL CARD ZOOM ================= */
   // Spatial zoom and tilt physics moved to modules/spatial.js
   window.openSpatialCardZoom = openSpatialCardZoom;
@@ -985,7 +997,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     if (featured && featured.children.length === 0) {
       const data = await api('/api/products?featured=1&limit=10').catch(() => ({ products: [] }));
       if (data.products && data.products.length) {
-        featured.innerHTML = data.products.slice(0, 10).map(productCard).join('');
+        featured.innerHTML = data.products.slice(0, 10).map((p) => featuredCard(p)).join('');
         refreshRevealObservers();
       }
     }
@@ -1101,53 +1113,375 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
     const hasMultipleImages = productGallery.length > 1;
 
+    function getProductProfile(prod) {
+      const name = (prod.name || '').toLowerCase();
+      const cat = (prod.category || '').toLowerCase();
+      const rawDesc = `${prod.name || ''} ${prod.description || ''} ${prod.longDescription || ''}`;
+      const text = rawDesc.toLowerCase();
+
+      // Helper metric extractors
+      const mlMatch = text.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|mililitre)/i);
+      const mlVal = mlMatch ? `${mlMatch[1].replace(',', '.')} ml` : null;
+
+      const cmMatch = text.match(/(\d+(?:[.,]\d+)?)\s*cm/i);
+      const cmVal = cmMatch ? `${cmMatch[1].replace(',', '.')} cm` : null;
+
+      const kgMatch = text.match(/(\d+(?:[.,]\d+)?)\s*kg/i);
+      const kgVal = kgMatch ? `${kgMatch[1].replace(',', '.')} Kg` : null;
+
+      // 1. KOZMETİK / CİNSEL SAĞLIK / SPREY / JEL / KREM / KAYGANLAŞTIRICI
+      const isCosmetic = (
+        name.includes('sprey') || name.includes('spray') || name.includes('jel') || name.includes('gel') ||
+        name.includes('krem') || name.includes('cream') || name.includes('lube') || name.includes('kayganlaştırıcı') ||
+        name.includes('damla') || name.includes('yağ') || name.includes('oil') || name.includes('stag') ||
+        name.includes('proling') || name.includes('parfüm') || name.includes('macun') || name.includes('glide')
+      ) && !name.includes('pompa') && !name.includes('vakum') && !name.includes('dildo') && !name.includes('vibratör');
+
+      if (isCosmetic) {
+        const isSpray = name.includes('sprey') || name.includes('spray') || name.includes('stag');
+        const isCream = name.includes('krem') || name.includes('cream');
+        const hasLidocaine = text.includes('lidokain') || text.includes('anestezik');
+
+        if (isSpray) {
+          return {
+            chips: [
+              { k: 'Ürün Formu', v: 'Geciktirici Sprey' },
+              { k: 'Net Hacim', v: mlVal || '20 ml (~100 Puf)' },
+              { k: 'Etki Süresi', v: '45 - 60 Dakika' },
+              { k: 'Cilt Uyumu', v: 'Dermatolojik Onaylı' }
+            ],
+            table: [
+              ['Ürün Adı', prod.name],
+              ['Ürün Formu', 'Geciktirici & Performans Spreyi'],
+              ['Net Hacim', mlVal ? `${mlVal} (~100 Püskürtme)` : '20 ml (~100 Doz)'],
+              ['Etkin Formül', hasLidocaine ? 'Lokal Etkili Geciktirici (%10 Lidokain Formülasyonu)' : 'Klinik Onaylı Aktif Bileşenler'],
+              ['Cilt Uyumluluğu', 'Dermatolojik testlerden geçmiş, pH dengeli formül'],
+              ['Kondom & Lateks Uyumu', 'Prezervatif ile %100 uyumludur, latekse zarar vermez'],
+              ['Etki Başlangıcı', 'Uygulamadan 10-15 dakika sonra tam aktif kontrol'],
+              ['Saklama Koşulları', '25°C altında oda sıcaklığında, güneş ışığından uzakta kapalı kutuda']
+            ],
+            careTitle: 'Kullanım ve Saklama Talimatı',
+            careText: 'İlişkiden yaklaşık 10-15 dakika önce temiz ve kuru bölgeye 2-3 püskürtme uygulayınız. Parmak uçlarınızla dairesel hareketlerle masaj yaparak cildinize iyice emilmesini sağlayınız. Prezervatif veya su bazlı kayganlaştırıcılar ile birlikte güvenle kullanılabilir. Gözle ve tahriş olmuş ciltle temasından kaçınınız. Çocukların erişemeyeceği, doğrudan güneş ışığı almayan serin ve kuru bir ortamda kapağı kapalı olarak saklayınız.'
+          };
+        }
+
+        if (isCream) {
+          return {
+            chips: [
+              { k: 'Ürün Formu', v: 'Performans Kremi' },
+              { k: 'Net Hacim', v: mlVal || '59 ml' },
+              { k: 'Etki Süresi', v: 'Hızlı & Uzun Süreli' },
+              { k: 'Cilt Uyumu', v: 'Dermatolojik Onaylı' }
+            ],
+            table: [
+              ['Ürün Adı', prod.name],
+              ['Ürün Formu', 'Erkeklere Özel Performans & Geciktirici Krem'],
+              ['Net Miktar', mlVal || '59 ml'],
+              ['Etkin Formül', hasLidocaine ? 'Topikal Etkili Formül (%10 Lidokain)' : 'Özel Geliştirilmiş Doku Uyumlu Formül'],
+              ['Cilt Uyumluluğu', 'Kokusuz, renksiz ve tatsız; cilde zarar vermeyen yapı'],
+              ['Kondom Uyumu', 'Lateks prezervatifler ile %100 güvenle kullanılabilir'],
+              ['Etki Başlangıcı', '15 dakika içinde emilir ve etkisini hissettirir'],
+              ['Saklama Koşulları', 'Oda sıcaklığında, doğrudan ısı ve ışıktan uzakta saklayınız']
+            ],
+            careTitle: 'Kullanım ve Saklama Talimatı',
+            careText: 'Aktiviteden yaklaşık 15 dakika önce temiz cilt yüzeyine nohut büyüklüğünde sürerek hafif masaj hareketleriyle emilene kadar uygulayınız. Koku ve tat bırakmadığı için partneriniz tarafından fark edilmez. Durulama gerektirmez. Çocukların ulaşamayacağı yerde ve kapağı sıkıca kapalı muhafaza ediniz.'
+          };
+        }
+
+        // Lube / Gel
+        return {
+          chips: [
+            { k: 'Formül', v: 'Su Bazlı Formül' },
+            { k: 'Net Hacim', v: mlVal || '250 ml' },
+            { k: 'Doku', v: 'İpeksi & Yağsız' },
+            { k: 'Uyum', v: 'Lateks & Oyuncak' }
+          ],
+          table: [
+            ['Ürün Adı', prod.name],
+            ['Ürün Tipi', 'Su Bazlı Medikal Kayganlaştırıcı Jel'],
+            ['Net Hacim', mlVal || '250 ml'],
+            ['Formül Yapısı', 'Tamamen su bazlı, yağsız, leke ve yapışkanlık bırakmayan ipeksi yapı'],
+            ['Oyuncak & Kondom Uyumu', '%100 Uyumlu (Lateks kondomlar, silikon ve TPE ürünlerle güvenli)'],
+            ['Temizlik Kolaylığı', 'Yalnızca ılık su ile zahmetsizce ciltten ve kumaşlardan arınır'],
+            ['Güvenlik Standartları', 'Hipoalerjenik, parabensiz, pH dengeli klinik formül']
+          ],
+          careTitle: 'Kullanım ve Hijyen Rehberi',
+          careText: 'İhtiyaç duyulan bölgeye veya yetişkin oyuncağının üzerine arzu edilen miktarda uygulayınız. Su bazlı formülü sayesinde leke bırakmaz, kumaşlardan ve ciltten sadece ılık su ile zahmetsizce temizlenir. Prezervatifler ve tüm medikal silikon ürünlerle %100 güvenle kullanılabilir. Direkt güneş ışığından uzakta, oda sıcaklığında saklayınız.'
+        };
+      }
+
+      // 2. FETİŞ / AKSESUAR / POMPA
+      const isFetishOrPump = (
+        name.includes('pompa') || name.includes('vakum') || name.includes('kelepçe') ||
+        name.includes('maske') || name.includes('kırbaç') || name.includes('harness') ||
+        cat === 'fetish-urunler' || cat === 'fantezi-ic-giyim'
+      );
+      if (isFetishOrPump) {
+        const isPump = name.includes('pompa') || name.includes('vakum');
+        if (isPump) {
+          return {
+            chips: [
+              { k: 'Gövde', v: 'Medikal Akrilik & Silikon' },
+              { k: 'Mekanizma', v: 'Hızlı Vakum Pompası' },
+              { k: 'Güvenlik', v: 'Basınç Emniyet Valfi' },
+              { k: 'Temizlik', v: 'Ayrılabilir Hijyenik Hazne' }
+            ],
+            table: [
+              ['Ürün Adı', prod.name],
+              ['Silindir Malzemesi', 'Yüksek dayanımlı şeffaf medikal akrilik'],
+              ['Conta Malzemesi', 'Hava sızdırmaz ultra esnek medikal silikon manşon'],
+              ['Emniyet Sistemi', 'Anında basınç tahliye emniyet valfi ile kontrollü kullanım'],
+              ['Ölçü Takibi', 'Silindir üzerinde kabartmalı milimetrik gelişim skalası'],
+              ['Kullanım Amacı', 'Bölgesel kan dolaşımını ve hassasiyeti artıran vakum terapisi']
+            ],
+            careTitle: 'Vakum Pompası Kullanım & Güvenlik Rehberi',
+            careText: 'Kullanmadan önce kenar silikon contasına hafifçe su bazlı jel sürerek hava sızdırmazlığını sağlayınız. Vakum uygularken basıncı daima kademeli olarak artırınız. Herhangi bir rahatsızlık hissettiğinizde silindir üzerindeki emniyet tahliye butonuna basarak vakumu anında boşaltınız. Kullanım sonrasında akrilik tüpü ve silikon contayı ılık sabunlu su ile yıkayıp durulayınız; alkollü veya aşındırıcı kimyasallardan uzak tutunuz.'
+          };
+        }
+        return {
+          chips: [
+            { k: 'Malzeme', v: text.includes('deri') ? 'Vegan / Hakiki Deri' : 'Yumuşak Peluş & Çelik' },
+            { k: 'Kilit', v: 'Hızlı Emniyet Mandallı' },
+            { k: 'Ayar', v: 'Ayarlanabilir Beden' },
+            { k: 'Kullanım', v: 'Çiftlere Özel Fantezi' }
+          ],
+          table: [
+            ['Ürün Adı', prod.name],
+            ['Ana Malzeme', text.includes('deri') ? 'Yüksek Kalite Vegan Deri & Krom Metal' : 'Yumuşak Peluş Astar & Paslanmaz Çelik'],
+            ['Kilit & Emniyet', 'Hızlı serbest bırakma mandalı ve güvenlik mekanizması'],
+            ['Beden Uyumu', 'Tüm beden ve bilek ölçülerine göre tam ayarlanabilir'],
+            ['Aksesuar Özelliği', 'Ten dostu, sürtünmede tahriş etmeyen konforlu iç kaplama']
+          ],
+          careTitle: 'Kullanım ve Muhafaza Rehberi',
+          careText: 'Metal ve deri detaylı aksesuarları doğrudan suya sokmayınız; nemli bir mikrofiber bezle silip ardından kuru bir bezle kurulayınız. Aşırı nemli veya doğrudan güneş ışığı alan ortamlardan uzakta, serin ve kuru bir yerde muhafaza ediniz.'
+        };
+      }
+
+      // 3. MANKEN / SUNİ VAJİNA / MASTÜRBATÖR / KALÇA
+      const isDollOrMasturbator = (
+        name.includes('manken') || name.includes('doll') || name.includes('kalça') ||
+        name.includes('suni vajina') || name.includes('mastürbatör') || name.includes('masturbator') ||
+        name.includes('vajina') || name.includes('cup') || cat === 'realistik-mankenler' || cat === 'ciftler'
+      );
+      if (isDollOrMasturbator) {
+        const isBigDoll = name.includes('manken') || name.includes('doll') || cat === 'realistik-mankenler' || (cmMatch && parseInt(cmMatch[1], 10) > 100);
+        return {
+          chips: [
+            { k: isBigDoll ? 'Boyut / Boy' : 'Boyut / Ağırlık', v: cmVal ? `${cmVal} ${kgVal ? '· ' + kgVal : ''}` : (kgVal || 'Ergonomik Tasarım') },
+            { k: 'Doku Malzemesi', v: 'Medikal Realistik TPE' },
+            { k: 'Gövde Yapısı', v: isBigDoll ? 'Mafsallı Metal İskelet' : 'Vakumlu Kanal Haznesi' },
+            { k: 'Temizlik', v: 'Yıkanabilir & Pudralanabilir' }
+          ],
+          table: [
+            ['Ürün Adı', prod.name],
+            ['Doku Malzemesi', 'Medikal Sınıf Ultra Yumuşak Gerçekçi TPE / CyberSkin'],
+            ['Boyut / Ölçü', cmVal || (isBigDoll ? '165-170 CM Standart Boy' : 'Ergonomik Kompakt Boyut')],
+            ['Gövde Ağırlığı', kgVal || (isBigDoll ? '~35-40 Kg Gerçekçi Gövde' : 'Konforlu El Tipi Ağırlık')],
+            ['İç Kanal Mimarisi', 'Çok katmanlı kabartmalı iç doku ve emici vakum haznesi'],
+            ['Kayganlaştırıcı Uyumu', 'Yalnızca su bazlı kayganlaştırıcılar ile kullanıma uygundur']
+          ],
+          careTitle: 'TPE Bakım, Yıkama ve Pudralama Rehberi',
+          careText: 'Ürünü her zaman bol miktarda su bazlı kayganlaştırıcı ile kullanınız. Kullanım sonrasında iç kanalları tazyikli ılık su ile durulayınız. Temizledikten sonra kalan suyu nazikçe süzüp hava alan kuru bir yerde kurumaya bırakınız. TPE malzemenin yapışmasını önlemek ve ipeksi yumuşak dokusunu daima ilk günkü gibi korumak için kuruduktan sonra özel yenileyici bakım pudrası (veya saf mısır nişastası) uygulayınız.'
+        };
+      }
+
+      // 4. ELEKTRONİK / VİBRATÖR
+      const isVibe = (
+        name.includes('vibratör') || name.includes('vibrator') || name.includes('wand') ||
+        name.includes('rabbit') || name.includes('şarjlı') || name.includes('telefon kontrollü') ||
+        name.includes('g-spot') || cat === 'vibratorler' || text.includes('titreşimli')
+      );
+      if (isVibe) {
+        const isApp = text.includes('telefon') || text.includes('app');
+        return {
+          chips: [
+            { k: 'Şarj Tipi', v: 'Manyetik USB Şarjlı' },
+            { k: 'Titreşim', v: isApp ? 'App / Uzaktan Kontrol' : '10+ Titreşim Modu' },
+            { k: 'Gövde', v: 'Medikal Sıvı Silikon' },
+            { k: 'Su Dayanımı', v: '100% Su Geçirmez (IPX7)' }
+          ],
+          table: [
+            ['Ürün Adı', prod.name],
+            ['Gövde Malzemesi', '%100 Vücut Uyumlu Sıvı Silikon & Dayanıklı ABS'],
+            ['Şarj & Batarya', 'Manyetik Hızlı USB Şarj (Dahili Li-Ion Akü)'],
+            ['Titreşim Modları', isApp ? 'Sınırsız müzik/mesafe ritim modu & App kontrolü' : 'Çok kademeli frekans ve darbe ritimleri'],
+            ['Su Dayanımı', 'IPX7 Su Geçirmez — Duş ve jakuzi kullanımına tam uygun'],
+            ['Ses Seviyesi', 'Ultra sessiz fısıltı motoru (< 40 dB)'],
+            ['Uyumluluk', 'Yalnızca su bazlı kayganlaştırıcılar ile uyumludur']
+          ],
+          careTitle: 'Elektronik Cihaz Bakım & Şarj Rehberi',
+          careText: 'Gövdenin ipeksi medikal silikon dokusunu korumak için daima su bazlı kayganlaştırıcılar ile kullanınız (silikon bazlı kayganlaştırıcılar silikon gövdeye zarar verir). Kullanım sonrasında cihazı kapatıp ılık su ve antibakteriyel sabun ile nazikçe yıkayınız. Şarj yuvasının tamamen kuruduğundan emin olduktan sonra şarj kablosunu bağlayınız. Cihaz şarjdayken kesinlikle çalıştırılmamalıdır.'
+        };
+      }
+
+      // 5. MANUEL DİLDO / ANAL PLUG / CAM / METAL (VARSAYILAN OYUNCAK)
+      let malzeme = 'Medikal Platinum Silikon';
+      if (text.includes('borosilikat') || text.includes('cam')) malzeme = 'Borosilikat Cam';
+      else if (text.includes('çelik') || text.includes('metal')) malzeme = 'Medikal Paslanmaz Çelik';
+      else if (text.includes('sıvı silikon')) malzeme = 'Ultra Yumuşak Sıvı Silikon';
+
+      let taban = 'Ergonomik Tasarım';
+      if (text.includes('vantuz')) taban = 'Güçlü Sabitleme Vantuzu';
+      else if (name.includes('plug') || text.includes('plug')) taban = 'Güvenli Taban (Flared Base)';
+
+      return {
+        chips: [
+          { k: 'Malzeme', v: malzeme.split(' ')[0] + ' ' + (malzeme.split(' ')[1] || '') },
+          { k: 'Boyut', v: cmVal || 'Ergonomik Boyut' },
+          { k: 'Taban / Yapı', v: taban },
+          { k: 'Su Dayanımı', v: '100% Su Geçirmez' }
+        ],
+        table: [
+          ['Ürün Adı', prod.name],
+          ['Gövde Malzemesi', `${malzeme} (Vücut ile %100 biyo-uyumlu, ftalatsız)`],
+          ['Ölçü / Uzunluk', cmVal || 'Standart Ergonomik Ölçü'],
+          ['Taban Mimarisi', taban],
+          ['Su Dayanımı', '100% Su Geçirmez — Kolay sterilize edilebilir'],
+          ['Hijyen & Sterilizasyon', 'Kaynatılabilir / Ilık sabunlu suyla %100 arındırılabilir']
+        ],
+        careTitle: 'Kullanım ve Hijyen Rehberi',
+        careText: 'Pürüzsüz ve konforlu bir deneyim için bol miktarda su bazlı kayganlaştırıcı ile kullanılması önerilir. Kullanımdan önce ve sonra ılık su ile nötr sabun veya özel oyuncak temizleme solüsyonu ile yıkayınız. Direkt güneş ışığından ve aşırı sıcak ortamlardan uzakta kuru bir yerde muhafaza ediniz.'
+      };
+    }
+
+    const profile = getProductProfile(p);
+
     root.innerHTML = `
-    <div class="page-head" style="padding-bottom:0"><div class="crumbs"><a href="/">${t('pd.crumb.home')}</a> / <a href="/magaza">${t('pd.crumb.shop')}</a> / <a href="/magaza?kat=${p.category}">${catName(p.category, p.categoryName)}</a></div></div>
+    <div class="page-head" style="padding-bottom:6px">
+      <div class="crumbs">
+        <a href="/">${t('pd.crumb.home')}</a> / 
+        <a href="/magaza">${t('pd.crumb.shop')}</a> / 
+        <a href="/magaza?kat=${p.category}">${catName(p.category, p.categoryName)}</a>
+      </div>
+    </div>
     <div class="pd-layout">
       <div class="pd-gallery">
-        <div class="pd-media"><img id="pd-main-image" src="${imgSrc(p.image)}" alt="${p.name}"></div>
+        <div class="pd-media">
+          <img id="pd-main-image" src="${imgSrc(p.image)}" alt="${esc(p.name)}">
+        </div>
         ${hasMultipleImages ? `
-          <div class="pd-thumbs" style="display:flex;gap:10px;margin-top:14px;overflow-x:auto;padding-bottom:6px">
+          <div class="pd-thumbs" role="tablist">
             ${productGallery.map((img, idx) => `
-              <button type="button" class="pd-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" style="border-radius:10px;border:2px solid ${img === p.image ? 'var(--rose)' : 'var(--line)'};padding:2px;background:var(--card-2);cursor:pointer;width:58px;height:58px;flex-shrink:0;overflow:hidden;transition:all .18s ease">
-                <img src="${imgSrc(img)}" alt="${p.name} - ${idx + 1}" style="width:100%;height:100%;object-fit:contain">
+              <button type="button" class="pd-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" aria-label="Görsel ${idx + 1}">
+                <img src="${imgSrc(img)}" alt="${esc(p.name)} - ${idx + 1}">
               </button>
             `).join('')}
           </div>
         ` : ''}
       </div>
       <div class="pd-info">
-        <div class="prod-cat"><a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="prod-cat-link">${catName(p.category, p.categoryName)}</a></div>
-        <h1>${p.name}</h1>
-        <div class="prod-rating">${stars(p.rating)} <span>· ${p.reviewCount} ${t('pd.reviews')}</span></div>
-        <div class="pd-price"><span>${fmt(p.price)}</span>${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ''}</div>
-        <p class="pd-desc">${p.description}</p>
-        <div class="qty-row">
-          <div class="qty-picker">
-            <button id="q-minus" type="button">−</button>
-            <input id="q-val" value="1" readonly>
-            <button id="q-plus" type="button">+</button>
+        <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="pd-category-tag">${catName(p.category, p.categoryName)}</a>
+        <h1 class="pd-title">${esc(p.name)}</h1>
+
+        ${p.reviewCount > 0 ? `
+          <div class="pd-rating-bar">
+            <span class="stars">${stars(p.rating)}</span>
+            <span class="pd-rating-val">${p.rating.toFixed(1)}</span>
+            <span class="pd-rating-count">(${p.reviewCount} ${t('pd.reviews')})</span>
           </div>
-          <button class="btn btn-primary" id="pd-add">${t('pd.add')}</button>
-          <button class="btn btn-ghost" id="pd-buy">${t('pd.buy')}</button>
+        ` : `
+          <div class="pd-rating-bar pd-no-rating">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Henüz değerlendirilmedi · İlk yorumu siz yapın</span>
+          </div>
+        `}
+
+        <div class="pd-price-row">
+          <span class="pd-price-current">${fmt(p.price)}</span>
+          ${p.oldPrice && p.oldPrice > p.price ? `
+            <span class="pd-price-old">${fmt(p.oldPrice)}</span>
+            <span class="pd-discount-badge">%${Math.round((1 - p.price / p.oldPrice) * 100)} İndirim</span>
+          ` : ''}
         </div>
-        <div class="stock-line"><span class="dot" ${p.stock < 5 ? 'style="background:var(--warn);box-shadow:0 0 12px var(--warn)"' : ''}></span>
-          ${p.stock > 0 ? (p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : t('pd.stock.in')) : t('pd.stock.out')}
+
+        ${p.description ? `<p class="pd-lead-desc">${esc(p.description)}</p>` : ''}
+
+        <div class="pd-quick-specs">
+          ${profile.chips.map(chip => `
+            <div class="pd-spec-chip">
+              <span class="pd-spec-k">${esc(chip.k)}</span>
+              <span class="pd-spec-v">${esc(chip.v)}</span>
+            </div>
+          `).join('')}
         </div>
-        <div class="pd-trust">
-          <div>${t('pd.trust1')}</div>
-          <div>${t('pd.trust2')}</div>
-          <div>${t('pd.trust3')}</div>
-          <div>${t('pd.trust4')}</div>
+
+        <div class="pd-actions-row">
+          <div class="pd-qty-stepper">
+            <button id="q-minus" type="button" aria-label="Azalt">−</button>
+            <input id="q-val" value="1" readonly aria-label="Adet">
+            <button id="q-plus" type="button" aria-label="Artır">+</button>
+          </div>
+          <button class="pd-btn-add" id="pd-add">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>${t('pd.add')}</span>
+          </button>
+          <button class="pd-btn-buy" id="pd-buy">${t('pd.buy')}</button>
+        </div>
+
+        <div class="pd-stock-badge">
+          <span class="pd-stock-dot ${p.stock < 5 ? 'is-low' : ''}"></span>
+          <span>${p.stock > 0 ? (p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : 'Stokta Mevcut — 24 Saat İçinde Gizli Kargoda') : t('pd.stock.out')}</span>
+        </div>
+
+        <div class="pd-trust-grid">
+          <div class="pd-trust-item">
+            <div class="pd-trust-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <div class="pd-trust-text">
+              <strong>Gizli Paketleme</strong>
+              <p>Dışarıdan içeriği kesinlikle anlaşılamaz, sade ambalaj</p>
+            </div>
+          </div>
+
+          <div class="pd-trust-item">
+            <div class="pd-trust-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="pd-trust-text">
+              <strong>Hızlı & Ücretsiz Kargo</strong>
+              <p>750 TL üzeri siparişlerde aynı gün ücretsiz gönderim</p>
+            </div>
+          </div>
+
+          <div class="pd-trust-item">
+            <div class="pd-trust-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="pd-trust-text">
+              <strong>Anonim ve Güvenli Ödeme</strong>
+              <p>256-Bit SSL şifreleme, ekstrede nötr şirket unvanı</p>
+            </div>
+          </div>
+
+          <div class="pd-trust-item">
+            <div class="pd-trust-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="pd-trust-text">
+              <strong>Steril Orijinal Ürün</strong>
+              <p>Güvenlik kilitli kutu, hijyen standartlarına %100 uygun</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="tab-row">
-      <button class="tab-btn on" data-tab="detay">${t('pd.tab.detail')}</button>
-      <button class="tab-btn" data-tab="yorum">${t('pd.tab.reviews')}</button>
+
+    <div class="pd-tabs-section">
+      <div class="pd-tabs-nav">
+        <button class="pd-tab-btn active" data-tab="detay">Ürün Açıklaması ve Detaylar</button>
+        <button class="pd-tab-btn" data-tab="yorum">${t('pd.tab.reviews')} (${p.reviewCount || 0})</button>
+      </div>
+      <div class="pd-tab-content" id="tab-panel"></div>
     </div>
-    <div class="tab-panel" id="tab-panel"></div>
-    <section class="block"><div class="section-head"><div><h2>${t('pd.similar')}</h2></div><a href="/magaza?kat=${p.category}" class="link-more">${t('pd.all')}</a></div><div class="prod-grid" id="related-grid"></div></section>`;
+
+    <section class="block">
+      <div class="section-head">
+        <div><h2>${t('pd.similar')}</h2></div>
+        <a href="/magaza?kat=${p.category}" class="link-more">${t('pd.all')}</a>
+      </div>
+      <div class="prod-grid" id="related-grid"></div>
+    </section>`;
 
     // Gallery thumbnail switcher handler
     const mainImg = $('#pd-main-image');
@@ -1155,11 +1489,10 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       btn.addEventListener('click', () => {
         const targetSrc = btn.dataset.thumbSrc;
         if (mainImg && targetSrc) {
+          mainImg.style.opacity = '0.4';
           mainImg.src = imgSrc(targetSrc);
-          $$('.pd-thumb-btn', root).forEach((b) => {
-            b.classList.toggle('active', b === btn);
-            b.style.borderColor = (b === btn) ? 'var(--rose)' : 'var(--line)';
-          });
+          mainImg.onload = () => { mainImg.style.opacity = '1'; };
+          $$('.pd-thumb-btn', root).forEach((b) => b.classList.toggle('active', b === btn));
         }
       });
     });
@@ -1193,24 +1526,71 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       }
     });
 
-    const panels = { detay: p.longDescription || p.description };
     function showTab(name) {
-      $$('.tab-btn').forEach((b) => b.classList.toggle('on', b.dataset.tab === name));
+      $$('.pd-tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
       const panel = $('#tab-panel');
       if (name === 'yorum') {
         panel.innerHTML = '<div class="spinner"></div>';
         api('/api/products/' + p.id + '/reviews').then((d) => {
-          panels.yorum = d.reviews.length
-            ? d.reviews.map((r) => `<div style="border-bottom:1px solid var(--line);padding:14px 0"><div style="color:var(--gold)">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div><div style="color:var(--text);margin:6px 0">${r.text}</div><small>— ${r.userName} · ${dateFmt(r.createdAt)}</small></div>`).join('')
-            : t('pd.noreviews');
-          panel.textContent = '';
-          panel.innerHTML = panels.yorum + `<div style="margin-top:20px"><a class="btn btn-ghost btn-sm" href="/urun/${p.slug}/yorum">${t('pd.write')}</a></div>`;
+          if (d.reviews && d.reviews.length > 0) {
+            panel.innerHTML = `
+              <div class="review-list">
+                ${d.reviews.map((r) => `
+                  <div style="border-bottom:1px solid var(--line);padding:18px 0">
+                    <div style="color:var(--gold);letter-spacing:2px;font-size:14px;margin-bottom:6px">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <div style="color:var(--text);margin-bottom:8px;font-size:14.5px;line-height:1.6">${esc(r.text)}</div>
+                    <div style="color:var(--muted);font-size:12.5px">${esc(r.userName)} · ${dateFmt(r.createdAt)}</div>
+                  </div>
+                `).join('')}
+              </div>
+              <div style="margin-top:24px"><a class="btn btn-ghost btn-sm" href="/urun/${p.slug}/yorum">${t('pd.write')}</a></div>`;
+          } else {
+            panel.innerHTML = `
+              <div style="padding:24px 0;color:var(--muted)">
+                <p style="font-size:14.5px;margin-bottom:6px">Bu ürün için henüz müşteri değerlendirmesi bulunmuyor.</p>
+                <p style="font-size:13px;opacity:0.8;margin-bottom:20px">Deneyiminizi paylaşarak diğer kullanıcılara yol gösterebilirsiniz.</p>
+                <a class="btn btn-primary btn-sm" href="/urun/${p.slug}/yorum">${t('pd.write')}</a>
+              </div>`;
+          }
         }).catch(() => { panel.textContent = t('pd.reviewsfail'); });
       } else {
-        panel.textContent = panels.detay;
+        const fullDesc = (p.longDescription || p.description || '').trim();
+        const paragraphs = fullDesc.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+        
+        panel.innerHTML = `
+          <div class="pd-desc-paragraphs">
+            ${paragraphs.map(para => `<p>${esc(para)}</p>`).join('')}
+          </div>
+          
+          <div class="pd-specs-table-wrap">
+            <table class="pd-specs-table">
+              <tbody>
+                ${profile.table.map(row => `
+                  <tr>
+                    <td>${esc(row[0])}</td>
+                    <td>${esc(row[1])}</td>
+                  </tr>
+                `).join('')}
+                <tr>
+                  <td>Kategori</td>
+                  <td>${catName(p.category, p.categoryName)}</td>
+                </tr>
+                <tr>
+                  <td>Paketleme & Gizlilik</td>
+                  <td>Mühürlü steril koruma, içeriği belli olmayan %100 gizli kargo kutusu</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pd-care-box">
+            <h4>${esc(profile.careTitle)}</h4>
+            <p>${esc(profile.careText)}</p>
+          </div>
+        `;
       }
     }
-    $$('.tab-btn').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+    $$('.pd-tab-btn').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
     showTab('detay');
 
     api('/api/products?cat=' + p.category + '&limit=6').then((d) => {
@@ -1264,6 +1644,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   
   /* ================= SOFT SPA NAVIGATION (Zero Flicker / Instant Smooth Transition) ================= */
   let isNavigating = false;
+  const scrollPositions = new Map();
+
   async function navigateTo(url, pushState = true) {
     if (isNavigating) return;
     const targetUrl = new URL(url, location.origin);
@@ -1283,6 +1665,23 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     if (!mainEl) {
       location.href = url;
       return;
+    }
+
+    // If user clicked link to the exact current page (e.g. Logo / Home while already on Home)
+    if (pushState && targetUrl.pathname === location.pathname && targetUrl.search === location.search && !targetUrl.hash) {
+      mainEl.classList.add('is-transitioning');
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      resetNavScrolled();
+      setTimeout(() => {
+        mainEl.classList.remove('is-transitioning');
+        refreshRevealObservers();
+      }, 160);
+      return;
+    }
+
+    // Save current scroll position before navigating away
+    if (pushState) {
+      scrollPositions.set(location.pathname + location.search, window.scrollY);
     }
 
     isNavigating = true;
@@ -1327,9 +1726,21 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       // Update cart count or badges
       refreshCartBadge();
 
-      // Smooth swap
+      // Swap content
       mainEl.innerHTML = newMain.innerHTML;
-      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Scroll handling: restore position on back/forward, or scroll to top on new page
+      if (pushState) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        resetNavScrolled();
+      } else {
+        const savedY = scrollPositions.get(targetUrl.pathname + targetUrl.search);
+        if (typeof savedY === 'number') {
+          window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
+        } else {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }
+      }
 
       // Trigger scroll reveal for newly injected content
       refreshRevealObservers();
@@ -1350,10 +1761,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       console.warn('Soft nav fallback:', err);
       location.href = url;
     } finally {
-      setTimeout(() => { mainEl.classList.remove('is-transitioning');
+      setTimeout(() => {
+        mainEl.classList.remove('is-transitioning');
         refreshRevealObservers();
         isNavigating = false;
-      }, 40);
+      }, 50);
     }
   }
 
@@ -1373,7 +1785,18 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       if (link.hasAttribute('download')) return;
 
       const href = link.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('wa.me')) return;
+      if (!href) return;
+      if (href.startsWith('#')) {
+        if (href.length > 1) {
+          const targetEl = document.querySelector(href);
+          if (targetEl) {
+            e.preventDefault();
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+        return;
+      }
+      if (href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('wa.me')) return;
 
       const dest = new URL(link.href, location.origin);
       if (dest.origin !== location.origin) return;

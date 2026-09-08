@@ -947,21 +947,10 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <script type="application/ld+json">${jsonLd}</script>
 <script type="speculationrules">
 {
-  "prerender": [
-    {
-      "source": "list",
-      "urls": ["/magaza", "/hakkimizda", "/iletisim"],
-      "eagerness": "moderate"
-    },
-    {
-      "where": { "href_matches": "/urun/*" },
-      "eagerness": "moderate"
-    }
-  ],
   "prefetch": [
     {
       "where": { "href_matches": "/*" },
-      "eagerness": "conservative"
+      "eagerness": "moderate"
     }
   ]
 }
@@ -1212,7 +1201,7 @@ function cleanEditorialTitle(name: string): string {
 const productCardSSR = (p: any, tr: any) => {
   const displayName = cleanEditorialTitle(p.name);
   const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
-  const priceHtml = `<span class="price"><span class="cur">₺</span><span class="val">${rawNum}</span></span>`;
+  const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
 
   return `
 <article class="prod-card rv" data-id="${p.id}" data-slug="${esc(p.slug)}">
@@ -1233,6 +1222,10 @@ const productCardSSR = (p: any, tr: any) => {
     </div>
   </div>
 </article>`;
+};
+
+const featuredCardSSR = (p: any, tr: any) => {
+  return productCardSSR(p, tr);
 };
 
 /* ---------------- pages ---------------- */
@@ -1306,7 +1299,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
 </section>
 <section class="block">
   <div class="section-head rv"><div><h2>${tr('sec.feat.h2')}</h2></div><a href="/magaza" class="link-more">${tr('sec.feat.link')}</a></div>
-  <div class="prod-grid" id="featured-grid">${featured.map((p: any) => productCardSSR(p, tr)).join('')}</div>
+  <div class="prod-grid" id="featured-grid">${featured.map((p: any) => featuredCardSSR(p, tr)).join('')}</div>
 </section>
 <section class="block">
   <div class="banner rv">
@@ -2589,12 +2582,25 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (lower.includes('titreşim') || lower.includes('mod')) highlights.push('Özelleştirilebilir Titreşim');
     if (lower.includes('şarj') || lower.includes('manyetik') || lower.includes('pil')) highlights.push('Manyetik Hızlı Şarj');
     if (lower.includes('su geçirmez') || lower.includes('ipx')) highlights.push('IPX Su Geçirmez Gövde');
+    if (lower.includes('sprey') || lower.includes('geciktirici')) highlights.push('Klinik Testli', 'Hızlı Etki', 'Güvenilir Formül');
     if (lower.includes('esnek') || lower.includes('bükülebilir')) highlights.push('Ergonomik & Esnek Başlık');
-    if (highlights.length < 3) highlights.push('Gövde Uyumlu Ergonomi', 'Sessiz ve Güçlü Motor', 'Kolay Temizlenebilir');
-
-    const lead = `${cleanTitle}, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.`;
     
-    const bulletItems = lines.filter(l => l.length > 5 && !l.toLowerCase().includes('bu vibratör') && !l.toLowerCase().includes('bu ürün')).slice(0, 6);
+    if (highlights.length < 3) {
+      if (category.toLowerCase().includes('sprey') || category.toLowerCase().includes('sağlık') || category.toLowerCase().includes('krem')) {
+        highlights.push('Özel Formül', 'Etkili Çözüm', 'Güvenli Kullanım');
+      } else if (category.toLowerCase().includes('dildo') || category.toLowerCase().includes('manken') || category.toLowerCase().includes('anal')) {
+        highlights.push('Gerçekçi Ten Hissi', 'Vücut Uyumlu Ergonomi', 'Kolay Temizlenebilir');
+      } else {
+        highlights.push('Ergonomik Tasarım', 'Premium Kalite', 'Kolay Kullanım');
+      }
+    }
+
+    let lead = `${cleanTitle}, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.`;
+    if (category.toLowerCase().includes('sprey') || category.toLowerCase().includes('sağlık')) {
+       lead = `${cleanTitle}, özel formülü sayesinde beklentileri karşılayan ve güven veren etkili bir deneyim sunar.`;
+    }
+
+    const bulletItems = lines.filter(l => l.length > 5 && !l.toLowerCase().includes('bu ürün')).slice(0, 6);
     const bulletText = bulletItems.length 
       ? `\n\nÖne Çıkan Özellikler:\n` + bulletItems.map(b => `• ${b.replace(/^[-•*:\d.]+\s*/, '')}`).join('\n')
       : '';
@@ -2860,14 +2866,20 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const ai = getAiClient();
       if (ai) {
         try {
-          const prompt = `Aşağıda toptancıdan veya tedarikçiden gelen ham ürün bilgisi yer almaktadır.
-Lütfen bu metni Türkiye'nin en seçkin lüks yetişkin sağlık ve yaşam mağazası LOVE SHOP standartlarına uygun, cezbedici, net, toptancı tekrarlarından ve kaba ifadelerden arındırılmış bir e-ticaret metnine dönüştür.
+          const prompt = `Aşağıda toptancıdan veya senin yazdığın ham ürün bilgisi yer almaktadır.
+Lütfen bu metni Türkiye'nin en seçkin lüks yetişkin sağlık ve yaşam mağazası LOVE SHOP standartlarına uygun, cezbedici, net ve profesyonel bir e-ticaret metnine dönüştür.
+
+ÖNEMLİ: Bu ürünün kategorisi "${category}" dir. 
+E�er ürün Realistik Dildolar, Realistik Mankenler, Erkek Cinsel Sağlık (Sprey/Krem) veya Anal Ürünler ise, ASLA "Sessiz Motor", "Titreşim", "Manyetik Şarj" veya "Su Geçirmez Gövde" GİBİ ELEKTRONİK/MOTORLU ÖZELLİKLER YAZMA!
+Sprey veya sağlık ürünleri ise "Klinik Testli", "Hızlı Etki", "Özel Formül" gibi mantıklı terimler kullan.
+Sadece metinde gerçekten var olan ve ürünün doğasına uygun gerçek özelliklerini çıkar (Örn: "Gerçekçi Ten Hissi", "Güçlü Vantuz Taban", "%100 Medikal Silikon").
+E�er ürün Vibratörler ise o zaman "Sessiz Motor", "20 Titreşim Modu" gibi özellikleri kullanabilirsin.
 
 Kurallar:
 1. Ürün Adı: Net, estetik ve profesyonel olsun.
-2. Kısa Açıklama (description): 1-2 cümlelik vurucu, öz, merak uyandıran ve kart altında/özette kullanılabilecek şık bir tanıtım cümlesi.
-3. Öne Çıkan Özellikler (highlights): 4 ila 6 adet hap bilgi niteliğinde rozet özelliği (Örn: "%100 Medikal Silikon", "20 Titreşim Modu & 8 Hız", "Manyetik Şarj", "IPX7 Su Geçirmez").
-4. Detaylı Açıklama (longDescription): Girişte akıcı ve lüks 1-2 paragraf; ardından 'Öne Çıkan Özellikler:' başlığı altında madde imleriyle (•) toparlanmış teknik detaylar.
+2. Kısa Açıklama (description): 1-2 cümlelik vurucu, öz, merak uyandıran şık bir tanıtım cümlesi.
+3. Öne Çıkan Özellikler (highlights): 4 ila 6 adet hap bilgi niteliğinde rozet özelliği. EZBERE KONUŞMA, SADECE HAM İÇERİKTEN VE KATEGORİYE UYGUN ÖZELLİKLERİ ÇIKAR!
+4. Detaylı Açıklama (longDescription): Girişte akıcı ve lüks 1-2 paragraf; ardından madde imleriyle (•) toparlanmış detaylar.
 
 Girdi Bilgileri:
 Ürün Adı: ${name || 'Belirtilmedi'}
@@ -2876,7 +2888,7 @@ Ham İçerik:
 ${rawText || name}`;
 
           const response = await ai.models.generateContent({
-            model: 'gemini-3.8-flash',
+            model: 'gemini-3.6-flash',
             contents: prompt,
             config: {
               systemInstruction: "Sen lüks e-ticaret markaları için kıdemli bir ürün metin yazarı ve içerik mimarısın. Toptancı metinlerini temizler, lüks ve akıcı satış diline dönüştürürsün.",

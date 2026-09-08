@@ -1128,10 +1128,12 @@
     };
     window.addEventListener('keydown', handleKey);
 
-    $$('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
+    $('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      closeModal();
+      if (confirm('Kaydedilmemiş verileriniz olabilir, çıkmak istediğinize emin misiniz?')) {
+        closeModal();
+      }
     }));
     m.addEventListener('click', (e) => { if (e.target === m) closeModal(); });
 
@@ -1595,7 +1597,11 @@
       closeModal();
     }));
     m.addEventListener('click', (e) => {
-      if (e.target === m) closeModal();
+      if (e.target === m) {
+        if (confirm('Kaydedilmemiş verileriniz olabilir, pencereyi kapatmak istediğinize emin misiniz?')) {
+          closeModal();
+        }
+      }
     });
 
     // Attach AI Copywriter & Polisher Event Handlers

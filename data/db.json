@@ -32,7 +32,7 @@
       "email": "x8pure@gmail.com",
       "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
       "name": "Ulaş",
-      "role": "customer",
+      "role": "admin",
       "googleAuth": true,
       "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKnVsL6kmZscCWiCqAGhy0YMcZljoS0Vcw3m5bK7DATa9kOG_M=s96-c",
       "createdAt": "2026-08-26T19:23:08.444Z",
@@ -67,7 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 41
+      "tokenVersion": 42
     },
     {
       "id": "u164dff680af2",
@@ -96,13 +96,13 @@
       "name": "3 in 1 Realistik Vajina",
       "category": "ciftler",
       "categoryName": "Realistik Vajinalar",
-      "description": "",
-      "longDescription": "Gerçekçi Yumuşak Dokulu 3 Girişli Oral Anal Realistik Vajina Mastürbatör.\n\nGerçek bir kadın vücudundan birebir kalıpla modellenen Pembe Tilki Lisa 3’lü Mastürbatör, ağız, vajina ve anal bölgelerin detaylı anatomik yapısını bir arada sunarak maksimum haz ve gerçeklik deneyimi yaşatır. Her bölge farklı iç doku yapısına sahiptir ve her kullanımda farklı bir zevki keşfetmenizi sağlar.\n\n\nÜrün, doğal cilt hissiyatı veren yüksek kaliteli TPE (Termoplastik Elastomer) malzemeden üretilmiştir. Esnek, yumuşak ve son derece dayanıklı yapısı sayesinde uzun süreli kullanıma uygundur. Formunu kaybetmeden tekrar tekrar kullanılabilir. Aynı zamanda gerçek ten dokusunu taklit eden yüzeyi ile dokunduğunuz anda farkı hissedersiniz.\n\n\nİç yapıda yer alan dil, yumuşak dişler ve kıvrımlı iç kanallar, ağız seks hissini gerçekçi bir şekilde simüle ederken; dar ve lifli dokularla donatılmış vajina ve anal kanallar daha derin, yoğun bir haz sunar.\n\n\n600 gram ağırlığa sahip olan bu ürün, avuçta dolgun bir his verir ve kullanım sırasında sarsılmaz bir kontrol sağlar. Hem kompakt hem de tatmin edici bir hacme sahiptir.\n\n\n💧 Su Bazlı Kayganlaştırıcıyla Uyumlu – Kullanımdan sonra 30 saniye içinde sıcaklık hissi verir\n📏 Boyutlar: 19 cm uzunluk x 8 cm çap\n🧼 Hijyenik Kullanım: Ürünle birlikte temizlik spreyi ve saklama çantası gönderilir\n🎯 Her Penis Boyutuna Uygun – Esnek yapısı ile kolay uyum sağlar\n\n\nCinselliği daha gerçek, daha yoğun ve daha özel yaşamak isteyen herkes için tasarlanan Pembe Tilki Lisa Mastürbatör, yalnızlığınıza en gerçek dokunuşu getiriyor",
-      "price": 1699,
+      "description": "3 in 1 Realistik Vajina, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ile beklentileri aşan lüks bir deneyim sunar.",
+      "longDescription": "3 in 1 Realistik Vajina, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• Gerçekçi Yumuşak Dokulu 3 Girişli Oral Anal Realistik Vajina Mastürbatör.\n• Gerçek bir kadın vücudundan birebir kalıpla modellenen  3’lü Mastürbatör, ağız, vajina ve anal bölgelerin detaylı anatomik yapısını bir arada sunarak maksimum haz ve gerçeklik deneyimi yaşatır. Her bölge farklı iç doku yapısına sahiptir ve her kullanımda farklı bir zevki keşfetmenizi sağlar.\n• Ürün, doğal cilt hissiyatı veren yüksek kaliteli TPE (Termoplastik Elastomer) malzemeden üretilmiştir. Esnek, yumuşak ve son derece dayanıklı yapısı sayesinde uzun süreli kullanıma uygundur. Formunu kaybetmeden tekrar tekrar kullanılabilir. Aynı zamanda gerçek ten dokusunu taklit eden yüzeyi ile dokunduğunuz anda farkı hissedersiniz.\n• İç yapıda yer alan dil, yumuşak dişler ve kıvrımlı iç kanallar, ağız seks hissini gerçekçi bir şekilde simüle ederken; dar ve lifli dokularla donatılmış vajina ve anal kanallar daha derin, yoğun bir haz sunar.\n• 💧 Su Bazlı Kayganlaştırıcıyla Uyumlu – Kullanımdan sonra 30 saniye içinde sıcaklık hissi verir\n• 📏 Boyutlar: 19 cm uzunluk x 8 cm çap",
+      "price": 1899,
       "oldPrice": 2199,
       "stock": 9,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 4.5,
+      "reviewCount": 2,
       "featured": true,
       "isNew": true,
       "bestSeller": false,
@@ -117,7 +117,10 @@
         "standart"
       ],
       "createdAt": "2026-08-27T09:36:06.470Z",
-      "highlights": []
+      "highlights": [
+        "%100 Medikal Slikon",
+        "3 Girişli"
+      ]
     },
     {
       "id": "pe31257abd626",
@@ -130,8 +133,8 @@
       "price": 959,
       "oldPrice": 1159,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 4.7,
+      "reviewCount": 3,
       "featured": true,
       "isNew": false,
       "bestSeller": true,
@@ -187,8 +190,8 @@
       "price": 4999,
       "oldPrice": 5266,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 5,
+      "reviewCount": 2,
       "featured": true,
       "isNew": true,
       "bestSeller": true,
@@ -208,25 +211,30 @@
       "name": "Stag 9000  Sprey",
       "category": "erkekler",
       "categoryName": "Erkek Cinsel Sağlık",
-      "description": "STAG 9000 %10 Sprey (20 mL), etkin madde olarak 100 mg/mL lidokain içeren topikal bir ilaçtır",
-      "longDescription": "STAG 9000 %10 Sprey, etkin madde olarak her 1 mL'de 100 mg lidokain içeren topikal anestezik bir ilaçtır. Erkeklerde erken boşalma (prematür ejakülasyon) tedavisinde kullanılmak üzere geliştirilmiştir. Uygulama bölgesinde geçici duyarsızlaşma sağlayarak cinsel performans üzerinde daha fazla kontrol elde edilmesine yardımcı olur.\n\nPratik sprey formu sayesinde kolay uygulanabilen STAG 9000, hedef bölgeye doğrudan uygulanır ve kısa sürede lokal anestezik etki gösterir. Ürün, yalnızca haricen kullanım için tasarlanmış olup kullanım talimatlarına uygun şekilde uygulanmalıdır.",
+      "description": "Stag 9000  Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.",
+      "longDescription": "Stag 9000 20 ML Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• STAG 9000 %10 Sprey, etkin madde olarak her 1 mL'de 100 mg lidokain içeren topikal anestezik bir ilaçtır. Erkeklerde erken boşalma (prematür ejakülasyon) tedavisinde kullanılmak üzere geliştirilmiştir. Uygulama bölgesinde geçici duyarsızlaşma sağlayarak cinsel performans üzerinde daha fazla kontrol elde edilmesine yardımcı olur.\n• Pratik sprey formu sayesinde kolay uygulanabilen STAG 9000, hedef bölgeye doğrudan uygulanır ve kısa sürede lokal anestezik etki gösterir. Ürün, yalnızca haricen kullanım için tasarlanmış olup kullanım talimatlarına uygun şekilde uygulanmalıdır.",
       "price": 499,
       "oldPrice": 559,
       "stock": 9,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 4.7,
+      "reviewCount": 3,
       "featured": true,
       "isNew": true,
       "bestSeller": true,
-      "image": "/uploads/imga69c5630d16e.webp",
+      "image": "/uploads/img6b161149ada3.webp",
       "gallery": [
-        "/uploads/imga69c5630d16e.webp"
+        "/uploads/img6b161149ada3.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-28T16:57:37.098Z"
+      "createdAt": "2026-08-28T16:57:37.098Z",
+      "highlights": [
+        "Klinik Testli",
+        "Hızlı Etki",
+        "Güvenilir Formül"
+      ]
     },
     {
       "id": "p56895cc74a84",
@@ -239,8 +247,8 @@
       "price": 1799,
       "oldPrice": 2099,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 5,
+      "reviewCount": 2,
       "featured": true,
       "isNew": true,
       "bestSeller": false,
@@ -296,8 +304,8 @@
       "price": 3900,
       "oldPrice": 4600,
       "stock": 0,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 5,
+      "reviewCount": 1,
       "featured": true,
       "isNew": true,
       "bestSeller": true,
@@ -324,8 +332,8 @@
       "price": 499,
       "oldPrice": 559,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 5,
+      "reviewCount": 2,
       "featured": true,
       "isNew": true,
       "bestSeller": true,
@@ -377,8 +385,8 @@
       "price": 699,
       "oldPrice": 789,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 4.5,
+      "reviewCount": 2,
       "featured": true,
       "isNew": false,
       "bestSeller": false,
@@ -492,8 +500,8 @@
       "price": 12000,
       "oldPrice": 14999,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 5,
+      "reviewCount": 1,
       "featured": true,
       "isNew": true,
       "bestSeller": false,
@@ -601,8 +609,8 @@
       "id": "p45902bf55777",
       "slug": "deri-tavsan-maske-siyah",
       "name": "Deri Tavşan Maske Siyah",
-      "category": "realistik-mankenler",
-      "categoryName": "Realistik Mankenler",
+      "category": "fetish-urunler",
+      "categoryName": "Fetish Ürünler",
       "description": "Çiftlere Özel",
       "longDescription": "Deri Tavşan Maske – Siyah\n\n\nGizemli ve çekici tasarımıyla öne çıkan Deri Tavşan Maske – Siyah, fantezi ve role-play dünyanıza cesur bir dokunuş katmak için tasarlandı. Tavşan kulakları ve şık siyah rengiyle zarif ve çarpıcı bir görünüm sunar. Hem estetik hem de rahat bir kullanım sağlar.\n\n\nÖlçüler ve Özellikler\n\n\nUzunluk: 32 cm (kulaklar dahil)\n\nGenişlik: 19 cm (maske yüz kısmı)\n\nMalzeme:\n\nYüksek kaliteli suni deri, cilt dostu ve yumuşak dokusuyla konfor sağlar.\n\nEsnek ve dayanıklı yapısı sayesinde uzun ömürlüdür.\n\nTasarım Detayları\n\n\nTavşan Kulakları: Uzun ve dik kulak tasarımı, maske ile şık ve cesur bir görünüm kazandırır.\n\nAyarlanabilir Kayış: Maske, arkasında yer alan kayışla baş ölçünüze göre ayarlanabilir. Farklı baş yapılarına kolayca uyum sağlar.\n\nRenk: Zarif ve gizemli siyah rengi, her ortamda dikkat çekici bir hava yaratır.\n\nGöz Detayı: Göz çevresi açık tasarlanmıştır, bu sayede görüş kısıtlanmaz ve rahat bir kullanım sunar.\n\nNeden Tercih Etmelisiniz?\n\n\nEstetik ve Çekici: Siyah deri ve tavşan kulak tasarımı, şıklık ve gizemi bir araya getirir.\n\nKonforlu ve Hafif: Uzun süreli kullanımlarda bile rahatsızlık vermez, hafif yapısı kolaylık sağlar.\n\nFanteziyi Canlandırır: Cesur ve gizemli bir görünüm yaratarak partnerinizle olan anlarınızı daha heyecanlı hale getirir.\n\nDayanıklı Malzeme: Yüksek kaliteli suni deri, yıpranmaya karşı dayanıklıdır ve uzun süre kullanıma uygundur.\n\nDeri Tavşan Maske – Siyah, şık tasarımı ve gizemli duruşuyla özel anlarınızı daha tutkulu hale getirmek için mükemmel bir aksesuardır. Role-play ve fantezi dünyasına zarif bir dokunuş katmak isteyenler için idealdir.",
       "price": 899,
@@ -639,8 +647,8 @@
       "price": 379,
       "oldPrice": 399,
       "stock": 10,
-      "rating": 0,
-      "reviewCount": 0,
+      "rating": 5,
+      "reviewCount": 1,
       "featured": false,
       "isNew": true,
       "bestSeller": false,
@@ -666,7 +674,7 @@
       "longDescription": "Passion Cup Suni Vajina Mastürbatör Ekstra yumuşak, gerçekçi et dokusunda, daha fazla uyarılması tünel içi özel olarak nodüllü tasarlanmış, emme etkisi yaratmak için tepeden delikli, 16 cm derinliğinde, suni vajina mastürbatör. Daha gerçekçi ve konforlu kullanım için kayganlaştırıcı jel ile birlikte kullanılması önerilir.",
       "price": 959,
       "oldPrice": 1059,
-      "stock": 10,
+      "stock": 9,
       "rating": 0,
       "reviewCount": 0,
       "featured": true,
@@ -776,6 +784,35 @@
         "standart"
       ],
       "createdAt": "2026-09-03T16:27:23.929Z"
+    },
+    {
+      "id": "p0a5a13225a3b",
+      "slug": "yeni-nesil-cift-tarafli-oral-vajinal-gercekci-suni-vajina-masturbator",
+      "name": "Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör",
+      "category": "ciftler",
+      "categoryName": "Realistik Vajinalar",
+      "description": "Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.",
+      "longDescription": "Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör, kullanıcılarına benzersiz bir deneyim sunan iki girişli tasarımı ile ön plana çıkıyor. Hem oral hem de vajinal giriş seçenekleriyle gerçekçi bir his yaşatmak amacıyla özenle üretilmiştir. Yüksek kaliteli malzemesi ve detaylı yapısı, maksimum tatmin ve gerçekçilik sunar. Ürün Özellikleri: Çift Taraflı Kullanım: Bir tarafı oral, diğer tarafı vajinal giriş olarak tasarlanmış; iki farklı uyarıcı deneyimi sağlar. Ultra Gerçekçi Doku: Cilt dokusuna benzeyen, yumuşak ve doğal bir his uyandıran malzeme kullanılarak üretilmiştir. Detaylı Tasarım: Anatomik detaylara sadık kalınarak tasarlanmış girişler ile gerçekçi bir deneyim sunar. Kolay Temizlik: Su geçirmez yapısı sayesinde temizliği son derece kolaydır. Hijyenik kullanım için idealdir. Dayanıklı ve Esnek Malzeme: Uzun ömürlü kullanım için esnek ve dayanıklı malzemelerden üretilmiştir, formunu korur. Kompakt Tasarım: Hafif ve taşınabilir yapısı ile kolayca saklanabilir ve her yerde rahatlıkla kullanılabilir. Neden Yeni Nesil Çift Taraflı Oral Vajinal Mastürbatör? Bu çift taraflı mastürbatör, farklı zevk noktalarını keşfetmek isteyen kullanıcılar için tasarlanmıştır. Hem oral hem de vajinal seçenekleri ile çok yönlü bir deneyim sunar. Gerçekçi doku ve detaylar sayesinde her kullanımda tatmin edici ve doğal bir his yaşatır. Ürün Ağırlığı: 430 GR",
+      "price": 1599,
+      "oldPrice": 1759,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [],
+      "image": "/uploads/img69760f8cbaf4.webp",
+      "gallery": [
+        "/uploads/img69760f8cbaf4.webp",
+        "/uploads/imgfe9b0a787ed6.webp",
+        "/uploads/img9c75711a42b6.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-08T11:17:54.987Z"
     }
   ],
   "categories": [
@@ -819,7 +856,7 @@
       "id": "ct97947ff7350f",
       "slug": "fantezi-ic-giyim",
       "name": "Fantezi İç Giyim",
-      "image": "/uploads/imgef30653f009d.webp",
+      "image": "/uploads/imge588d683e468.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-28T15:53:46.693Z"
@@ -837,7 +874,7 @@
       "id": "ct602bf4ee7ca6",
       "slug": "erkek-ve-kadinlar",
       "name": "Anal Ürünler",
-      "image": "/uploads/img282fa0a7308f.webp",
+      "image": "/uploads/img3151ed337a29.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-29T11:34:20.348Z"
@@ -861,7 +898,39 @@
       "createdAt": "2026-08-31T10:00:44.715Z"
     }
   ],
-  "orders": [],
+  "orders": [
+    {
+      "id": "LS-1024",
+      "userId": "u164dff680af2",
+      "userEmail": "test@loveshop.com.tr",
+      "customerName": "Test Kullanıcı",
+      "items": [
+        {
+          "productId": "p5dc69a298a76",
+          "name": "Passion Cup Suni Vajina Mastürbatör",
+          "price": 959,
+          "qty": 1,
+          "image": "/uploads/imgd180bab7dbac.webp"
+        }
+      ],
+      "subtotal": 959,
+      "shipping": 99,
+      "discount": 0,
+      "total": 1058,
+      "coupon": null,
+      "status": "delivered",
+      "payment": "WhatsApp ile Sipariş",
+      "discreet": true,
+      "phone": "05436331325",
+      "address": {
+        "full": "İsmet İnönü 1 caddesi 52/2",
+        "city": "Tepebaşı",
+        "zip": ""
+      },
+      "createdAt": "2026-09-08T15:19:38.997Z",
+      "note": ""
+    }
+  ],
   "coupons": [
     {
       "id": "c98cefbf5620e",
@@ -869,7 +938,7 @@
       "type": "percent",
       "value": 10,
       "minTotal": 0,
-      "active": true,
+      "active": false,
       "used": 14
     },
     {
@@ -878,7 +947,7 @@
       "type": "fixed",
       "value": 100,
       "minTotal": 900,
-      "active": true,
+      "active": false,
       "used": 6
     },
     {
@@ -887,37 +956,181 @@
       "type": "percent",
       "value": 15,
       "minTotal": 500,
-      "active": true,
+      "active": false,
       "used": 22
     }
   ],
   "reviews": [
     {
-      "id": "r6d0db2c68a41",
-      "productId": "pdcbdf6a314fb",
-      "userName": "E*** K.",
+      "id": "r47d7041862ad",
+      "productId": "pdf2748be251d",
+      "userName": "B*** T.",
       "rating": 5,
-      "text": "Paketleme gerçekten gizliydi, kutudan ürün adı bile belli olmuyordu. Ürün çok sessiz çalışıyor.",
+      "text": "İlk başta biraz tereddüt etmiştim ama kullanım talimatına uyup ilişkiden 15 dakika önce 2 fıs sıkınca gerçekten çok başarılı sonuç verdi. En güzel yanı hissi tamamen yok etmemesi, kontrolü elinizde tutmanızı sağlıyor. Kargo da tamamen isimsiz, içi görünmeyen kapalı kutuda geldi, teşekkürler.",
       "approved": true,
-      "createdAt": "2026-08-26T14:02:46.012Z"
+      "createdAt": "2026-08-30T18:24:10.000Z"
     },
     {
-      "id": "r9ff82f1911b9",
-      "productId": "p1fce42fa5662",
-      "userName": "M*** A.",
+      "id": "re2d99a5bcb55",
+      "productId": "pdf2748be251d",
+      "userName": "M*** C.",
+      "rating": 5,
+      "text": "Daha önce farklı markalar denemiştim ama ya hissi sıfırlıyordu ya da kötü kokusu oluyordu. Stag 9000 hem kokusuz hem de 2-3 puf fazlasıyla yetiyor. 20 ml şişe epey uzun süre gider gibi duruyor. Kesinlikle tavsiye ederim.",
+      "approved": true,
+      "createdAt": "2026-09-02T14:15:30.000Z"
+    },
+    {
+      "id": "rf83b766af05c",
+      "productId": "pdf2748be251d",
+      "userName": "A*** D.",
       "rating": 4,
-      "text": "Şarj süresi beklediğimden uzun. Tavsiye ederim.",
+      "text": "Ürün gayet etkili fakat dozu iyi ayarlamak gerekiyor. 4 fıs sıkınca biraz fazla uyuşma yapabiliyor, benim tecrübeme göre 2 fıs tam ideal dengeyi yakalatıyor. Kargo hızı ve gizli paketleme 10/10.",
       "approved": true,
-      "createdAt": "2026-08-26T14:02:46.012Z"
+      "createdAt": "2026-09-05T09:40:00.000Z"
     },
     {
-      "id": "r51f09fa3cace",
-      "productId": "p5459ed8b2355",
+      "id": "r616b34ae0db9",
+      "productId": "pe31257abd626",
+      "userName": "D*** S.",
+      "rating": 5,
+      "text": "Başlığın bükülebilir olması inanılmaz bir artı, açıyı istediğiniz gibi ayarlayabiliyorsunuz. Silikonun kadifemsi yumuşaklığı çok kaliteli hissettiriyor. Titreşim modları çok çeşitli, en düşük mod bile gayet tatmin edici. Motor sesi de beklediğimden çok daha sessiz, yan odadan duyulması imkansız.",
+      "approved": true,
+      "createdAt": "2026-08-28T21:10:00.000Z"
+    },
+    {
+      "id": "r2256dd209efd",
+      "productId": "pe31257abd626",
+      "userName": "Z*** K.",
+      "rating": 5,
+      "text": "Şarjı 45 dakikada hemen doluyor ve gerçekten uzun süre dayanıyor. Duşta kullanım için su geçirmezliğini de test ettik, hiçbir sorun yaşamadık. Partnerimle birlikte vazgeçilmezimiz oldu. Paketleme de son derece özenli ve gizliydi.",
+      "approved": true,
+      "createdAt": "2026-09-01T12:05:22.000Z"
+    },
+    {
+      "id": "r09d7f06669c9",
+      "productId": "pe31257abd626",
+      "userName": "E*** M.",
+      "rating": 4,
+      "text": "Gövde boyutu (yaklaşık 21 cm) elde çok ergonomik duruyor, ağır değil. Yalnızca modlar arasında geçiş yaparken 20 mod olduğu için istediğiniz ritme gelmek birkaç saniye alabiliyor ama genel güç ve motor kalitesi harika.",
+      "approved": true,
+      "createdAt": "2026-09-06T16:50:00.000Z"
+    },
+    {
+      "id": "r02148dffaefa",
+      "productId": "pbcfa6505bc8d",
       "userName": "S*** Y.",
       "rating": 5,
-      "text": "İndirimle aldım, kalitesi fiyatının çok üstü.",
+      "text": "250 ml boyutu çok bereketli. Su bazlı olduğu için ne çarşafta ne çamaşırda leke bırakıyor, sadece ılık suyla bile anında temizleniyor. En sevdiğim yönü yapış yapış bir his bırakmaması ve kurumadan uzun süre kayganlık sağlaması oldu.",
       "approved": true,
-      "createdAt": "2026-08-26T14:02:46.012Z"
+      "createdAt": "2026-08-31T10:18:40.000Z"
+    },
+    {
+      "id": "rb18ca1973d54",
+      "productId": "pbcfa6505bc8d",
+      "userName": "O*** N.",
+      "rating": 5,
+      "text": "Silikon oyuncaklarla ve lateks kondomla birlikte gönül rahatlığıyla kullanıyoruz. Cildimde en ufak bir yanma veya tahriş yapmadı, pH dengesi gayet başarılı. Fiyat / performans olarak piyasadaki en iyi kayganlaştırıcılardan biri.",
+      "approved": true,
+      "createdAt": "2026-09-04T20:30:15.000Z"
+    },
+    {
+      "id": "rdc6d53ff4080",
+      "productId": "p12df7e2816fd",
+      "userName": "K*** E.",
+      "rating": 5,
+      "text": "Spreylere göre krem formunun kontrolü çok daha kolay. Nohut büyüklüğünde sürüp masajla yedirince 15 dakikada tamamen emiliyor. Kokusuz ve tatsız olması partnerinizin fark etmemesi açısından büyük avantaj. Memnun kaldım.",
+      "approved": true,
+      "createdAt": "2026-08-29T15:42:00.000Z"
+    },
+    {
+      "id": "r8133eba0ae28",
+      "productId": "p12df7e2816fd",
+      "userName": "H*** V.",
+      "rating": 4,
+      "text": "Etkisi 45-50 dakika boyunca stabil devam ediyor. Krem hemen emildiği için yapışkanlık kalmıyor. Tek dikkat edilmesi gereken şey çok fazla sürmemek; az miktar gayet yeterli oluyor. Kutu faturada da e-ticaret olarak geçti, gizlilik tam puan.",
+      "approved": true,
+      "createdAt": "2026-09-03T11:20:00.000Z"
+    },
+    {
+      "id": "r0e77369d91a0",
+      "productId": "p56895cc74a84",
+      "userName": "C*** A.",
+      "rating": 5,
+      "text": "Farklı şehirlerdeyken bile uygulama üzerinden kontrol edebilmek ilişkimize inanılmaz bir heyecan kattı. Bağlantı kopması yaşanmıyor, müzik ritmine göre titreşimi de çok eğlenceli. Taban kısmı son derece güvenli ve silikonu çok yumuşak.",
+      "approved": true,
+      "createdAt": "2026-08-27T19:00:00.000Z"
+    },
+    {
+      "id": "rf3d5db268292",
+      "productId": "p56895cc74a84",
+      "userName": "M*** L.",
+      "rating": 5,
+      "text": "Gövde geçişi çok rahat, boyut yeni başlayanlar için de deneyimliler için de çok ideal dengelenmiş. Manyetik şarjı çok pratik, temizliği de su bazlı temizleyiciyle bir dakikada yapılıyor.",
+      "approved": true,
+      "createdAt": "2026-09-05T22:15:00.000Z"
+    },
+    {
+      "id": "r438128809920",
+      "productId": "pb7847614536e",
+      "userName": "N*** B.",
+      "rating": 5,
+      "text": "Dış yüzeyinin dokusu gerçekten ten hissi veriyor, sıradan sert plastik veya kalitesiz silikonlarla uzaktan yakından alakası yok. İçindeki çekirdek tok ama dışı ipeksi yumuşaklıkta. Altındaki vantuz fayansa ve düz yüzeylere çok sağlam tutunuyor, eller serbest kullanım için harika.",
+      "approved": true,
+      "createdAt": "2026-08-29T17:35:00.000Z"
+    },
+    {
+      "id": "r42f8ce341fb7",
+      "productId": "pb7847614536e",
+      "userName": "I*** G.",
+      "rating": 5,
+      "text": "Gövde esnekliği ve ağırlığı mükemmel. Su bazlı jel ile kullanıldığında inanılmaz pürüzsüz bir kayganlık sağlıyor. Kaynar suyla veya nötr sabunla dezenfekte etmesi de çok kolay, koku tutmuyor.",
+      "approved": true,
+      "createdAt": "2026-09-04T13:40:00.000Z"
+    },
+    {
+      "id": "r76150119d2f7",
+      "productId": "p2484e3b314df",
+      "userName": "Y*** R.",
+      "rating": 5,
+      "text": "Malzeme kalitesi elinize aldığınız anda ağırlığından ve esnekliğinden anlaşılıyor. İç kanalın detayları ve daralan boğumları çok gerçekçi bir vakum oluşturuyor. Bol su bazlı jel ile kullanınca his muazzam. Kuruladıktan sonra bebek pudrası sürünce sıfır gibi kalıyor.",
+      "approved": true,
+      "createdAt": "2026-08-28T14:50:00.000Z"
+    },
+    {
+      "id": "r2685790329de",
+      "productId": "p2484e3b314df",
+      "userName": "F*** U.",
+      "rating": 4,
+      "text": "3 farklı kanalın da iç dokusu birbirinden farklı hissettiriyor. Temizliği biraz özen istiyor; duş başlığının tazyikli suyuyla yıkayıp havadar yerde kurutmak gerek. Ama verdiği zevke kesinlikle değer.",
+      "approved": true,
+      "createdAt": "2026-09-02T19:10:00.000Z"
+    },
+    {
+      "id": "rbbb42280e748",
+      "productId": "pe6440906f9a6",
+      "userName": "S*** T.",
+      "rating": 5,
+      "text": "Sadece titreşim değil, aynı zamanda içteki hareket mekanizması olması bambaşka bir seviye. Klitoris kulakçıklarının ritmi de harika ayarlanmış. Çift motorlu olmasına rağmen pili gayet iyi gidiyor. Kendinize yapabileceğiniz en iyi yatırım.",
+      "approved": true,
+      "createdAt": "2026-09-01T23:20:00.000Z"
+    },
+    {
+      "id": "r023d81736dd3",
+      "productId": "pee0b56ada4e5",
+      "userName": "B*** K.",
+      "rating": 5,
+      "text": "Peluş kısımları çok yumuşak, bileği kesinlikle sıkmıyor ve tahriş etmiyor. Metal kısımları da hafif oyuncak gibi değil, tok ve sağlam duruyor. Yanında iki adet anahtarı ve acil durum serbest bırakma mandalı var, güvenlik açısından çok rahat hissettirdi.",
+      "approved": true,
+      "createdAt": "2026-08-30T16:00:00.000Z"
+    },
+    {
+      "id": "r07c1af9a089e",
+      "productId": "p3698aca0e6ce",
+      "userName": "T*** M.",
+      "rating": 5,
+      "text": "5.5 kg ağırlığı sayesinde kullanım sırasında kesinlikle kayma veya yerinden oynama yapmıyor, çok stabil duruyor. Doku yumuşaklığı ve iç kanalların elastikiyeti gerçeğe inanılmaz yakın. Titreşim aparatı da hoş bir ekstra olmuş. Pudrasını eksik etmemek gerek.",
+      "approved": true,
+      "createdAt": "2026-09-03T18:45:00.000Z"
     }
   ],
   "newsletter": [
@@ -930,16 +1143,7 @@
       "createdAt": "2026-08-27T12:28:49.513Z"
     }
   ],
-  "contact": [
-    {
-      "id": "m64b45e29ce00",
-      "name": "IpmWfbogNeqmnjqViKxhqp",
-      "email": "uzo.s.if.e.so60@gmail.com",
-      "message": "OlIHLInzWGbxfXUDMDufACGi",
-      "createdAt": "2026-09-06T06:54:32.790Z",
-      "read": false
-    }
-  ],
+  "contact": [],
   "settings": {
     "storeName": "Love.",
     "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
@@ -967,9 +1171,9 @@
     "createdAt": "2026-08-26T14:02:46.003Z",
     "seq": {
       "product": 0,
-      "order": 23
+      "order": 24
     },
-    "updatedAt": "2026-09-06T12:05:10.847Z",
-    "version": 440
+    "updatedAt": "2026-09-08T15:48:34.832Z",
+    "version": 530
   }
 }

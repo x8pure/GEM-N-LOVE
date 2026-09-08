@@ -1,0 +1,61 @@
+/* Ghost Pill Design for Featured Grid */
+#featured-grid .prod-info {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+}
+
+#featured-grid .prod-price-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  border-radius: 40px !important;
+  padding: 4px 6px 4px 14px !important;
+  margin-top: 12px !important;
+  width: max-content !important;
+  min-width: 140px;
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s !important;
+}
+
+html.light #featured-grid .prod-price-row {
+  background: rgba(0,0,0,0.03) !important;
+  border: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+#featured-grid .prod-card:hover .prod-price-row {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+html.light #featured-grid .prod-card:hover .prod-price-row {
+  background: rgba(0,0,0,0.06) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+
+#featured-grid .price {
+  font-size: 15px !important;
+  letter-spacing: -0.2px !important;
+  transform: translateY(-1px);
+}
+
+#featured-grid .editorial-add-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  margin-left: 12px;
+  background: var(--text) !important;
+  color: var(--bg) !important;
+  border: none !important;
+}
+#featured-grid .editorial-add-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+#featured-grid .prod-card:hover .editorial-add-btn {
+  transform: scale(1.05);
+  background: var(--rose) !important;
+  color: #fff !important;
+}

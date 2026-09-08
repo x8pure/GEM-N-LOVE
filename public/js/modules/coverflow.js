@@ -59,7 +59,7 @@ export /* ================= DEPTHDECK COVERFLOW — Perspective Fan & Kinetic In
             <div class="card-sheen"></div>
             <span class="cf-cap">
               <b>${displayName}</b>
-              <span class="cf-price"><span class="cur">₺</span><span class="val">${rawNum}</span></span>
+              <span class="cf-price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>
             </span>
           </a>
         </div>`;
