@@ -1295,7 +1295,6 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     <a class="bento-card bento-cta bento-card-g rv rv-d${top.length + 1}" href="/magaza">
       <span class="cta-glow" aria-hidden="true"></span>
       <span class="cta-inner">
-        <em class="cta-kicker">${tr('bcta.kicker')}</em>
         <h3>${tr('bcta.h3')}<span class="dot-rose">.</span></h3>
         <span class="cta-count">${tr('bcta.count', { cats: allCats.length, prods: C.num(totalCount) })}</span>
       </span>

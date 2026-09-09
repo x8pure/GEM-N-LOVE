@@ -1900,6 +1900,7 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
   color: var(--rose);
   margin-top: 2px;
 }
+}
 .bento-meta .bcount {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 11px;
@@ -6011,8 +6012,11 @@ html.dark .acc-card-panel {
   .icon-btn { width: 42px; height: 42px; font-size: 16px; }
   .icon-btn svg, .icon-svg { width: 20px; height: 20px; }
   .lang-btn { width: 42px; height: 42px; font-size: 12px; font-weight: 600; }
-  .page-head { padding: 34px 5vw 18px; }
-  .page-head h1 { font-size: clamp(28px, 6vw, 38px); letter-spacing: -1px; }
+  .page-head { padding: 20px 5vw 10px; }
+  .page-head h1 { font-size: clamp(26px, 6vw, 32px); letter-spacing: -1px; }
+  .page-head p, .page-head .crumbs { display: none; }
+  .shop-layout aside.filters h4 { display: none; }
+  .shop-toolbar { margin-bottom: 8px; }
   section.block { padding: 36px 5vw !important; }
   .section-head { margin-bottom: 20px; }
   .cf-stage { width: min(88vw, 480px); min-height: 440px; height: auto; margin: 0 auto; gap: 10px; }
@@ -6377,17 +6381,18 @@ html.dark .acc-card-panel {
   .cf-stage { width: min(92vw, 420px); min-height: 380px; height: auto; gap: 12px; }
   .cf-bar { margin-top: 10px !important; gap: 10px !important; }
   .marquee { margin: 6px 4vw 0 !important; }
-  .page-head { padding: 22px 4.5vw 14px; }
-  .page-head h1 { font-size: 25px; letter-spacing: -0.6px; }
-  .page-head p { font-size: 12.5px; margin-top: 3px; }
+  .page-head { padding: 16px 4.5vw 8px; }
+  .page-head h1 { font-size: 24px; letter-spacing: -0.6px; }
+  .page-head p, .page-head .crumbs { display: none; }
   .shop-layout { padding: 0 4.5vw 40px !important; }
-  .shop-layout aside.filters { margin-bottom: 8px !important; }
-  .shop-layout aside.filters h4 { font-size: 10.5px; margin: 4px 0 6px; }
-  .shop-layout .filter-chips { padding: 4px 0 8px; gap: 6px; }
+  .shop-layout aside.filters { margin-bottom: 4px !important; }
+  .shop-layout aside.filters .field { margin-bottom: 8px; }
+  .shop-layout aside.filters h4 { display: none; }
+  .shop-layout .filter-chips { padding: 0 0 8px; gap: 6px; }
   .shop-layout .filter-chips .chip { padding: 6px 13px; font-size: 12px; }
-  .shop-toolbar { margin-bottom: 14px; gap: 8px; }
-  .shop-toolbar select { font-size: 12px; padding: 7px 12px; }
-  .results-count { font-size: 12px; }
+  .shop-toolbar { margin-bottom: 10px; gap: 8px; }
+  .shop-toolbar select { font-size: 11.5px; padding: 6px 12px; }
+  .results-count { font-size: 11.5px; }
   .prod-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px 9px !important; }
   .prod-info { padding: 10px 2px 0; }
   .prod-name { font-size: 14px; line-height: 1.3; }

@@ -1717,8 +1717,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     }
   }
 
+  let lastNavUrlStr = location.href;
+
   async function navigateTo(url, pushState = true) {
     const targetUrl = new URL(url, location.origin);
+    lastNavUrlStr = targetUrl.href;
     if (targetUrl.origin !== location.origin) {
       location.href = url;
       return;
@@ -1751,7 +1754,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
     // Save current scroll position before navigating away
     if (pushState) {
-      scrollPositions.set(location.pathname + location.search, window.scrollY || window.pageYOffset || 0);
+      const currentY = window.scrollY || window.pageYOffset || 0;
+      scrollPositions.set(location.pathname + location.search, currentY);
+      try {
+        sessionStorage.setItem('ls_scr_' + location.pathname + location.search, currentY.toString());
+      } catch (e) {}
     }
 
     // Cancel in-flight previous request if user clicks fast between tabs
@@ -1809,9 +1816,20 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
           sessionStorage.setItem('ls_scr_' + targetUrl.pathname + targetUrl.search, '0');
         } catch (e) {}
       } else {
-        const savedY = scrollPositions.get(targetUrl.pathname + targetUrl.search);
+        let savedY = scrollPositions.get(targetUrl.pathname + targetUrl.search);
+        if (typeof savedY !== 'number') {
+          try {
+            const sy = sessionStorage.getItem('ls_scr_' + targetUrl.pathname + targetUrl.search);
+            if (sy !== null) savedY = parseInt(sy, 10);
+          } catch (e) {}
+        }
+        
         if (typeof savedY === 'number') {
-          window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
+            setTimeout(() => window.scrollTo({ top: savedY, left: 0, behavior: 'instant' }), 50);
+            setTimeout(() => window.scrollTo({ top: savedY, left: 0, behavior: 'instant' }), 120);
+          });
         } else {
           window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         }
@@ -1848,6 +1866,17 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     if (initSpaLinks.initialized) return;
     initSpaLinks.initialized = true;
 
+    const originalPush = history.pushState;
+    history.pushState = function(...args) {
+      originalPush.apply(this, args);
+      lastNavUrlStr = location.href;
+    };
+    const originalReplace = history.replaceState;
+    history.replaceState = function(...args) {
+      originalReplace.apply(this, args);
+      lastNavUrlStr = location.href;
+    };
+
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a');
       if (!link) return;
@@ -1882,8 +1911,13 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         const chip = $(`#cat-chips [data-cat="${cat}"]`);
         if (chip) {
           e.preventDefault();
+          const currentY = window.scrollY || window.pageYOffset || 0;
+          scrollPositions.set(location.pathname + location.search, currentY);
+          try { sessionStorage.setItem('ls_scr_' + location.pathname + location.search, currentY.toString()); } catch(e) {}
+          
           chip.click();
           history.pushState({}, '', link.href);
+          lastNavUrlStr = link.href;
           return;
         }
       }
@@ -1893,6 +1927,23 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     });
 
     window.addEventListener('popstate', () => {
+      const currentUrl = new URL(location.href);
+      const prevUrl = new URL(lastNavUrlStr);
+      
+      const currUrun = currentUrl.searchParams.get('urun');
+      const prevUrun = prevUrl.searchParams.get('urun');
+      
+      currentUrl.searchParams.delete('urun');
+      prevUrl.searchParams.delete('urun');
+      
+      if (currentUrl.href === prevUrl.href && currUrun !== prevUrun) {
+        // Modal opened or closed, do not trigger full SPA page reload
+        lastNavUrlStr = location.href;
+        return;
+      }
+      
+      // Update lastNavUrlStr before navigating
+      lastNavUrlStr = location.href;
       navigateTo(location.href, false);
     });
   }
