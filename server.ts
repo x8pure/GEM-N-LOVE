@@ -1274,10 +1274,10 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
       homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99
     };
   });
-  const exactSlugs = ['vibratorler', 'realistik-dildolar', 'erkekler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'erkek-ve-kadinlar'];
+  const exactSlugs = ['vibratorler', 'realistik-dildolar', 'erkek-ve-kadinlar', 'fetish-urunler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'erkekler'];
   const topCats = exactSlugs.map(slug => allCats.find(c => c.slug === slug)).filter(Boolean);
   const homeRemaining = allCats.filter((c) => !topCats.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
-  const top = [...topCats, ...homeRemaining].slice(0, 7);
+  const top = [...topCats, ...homeRemaining].slice(0, 8);
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
@@ -1303,7 +1303,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   <div class="section-head rv"><div><h2>${tr('sec.cats.h2')}</h2><p>${tr('sec.cats.p', { n: C.num(totalCount) })}</p></div><a href="/magaza" class="link-more">${tr('sec.cats.link')}</a></div>
   <div class="bento">${top.map((c, i) => {
     const nm = formatCatTitle(c.name);
-    const area = ['a','b','c','d','e','f','h'][i] || 'a';
+    const area = ['a','b','c','i','d','e','f','h'][i] || 'a';
     return `
     <a class="bento-card bento-card-${area} rv rv-d${i + 1}" href="/magaza?kat=${c.slug}">
       <div class="bento-img-wrap"><img class="bento-bg" src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy"></div>

@@ -1677,7 +1677,7 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
   grid-template-columns: repeat(4, 1fr);
   grid-template-areas:
     "a a b c"
-    "a a d d"
+    "a a i d"
     "e f h g";
   grid-auto-rows: 195px;
 }
@@ -1689,6 +1689,7 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
 .bento-card-f { grid-area: f; }
 .bento-card-g { grid-area: g; }
 .bento-card-h { grid-area: h; }
+.bento-card-i { grid-area: i; }
 
 .bento-card {
   position: relative;
@@ -1798,6 +1799,7 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
     padding: 10px !important;
     z-index: 2 !important; /* IN FRONT of the text */
     pointer-events: none !important;
+    overflow: visible !important;
   }
   .bento-card-a .bento-bg {
     position: relative !important;
@@ -1820,7 +1822,8 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
 .bento-card-d .bento-meta,
 .bento-card-e .bento-meta,
 .bento-card-f .bento-meta,
-.bento-card-h .bento-meta {
+.bento-card-h .bento-meta,
+.bento-card-i .bento-meta {
   position: absolute;
   top: 50%;
   left: 22px;
@@ -1847,6 +1850,13 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
 .bento-card-d .bento-bg {
   max-height: 110%;
   max-width: 48%;
+  right: 6px;
+  bottom: 0;
+}
+
+.bento-card-i .bento-bg {
+  max-height: 102%;
+  max-width: 52%;
   right: 6px;
   bottom: 0;
 }
@@ -5996,7 +6006,7 @@ html.dark .acc-card-panel {
   .bento {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    grid-template-areas: "a a" "b c" "d d" "e f" "h g" !important;
+    grid-template-areas: "a a" "b c" "i d" "e e" "f h" "g g" !important;
     grid-auto-rows: 200px !important;
     gap: 14px !important;
   }
@@ -6080,7 +6090,7 @@ html.dark .acc-card-panel {
     grid-template-areas:
       "a b"
       "a c"
-      "a d"
+      "i d"
       "e e"
       "f g"
       "h g" !important;
@@ -6182,10 +6192,10 @@ html.dark .acc-card-panel {
     pointer-events: none !important;
   }
   .bento-card-a .bento-meta h3 {
-    font-size: 19px !important;
-    font-weight: 850 !important;
-    letter-spacing: -0.5px !important;
-    line-height: 1.1 !important;
+    font-size: 16.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.35px !important;
+    line-height: 1.12 !important;
     text-align: left !important;
     white-space: nowrap !important;
     word-break: normal !important;
@@ -6212,6 +6222,7 @@ html.dark .acc-card-panel {
     z-index: 2 !important;
     pointer-events: none !important;
     padding: 10px !important;
+    overflow: visible !important;
   }
   .bento-card-a .bento-bg {
     position: relative !important;
@@ -6236,6 +6247,7 @@ html.dark .acc-card-panel {
   .bento-card-d { grid-area: d !important; }
   .bento-card-f { grid-area: f !important; }
   .bento-card-h { grid-area: c !important; } /* Swapped on mobile: Anal Ürünler gets spot c */
+  .bento-card-i { grid-area: i !important; }
 
   /* Specific Card Fine-tuning for Images */
   .bento-card-b .bento-img-wrap,
@@ -6487,12 +6499,14 @@ html.dark .acc-card-panel {
     grid-auto-rows: 106px !important;
     gap: 8px !important;
   }
+  .bento-card-a .bento-meta h3,
   .bento-card-b .bento-meta h3,
   .bento-card-c .bento-meta h3,
   .bento-card-d .bento-meta h3,
   .bento-card-e .bento-meta h3,
   .bento-card-f .bento-meta h3,
-  .bento-card-h .bento-meta h3 {
+  .bento-card-h .bento-meta h3,
+  .bento-card-i .bento-meta h3 {
     font-size: 16.5px !important;
     font-weight: 700 !important;
     line-height: 1.12 !important;
