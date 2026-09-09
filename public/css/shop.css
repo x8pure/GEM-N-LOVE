@@ -1743,29 +1743,75 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
   transform: translateZ(0);
 }
 
-/* Card A (Vibratörler) - Hero Card: Top Title & Centered Large Image */
-.bento-card-a .bento-meta {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 3;
-}
-.bento-card-a .bento-img-wrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-}
-.bento-card-a .bento-bg {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  max-width: 84%;
-  max-height: 84%;
-  margin-top: 18px;
-  filter: drop-shadow(0 20px 36px rgba(41, 37, 36, 0.20));
+/* Card A (Vibratörler) - Hero Card: 3D Depth Effect (Desktop Only) */
+@media (min-width: 769px) {
+  .bento-card-a {
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .bento-card-a .bento-meta {
+    position: absolute !important;
+    top: 14% !important;
+    bottom: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center !important;
+    transform: translateY(-10px) !important;
+    z-index: 1 !important; /* BEHIND the image */
+    padding: 0 8px !important;
+    margin: 0 !important;
+    pointer-events: none !important;
+  }
+  .bento-card-a .bento-meta h3 {
+    font-size: clamp(38px, 5.2vw, 68px) !important;
+    font-weight: 900 !important;
+    letter-spacing: -1.5px !important;
+    line-height: 1 !important;
+    color: var(--text, #18181B) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    text-shadow: none !important;
+  }
+
+  /* High contrast solid text in Dark Mode without white glow/shine */
+  html.dark .bento-card-a .bento-meta h3,
+  [data-theme="dark"] .bento-card-a .bento-meta h3 {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.70) !important; /* Solid dark drop shadow only, NO white glow */
+  }
+
+  .bento-card-a .bento-img-wrap {
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px !important;
+    z-index: 2 !important; /* IN FRONT of the text */
+    pointer-events: none !important;
+  }
+  .bento-card-a .bento-bg {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    max-width: 84% !important;
+    max-height: 84% !important;
+    object-fit: contain !important;
+    margin-top: 20px !important;
+    filter: drop-shadow(0 20px 36px rgba(0, 0, 0, 0.40)) !important;
+    transition: transform .5s cubic-bezier(.16, 1, 0.3, 1), filter .4s ease !important;
+  }
 }
 
 /* Cards (b, c, d, e, f, h) - Vertically Centered Category Title on Left */
@@ -6112,49 +6158,88 @@ html.dark .acc-card-panel {
     filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45)) !important;
   }
 
-  /* Big Hero Card A (Modular - Vibratörler) - Image Centered & High Quality */
+  /* Big Hero Card A (Modular - Vibratörler) - Bottom Left Clean Mobile Layout */
   .bento-card-a {
     grid-area: a !important;
     border-radius: 20px !important;
     padding: 14px !important;
+    position: relative !important;
+    overflow: hidden !important;
   }
   .bento-card-a .bento-meta {
+    position: absolute !important;
+    bottom: 16px !important;
+    left: 16px !important;
     top: auto !important;
-    bottom: 14px !important;
-    left: 14px !important;
-    transform: none !important;
+    right: auto !important;
+    width: auto !important;
     max-width: 85% !important;
+    text-align: left !important;
+    transform: none !important;
+    z-index: 3 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    pointer-events: none !important;
   }
   .bento-card-a .bento-meta h3 {
-    font-size: 20px !important;
-    letter-spacing: -0.4px !important;
-    line-height: 1.15 !important;
-    font-weight: 700 !important;
+    font-size: 19px !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.5px !important;
+    line-height: 1.1 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    text-shadow: none !important;
+    margin: 0 !important;
   }
+
+  html.dark .bento-card-a .bento-meta h3,
+  [data-theme="dark"] .bento-card-a .bento-meta h3 {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+  }
+
   .bento-card-a .bento-img-wrap {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 45px !important; /* Görseli üst/orta alana ortalar, alt sol yazı ile çakışmaz */
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+    padding: 10px !important;
   }
   .bento-card-a .bento-bg {
     position: relative !important;
     right: auto !important;
+    left: auto !important;
+    top: auto !important;
     bottom: auto !important;
-    max-width: 86% !important;
-    max-height: 70% !important;
-    margin-top: -16px !important;
-    filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55)) !important;
+    max-width: 85% !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    object-fit: contain !important;
+    transform: none !important;
+    filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.35)) !important;
+    transition: transform .5s cubic-bezier(.16, 1, 0.3, 1), filter .4s ease !important;
   }
 
-  /* Right Stack (b: Dildolar, c: Erkek Sağlık, d: İç Giyim) & Bottom Left (f: Realistik Vajinalar, h: Anal Ürünler) */
+  /* Right Stack (b: Dildolar, c: Anal Ürünler [swapped on mobile], d: İç Giyim) & Bottom Left (f: Realistik Vajinalar, h: Erkek Cinsel Sağlık [swapped on mobile]) */
   .bento-card-b { grid-area: b !important; }
-  .bento-card-c { grid-area: c !important; }
+  .bento-card-c { grid-area: h !important; } /* Swapped on mobile: Erkek Cinsel Sağlık gets wider left spot h */
   .bento-card-d { grid-area: d !important; }
   .bento-card-f { grid-area: f !important; }
-  .bento-card-h { grid-area: h !important; }
+  .bento-card-h { grid-area: c !important; } /* Swapped on mobile: Anal Ürünler gets spot c */
 
   /* Specific Card Fine-tuning for Images */
   .bento-card-b .bento-img-wrap,
-  .bento-card-c .bento-img-wrap {
+  .bento-card-h .bento-img-wrap {
     align-items: center !important;
     justify-content: flex-end !important;
     padding-right: 8px !important;
@@ -6166,7 +6251,7 @@ html.dark .acc-card-panel {
     right: auto !important;
     bottom: auto !important;
   }
-  .bento-card-c .bento-bg {
+  .bento-card-h .bento-bg {
     position: relative !important;
     max-width: 48% !important;
     max-height: 82% !important;
@@ -6180,7 +6265,7 @@ html.dark .acc-card-panel {
     bottom: 0 !important;
   }
   .bento-card-f .bento-meta h3,
-  .bento-card-h .bento-meta h3 {
+  .bento-card-c .bento-meta h3 {
     font-size: 17px !important;
     font-weight: 700 !important;
   }
@@ -6190,7 +6275,7 @@ html.dark .acc-card-panel {
     right: 2px !important;
     bottom: 0 !important;
   }
-  .bento-card-h .bento-bg {
+  .bento-card-c .bento-bg {
     max-width: 50% !important;
     max-height: 100% !important;
     right: 2px !important;
@@ -6401,9 +6486,6 @@ html.dark .acc-card-panel {
   .bento {
     grid-auto-rows: 106px !important;
     gap: 8px !important;
-  }
-  .bento-card-a .bento-meta h3 {
-    font-size: 19px !important;
   }
   .bento-card-b .bento-meta h3,
   .bento-card-c .bento-meta h3,

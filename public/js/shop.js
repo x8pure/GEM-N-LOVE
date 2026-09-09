@@ -1040,8 +1040,10 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     'ciftler': 'For Couples', 'kozmetik': 'Cosmetics', 'fantasy': 'Fantasy', 'oyunlar': 'Games', 'knot': 'Knot'
   };
   function catName(slug, name) {
+    let res = name || CAT_EN[slug] || slug;
+    if (slug === 'erkekler' || res === 'Erkek Sağlık' || res === 'Erkek Saglik') return 'Erkek Cinsel Sağlık';
     if (LANG === 'en' && CAT_EN[slug]) return CAT_EN[slug];
-    return name || CAT_EN[slug] || slug;
+    return res;
   }
   window.LS.catName = catName;
   LS.catName = catName;
@@ -1114,6 +1116,15 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     const hasMultipleImages = productGallery.length > 1;
 
     function getProductProfile(prod) {
+      if (Array.isArray(prod.specsTable) && prod.specsTable.length > 0) {
+        return {
+          chips: Array.isArray(prod.specChips) ? prod.specChips : [],
+          table: prod.specsTable,
+          careTitle: prod.careTitle || 'Kullanım ve Güvenlik Rehberi',
+          careText: prod.careText || ''
+        };
+      }
+
       const name = (prod.name || '').toLowerCase();
       const cat = (prod.category || '').toLowerCase();
       const rawDesc = `${prod.name || ''} ${prod.description || ''} ${prod.longDescription || ''}`;
@@ -1129,17 +1140,75 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       const kgMatch = text.match(/(\d+(?:[.,]\d+)?)\s*kg/i);
       const kgVal = kgMatch ? `${kgMatch[1].replace(',', '.')} Kg` : null;
 
-      // 1. KOZMETİK / CİNSEL SAĞLIK / SPREY / JEL / KREM / KAYGANLAŞTIRICI
+      // 1. EREKSİYON HALKASI / PENİS HALKASI / KILIF / PREZERVATİF / KONDOM
+      const isRingOrSleeve = (
+        name.includes('halka') || name.includes('ring') || name.includes('kılıf') ||
+        name.includes('sleeve') || name.includes('prezervatif') || name.includes('kondom') ||
+        text.includes('penis halka') || text.includes('ereksiyon halka') || text.includes('geciktirici halka')
+      ) && !name.includes('sprey') && !name.includes('jel') && !name.includes('krem') && !name.includes('damla');
+
+      if (isRingOrSleeve) {
+        const isSleeve = name.includes('kılıf') || name.includes('sleeve');
+        const isCondom = name.includes('prezervatif') || name.includes('kondom');
+        const countMatch = name.match(/(\d+)\s*['’]?(?:li|lı|lu|lü|adet|li)/i) || text.match(/(\d+)\s*(?:adet|lü|lı|li|lu)/i);
+        const countText = countMatch ? `${countMatch[1]} Adet Paket İçeriği` : 'Özel Ergonomik Paket';
+
+        if (isCondom) {
+          return {
+            chips: [
+              { k: 'Ürün Tipi', v: 'Prezervatif & Koruyucu' },
+              { k: 'Paket', v: countText },
+              { k: 'Doku', v: text.includes('tırtıklı') ? 'Tırtıklı & Kabartmalı' : 'Ultra İnce & Doğal Hissiyat' },
+              { k: 'Uyum', v: '%100 Standart Uyum' }
+            ],
+            table: [
+              ['Ürün Adı', prod.name],
+              ['Ürün Tipi', 'Koruyucu Prezervatif & Lateks Kılıf'],
+              ['Paket İçeriği', countText],
+              ['Malzeme Yapısı', 'Klinik Onaylı Doğal Lateks / Polyisoprene'],
+              ['Kayganlaştırıcı', 'Rezervuar uçlu, ekstra kayganlaştırıcı kaplamalı'],
+              ['Test & Kalite', '%100 Elektronik Olarak Test Edilmiş Hijyen Standartları']
+            ],
+            careTitle: 'Kullanım ve Güvenlik Rehberi',
+            careText: 'Tek kullanımlıktır. Doğrudan güneş ışığı almayan, serin ve kuru bir ortamda son kullanma tarihine kadar muhafaza ediniz. Açarken kılıfa zarar vermemek için kesici aletler kullanmayınız.'
+          };
+        }
+
+        return {
+          chips: [
+            { k: 'Ürün Tipi', v: isSleeve ? 'Erkeksi Uzatmalı Kılıf' : 'Ereksiyon & Destek Halkası' },
+            { k: 'Malzeme', v: 'Ultra Esnek Medikal Silikon/TPR' },
+            { k: 'Beden', v: '%100 Tüm Boyutlara Uyumlu' },
+            { k: 'Temizlik', v: 'Ilık Sabunlu Su' }
+          ],
+          table: [
+            ['Ürün Adı', prod.name],
+            ['Ürün Tipi', isSleeve ? 'Erkeksi Uzatmalı & Dokulu Penil Kılıf' : 'Erkeksi Performans & Ereksiyon Destek Halkası'],
+            ['Gövde Malzemesi', 'Yüksek elastikiyete sahip, ten dostu Medikal Silikon / TPR (Ftalatsız)'],
+            ['Beden / Esneklik', 'Yüksek esneme kabiliyeti sayesinde tüm boyutlara %100 konforlu uyum sağlar'],
+            ['Kullanım Amacı', isSleeve ? 'Ekstra hacim, doku ve haz artırıcı koruyucu yapı' : 'Ereksiyon süresini ve kan dolaşımını destekleyici ergonomik yapı'],
+            ['Temizlik & Bakım', 'Ilık su ve nötr sabun ile yıkayıp kurutarak tekrar güvenle kullanabilirsiniz']
+          ],
+          careTitle: 'Kullanım ve Bakım Rehberi',
+          careText: 'Konforlu kullanım ve kolay takma/çıkarma için su bazlı kayganlaştırıcı jel ile kullanılması tavsiye edilir. Kullanımdan önce ve sonra ılık sabunlu su ile yıkayınız. Aşırı germeden nazikçe takıp çıkarınız. Kuru, serin ve doğrudan güneş ışığı almayan bir yerde muhafaza ediniz.'
+        };
+      }
+
+      // 2. KOZMETİK / CİNSEL SAĞLIK / SPREY / JEL / KREM / KAYGANLAŞTIRICI / DAMLA / TAKVİYE / YAĞ
       const isCosmetic = (
         name.includes('sprey') || name.includes('spray') || name.includes('jel') || name.includes('gel') ||
         name.includes('krem') || name.includes('cream') || name.includes('lube') || name.includes('kayganlaştırıcı') ||
-        name.includes('damla') || name.includes('yağ') || name.includes('oil') || name.includes('stag') ||
-        name.includes('proling') || name.includes('parfüm') || name.includes('macun') || name.includes('glide')
-      ) && !name.includes('pompa') && !name.includes('vakum') && !name.includes('dildo') && !name.includes('vibratör');
+        name.includes('damla') || name.includes('drop') || name.includes('yağ') || name.includes('oil') || name.includes('stag') ||
+        name.includes('proling') || name.includes('parfüm') || name.includes('macun') || name.includes('glide') ||
+        name.includes('takviye') || cat === 'kadin-cinsel-saglik' || cat === 'erkek-saglik'
+      ) && !name.includes('pompa') && !name.includes('vakum') && !name.includes('dildo') && !name.includes('vibratör') && !name.includes('halka');
 
       if (isCosmetic) {
         const isSpray = name.includes('sprey') || name.includes('spray') || name.includes('stag');
         const isCream = name.includes('krem') || name.includes('cream');
+        const isLube = name.includes('jel') || name.includes('gel') || name.includes('lube') || name.includes('kayganlaştırıcı') || name.includes('glide');
+        const isDrops = name.includes('damla') || name.includes('drop') || name.includes('takviye') || name.includes('macun') || (cat === 'kadin-cinsel-saglik' && !isLube) || text.includes('bitkisel ekstrakt');
+        const isOil = (name.includes('yağ') || name.includes('oil') || text.includes('masaj yağı')) && !isDrops;
         const hasLidocaine = text.includes('lidokain') || text.includes('anestezik');
 
         if (isSpray) {
@@ -1188,6 +1257,49 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
           };
         }
 
+        if (isDrops) {
+          return {
+            chips: [
+              { k: 'Ürün Formu', v: 'Bitkisel Sıvı Damla' },
+              { k: 'Net Hacim', v: mlVal || '10 ml' },
+              { k: 'İçerik', v: 'Bitkisel Ekstrakt & Vitamin' },
+              { k: 'Kullanım', v: 'İçeceğe Damlatılarak' }
+            ],
+            table: [
+              ['Ürün Adı', prod.name],
+              ['Ürün Tipi', 'Kadın Cinsel Sağlık & Bitkisel Sıvı Takviye Damla'],
+              ['Net Hacim', mlVal || '10 ml'],
+              ['Formül Yapısı', 'Bitkisel ekstraktlar, C vitamini, L-Arjinin ve amino asit bileşenli sıvı takviye'],
+              ['Kullanım Şekli', 'Alkolsüz ve asitsiz içeceklerle veya suya damlatılarak tüketilir'],
+              ['Kalite & Güvenlik', 'Hijyenik damlalıklı cam şişe, koruyuculu ve pH dengeli formülasyon'],
+              ['Saklama Koşulları', '25°C altında oda sıcaklığında, doğrudan ışık ve ısıdan uzakta saklayınız']
+            ],
+            careTitle: 'Kullanım ve Tüketim Rehberi',
+            careText: 'Kullanmadan önce şişeyi hafifçe çalkalayınız. Bir bardak suya veya arzu edilen alkolsüz ve asitsiz soğuk/ılık içeceğe ambalaj üzerinde önerilen damla miktarında ilave ederek tüketiniz. Günlük tavsiye edilen porsiyon miktarını aşmayınız. Çocukların ulaşamayacağı, doğrudan güneş ışığı almayan serin ve kuru bir yerde muhafaza ediniz.'
+          };
+        }
+
+        if (isOil) {
+          return {
+            chips: [
+              { k: 'Ürün Formu', v: 'Masaj & Bakım Yağı' },
+              { k: 'Net Hacim', v: mlVal || '100 ml' },
+              { k: 'Doku', v: 'Besleyici & İpeksi' },
+              { k: 'Aroma', v: text.includes('kokusuz') ? 'Kokusuz' : 'Özel Aromatik Esans' }
+            ],
+            table: [
+              ['Ürün Adı', prod.name],
+              ['Ürün Tipi', 'Besleyici Vücut & Masaj Yağı'],
+              ['Net Hacim', mlVal || '100 ml'],
+              ['Formül Yapısı', 'Doğal bitkisel yağ kompleksi ile zenginleştirilmiş besleyici doku'],
+              ['Cilt Uyumlu', 'Dermatolojik testlerden geçmiş, tüm cilt tiplerine uygun hafif yapılı formül'],
+              ['Temizlik & Bakım', 'Ilık su ve duş jeli ile cildinizi zahmetsizce temizleyebilirsiniz']
+            ],
+            careTitle: 'Kullanım ve Masaj Rehberi',
+            careText: 'Yeterli miktarda yağı avucunuza alıp hafifçe ısıttıktan sonra dairesel masaj hareketleriyle cilde uygulayınız. Harici kullanım içidir. Direkt güneş ışığından uzakta, serin ve kuru yerde saklayınız.'
+          };
+        }
+
         // Lube / Gel
         return {
           chips: [
@@ -1210,7 +1322,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         };
       }
 
-      // 2. FETİŞ / AKSESUAR / POMPA
+      // 3. FETİŞ / AKSESUAR / POMPA
       const isFetishOrPump = (
         name.includes('pompa') || name.includes('vakum') || name.includes('kelepçe') ||
         name.includes('maske') || name.includes('kırbaç') || name.includes('harness') ||
@@ -1257,11 +1369,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         };
       }
 
-      // 3. MANKEN / SUNİ VAJİNA / MASTÜRBATÖR / KALÇA
+      // 4. MANKEN / SUNİ VAJİNA / MASTÜRBATÖR / KALÇA
       const isDollOrMasturbator = (
         name.includes('manken') || name.includes('doll') || name.includes('kalça') ||
         name.includes('suni vajina') || name.includes('mastürbatör') || name.includes('masturbator') ||
-        name.includes('vajina') || name.includes('cup') || cat === 'realistik-mankenler' || cat === 'ciftler'
+        name.includes('vajina') || name.includes('cup') || cat === 'realistik-mankenler'
       );
       if (isDollOrMasturbator) {
         const isBigDoll = name.includes('manken') || name.includes('doll') || cat === 'realistik-mankenler' || (cmMatch && parseInt(cmMatch[1], 10) > 100);
@@ -1285,11 +1397,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         };
       }
 
-      // 4. ELEKTRONİK / VİBRATÖR
+      // 5. ELEKTRONİK / VİBRATÖR
       const isVibe = (
         name.includes('vibratör') || name.includes('vibrator') || name.includes('wand') ||
         name.includes('rabbit') || name.includes('şarjlı') || name.includes('telefon kontrollü') ||
-        name.includes('g-spot') || cat === 'vibratorler' || text.includes('titreşimli')
+        name.includes('g-spot') || cat === 'vibratorler' || text.includes('titreşimli') || text.includes('titreşim')
       );
       if (isVibe) {
         const isApp = text.includes('telefon') || text.includes('app');
@@ -1314,33 +1426,62 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         };
       }
 
-      // 5. MANUEL DİLDO / ANAL PLUG / CAM / METAL (VARSAYILAN OYUNCAK)
-      let malzeme = 'Medikal Platinum Silikon';
-      if (text.includes('borosilikat') || text.includes('cam')) malzeme = 'Borosilikat Cam';
-      else if (text.includes('çelik') || text.includes('metal')) malzeme = 'Medikal Paslanmaz Çelik';
-      else if (text.includes('sıvı silikon')) malzeme = 'Ultra Yumuşak Sıvı Silikon';
+      // 6. DİLDO / PLUG / CAM / METAL (YALNIZCA GERÇEK DİLDO VE PLUGLAR)
+      const isDildoOrPlug = name.includes('dildo') || name.includes('plug') || name.includes('vantuz') || name.includes('anal') || name.includes('prob') || text.includes('dildo') || text.includes('plug');
+      if (isDildoOrPlug) {
+        let malzeme = 'Medikal Platinum Silikon';
+        if (text.includes('borosilikat') || text.includes('cam')) malzeme = 'Borosilikat Cam';
+        else if (text.includes('çelik') || text.includes('metal')) malzeme = 'Medikal Paslanmaz Çelik';
+        else if (text.includes('sıvı silikon')) malzeme = 'Ultra Yumuşak Sıvı Silikon';
 
-      let taban = 'Ergonomik Tasarım';
-      if (text.includes('vantuz')) taban = 'Güçlü Sabitleme Vantuzu';
-      else if (name.includes('plug') || text.includes('plug')) taban = 'Güvenli Taban (Flared Base)';
+        let taban = 'Ergonomik Yüzey';
+        if (text.includes('vantuz')) taban = 'Güçlü Sabitleme Vantuzu';
+        else if (name.includes('plug') || text.includes('plug')) taban = 'Güvenli Taban (Flared Base)';
+
+        return {
+          chips: [
+            { k: 'Malzeme', v: malzeme.split(' ')[0] + ' ' + (malzeme.split(' ')[1] || '') },
+            { k: 'Boyut', v: cmVal || 'Ergonomik Boyut' },
+            { k: 'Taban / Yapı', v: taban },
+            { k: 'Hijyen', v: 'Kolay Temizlenebilir' }
+          ],
+          table: [
+            ['Ürün Adı', prod.name],
+            ['Gövde Malzemesi', `${malzeme} (Vücut ile %100 biyo-uyumlu, ftalatsız)`],
+            ['Ölçü / Uzunluk', cmVal || 'Standart Ergonomik Ölçü'],
+            ['Taban Mimarisi', taban],
+            ['Su Dayanımı', '100% Su Geçirmez'],
+            ['Hijyen & Sterilizasyon', 'Ilık sabunlu suyla %100 arındırılabilir']
+          ],
+          careTitle: 'Kullanım ve Hijyen Rehberi',
+          careText: 'Pürüzsüz ve konforlu bir deneyim için bol miktarda su bazlı kayganlaştırıcı ile kullanılması önerilir. Kullanımdan önce ve sonra ılık su ile nötr sabun veya özel oyuncak temizleme solüsyonu ile yıkayınız. Direkt güneş ışığından ve aşırı sıcak ortamlardan uzakta kuru bir yerde muhafaza ediniz.'
+        };
+      }
+
+      // 7. GENEL / DİĞER HER ŞEY İÇİN TEMİZ VE GERÇEKÇİ FALLBACK
+      let generalMaterial = 'Ten Dostu Medikal Malzeme (Ftalatsız)';
+      if (text.includes('silikon')) generalMaterial = '%100 Medikal Biyo-Uyumlu Silikon';
+      else if (text.includes('tpe') || text.includes('tpr')) generalMaterial = 'Yumuşak Esnek Medikal TPE / TPR';
+      else if (text.includes('deri')) generalMaterial = 'Yüksek Kalite Vegan Deri';
+      else if (text.includes('kumaş') || text.includes('dantel')) generalMaterial = 'Nefes Alabilir Konforlu Kumaş';
 
       return {
         chips: [
-          { k: 'Malzeme', v: malzeme.split(' ')[0] + ' ' + (malzeme.split(' ')[1] || '') },
-          { k: 'Boyut', v: cmVal || 'Ergonomik Boyut' },
-          { k: 'Taban / Yapı', v: taban },
-          { k: 'Su Dayanımı', v: '100% Su Geçirmez' }
+          { k: 'Ürün Türü', v: 'Lüks Yetişkin Sağlık' },
+          { k: 'Malzeme', v: generalMaterial.split(' ')[0] + ' ' + (generalMaterial.split(' ')[1] || '') },
+          { k: 'Boyut', v: cmVal || 'Ergonomik Standart Ölçü' },
+          { k: 'Güvenlik', v: 'Ten Dostu & Ftalatsız' }
         ],
         table: [
           ['Ürün Adı', prod.name],
-          ['Gövde Malzemesi', `${malzeme} (Vücut ile %100 biyo-uyumlu, ftalatsız)`],
-          ['Ölçü / Uzunluk', cmVal || 'Standart Ergonomik Ölçü'],
-          ['Taban Mimarisi', taban],
-          ['Su Dayanımı', '100% Su Geçirmez — Kolay sterilize edilebilir'],
-          ['Hijyen & Sterilizasyon', 'Kaynatılabilir / Ilık sabunlu suyla %100 arındırılabilir']
+          ['Kategori', catName(prod.category, prod.categoryName)],
+          ['Malzeme Yapısı', generalMaterial],
+          ['Ölçü / Boyut', cmVal || 'Ergonomik Standart Ölçü'],
+          ['Kalite & Hijyen', 'Dermatolojik / Medikal standartlarda insan sağlığına zararsız materyal'],
+          ['Paketleme & Gizlilik', 'Mühürlü steril koruma, içeriği dışarıdan belli olmayan %100 gizli kargo kutusu']
         ],
         careTitle: 'Kullanım ve Hijyen Rehberi',
-        careText: 'Pürüzsüz ve konforlu bir deneyim için bol miktarda su bazlı kayganlaştırıcı ile kullanılması önerilir. Kullanımdan önce ve sonra ılık su ile nötr sabun veya özel oyuncak temizleme solüsyonu ile yıkayınız. Direkt güneş ışığından ve aşırı sıcak ortamlardan uzakta kuru bir yerde muhafaza ediniz.'
+        careText: 'Ürünü kullanmadan önce ve sonra ılık su ve nötr sabun ile nazikçe temizleyiniz. Doğrudan güneş ışığı almayan, serin ve kuru bir yerde muhafaza ediniz.'
       };
     }
 

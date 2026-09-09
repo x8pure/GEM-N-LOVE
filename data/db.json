@@ -164,9 +164,9 @@
       "stock": 6,
       "rating": 0,
       "reviewCount": 0,
-      "featured": true,
+      "featured": false,
       "isNew": true,
-      "bestSeller": true,
+      "bestSeller": false,
       "image": "/uploads/img9e03f59652d2.webp",
       "gallery": [
         "/uploads/img9e03f59652d2.webp",
@@ -177,7 +177,8 @@
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-28T14:43:54.851Z"
+      "createdAt": "2026-08-28T14:43:54.851Z",
+      "highlights": []
     },
     {
       "id": "pb7847614536e",
@@ -192,9 +193,9 @@
       "stock": 10,
       "rating": 5,
       "reviewCount": 2,
-      "featured": true,
+      "featured": false,
       "isNew": true,
-      "bestSeller": true,
+      "bestSeller": false,
       "image": "/uploads/imgee90f2ac5ae0.webp",
       "gallery": [
         "/uploads/imgee90f2ac5ae0.webp"
@@ -203,7 +204,8 @@
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-28T15:01:10.601Z"
+      "createdAt": "2026-08-28T15:01:10.601Z",
+      "highlights": []
     },
     {
       "id": "pdf2748be251d",
@@ -815,6 +817,69 @@
         "standart"
       ],
       "createdAt": "2026-09-08T11:17:54.987Z"
+    },
+    {
+      "id": "p5813616cd082",
+      "slug": "orviax-love-drops-for-women-damla",
+      "name": "Orviax Love Drops For Women Damla",
+      "category": "kadinlar",
+      "categoryName": "Kadın Cinsel Sağlık",
+      "description": "Orviax Love Drops For Women Damla.",
+      "longDescription": "Orviax Love Drops For Women Damla,\n\nÖne Çıkan Özellikler:\n• 10 ML - Bitkisel ekstraktlar, vitamin desteği ve antioksidan bileşenler içeren sıvı takviyedir. Satıcı bilgilerinde su, L-askorbik asit (C vitamini), L-arjinin, meyan kökü özütü, kafein ile gıda koruyucuları (potasyum sorbat ve sodyum benzoat) bulunduğu belirtilmektedir",
+      "price": 499,
+      "oldPrice": 559,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [
+        "Ergonomik Tasarım",
+        "Premium Kalite",
+        "Kolay Kullanım",
+        "10 ML"
+      ],
+      "image": "/uploads/imgcd26631af80f.webp",
+      "gallery": [
+        "/uploads/imgcd26631af80f.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-09T12:41:04.342Z"
+    },
+    {
+      "id": "pa4cab77cad28",
+      "slug": "3-li-penis-halkasi",
+      "name": "3'li Penis Halkası",
+      "category": "erkekler",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "description": "3'li Penis Halkası",
+      "longDescription": "3'li Penis Halkası, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• Üçlü Penis Halkası. Siyah, mavi ve şeffaf renklere sahiptirler.",
+      "price": 259,
+      "oldPrice": null,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [
+        "Ergonomik Tasarım",
+        "Premium Kalite",
+        "Kolay Kullanım"
+      ],
+      "image": "/uploads/img0b5f9e122919.webp",
+      "gallery": [
+        "/uploads/img0b5f9e122919.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-09T12:59:11.562Z"
     }
   ],
   "categories": [
@@ -849,7 +914,7 @@
       "id": "ct_realistik-dildolar",
       "slug": "realistik-dildolar",
       "name": "Realistik Dildolar",
-      "image": "/uploads/img9e03f59652d2.webp",
+      "image": "/uploads/imgb4a475d33373.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-28T14:49:41.786Z"
@@ -866,7 +931,7 @@
     {
       "id": "ct3177d2d9d44e",
       "slug": "erkekler",
-      "name": "Erkek Sağlık",
+      "name": "Erkek Cinsel Sağlık",
       "image": "/uploads/imga69c5630d16e.webp",
       "featuredOnHome": true,
       "homeOrder": 2,
@@ -1143,7 +1208,7 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-09T08:20:51.251Z",
-    "version": 550
+    "updatedAt": "2026-09-09T13:20:32.053Z",
+    "version": 591
   }
 }

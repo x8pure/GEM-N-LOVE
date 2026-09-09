@@ -72,6 +72,18 @@ export async function syncWithCloud(force = false) {
     if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
       setMemoryDb(cloudState, true);
       db = load();
+      let changed = false;
+      if (Array.isArray(db.categories)) {
+        db.categories.forEach((c: any) => {
+          if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') { c.name = 'Erkek Cinsel Sağlık'; changed = true; }
+        });
+      }
+      if (Array.isArray(db.products)) {
+        db.products.forEach((p: any) => {
+          if (p.category === 'erkekler' || p.categoryName === 'Erkek Sağlık') { p.categoryName = 'Erkek Cinsel Sağlık'; changed = true; }
+        });
+      }
+      if (changed) { await saveAsync(); }
       lastCloudSyncTime = Date.now();
       console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories.`);
     } else if (localDb && Array.isArray(localDb.products) && localDb.products.length > 0) {
@@ -616,8 +628,16 @@ function errT(lang: string, key: string, vars?: Record<string, any>) {
 /* ---------------- calc helpers ---------------- */
 function allCategories() {
   const cats = Array.isArray(db.categories) ? [...db.categories] : [];
+  for (const c of cats) {
+    if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') {
+      c.name = 'Erkek Cinsel Sağlık';
+    }
+  }
   const known = new Set(cats.map((c: any) => c.slug));
   for (const p of db.products || []) {
+    if (p.category === 'erkekler' || p.categoryName === 'Erkek Sağlık') {
+      p.categoryName = 'Erkek Cinsel Sağlık';
+    }
     if (p.category && !known.has(p.category)) {
       known.add(p.category);
       cats.push({ id: 'ct_' + p.category, slug: p.category, name: p.categoryName || p.category, image: '', featuredOnHome: false, homeOrder: 99, createdAt: p.createdAt });
@@ -1262,7 +1282,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
   const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6);
-  const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 6);
+  const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 3);
   const html = `
 <section class="hero">
   <div class="hero-bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
