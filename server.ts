@@ -626,6 +626,14 @@ function allCategories() {
   return cats;
 }
 
+function formatCatTitle(name: string): string {
+  const parts = (name || '').trim().split(/\s+/);
+  if (parts.length <= 1) return esc(parts[0] || '');
+  const first = parts.slice(0, -1).join(' ');
+  const last = parts[parts.length - 1];
+  return `${esc(first)} <em>${esc(last)}</em>`;
+}
+
 function wheelProducts() {
   if (!Array.isArray(db.settings.wheelIds)) db.settings.wheelIds = [];
   const chosen: any[] = [];
@@ -1246,7 +1254,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
       homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99
     };
   });
-  const exactSlugs = ['vibratorler', 'erkekler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'realistik-dildolar'];
+  const exactSlugs = ['vibratorler', 'realistik-dildolar', 'erkekler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'erkek-ve-kadinlar'];
   const topCats = exactSlugs.map(slug => allCats.find(c => c.slug === slug)).filter(Boolean);
   const homeRemaining = allCats.filter((c) => !topCats.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
   const top = [...topCats, ...homeRemaining].slice(0, 7);
@@ -1274,20 +1282,18 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
 <section class="block">
   <div class="section-head rv"><div><h2>${tr('sec.cats.h2')}</h2><p>${tr('sec.cats.p', { n: C.num(totalCount) })}</p></div><a href="/magaza" class="link-more">${tr('sec.cats.link')}</a></div>
   <div class="bento">${top.map((c, i) => {
-    const parts = c.name.split(' ');
-    const nm = parts[0] + (parts.length > 1 ? ` <em>${parts.slice(1).join(' ')}</em>` : '');
+    const nm = formatCatTitle(c.name);
     const area = ['a','b','c','d','e','f','h'][i] || 'a';
     return `
     <a class="bento-card bento-card-${area} rv rv-d${i + 1}" href="/magaza?kat=${c.slug}">
-      <span class="bento-rank">0${i + 1}</span>
-      <span class="bento-arrow-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
       <div class="bento-img-wrap"><img class="bento-bg" src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy"></div>
-      <div class="bento-meta"><h3>${nm}</h3><span class="bcount">${c.count} ${tr('cats.products')}</span></div>
+      <div class="bento-meta">
+        <h3>${nm}</h3>
+      </div>
     </a>`;
   }).join('')}
     <a class="bento-card bento-cta bento-card-g rv rv-d${top.length + 1}" href="/magaza">
       <span class="cta-glow" aria-hidden="true"></span>
-      <span class="bento-arrow-icon cta-corner-arrow" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
       <span class="cta-inner">
         <em class="cta-kicker">${tr('bcta.kicker')}</em>
         <h3>${tr('bcta.h3')}<span class="dot-rose">.</span></h3>

@@ -32,7 +32,7 @@
       "email": "x8pure@gmail.com",
       "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
       "name": "Ulaş",
-      "role": "admin",
+      "role": "customer",
       "googleAuth": true,
       "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKnVsL6kmZscCWiCqAGhy0YMcZljoS0Vcw3m5bK7DATa9kOG_M=s96-c",
       "createdAt": "2026-08-26T19:23:08.444Z",
@@ -67,7 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 42
+      "tokenVersion": 43
     },
     {
       "id": "u164dff680af2",
@@ -138,9 +138,9 @@
       "featured": true,
       "isNew": false,
       "bestSeller": true,
-      "image": "/uploads/imgaba08e56526e.webp",
+      "image": "/uploads/img4ca0fae4e044.webp",
       "gallery": [
-        "/uploads/imgaba08e56526e.webp",
+        "/uploads/img4ca0fae4e044.webp",
         "/uploads/imgd74a65edb29d.webp",
         "/uploads/img4a49740ce022.webp"
       ],
@@ -252,8 +252,9 @@
       "featured": true,
       "isNew": true,
       "bestSeller": false,
-      "image": "/uploads/imgd808403a2654.webp",
+      "image": "/uploads/imgd5b3fb871546.webp",
       "gallery": [
+        "/uploads/imgd5b3fb871546.webp",
         "/uploads/imgd808403a2654.webp",
         "/uploads/imga2b266df5429.webp",
         "/uploads/img366a0bf13dd8.webp"
@@ -281,17 +282,17 @@
       "featured": true,
       "isNew": true,
       "bestSeller": true,
-      "image": "/uploads/imged8838ca011b.webp",
+      "image": "/uploads/imga85b9cdf148c.webp",
       "gallery": [
-        "/uploads/imged8838ca011b.webp",
-        "/uploads/img1e34058bf48e.webp",
+        "/uploads/imga85b9cdf148c.webp",
         "/uploads/img0103fa877c83.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-29T11:49:54.185Z"
+      "createdAt": "2026-08-29T11:49:54.185Z",
+      "highlights": []
     },
     {
       "id": "pe6440906f9a6",
@@ -560,15 +561,15 @@
       "stock": 10,
       "rating": 0,
       "reviewCount": 0,
-      "featured": false,
+      "featured": true,
       "isNew": true,
       "bestSeller": false,
       "highlights": [
         "Toplam ürün ağırlığı: 285 g"
       ],
-      "image": "/uploads/imgc41a6be24646.webp",
+      "image": "/uploads/img737d6c4ddf9e.webp",
       "gallery": [
-        "/uploads/imgc41a6be24646.webp",
+        "/uploads/img737d6c4ddf9e.webp",
         "/uploads/img9798b7c042d4.webp",
         "/uploads/img3689e37cc3bf.webp"
       ],
@@ -628,7 +629,8 @@
       "image": "/uploads/imgac2ddcd00600.webp",
       "gallery": [
         "/uploads/imgac2ddcd00600.webp",
-        "/uploads/imgc14eacd5e2cb.webp"
+        "/uploads/imgc14eacd5e2cb.webp",
+        "/uploads/img8e351987579a.webp"
       ],
       "tags": [],
       "variants": [
@@ -864,7 +866,7 @@
     {
       "id": "ct3177d2d9d44e",
       "slug": "erkekler",
-      "name": "Erkek Cinsel Sağlık",
+      "name": "Erkek Sağlık",
       "image": "/uploads/imga69c5630d16e.webp",
       "featuredOnHome": true,
       "homeOrder": 2,
@@ -898,39 +900,7 @@
       "createdAt": "2026-08-31T10:00:44.715Z"
     }
   ],
-  "orders": [
-    {
-      "id": "LS-1024",
-      "userId": "u164dff680af2",
-      "userEmail": "test@loveshop.com.tr",
-      "customerName": "Test Kullanıcı",
-      "items": [
-        {
-          "productId": "p5dc69a298a76",
-          "name": "Passion Cup Suni Vajina Mastürbatör",
-          "price": 959,
-          "qty": 1,
-          "image": "/uploads/imgd180bab7dbac.webp"
-        }
-      ],
-      "subtotal": 959,
-      "shipping": 99,
-      "discount": 0,
-      "total": 1058,
-      "coupon": null,
-      "status": "delivered",
-      "payment": "WhatsApp ile Sipariş",
-      "discreet": true,
-      "phone": "05436331325",
-      "address": {
-        "full": "İsmet İnönü 1 caddesi 52/2",
-        "city": "Tepebaşı",
-        "zip": ""
-      },
-      "createdAt": "2026-09-08T15:19:38.997Z",
-      "note": ""
-    }
-  ],
+  "orders": [],
   "coupons": [
     {
       "id": "c98cefbf5620e",
@@ -1173,7 +1143,7 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-08T15:48:34.832Z",
-    "version": 530
+    "updatedAt": "2026-09-09T08:20:51.251Z",
+    "version": 550
   }
 }
