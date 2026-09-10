@@ -388,9 +388,10 @@ const STR: Record<string, Record<string, string>> = {
     'reg.btn': 'Hesap Oluştur', 'reg.alt': 'Zaten üye misin?', 'reg.altLink': 'Giriş yap',
     'account.title': 'Hesabım', 'profile.title': 'Profilim',
     'about.eb': 'Hikayemiz',
-    'about.h1': 'Utancı geride bıraktık. <em class="em-rose">Keyfi</em> öne aldık.',
-    'about.p1': 'Love Shop, "ayıp" kelimesinin alışveriş deneyimini kirletmesine izin vermeyen bir ekip tarafından kuruldu. Bizim için bedenini tanımak, keyfini keşfetmek ve kendini sevmek bir lüks değil; temel bir hak.',
-    'about.p2': '2026\'nın ödüllü web tasarım dilini — koyu, duyusal, akışkan — Türkiye\'deki ilk "gururla gezilebilir" yetişkin mağazasıyla buluşturduk.',
+    'about.h1': 'Utancı geride bıraktık. <br class="about-br"><em class="em-rose">Keyfi</em> öne aldık.',
+    'about.p1': 'Love Shop, 2012 yılından bu yana 14 yıldır Eskişehir İsmet İnönü Caddesi’ndeki aynı fiziksel mağazasında kesintisiz hizmet veriyor. Yeri ve muhatabı belirsiz internet satıcılarının aksine; her gün kapısı açık, fiziki varlığı ve kurumsal sorumluluğu somut olan gerçek bir işletmeyiz.',
+    'about.p2': 'Bugüne dek 5.000\'i aşkın müşterimize paketleme standartlarımızdan tek bir ödün vermeden, %100 gizlilik ve mahremiyet esasıyla ulaştık. Bizim için bedenini tanımak, keyfini keşfetmek ve cinsel sağlığına özen göstermek bir tabu veya lüks değil; en doğal insani hak.',
+    'about.p3': '14 yıllık perakende tecrübemizi, CE sertifikalı vücut dostu ürün seçkimizi ve koşulsuz gizlilik ilkemizi; modern, saygın ve gururla gezilebilir bir alışveriş deneyimiyle buluşturuyoruz.',
     'about.priv.h': 'Gizlilik Manifestosu',
     'about.priv.p': 'Gizlilik bizim için pazarlama sloganı değil, mimari bir karar:',
     'about.priv.list': '• <b>Paket:</b> Düz kraft kutu. Üzerinde logo yok, ürün adı yok, iade adresi bile jenerik.<br>• <b>Ekstre:</b> Kart hareketinde yalnızca "LS TR Bilişim" yazar.<br>• <b>Veri:</b> Sipariş geçmişin yalnızca sen ve bizim gördüğümüz şifreli bir altyapıda durur. Asla üçüncü taraflarla paylaşılmaz.<br>• <b>Gezinti:</b> Çerezlerimiz yalnızca sepetin hatırlaması için var; reklam izleme yok.',
@@ -485,9 +486,10 @@ const STR: Record<string, Record<string, string>> = {
     'reg.btn': 'Create Account', 'reg.alt': 'Already a member?', 'reg.altLink': 'Sign in',
     'account.title': 'My Account', 'profile.title': 'My Profile',
     'about.eb': 'Our Story',
-    'about.h1': 'We left the shame behind. We put <em class="em-rose">pleasure</em> first.',
-    'about.p1': 'Love Shop was founded by a team that refuses to let the word "taboo" poison the shopping experience.',
-    'about.p2': 'We paired the award-winning web design language of 2026 with Turkey\'s first adult store you can browse with pride.',
+    'about.h1': 'We left the shame behind. <br class="about-br">We put <em class="em-rose">pleasure</em> first.',
+    'about.p1': 'Since 2012, Love Shop has been welcoming visitors and shipping orders continuously from the exact same physical store on İsmet İnönü Street in Eskişehir for 14 years. Unlike faceless online sellers with no verifiable address, we are a tangible establishment with an open door and real accountability.',
+    'about.p2': 'To date, we have delivered over 5,000 orders with 100% discretion and zero compromise on our packaging standards. We believe exploring pleasure, understanding one\'s body, and prioritizing sexual wellness is not a taboo, but a fundamental right.',
+    'about.p3': 'We combine our 14 years of hands-on retail expertise and certified body-safe catalog with a respectful, modern, and stigma-free shopping experience.',
     'about.priv.h': 'Privacy Manifesto',
     'about.priv.p': 'Privacy is not a marketing slogan for us; it is an architectural decision:',
     'about.priv.list': '• <b>Package:</b> Plain kraft box. No logo, no product name.<br>• <b>Statement:</b> Your card statement reads "LS TR Bilişim".<br>• <b>Data:</b> Encrypted and private.',
@@ -964,7 +966,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@500;600;700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" rel="stylesheet" />
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -1018,7 +1020,7 @@ ${opts.noChrome ? body : `
       </button>
       <button id="lang-toggle" class="lang-btn" title="${C.lang === 'tr' ? 'Switch to English' : 'Türkçeye geç'}" aria-label="Switch language">${C.lang === 'tr' ? 'EN' : 'TR'}</button>
       <span id="nav-user"><a href="/giris" class="icon-btn" title="${tr('nav.login')}"><svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></span>
-      <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg icon-bag-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12a1.8 1.8 0 0 1-1.8 1.8H7.8A1.8 1.8 0 0 1 6 20L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="cart-badge" id="cart-badge">${C.cartCount || 0}</span></a>
+      <a href="/sepet" class="icon-btn cart-btn" id="nav-cart-btn" title="Sepet" aria-label="Sepet"><svg class="icon-svg icon-bag-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12a1.8 1.8 0 0 1-1.8 1.8H7.8A1.8 1.8 0 0 1 6 20L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="cart-badge ${C.cartCount ? '' : 'hidden'}" id="cart-badge" style="${C.cartCount ? '' : 'display:none;'}">${C.cartCount || 0}</span></a>
       <button id="burger" class="icon-btn burger-btn" aria-label="Menü" title="Menü">
         <svg class="icon-svg icon-burger-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <line class="burger-bar b-bar-1" x1="4" x2="20" y1="8.5" y2="8.5"/>
@@ -1802,11 +1804,11 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
   const html = `
-<div class="rich">
-  <span class="eyebrow">${tr('about.eb')}</span>
-  <h2 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1">${tr('about.h1')}</h2>
-  <p style="font-size:16px">${tr('about.p1')}</p>
-  <p>${tr('about.p2')}</p>
+<div class="rich rich-about">
+  <h1 style="font-family:'Outfit',sans-serif !important;font-size:clamp(32px,4.5vw,56px);font-weight:700;line-height:1.15;letter-spacing:-0.6px;margin-bottom:28px;">${tr('about.h1')}</h1>
+  <p style="font-size:17px;line-height:1.65;color:var(--text);margin-bottom:16px;">${tr('about.p1')}</p>
+  <p style="font-size:16px;line-height:1.65;margin-bottom:16px;">${tr('about.p2')}</p>
+  <p style="font-size:16px;line-height:1.65;margin-bottom:34px;">${tr('about.p3')}</p>
   <h2 id="gizlilik">${tr('about.priv.h')}</h2>
   <p>${tr('about.priv.p')}</p>
   <p>${tr('about.priv.list')}</p>
@@ -1836,7 +1838,7 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'About Us' : 'Hakkımızda — Eskişehir Love Seks & Erotik Shop', html, {
-    description: 'Love Shop: Eskişehir ve Türkiye genelinde güvenli, kaliteli, vücut dostu ürünler sunan seçkin yetişkin yaşam ve seks shop mağazası. %100 gizlilik manifestosu.'
+    description: C.lang === 'en' ? 'Love Shop: 14 years at the same address in Eskişehir, delivering over 5,000 orders with 100% discretion and body-safe certified products.' : 'Love Shop: 2012\'den bu yana 14 yıldır Eskişehir\'deki aynı fiziksel adresinde, 5.000\'i aşkın müşterisine %100 gizlilik ve güvenle hizmet veren köklü mağaza.'
   }, C));
 }
 

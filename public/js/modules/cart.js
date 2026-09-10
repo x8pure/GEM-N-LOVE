@@ -28,14 +28,17 @@ export function updateCartBadge(count, isNewAdd = false) {
   const n = Math.max(0, parseInt(count, 10) || 0);
   badges.forEach((b) => {
     b.textContent = n;
+    b.setAttribute('data-count', String(n));
     if (n > 0) {
       b.classList.remove('hidden');
+      b.style.display = 'flex';
       if (isNewAdd) {
         b.classList.add('bounce');
         setTimeout(() => b.classList.remove('bounce'), 450);
       }
     } else {
       b.classList.add('hidden');
+      b.style.display = 'none';
     }
   });
 }

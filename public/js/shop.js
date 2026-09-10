@@ -1496,23 +1496,28 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       </div>
     </div>
     <div class="pd-layout">
-      <div class="pd-gallery">
-        <div class="pd-media">
+      <div class="pd-gallery" id="pd-gallery-wrap">
+        <div class="pd-media" id="pd-media-stage" role="button" tabindex="0" aria-label="Görseli büyüt (Tam Ekran)">
           <img id="pd-main-image" src="${imgSrc(p.image)}" alt="${esc(p.name)}">
         </div>
         ${hasMultipleImages ? `
-          <div class="pd-thumbs" role="tablist">
+          <div class="pd-thumbs" role="tablist" aria-label="Ürün Görselleri">
             ${productGallery.map((img, idx) => `
-              <button type="button" class="pd-thumb-btn ${img === p.image ? 'active' : ''}" data-thumb-src="${esc(img)}" aria-label="Görsel ${idx + 1}">
+              <button type="button" class="pd-thumb-btn ${idx === 0 ? 'active' : ''}" data-thumb-idx="${idx}" data-thumb-src="${esc(img)}" aria-label="Görsel ${idx + 1}">
                 <img src="${imgSrc(img)}" alt="${esc(p.name)} - ${idx + 1}">
               </button>
+            `).join('')}
+          </div>
+          <div class="pd-dots" role="tablist" aria-label="Görsel Sayfaları">
+            ${productGallery.map((_, idx) => `
+              <button type="button" class="pd-dot ${idx === 0 ? 'active' : ''}" data-dot-idx="${idx}" aria-label="Görsel ${idx + 1}"></button>
             `).join('')}
           </div>
         ` : ''}
       </div>
       <div class="pd-info">
         <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="pd-category-tag">${catName(p.category, p.categoryName)}</a>
-        <h1 class="pd-title">${esc(p.name)}</h1>
+        <h1 class="pd-title">${esc(String(p.name || '').replace(/\s+/g, ' ').trim())}</h1>
 
         ${p.reviewCount > 0 ? `
           <div class="pd-rating-bar">
@@ -1624,19 +1629,201 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       <div class="prod-grid" id="related-grid"></div>
     </section>`;
 
-    // Gallery thumbnail switcher handler
-    const mainImg = $('#pd-main-image');
-    $$('.pd-thumb-btn', root).forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const targetSrc = btn.dataset.thumbSrc;
-        if (mainImg && targetSrc) {
-          mainImg.style.opacity = '0.4';
-          mainImg.src = imgSrc(targetSrc);
-          mainImg.onload = () => { mainImg.style.opacity = '1'; };
-          $$('.pd-thumb-btn', root).forEach((b) => b.classList.toggle('active', b === btn));
+    // Gallery controller: switcher, swipe gestures, arrow navigation & fullscreen lightbox
+    let activeImgIdx = 0;
+    const mainImg = $('#pd-main-image', root);
+    const mediaStage = $('#pd-media-stage', root);
+    const curIdxEl = $('#pd-cur-idx', root);
+    const thumbBtns = $$('.pd-thumb-btn', root);
+
+    function updateGalleryImage(idx) {
+      if (!productGallery[idx]) return;
+      activeImgIdx = idx;
+      const targetSrc = productGallery[idx];
+      if (mainImg) {
+        mainImg.style.opacity = '0.35';
+        mainImg.src = imgSrc(targetSrc);
+        mainImg.onload = () => { mainImg.style.opacity = '1'; };
+      }
+      if (curIdxEl) curIdxEl.textContent = String(idx + 1);
+      thumbBtns.forEach((b, i) => {
+        const isActive = i === idx;
+        b.classList.toggle('active', isActive);
+        if (isActive) {
+          b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       });
+      const dotBtns = $$('.pd-dot', root);
+      dotBtns.forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
+    }
+
+    thumbBtns.forEach((btn, idx) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateGalleryImage(idx);
+      });
     });
+
+    const dotBtns = $$('.pd-dot', root);
+    dotBtns.forEach((btn, idx) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateGalleryImage(idx);
+      });
+    });
+
+    const prevBtn = $('#pd-arrow-prev', root);
+    const nextBtn = $('#pd-arrow-next', root);
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const prevIdx = (activeImgIdx - 1 + productGallery.length) % productGallery.length;
+        updateGalleryImage(prevIdx);
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const nextIdx = (activeImgIdx + 1) % productGallery.length;
+        updateGalleryImage(nextIdx);
+      });
+    }
+
+    // Touch swipe for mobile gallery
+    if (mediaStage && productGallery.length > 1) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      mediaStage.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+      mediaStage.addEventListener('touchend', (e) => {
+        if (!e.changedTouches || !e.changedTouches[0]) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 35 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+          if (dx < 0) {
+            updateGalleryImage((activeImgIdx + 1) % productGallery.length);
+          } else {
+            updateGalleryImage((activeImgIdx - 1 + productGallery.length) % productGallery.length);
+          }
+        }
+      }, { passive: true });
+    }
+
+    // Remove any leftover lightbox from DOM
+    const oldLb = $('#pd-lightbox');
+    if (oldLb) oldLb.remove();
+
+    // Luxury Fullscreen Lightbox
+    function openLightbox(startIdx) {
+      let lbIdx = (typeof startIdx === 'number') ? startIdx : activeImgIdx;
+      let lb = $('#pd-lightbox');
+      if (!lb) {
+        lb = document.createElement('div');
+        lb.id = 'pd-lightbox';
+        lb.className = 'pd-lightbox';
+        lb.setAttribute('role', 'dialog');
+        lb.setAttribute('aria-modal', 'true');
+        lb.setAttribute('aria-hidden', 'true');
+        lb.style.display = 'none';
+        lb.innerHTML = `
+          <div class="pd-lb-backdrop"></div>
+          <div class="pd-lb-container">
+            <button type="button" class="pd-lb-close" aria-label="Kapat" title="Kapat (ESC)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <div class="pd-lb-img-wrap">
+              <img id="pd-lb-img" src="" alt="${esc(p.name)}">
+            </div>
+            ${hasMultipleImages ? `
+              <button type="button" class="pd-lb-nav pd-lb-prev" aria-label="Önceki Görsel">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button type="button" class="pd-lb-nav pd-lb-next" aria-label="Sonraki Görsel">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <div class="pd-lb-counter"><span id="pd-lb-cur">1</span> / <span>${productGallery.length}</span></div>
+            ` : ''}
+          </div>
+        `;
+        document.body.appendChild(lb);
+      }
+
+      const lbImg = $('#pd-lb-img', lb);
+      const lbCur = $('#pd-lb-cur', lb);
+
+      function setLbImage(i) {
+        lbIdx = (i + productGallery.length) % productGallery.length;
+        if (lbImg) {
+          lbImg.style.opacity = '0.35';
+          lbImg.src = imgSrc(productGallery[lbIdx]);
+          lbImg.onload = () => { lbImg.style.opacity = '1'; };
+        }
+        if (lbCur) lbCur.textContent = String(lbIdx + 1);
+        updateGalleryImage(lbIdx);
+      }
+
+      setLbImage(lbIdx);
+      lb.style.display = 'flex';
+      lb.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => {
+        lb.classList.add('open');
+      });
+      document.body.style.overflow = 'hidden';
+
+      const closeLb = () => {
+        lb.classList.remove('open');
+        lb.style.display = 'none';
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', onKey);
+      };
+
+      const onKey = (e) => {
+        if (e.key === 'Escape') closeLb();
+        if (e.key === 'ArrowLeft' && hasMultipleImages) setLbImage(lbIdx - 1);
+        if (e.key === 'ArrowRight' && hasMultipleImages) setLbImage(lbIdx + 1);
+      };
+      window.addEventListener('keydown', onKey);
+
+      const closeBtn = $('.pd-lb-close', lb);
+      if (closeBtn) closeBtn.onclick = closeLb;
+      const backdrop = $('.pd-lb-backdrop', lb);
+      if (backdrop) backdrop.onclick = closeLb;
+
+      if (hasMultipleImages) {
+        const prevLbBtn = $('.pd-lb-prev', lb);
+        if (prevLbBtn) prevLbBtn.onclick = (e) => { e.stopPropagation(); setLbImage(lbIdx - 1); };
+        const nextLbBtn = $('.pd-lb-next', lb);
+        if (nextLbBtn) nextLbBtn.onclick = (e) => { e.stopPropagation(); setLbImage(lbIdx + 1); };
+      }
+    }
+
+    if (mediaStage) {
+      mediaStage.addEventListener('click', (e) => {
+        if (e.target.closest('.pd-arrow-nav')) return;
+        openLightbox(activeImgIdx);
+      });
+      mediaStage.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openLightbox(activeImgIdx);
+        }
+      });
+    }
+
+    const expandTrigger = $('#pd-expand-trigger', root);
+    if (expandTrigger) {
+      expandTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLightbox(activeImgIdx);
+      });
+    }
 
     let qty = 1;
     const qv = $('#q-val');
