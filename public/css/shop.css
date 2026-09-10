@@ -1441,7 +1441,7 @@ html.dark .mm-apple-ctrl-row {
   transition: background 1.4s ease; pointer-events: none;
 }
 .cf-scene {
-  position: relative; z-index: 1; width: 100%; aspect-ratio: 1.30;
+  position: relative; z-index: 1; width: 100%; aspect-ratio: 1.15;
   perspective: 1150px; perspective-origin: 50% 40%;
   touch-action: pan-y; cursor: grab;
   opacity: 0;
@@ -1460,8 +1460,8 @@ html.dark .mm-apple-ctrl-row {
   transform: translate3d(0, 0, 0);
 }
 .cf-card {
-  display: block; width: min(58%, 350px); aspect-ratio: 3/3.6;
-  border-radius: 16px; overflow: hidden; position: relative;
+  display: block; width: min(58%, 330px); aspect-ratio: 1 / 1.36;
+  border-radius: 18px; overflow: hidden; position: relative;
   background: var(--studio-card-bg);
   border: 1px solid rgba(41, 37, 36, calc(.08 + .06 * var(--f, 0)));
   box-shadow: 0 calc(10px + 16px * var(--f, 0)) calc(26px + 24px * var(--f, 0)) rgba(41, 37, 36, calc(.08 + .08 * var(--f, 0))), 0 0 0 1px rgba(255, 142, 134, calc(.15 * var(--f, 0)));
@@ -1473,11 +1473,34 @@ html.dark .mm-apple-ctrl-row {
 .cf-card .card-sheen {
   display: none !important;
 }
-@media (max-width: 640px) {
-  .cf-card { width: min(68%, 320px); }
+@media (max-width: 860px) {
+  .cf-scene {
+    aspect-ratio: auto;
+    width: 100%;
+    height: 390px;
+    min-height: 390px;
+  }
+  .cf-card {
+    width: min(72%, 270px);
+    height: 375px;
+    max-height: 96%;
+    aspect-ratio: 1 / 1.40;
+    border-radius: 20px;
+  }
+}
+@media (max-width: 480px) {
+  .cf-scene {
+    height: 380px;
+    min-height: 380px;
+  }
+  .cf-card {
+    width: min(74%, 255px);
+    height: 365px;
+    aspect-ratio: 1 / 1.42;
+  }
 }
 .cf-card img {
-  display: block; width: 100%; height: 100%; object-fit: contain; padding: 14px; pointer-events: none; border-radius: 15px;
+  display: block; width: 100%; height: 100%; object-fit: contain; padding: 16px 14px 44px; pointer-events: none; border-radius: 15px;
   filter: drop-shadow(0 12px 24px rgba(41, 37, 36, 0.14)) drop-shadow(0 2px 6px rgba(41, 37, 36, 0.08));
   transition: filter .35s ease;
   transform: translateZ(0);
