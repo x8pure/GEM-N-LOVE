@@ -1951,11 +1951,12 @@ section.block { padding: 56px 5vw; position: relative; z-index: 2; box-sizing: b
 .nm-short { display: none; }
 .bento-meta h3 em {
   display: block;
-  font-style: italic;
-  font-weight: 400;
-  color: var(--rose);
-  margin-top: 2px;
-}
+  font-style: normal;
+  font-weight: 450;
+  color: #71717A;
+  letter-spacing: -0.2px;
+  margin-top: 3px;
+  transition: color 0.25s ease;
 }
 .bento-meta .bcount {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -2055,11 +2056,18 @@ html.dark .bento-meta h3,
 }
 html.dark .bento-meta h3 em,
 [data-theme="dark"] .bento-meta h3 em {
-  color: #FFB3AE !important;
+  color: #A1A1AA !important;
+  font-style: normal !important;
+  font-weight: 450 !important;
+  letter-spacing: -0.2px !important;
+}
+html.dark .bento-card:hover .bento-meta h3 em,
+[data-theme="dark"] .bento-card:hover .bento-meta h3 em {
+  color: #E4E4E7 !important;
 }
 html.dark .bento-meta .bcount,
 [data-theme="dark"] .bento-meta .bcount {
-  color: #A1A1AA !important;
+  color: #71717A !important;
 }
 
 html.dark .bento-cta,
@@ -6136,12 +6144,17 @@ html.dark .acc-card-panel {
   }
 
   .bento-meta h3 em {
-    font-style: italic !important;
-    font-weight: 400 !important;
-    color: var(--rose, #FB7185) !important;
+    font-style: normal !important;
+    font-weight: 450 !important;
+    color: #71717A !important;
     display: block !important;
-    margin-top: 2px !important;
+    margin-top: 3px !important;
     margin-left: 0 !important;
+    letter-spacing: -0.2px !important;
+  }
+  html.dark .bento-meta h3 em,
+  [data-theme="dark"] .bento-meta h3 em {
+    color: #A1A1AA !important;
   }
 
   .bento-card .bento-img-wrap {
@@ -6243,15 +6256,15 @@ html.dark .acc-card-panel {
 
   /* Right Stack (b: Dildolar, c: Anal Ürünler [swapped on mobile], d: İç Giyim) & Bottom Left (f: Realistik Vajinalar, h: Erkek Cinsel Sağlık [swapped on mobile]) */
   .bento-card-b { grid-area: b !important; }
-  .bento-card-c { grid-area: h !important; } /* Swapped on mobile: Erkek Cinsel Sağlık gets wider left spot h */
+  .bento-card-c { grid-area: c !important; }
   .bento-card-d { grid-area: d !important; }
   .bento-card-f { grid-area: f !important; }
-  .bento-card-h { grid-area: c !important; } /* Swapped on mobile: Anal Ürünler gets spot c */
+  .bento-card-h { grid-area: h !important; }
   .bento-card-i { grid-area: i !important; }
 
   /* Specific Card Fine-tuning for Images */
   .bento-card-b .bento-img-wrap,
-  .bento-card-h .bento-img-wrap {
+  .bento-card-c .bento-img-wrap {
     align-items: center !important;
     justify-content: flex-end !important;
     padding-right: 8px !important;
@@ -6263,7 +6276,7 @@ html.dark .acc-card-panel {
     right: auto !important;
     bottom: auto !important;
   }
-  .bento-card-h .bento-bg {
+  .bento-card-c .bento-bg {
     position: relative !important;
     max-width: 48% !important;
     max-height: 82% !important;
@@ -6277,7 +6290,7 @@ html.dark .acc-card-panel {
     bottom: 0 !important;
   }
   .bento-card-f .bento-meta h3,
-  .bento-card-c .bento-meta h3 {
+  .bento-card-h .bento-meta h3 {
     font-size: 17px !important;
     font-weight: 700 !important;
   }
@@ -6287,7 +6300,7 @@ html.dark .acc-card-panel {
     right: 2px !important;
     bottom: 0 !important;
   }
-  .bento-card-c .bento-bg {
+  .bento-card-h .bento-bg {
     max-width: 50% !important;
     max-height: 100% !important;
     right: 2px !important;
