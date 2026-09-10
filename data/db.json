@@ -46,7 +46,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 7
+      "tokenVersion": 8
     },
     {
       "id": "uad8ba2526165",
@@ -215,7 +215,7 @@
       "categoryName": "Erkek Cinsel Sağlık",
       "description": "Stag 9000  Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.",
       "longDescription": "Stag 9000 20 ML Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• STAG 9000 %10 Sprey, etkin madde olarak her 1 mL'de 100 mg lidokain içeren topikal anestezik bir ilaçtır. Erkeklerde erken boşalma (prematür ejakülasyon) tedavisinde kullanılmak üzere geliştirilmiştir. Uygulama bölgesinde geçici duyarsızlaşma sağlayarak cinsel performans üzerinde daha fazla kontrol elde edilmesine yardımcı olur.\n• Pratik sprey formu sayesinde kolay uygulanabilen STAG 9000, hedef bölgeye doğrudan uygulanır ve kısa sürede lokal anestezik etki gösterir. Ürün, yalnızca haricen kullanım için tasarlanmış olup kullanım talimatlarına uygun şekilde uygulanmalıdır.",
-      "price": 499,
+      "price": 479,
       "oldPrice": 559,
       "stock": 9,
       "rating": 4.7,
@@ -276,7 +276,7 @@
       "categoryName": "Vibratörler",
       "description": "Akıllı Telefon Uyarıcılı Yumurta Vibratör – Zevki Yeniden Tanımlayın",
       "longDescription": "Akıllı Telefon Uyarıcılı Yumurta Vibratör – Zevki Yeniden Tanımlayın\n\nTelefon Kontrollü Yumurta Vibratör, yenilikçi teknoloji ve estetik tasarımın mükemmel bir kombinasyonudur. Bu ürün, 10 farklı titreşim moduyla, kullanıcılarına benzersiz bir zevk deneyimi sunar. Akıllı telefon uygulamasıyla kontrol edilebilir ve sessiz çalışma özelliği sayesinde gizliliği ön planda tutar.\n\nÜrün Özellikleri:\n\nBoyut ve Ağırlık: 18 cm X 3.7 cm X 7.3 cm boyutları ve 170 gr ağırlığıyla kullanımı son derece rahat ve konforludur. Taşıması kolaydır ve istenilen her yere götürülebilir.\nRenk Seçeneği: Göz alıcı pembe rengiyle estetik bir görünüm sunar. Bu renk seçeneği, ürüne şıklık ve zarafet katmaktadır.\nTitreşim Modları: 10 farklı titreşim moduyla çeşitli zevk seviyelerine hitap eder. Kullanıcılar istedikleri titreşim modunu seçerek kişisel tercihlerine uygun deneyimler yaşayabilirler.\nAkıllı Telefon Uygulaması: Akıllı telefonlara indirilen kişisel uygulama ile kontrol edilebilir. Bu özellik, kullanıcıya daha fazla kontrol ve esneklik sağlar.\nKolay Temizlenebilir ve Esnek Yapı: %100 medikal materyalden üretilmiş olan ürün, kolayca temizlenebilir ve hijyenik bir kullanım sağlar. Esnek yapısıyla vücuda mükemmel uyum sağlar.\nTelefon Kontrollü Yumurta Vibratör, kaliteli malzeme ve yenilikçi teknolojiyle üretilmiştir. Kullanıcıların beklentilerini karşılamak için özenle tasarlanmıştır ve her anınızı daha özel hale getirmek için ideal bir tercihtir.",
-      "price": 1999,
+      "price": 1599,
       "oldPrice": 2259,
       "stock": 10,
       "rating": 0,
@@ -287,7 +287,7 @@
       "image": "/uploads/imga85b9cdf148c.webp",
       "gallery": [
         "/uploads/imga85b9cdf148c.webp",
-        "/uploads/img0103fa877c83.webp"
+        "/uploads/img61568e20e7a7.webp"
       ],
       "tags": [],
       "variants": [
@@ -366,16 +366,16 @@
       "featured": true,
       "isNew": true,
       "bestSeller": true,
-      "image": "/uploads/img42353635ba75.webp",
+      "image": "/uploads/img05b060a51329.webp",
       "gallery": [
-        "/uploads/img42353635ba75.webp",
-        "/uploads/img161323149046.webp"
+        "/uploads/img05b060a51329.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-29T12:15:37.475Z"
+      "createdAt": "2026-08-29T12:15:37.475Z",
+      "highlights": []
     },
     {
       "id": "p12df7e2816fd",
@@ -391,12 +391,11 @@
       "rating": 4.5,
       "reviewCount": 2,
       "featured": true,
-      "isNew": false,
-      "bestSeller": false,
-      "image": "/uploads/img2dbde1404660.webp",
+      "isNew": true,
+      "bestSeller": true,
+      "image": "/uploads/img35375304976f.webp",
       "gallery": [
-        "/uploads/img2dbde1404660.webp",
-        "/uploads/imgb42fc9f88fdb.webp"
+        "/uploads/img35375304976f.webp"
       ],
       "tags": [],
       "variants": [
@@ -657,10 +656,9 @@
       "isNew": true,
       "bestSeller": false,
       "highlights": [],
-      "image": "/uploads/img75bab3105782.webp",
+      "image": "/uploads/img4483c658e339.webp",
       "gallery": [
-        "/uploads/img75bab3105782.webp",
-        "/uploads/imgfe9efc5970bc.webp"
+        "/uploads/img4483c658e339.webp"
       ],
       "tags": [],
       "variants": [
@@ -873,13 +871,102 @@
       ],
       "image": "/uploads/img0b5f9e122919.webp",
       "gallery": [
-        "/uploads/img0b5f9e122919.webp"
+        "/uploads/img0b5f9e122919.webp",
+        "/uploads/imgbed127603d4a.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
       "createdAt": "2026-09-09T12:59:11.562Z"
+    },
+    {
+      "id": "pf69fe89a965c",
+      "slug": "xoxo-gercekci-masturbator",
+      "name": "XOXO Gerçekçi Mastürbatör",
+      "category": "ciftler",
+      "categoryName": "Realistik Vajinalar",
+      "description": "TPE Malzeme, Ten Rengi, 5 kg",
+      "longDescription": "Ana malzeme\tTPE\n\nAna renk\tBedensel\n\nAnatomi\tVajina\n\nFikstürde\tHayır\n\nG noktasının uyarılması\tHayır\n\nGiysilerimde\tHayır\n\nKontrol panelinin varlığı\tHayır\n\nNem koruma seviyesi\tSu geçirmez\n\nPerakende paketindeki ürün sayısı\t1\n\nRotasyon ile\tHayır\n\nTitreşim ile\tHayır\n\nısıtma ile\tHayır\n\nŞişede\tHayır",
+      "price": 7989,
+      "oldPrice": 6399,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [],
+      "image": "/uploads/img149dcf740290.webp",
+      "gallery": [
+        "/uploads/img149dcf740290.webp",
+        "/uploads/imge83ab2f3b6ff.webp",
+        "/uploads/img4d9b9c4a4611.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-09T16:59:54.082Z"
+    },
+    {
+      "id": "pc673785d558d",
+      "slug": "flovetta-petunia-klitoral-uyaricili-vibrator",
+      "name": "Flovetta PETUNIA Klitoral Uyarıcılı Vibratör",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "",
+      "longDescription": "PETUNIA Klitoral Uyarıcılı Vibratör, iç bölge ve klitoral bölgeyi aynı kullanım sırasında uyarmaya yardımcı olan çift kollu tasarıma sahiptir. Yumuşak silikon yüzeyi, 10 cm çalışma uzunluğu ve 3,2 cm maksimum çapıyla kontrollü ve konforlu bir deneyim sunmayı amaçlar.\n\nÜrün gövdesindeki düğmeler sayesinde titreşim kolayca yönetilebilir. Kablo veya şarj işlemi gerektirmeyen model, 2 adet AAA pil ile çalışır. IPX3 seviyesindeki sıçrayan su koruması günlük temizliği kolaylaştırırken kompakt yapısı ürünü saklamayı ve taşımayı pratik hâle getirir.",
+      "price": 2259,
+      "oldPrice": 2489,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [],
+      "image": "/uploads/imgd7c3a53ab8b9.webp",
+      "gallery": [
+        "/uploads/imgd7c3a53ab8b9.webp",
+        "/uploads/img4400b9b46200.webp",
+        "/uploads/imga6f3c09275e0.webp",
+        "/uploads/imgb53e76546023.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-09T17:07:04.140Z"
+    },
+    {
+      "id": "p1c8dfda98620",
+      "slug": "flovetta-wisteria-klitoral-uyaricili-g-noktasi-vibratoru",
+      "name": "Flovetta WISTERIA Klitoral Uyarıcılı G Noktası Vibratörü",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "",
+      "longDescription": "Flovetta Wisteria, hem G-noktasını hem de klitorisi aynı anda uyarmak için tasarlanmış çok fonksiyonlu bir vibratördür. Ergonomik tasarımı, güçlü titreşim motorları ve yumuşak silikon yüzeyi sayesinde benzersiz bir haz deneyimi sunar.\n\nÇift uyarım: G-noktası ve klitorisi aynı anda uyarır.\nBoyutlar: Uzunluk 18,5 cm – Giriş kısmı 9 cm – Çap 3,5 cm.\nPillerin sayısı ve türü 2AAA\nPremium silikon: Kadifemsi, cilde dost yüzey.\nErgonomik halka tutma yeri: Rahat kullanım ve kontrol sağlar.\nGüçlü titreşim modları: Farklı hız ve ritim seçenekleriyle kişiselleştirilebilir.\nNem koruma seviyesi IPX3 – düşeyden 60 ° ‘ye kadar sapma açısına sahip su sıçramasına karşı koruma\nRenk: Mor",
+      "price": 2359,
+      "oldPrice": 2869,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [],
+      "image": "/uploads/img882565f2d0b1.webp",
+      "gallery": [
+        "/uploads/img882565f2d0b1.webp",
+        "/uploads/img555ed2ab3c6f.webp",
+        "/uploads/img87f41c97ab76.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-09T17:12:35.949Z"
     }
   ],
   "categories": [
@@ -905,7 +992,7 @@
       "id": "ctc3fe15335b3e",
       "slug": "vibratorler",
       "name": "Vibratörler",
-      "image": "/uploads/img84a900a10ee8.webp",
+      "image": "/uploads/imga7bd261ee417.webp",
       "featuredOnHome": true,
       "homeOrder": 4,
       "createdAt": "2026-08-27T09:58:04.404Z"
@@ -932,7 +1019,7 @@
       "id": "ct3177d2d9d44e",
       "slug": "erkekler",
       "name": "Erkek Cinsel Sağlık",
-      "image": "/uploads/imga69c5630d16e.webp",
+      "image": "/uploads/imgda944616d9f7.webp",
       "featuredOnHome": true,
       "homeOrder": 2,
       "createdAt": "2026-08-28T16:22:49.472Z"
@@ -959,7 +1046,7 @@
       "id": "ctc9c6a9a9ae12",
       "slug": "fetish-urunler",
       "name": "Fetish Ürünler",
-      "image": "/uploads/img93909a07615b.webp",
+      "image": "/uploads/img24ee957dbed3.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-31T10:00:44.715Z"
@@ -1192,14 +1279,14 @@
     "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
     "instagram": "@loveeroticshop",
     "wheelIds": [
-      "pe31257abd626",
       "p2484e3b314df",
       "pb8933905dc29",
       "p56895cc74a84",
       "pdf2748be251d",
       "pe6440906f9a6",
       "pbcfa6505bc8d",
-      "pd2d3abea895e"
+      "pd2d3abea895e",
+      "pc673785d558d"
     ]
   },
   "meta": {
@@ -1208,7 +1295,7 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-09T13:20:32.053Z",
-    "version": 591
+    "updatedAt": "2026-09-10T12:48:57.921Z",
+    "version": 1024
   }
 }
