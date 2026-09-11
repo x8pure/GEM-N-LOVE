@@ -3437,6 +3437,43 @@ ${itemsXml}
         return res.end(xmlFeed);
       }
 
+      if (pathname === '/local-inventory.xml' || pathname === '/local-feed.xml' || pathname === '/google-local-inventory.xml') {
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        const host = req.headers.host || 'loveeroticshop.com';
+        const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
+        const baseUrl = host.includes('localhost') ? `${proto}://${host}` : 'https://loveeroticshop.com';
+        
+        // Store code query support, default to store code '1' or 'eskisehir'
+        const urlObj = new URL(req.url || '/', `http://${host}`);
+        const storeCode = urlObj.searchParams.get('store_code') || '1';
+        
+        const approvedIds = ['p5bdb3e17409d', 'pbcfa6505bc8d', 'p5813616cd082'];
+        const selectedProducts = (db.products || []).filter((p: any) => approvedIds.includes(p.id));
+        
+        const localItemsXml = selectedProducts.map((p: any) => {
+          const priceStr = `${Number(p.price || 0).toFixed(2)} TRY`;
+          const qty = p.stock && p.stock > 0 ? p.stock : 15;
+          return `    <item>
+      <g:store_code>${esc(storeCode)}</g:store_code>
+      <g:id>${esc(p.id)}</g:id>
+      <g:price>${priceStr}</g:price>
+      <g:availability>in_stock</g:availability>
+      <g:quantity>${qty}</g:quantity>
+    </item>`;
+        }).join('\n');
+
+        const xmlLocalFeed = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Love Erotik Shop - Eskişehir Mağaza Yerel Envanteri</title>
+    <link>${baseUrl}</link>
+    <description>Eskişehir Fiziksel Mağaza Raf Envanter ve Stok Bilgisi</description>
+${localItemsXml}
+  </channel>
+</rss>`;
+        return res.end(xmlLocalFeed);
+      }
+
       if (pathname === '/') return pageHome(req, res);
       if (pathname === '/magaza') return pageShop(req, res);
       const rev = pathname.match(/^\/urun\/([^/]+)\/yorum$/);
