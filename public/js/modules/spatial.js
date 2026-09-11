@@ -108,7 +108,7 @@ export function getProductSpecs(prod) {
   return [
     { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı' },
     { icon: '<rect x="3.5" y="6.5" width="17" height="13" rx="2.5"/><path d="M3.5 11h17M12 6.5v13"/>', text: LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme' },
-    { icon: '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>', text: LANG === 'en' ? 'Fast 24h Dispatch' : '24 Saatte Hızlı Kargo' },
+    { icon: '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>', text: LANG === 'en' ? 'Same Day Dispatch (1-3 Days)' : '14:00 Öncesi Aynı Gün Kargo' },
     { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Premium Grade Standard' : 'Yüksek Kalite Standardı' }
   ];
 }
@@ -378,7 +378,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     const inStock = p.stock > 0;
     const stockBadge = inStock
-      ? `<span class="stock-pill in-stock">● ${LANG === 'en' ? 'In Stock · Ships in 24h' : 'Stokta · 24 Saatte Kargoda'}</span>`
+      ? `<span class="stock-pill in-stock">● ${LANG === 'en' ? 'In Stock · Same Day Dispatch' : 'Stokta · 14:00 Öncesi Aynı Gün Kargo'}</span>`
       : `<span class="stock-pill out-stock">● ${LANG === 'en' ? 'Out of Stock' : 'Tükendi'}</span>`;
 
     const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);

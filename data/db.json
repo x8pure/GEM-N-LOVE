@@ -210,10 +210,10 @@
     {
       "id": "pdf2748be251d",
       "slug": "stag-9000-lidokain-sprey",
-      "name": "Stag 9000 Sprey",
+      "name": "Stag 9000  Sprey",
       "category": "erkekler",
       "categoryName": "Erkek Cinsel Sağlık",
-      "description": "Stag 9000 Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.",
+      "description": "Stag 9000  Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.",
       "longDescription": "Stag 9000 20 ML Sprey, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• STAG 9000 %10 Sprey, etkin madde olarak her 1 mL'de 100 mg lidokain içeren topikal anestezik bir ilaçtır. Erkeklerde erken boşalma (prematür ejakülasyon) tedavisinde kullanılmak üzere geliştirilmiştir. Uygulama bölgesinde geçici duyarsızlaşma sağlayarak cinsel performans üzerinde daha fazla kontrol elde edilmesine yardımcı olur.\n• Pratik sprey formu sayesinde kolay uygulanabilen STAG 9000, hedef bölgeye doğrudan uygulanır ve kısa sürede lokal anestezik etki gösterir. Ürün, yalnızca haricen kullanım için tasarlanmış olup kullanım talimatlarına uygun şekilde uygulanmalıdır.",
       "price": 479,
       "oldPrice": 559,
@@ -327,10 +327,10 @@
     {
       "id": "pbcfa6505bc8d",
       "slug": "cabs-glide-kayganlastirici-jel-250-ml",
-      "name": "Cabs Glide Kayganlaştırıcı Jel 250 ml.",
+      "name": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
       "category": "kadinlar",
       "categoryName": "Kadın Cinsel Sağlık",
-      "description": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel, uzun süreli kayganlık sağlar. Klinik testlerden geçen ürün, kondom çeşitleri ile birlikte kullanmaya uyumludur. Tamamen su bazlı olan ürünün formülünde yağ yoktur. Çocukların ulaşamayacağı, serin ve kuru bir yerde saklayınız.",
+      "description": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel (250 ml), ipeksi ve uzun süreli kayganlık hissi sağlar. Kondom çeşitleri ile birlikte kullanıma uyumludur. Tamamen su bazlıdır, yağsız formülü ile leke bırakmaz ve ılık suyla kolayca temizlenir. %100 gizli kutuda gönderilir.",
       "longDescription": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel, uzun süreli kayganlık sağlar. Klinik testlerden geçen ürün, kondom çeşitleri ile birlikte kullanmaya uyumludur. Tamamen su bazlı olan ürünün formülünde yağ yoktur. Çocukların ulaşamayacağı, serin ve kuru bir yerde saklayınız.",
       "price": 499,
       "oldPrice": 559,
@@ -348,15 +348,16 @@
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-08-29T12:10:40.125Z"
+      "createdAt": "2026-08-29T12:10:40.125Z",
+      "shortDesc": "Su bazlı, ipeksi kayganlık sağlayan dermatolojik masaj ve kayganlaştırıcı jel."
     },
     {
       "id": "p5bdb3e17409d",
       "slug": "proling-erkeklere-ozel-gelistirilmis-sprey",
-      "name": "Proling Erkeklere Özel Geliştirilmiş Sprey",
+      "name": "Proling Erkeklere Özel Bakım ve Masaj Spreyi 59 ml.",
       "category": "erkekler",
       "categoryName": "Erkek Cinsel Sağlık",
-      "description": "Proling %10 Sprey (59 mL), etkin madde olarak 100 mg/mL lidokain içeren topikal bir ilaçtır",
+      "description": "Proling Erkeklere Özel Bakım Spreyi (59 mL), özel geliştirilmiş ferahlatıcı bitkisel formülü ile konforlu bir deneyim ve süreyi desteklemeye yardımcı ferahlatıcı bakım sunar. Ciltle uyumlu formülü rahatlatıcı ve canlandırıcı etki sağlar. 14:00 öncesi siparişlerde aynı gün kargo avantajıyla %100 gizli paketleme ile teslim edilir.",
       "longDescription": "Cinsel birleşmeden 15 dakika önce penise, 3 kez sıkılan Proling Erkeklere Özel Geliştirilmiş Sprey, 15 dakika sonunda etkisini gösterir.\n\n\nSprey, kondom ile uyumlu olduğu için kondom ile birlikte kullanabilirsiniz. Yerli üretim Proling sprey, temiz içeriği nedeniyle cilde zarar vermez.\n\n\nÜrünün; tadı, kokusu veya rengi bulunmadığı için partneriniz tarafından fark edilmez. Sprey formu sayesinde uzun bir kullanım ömrüne sahiptir.\n\n\nProling sprey; CE belgesine, ürün sertifikasına ve ISO 9001, 2000 belgelerine sahiptir.",
       "price": 699,
       "oldPrice": 779,
@@ -375,7 +376,8 @@
         "standart"
       ],
       "createdAt": "2026-08-29T12:15:37.475Z",
-      "highlights": []
+      "highlights": [],
+      "shortDesc": "Erkeklere özel canlandırıcı ve süreyi desteklemeye yardımcı ferahlatıcı bakım spreyi."
     },
     {
       "id": "p12df7e2816fd",
@@ -819,10 +821,10 @@
     {
       "id": "p5813616cd082",
       "slug": "orviax-love-drops-for-women-damla",
-      "name": "Orviax Love Drops For Women Damla",
+      "name": "Orviax Love Drops Kadınlara Özel Bitkisel Destek Damlası 30 ml.",
       "category": "kadinlar",
       "categoryName": "Kadın Cinsel Sağlık",
-      "description": "Orviax Love Drops For Women Damla.",
+      "description": "Orviax Love Drops Kadınlara Özel Bitkisel Destek Damlası (30 mL), doğal bitki ve vitamin özleri içeren özel formülü ile kadınların günlük canlılık, enerji ve yaşam dengesini desteklemeye yardımcı takviye edici aromatik damladır. İçeceklere karıştırılarak pratik şekilde kullanılabilir. %100 gizli paketleme ile gönderilir.",
       "longDescription": "Orviax Love Drops For Women Damla,\n\nÖne Çıkan Özellikler:\n• 10 ML - Bitkisel ekstraktlar, vitamin desteği ve antioksidan bileşenler içeren sıvı takviyedir. Satıcı bilgilerinde su, L-askorbik asit (C vitamini), L-arjinin, meyan kökü özütü, kafein ile gıda koruyucuları (potasyum sorbat ve sodyum benzoat) bulunduğu belirtilmektedir",
       "price": 499,
       "oldPrice": 559,
@@ -846,7 +848,8 @@
       "variants": [
         "standart"
       ],
-      "createdAt": "2026-09-09T12:41:04.342Z"
+      "createdAt": "2026-09-09T12:41:04.342Z",
+      "shortDesc": "Kadınlara özel doğal bitki özlü günlük canlılık ve yaşam destek damlası."
     },
     {
       "id": "pa4cab77cad28",
@@ -967,6 +970,73 @@
         "standart"
       ],
       "createdAt": "2026-09-09T17:12:35.949Z"
+    },
+    {
+      "id": "pc3613ea47017",
+      "slug": "popo-pleasure-serpens-anal-yapay-penis",
+      "name": "POPO Pleasure Serpens Anal Yapay Penis",
+      "category": "erkek-ve-kadinlar",
+      "categoryName": "Anal Ürünler",
+      "description": "S Virajlı, Silikon, Siyah, 13 cm",
+      "longDescription": "Anatomik olarak şekillendirilmiş hafif kavisli bir yapay penis, bir aile yatak odasında idealdir. Değerli erojen noktaları mükemmel bir şekilde uyarır. Erkeklerde bu P noktasıdır, kadınlarda G noktasıdır. Sonunda penisin başına bir ipucu bulunan koni şeklindeki şekil, girmek için uygundur. Yuvarlak taban, az kuvvetle pürüzsüz bir yüzeye sabitlenir ve bir stoper görevi görür.",
+      "price": 799,
+      "oldPrice": 8959,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [],
+      "image": "/uploads/img30ee6aca0718.webp",
+      "gallery": [
+        "/uploads/img30ee6aca0718.webp",
+        "/uploads/img7ff3e5b4e4f7.webp",
+        "/uploads/imgb1bb297eead7.webp",
+        "/uploads/imge1fa23f7d15c.webp",
+        "/uploads/img98220f01498b.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-10T17:25:26.509Z"
+    },
+    {
+      "id": "pce7e3e765b9c",
+      "slug": "popo-pleasure-dorado-anal-stimulatoru",
+      "name": "POPO Pleasure Dorado Anal Stimülatörü",
+      "category": "erkek-ve-kadinlar",
+      "categoryName": "Anal Ürünler",
+      "description": "",
+      "longDescription": "Bu anal oyunlar ve zevkler için bir seks oyuncağıdır. Penis başının taklidi ile kavisli şekli, önce onu anüse rahatça sokmanıza izin verir ve ikincisi, erkek P noktasını etkilemek için mükemmel bir yoldur ve bu da artan bir orgazm dalgasına neden olur. Tutamak halkası, penetrasyon derecesini kolayca ayarlamayı ve oyuncağın tamamen içeri girmeyeceğinden emin olmayı mümkün kılar.\n\nSu Geçirmez, Silikon, Siyah, 18 cm, Ø 3, 5 cm",
+      "price": 859,
+      "oldPrice": 899,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [
+        "Su Geçirmez",
+        "Silikon",
+        "Siyah",
+        "18 cm",
+        "Ø 3",
+        "5 cm"
+      ],
+      "image": "/uploads/img09d4ed99087c.webp",
+      "gallery": [
+        "/uploads/img09d4ed99087c.webp",
+        "/uploads/imge8100269ef45.webp",
+        "/uploads/img5e1ee1a584d2.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-10T17:43:02.916Z"
     }
   ],
   "categories": [
@@ -974,7 +1044,7 @@
       "id": "ct7842337befe2",
       "slug": "realistik-mankenler",
       "name": "Realistik Mankenler",
-      "image": "/uploads/img68301019645d.webp",
+      "image": "/uploads/img72f389902ea3.webp",
       "featuredOnHome": true,
       "homeOrder": 3,
       "createdAt": "2026-08-27T09:43:58.140Z"
@@ -992,7 +1062,7 @@
       "id": "ctc3fe15335b3e",
       "slug": "vibratorler",
       "name": "Vibratörler",
-      "image": "/uploads/imga7bd261ee417.webp",
+      "image": "/uploads/imgfa2478ab0e8d.webp",
       "featuredOnHome": true,
       "homeOrder": 4,
       "createdAt": "2026-08-27T09:58:04.404Z"
@@ -1001,7 +1071,7 @@
       "id": "ct_realistik-dildolar",
       "slug": "realistik-dildolar",
       "name": "Realistik Dildolar",
-      "image": "/uploads/imgb4a475d33373.webp",
+      "image": "/uploads/img9e03f59652d2.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-28T14:49:41.786Z"
@@ -1019,7 +1089,7 @@
       "id": "ct3177d2d9d44e",
       "slug": "erkekler",
       "name": "Erkek Cinsel Sağlık",
-      "image": "/uploads/imgda944616d9f7.webp",
+      "image": "/uploads/img05b060a51329.webp",
       "featuredOnHome": true,
       "homeOrder": 2,
       "createdAt": "2026-08-28T16:22:49.472Z"
@@ -1028,7 +1098,7 @@
       "id": "ct602bf4ee7ca6",
       "slug": "erkek-ve-kadinlar",
       "name": "Anal Ürünler",
-      "image": "/uploads/img3151ed337a29.webp",
+      "image": "/uploads/imgd5b3fb871546.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-29T11:34:20.348Z"
@@ -1046,7 +1116,7 @@
       "id": "ctc9c6a9a9ae12",
       "slug": "fetish-urunler",
       "name": "Fetish Ürünler",
-      "image": "/uploads/img24ee957dbed3.webp",
+      "image": "/uploads/imgac2ddcd00600.webp",
       "featuredOnHome": false,
       "homeOrder": 99,
       "createdAt": "2026-08-31T10:00:44.715Z"
@@ -1295,7 +1365,7 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-10T14:57:29.356Z",
-    "version": 1110
+    "updatedAt": "2026-09-11T09:15:54.995Z",
+    "version": 1351
   }
 }

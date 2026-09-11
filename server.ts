@@ -394,7 +394,7 @@ const STR: Record<string, Record<string, string>> = {
     'about.p3': '14 yıllık perakende tecrübemizi, CE sertifikalı vücut dostu ürün seçkimizi ve koşulsuz gizlilik ilkemizi; modern, saygın ve gururla gezilebilir bir alışveriş deneyimiyle buluşturuyoruz.',
     'about.priv.h': 'Gizlilik Manifestosu',
     'about.priv.p': 'Gizlilik bizim için pazarlama sloganı değil, mimari bir karar:',
-    'about.priv.list': '• <b>Paket:</b> Düz kraft kutu. Üzerinde logo yok, ürün adı yok, iade adresi bile jenerik.<br>• <b>Ekstre:</b> Kart hareketinde yalnızca "LS TR Bilişim" yazar.<br>• <b>Veri:</b> Sipariş geçmişin yalnızca sen ve bizim gördüğümüz şifreli bir altyapıda durur. Asla üçüncü taraflarla paylaşılmaz.<br>• <b>Gezinti:</b> Çerezlerimiz yalnızca sepetin hatırlaması için var; reklam izleme yok.',
+    'about.priv.list': '• <b>Paket:</b> Düz kraft kutu. Üzerinde logo yok, ürün adı yok, iade adresi bile jenerik.<br>• <b>Kargo & Teslimat:</b> Saat 14:00\'a kadar verilen siparişler aynı gün kargoya verilir; Türkiye geneli 1-3 iş gününde teslim edilir. 2.000 TL üzeri kargo ücretsizdir.<br>• <b>Ekstre:</b> Kart hareketinde yalnızca "LS TR Bilişim" yazar.<br>• <b>Veri:</b> Sipariş geçmişin yalnızca sen ve bizim gördüğümüz şifreli bir altyapıda durur. Asla üçüncü taraflarla paylaşılmaz.<br>• <b>Gezinti:</b> Çerezlerimiz yalnızca sepetin hatırlaması için var; reklam izleme yok.',
     'about.ret.h': 'İade & Garanti',
     'about.ret.p': 'Hijyen nedeniyle kullanılmış ürünlerde iade kabul edilmiyor — bu yasa ve sağlığın gereği. Ancak:',
     'about.ret.list': '• Ürün hasarlı ya da yanlış geldiyse koşulsuz yenisi gönderilir.<br>• Tüm elektronik ürünler 2 yıl garantili.<br>• Açılmamış kozmetiklerde 14 gün içinde iade mümkün.',
@@ -492,7 +492,7 @@ const STR: Record<string, Record<string, string>> = {
     'about.p3': 'We combine our 14 years of hands-on retail expertise and certified body-safe catalog with a respectful, modern, and stigma-free shopping experience.',
     'about.priv.h': 'Privacy Manifesto',
     'about.priv.p': 'Privacy is not a marketing slogan for us; it is an architectural decision:',
-    'about.priv.list': '• <b>Package:</b> Plain kraft box. No logo, no product name.<br>• <b>Statement:</b> Your card statement reads "LS TR Bilişim".<br>• <b>Data:</b> Encrypted and private.',
+    'about.priv.list': '• <b>Package:</b> Plain kraft box. No logo, no product name.<br>• <b>Shipping & Delivery:</b> Orders placed before 14:00 ship same day; 1-3 business days across Turkey. Free shipping over 2,000 TL.<br>• <b>Statement:</b> Your card statement reads "LS TR Bilişim".<br>• <b>Data:</b> Encrypted and private.',
     'about.ret.h': 'Returns & Warranty',
     'about.ret.p': 'Used products cannot be returned due to hygiene regulations.',
     'about.ret.list': '• Damaged items replaced unconditionally.<br>• 2-year warranty on electronic items.',
@@ -1207,6 +1207,7 @@ function cleanEditorialTitle(name: string): string {
   if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
   if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
   if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
+  if (s.toLowerCase().includes('proling') && (s.toLowerCase().includes('krem') || s.toLowerCase().includes('cream'))) return 'Proling Krem';
   if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
 
   let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();
@@ -3295,7 +3296,7 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
         pathname.startsWith('/media/') ||
         pathname.startsWith('/assets/') ||
         pathname.startsWith('/public/') ||
-        pathname.startsWith('/google') ||
+        (pathname.startsWith('/google') && !pathname.endsWith('.xml')) ||
         /\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2|ttf|mp4|json|html|txt)$/i.test(pathname)
       ) {
         return serveStatic(req, res, pathname.replace(/^\/public/, ''));
@@ -3384,6 +3385,56 @@ ${prodUrls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>`;
         return res.end(sitemap);
+      }
+
+      if (pathname === '/google-feed.xml' || pathname === '/merchant-feed.xml') {
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        const host = req.headers.host || 'loveeroticshop.com';
+        const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
+        const baseUrl = host.includes('localhost') ? `${proto}://${host}` : 'https://loveeroticshop.com';
+        
+        const approvedIds = ['p5bdb3e17409d', 'pbcfa6505bc8d', 'p5813616cd082'];
+        const selectedProducts = (db.products || []).filter((p: any) => approvedIds.includes(p.id));
+        
+        const itemsXml = selectedProducts.map((p: any) => {
+          let fullImg = p.image || '';
+          if (fullImg && !fullImg.startsWith('http://') && !fullImg.startsWith('https://')) {
+            fullImg = `${baseUrl}${fullImg.startsWith('/') ? '' : '/'}${fullImg}`;
+          }
+          const itemLink = `${baseUrl}/urun/${esc(p.slug || p.id)}`;
+          const priceStr = `${Number(p.price || 0).toFixed(2)} TRY`;
+          const cleanDesc = (p.description || p.shortDesc || p.name).replace(/<[^>]+>/g, '').trim();
+          const shippingCost = Number(p.price || 0) >= (db.settings.freeShippingThreshold || 2000) ? '0.00 TRY' : `${Number(db.settings.shippingFee || 99).toFixed(2)} TRY`;
+          
+          return `    <item>
+      <g:id>${esc(p.id)}</g:id>
+      <g:title><![CDATA[${p.name}]]></g:title>
+      <g:description><![CDATA[${cleanDesc}]]></g:description>
+      <g:link>${itemLink}</g:link>
+      <g:image_link>${esc(fullImg)}</g:image_link>
+      <g:condition>new</g:condition>
+      <g:availability>${p.stock > 0 ? 'in_stock' : 'out_of_stock'}</g:availability>
+      <g:price>${priceStr}</g:price>
+      <g:brand>Love</g:brand>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>TR</g:country>
+        <g:service>Standart Hızlı Kargo</g:service>
+        <g:price>${shippingCost}</g:price>
+      </g:shipping>
+    </item>`;
+        }).join('\n');
+
+        const xmlFeed = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Love Erotik Shop - Google Alışveriş Kataloğu</title>
+    <link>${baseUrl}</link>
+    <description>Love Erotik Shop Onaylı Kişisel Bakım ve Masaj Ürünleri</description>
+${itemsXml}
+  </channel>
+</rss>`;
+        return res.end(xmlFeed);
       }
 
       if (pathname === '/') return pageHome(req, res);

@@ -17,6 +17,7 @@ function cleanEditorialTitle(name) {
   if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
   if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
   if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
+  if (s.toLowerCase().includes('proling') && (s.toLowerCase().includes('krem') || s.toLowerCase().includes('cream'))) return 'Proling Krem';
   if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
 
   let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();

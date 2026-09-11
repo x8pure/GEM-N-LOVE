@@ -263,24 +263,30 @@ export async function initCart() {
 
           <div class="cart-trust-panel">
             <div class="trust-item">
-              <div class="trust-icon">📦</div>
+              <div class="trust-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              </div>
               <div class="trust-content">
                 <strong>%100 Gizli Paketleme</strong>
                 <span>Dış pakette mağaza veya ürün bilgisi yer almaz</span>
               </div>
             </div>
             <div class="trust-item">
-              <div class="trust-icon">🔒</div>
+              <div class="trust-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
               <div class="trust-content">
                 <strong>Güvenli İletişim</strong>
                 <span>WhatsApp veya mağazada gizli ödeme</span>
               </div>
             </div>
             <div class="trust-item">
-              <div class="trust-icon">⚡</div>
+              <div class="trust-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
               <div class="trust-content">
-                <strong>Hızlı Sevkiyat</strong>
-                <span>24 saat içinde gizli ve özenli kargolama</span>
+                <strong>Hızlı Teslimat</strong>
+                <span>14:00'a kadar aynı gün kargo, 1-3 iş gününde teslimat</span>
               </div>
             </div>
           </div>
