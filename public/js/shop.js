@@ -964,7 +964,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     return `
     <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
-        ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
+        ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
         <div class="card-sheen"></div>
       </a>
       <div class="prod-info">

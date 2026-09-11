@@ -784,12 +784,15 @@ const CAT_EN: Record<string, string> = {
 
 function catNameEN(slug: string, name: string) { return CAT_EN[slug] || name; }
 
+const APP_BUILD_TIME = Date.now();
+const APP_VERSION = '2.1.0';
+
 function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const st = db.settings;
   const C = ctx || { lang: 'tr', theme: 'light', t: makeT('tr'), num: (n: number) => n.toLocaleString('tr-TR') };
   const tr = C.t;
   const dark = C.theme === 'dark';
-  const appVersion = '1.0.9-' + Date.now();
+  const appVersion = `${APP_VERSION}-${APP_BUILD_TIME}`;
   const desc = opts.description || (C.lang === 'en' 
     ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery.'
     : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.');
@@ -968,7 +971,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" /></noscript>
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -1241,7 +1245,7 @@ const productCardSSR = (p: any, tr: any) => {
   return `
 <article class="prod-card rv" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
-    ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
+    ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
     <div class="card-sheen"></div>
   </a>
   <div class="prod-info">
@@ -1324,7 +1328,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     const area = ['a','b','c','i','d','e','f','h'][i] || 'a';
     return `
     <a class="bento-card bento-card-${area} rv rv-d${i + 1}" href="/magaza?kat=${c.slug}">
-      <div class="bento-img-wrap"><img class="bento-bg" src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy"></div>
+      <div class="bento-img-wrap"><img class="bento-bg" src="${esc(c.image)}" alt="${esc(c.name)}" width="480" height="480" loading="lazy" decoding="async"></div>
       <div class="bento-meta">
         <h3>${nm}</h3>
       </div>
@@ -2047,12 +2051,20 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   fs.stat(p, (serr, st) => {
     if (serr) { return sendSvgFallback(); }
     
+    const isVersioned = pathname.includes('?v=') || pathname.includes('v=');
+    let cacheControl = 'public, max-age=86400';
+    if (ext === '.woff2' || ext === '.ttf' || pathname.startsWith('/uploads/') || ext === '.webp' || ext === '.png' || ext === '.jpg' || ext === '.svg' || ext === '.ico') {
+      cacheControl = 'public, max-age=31536000, immutable';
+    } else if (isScriptOrStyle) {
+      cacheControl = isVersioned ? 'public, max-age=31536000, immutable' : 'public, max-age=86400';
+    }
+
     // Support HTTP Range requests for video/media playback (Essential for iOS Safari & Chrome)
     if (req.method === 'HEAD') {
       res.writeHead(200, {
         'Content-Length': st.size,
         'Content-Type': type,
-        'Cache-Control': isScriptOrStyle ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=86400'
+        'Cache-Control': cacheControl
       });
       return res.end();
     }
@@ -2071,7 +2083,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
           'Accept-Ranges': 'bytes',
           'Content-Length': chunkSize,
           'Content-Type': type,
-          'Cache-Control': 'public, max-age=86400'
+          'Cache-Control': cacheControl
         });
         return stream.pipe(res);
       } else {
@@ -2079,7 +2091,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
           'Content-Length': fileSize,
           'Content-Type': type,
           'Accept-Ranges': 'bytes',
-          'Cache-Control': 'public, max-age=86400'
+          'Cache-Control': cacheControl
         });
         return fs.createReadStream(p).pipe(res);
       }
@@ -2090,7 +2102,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
       res.writeHead(200, {
         'Content-Length': buf.length,
         'Content-Type': type,
-        'Cache-Control': isScriptOrStyle ? 'no-store, no-cache, must-revalidate, max-age=0' : 'public, max-age=86400'
+        'Cache-Control': cacheControl
       });
       res.end(buf);
     });

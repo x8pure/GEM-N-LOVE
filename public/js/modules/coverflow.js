@@ -97,7 +97,7 @@ export async function initCoverflow(stage) {
         return `
       <div class="cf-pos" data-i="${i}">
         <a class="cf-card" href="/urun/${p.slug}" data-slug="${p.slug}" aria-label="${p.name}">
-          <img src="${imgSrc(p.image)}" alt="${p.name}" draggable="false" ${i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'} decoding="async">
+          <img src="${imgSrc(p.image)}" alt="${p.name}" width="400" height="400" draggable="false" ${i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'} decoding="async">
           <div class="card-sheen"></div>
           <span class="cf-cap">
             <b>${displayName}</b>
