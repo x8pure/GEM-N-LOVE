@@ -976,6 +976,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');var isBot=/bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(navigator.userAgent);if(!isBot&&(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas')))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
+${opts.preloadImages && Array.isArray(opts.preloadImages) ? opts.preloadImages.map((img: string) => `<link rel="preload" as="image" href="${esc(img)}" fetchpriority="high">`).join('\n') : ''}
 <script type="application/ld+json">${jsonLd}</script>
 <script type="speculationrules">
 {
@@ -1287,8 +1288,17 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
+  const heroProds = (db.products.filter((p: any) => p.wheelPrize || p.featured).length ? db.products.filter((p: any) => p.wheelPrize || p.featured) : db.products).slice(0, 8);
   const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6);
   const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 3);
+  const heroJson = JSON.stringify(heroProds.map((p: any) => ({
+    slug: p.slug,
+    name: p.name,
+    price: p.price,
+    image: p.image,
+    category: p.category
+  }))).replace(/</g, '\\u003c');
+  const heroFirstImg = heroProds[0]?.image || '';
   const html = `
 <section class="hero">
   <div class="hero-bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
@@ -1302,7 +1312,9 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     <div class="hero-stats"><div><strong>${C.num(db.products.length)}+</strong><span>${tr('hero.stat1')}</span></div><div><strong>${tr('hero.stat2')}</strong><span>${tr('hero.stat2.label')}</span></div><div><strong>${tr('hero.stat3')}</strong><span>${tr('hero.stat3.label')}</span></div></div>
   </div>
   <div class="hero-visual">
-    <div class="cf-stage" id="cf-stage" aria-label="Featured product showcase"></div>
+    <div class="cf-stage" id="cf-stage" aria-label="Featured product showcase">
+      <script type="application/json" id="hero-prods-data">${heroJson}</script>
+    </div>
   </div>
 </section>
 <section class="block">
@@ -1393,7 +1405,8 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     description: C.lang === 'en'
       ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery in Turkey.'
       : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.',
-    faq: homeFaqs
+    faq: homeFaqs,
+    preloadImages: heroFirstImg ? [heroFirstImg] : []
   }, C));
 }
 

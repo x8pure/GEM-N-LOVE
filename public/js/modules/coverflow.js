@@ -61,11 +61,27 @@ export async function initCoverflow(stage) {
   destroyCoverflow();
 
   let prods = [];
-  try {
-    const res = await api('/api/products?wheel=1&limit=8');
-    prods = res && res.products ? res.products : [];
-  } catch (err) {
-    console.warn('Coverflow prods fetch error:', err);
+  // 1. Instant check for SSR/server-inlined hero products data
+  const embeddedScript = $('#hero-prods-data', stage) || document.getElementById('hero-prods-data');
+  if (embeddedScript && embeddedScript.textContent) {
+    try {
+      const parsed = JSON.parse(embeddedScript.textContent);
+      if (Array.isArray(parsed) && parsed.length) {
+        prods = parsed;
+      }
+    } catch (e) {
+      console.warn('Failed parsing embedded hero-prods-data:', e);
+    }
+  }
+
+  // 2. Fallback to API if not present
+  if (!prods.length) {
+    try {
+      const res = await api('/api/products?wheel=1&limit=8');
+      prods = res && res.products ? res.products : [];
+    } catch (err) {
+      console.warn('Coverflow prods fetch error:', err);
+    }
   }
   if (!prods.length) return;
 
@@ -81,7 +97,7 @@ export async function initCoverflow(stage) {
         return `
       <div class="cf-pos" data-i="${i}">
         <a class="cf-card" href="/urun/${p.slug}" data-slug="${p.slug}" aria-label="${p.name}">
-          <img src="${imgSrc(p.image)}" alt="${p.name}" draggable="false">
+          <img src="${imgSrc(p.image)}" alt="${p.name}" draggable="false" ${i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'} decoding="async">
           <div class="card-sheen"></div>
           <span class="cf-cap">
             <b>${displayName}</b>
@@ -272,16 +288,12 @@ export async function initCoverflow(stage) {
 
   // Pre-calculate first layout synchronously so elements are already in 3D position
   layout(performance.now());
+  if (scene && !isDestroyed) {
+    scene.classList.add('cf-ready');
+  }
   
   // Start loop
   loopId = requestAnimationFrame(loop);
-
-  // Smoothly reveal scene once layout is calculated (prevents initial scale flash / jump)
-  requestAnimationFrame(() => {
-    if (scene && !isDestroyed) {
-      scene.classList.add('cf-ready');
-    }
-  });
 
   const onMouseEnter = () => { auto = false; clearTimeout(autoStepTimer); if (fill) fill.style.width = '0%'; };
   const onMouseLeave = () => { if (!reduced && !isDestroyed) { auto = true; scheduleAuto(); } };

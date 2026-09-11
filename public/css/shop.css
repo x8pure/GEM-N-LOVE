@@ -1445,7 +1445,7 @@ html.dark .mm-apple-ctrl-row {
   perspective: 1150px; perspective-origin: 50% 40%;
   touch-action: pan-y; cursor: grab;
   opacity: 0;
-  transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.15s ease-out;
 }
 .cf-scene.cf-ready {
   opacity: 1;
@@ -1672,7 +1672,7 @@ html.dark .cf-progress i {
 }
 
 @keyframes cfIn { from { opacity: 0; } }
-.cf-stage { animation: cfIn .8s ease-out backwards; }
+.cf-stage { animation: cfIn .2s ease-out backwards; }
 @media (prefers-reduced-motion: reduce) {
   .cf-stage { animation: none; }
 }
