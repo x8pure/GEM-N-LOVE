@@ -263,9 +263,10 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   };
 
   if (gate) {
+    const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(navigator.userAgent);
     const params = new URLSearchParams(location.search);
     const forceShow = params.has('age') || params.has('gate') || params.has('preview') || params.has('yas');
-    if (localStorage.getItem(`ls_age_ok_v11`) === `1` && !forceShow) {
+    if (isBot || (localStorage.getItem(`ls_age_ok_v11`) === `1` && !forceShow)) {
       gate.classList.add(`hidden`);
       document.body.classList.remove(`gate-active`);
       document.documentElement.classList.remove(`gate-active-init`);

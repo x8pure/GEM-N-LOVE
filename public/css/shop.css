@@ -6943,9 +6943,8 @@ body.gate-active nav.top,
 body.gate-active main,
 body.gate-active footer,
 body.gate-active #cursor-glow {
-  opacity: 0 !important;
-  visibility: hidden !important;
   pointer-events: none !important;
+  user-select: none !important;
 }
 body.gate-passing nav.top,
 body.gate-passing main,

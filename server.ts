@@ -535,7 +535,9 @@ function pageCtx(req: http.IncomingMessage, res?: http.ServerResponse) {
   const theme = getCookieValue(req, 'ls_theme') === 'dark' ? 'dark' : 'light';
   const sess = getSession(req, res);
   const cartCount = (sess && Array.isArray(sess.cart)) ? sess.cart.reduce((a: number, i: any) => a + (parseInt(i.qty, 10) || 1), 0) : 0;
-  return { lang, theme, t: makeT(lang), num: (n: number) => n.toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'), cartCount };
+  const ua = (req.headers['user-agent'] || '').toLowerCase();
+  const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(ua);
+  return { lang, theme, t: makeT(lang), num: (n: number) => n.toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'), cartCount, isBot };
 }
 
 const ERR: Record<string, Record<string, string>> = {
@@ -971,7 +973,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/favicon.svg">
-<script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');if(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas'))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
+<script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');var isBot=/bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(navigator.userAgent);if(!isBot&&(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas')))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
 <link rel="stylesheet" href="/css/shop.css?v=${appVersion}">
 <script type="application/ld+json">${jsonLd}</script>
@@ -989,6 +991,7 @@ ${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID
 </head>
 <body>
 ${opts.noChrome ? body : `
+${C.isBot ? '' : `
 <div id="age-gate">
   <div class="age-content">
     <h2 class="brand age-brand">LOVE<span class="dot">.</span></h2>
@@ -1000,7 +1003,7 @@ ${opts.noChrome ? body : `
     </div>
     <small class="age-small">${tr('age.small')}</small>
   </div>
-</div>
+</div>`}
 <div id="cursor-glow"></div>
 <header><nav class="top">
   <div class="nav-inner">
