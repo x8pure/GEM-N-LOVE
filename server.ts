@@ -2053,14 +2053,19 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
         }
       } catch (e) {}
 
-      const slug = path.basename(pathname, path.extname(pathname));
-      const svg = getSvgForSlug(slug);
-      res.writeHead(200, {
-        'Content-Type': 'image/svg+xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=86400'
-      });
-      if (req.method === 'HEAD') return res.end();
-      return res.end(svg);
+      // Only attempt SVG silhouette rendering if the request is specifically for an SVG file or a known vector slug
+      if (ext === '.svg' || !ext) {
+        const slug = path.basename(pathname, path.extname(pathname));
+        const svg = getSvgForSlug(slug);
+        if (svg) {
+          res.writeHead(200, {
+            'Content-Type': 'image/svg+xml; charset=utf-8',
+            'Cache-Control': 'public, max-age=86400'
+          });
+          if (req.method === 'HEAD') return res.end();
+          return res.end(svg);
+        }
+      }
     }
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     return res.end('404');
