@@ -32,7 +32,7 @@
       "email": "x8pure@gmail.com",
       "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
       "name": "Ulaş",
-      "role": "customer",
+      "role": "admin",
       "googleAuth": true,
       "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKnVsL6kmZscCWiCqAGhy0YMcZljoS0Vcw3m5bK7DATa9kOG_M=s96-c",
       "createdAt": "2026-08-26T19:23:08.444Z",
@@ -1461,7 +1461,46 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-12T08:58:00.565Z",
-    "version": 1653
-  }
+    "updatedAt": "2026-09-12T13:24:23.820Z",
+    "version": 1680
+  },
+  "posSales": [
+    {
+      "id": "POS-MTYECC1F-737",
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "nakit",
+      "total": 1000,
+      "items": [],
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-12T13:03:57.939Z"
+    },
+    {
+      "id": "POS-MTYECAJQ-M96",
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "nakit",
+      "total": 100,
+      "items": [],
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-12T13:03:56.006Z"
+    },
+    {
+      "id": "POS-MTYEBG38-KIR",
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "pos",
+      "total": 750,
+      "items": [],
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-12T13:03:16.532Z"
+    },
+    {
+      "id": "TEST_1789217784103",
+      "total": 99
+    }
+  ]
 }

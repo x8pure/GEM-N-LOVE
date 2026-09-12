@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">  <!-- Minimalist Premium Pure Brand Dot: Modern Obsidian canvas with #E63946 signature accent -->  <rect width="64" height="64" rx="16" fill="#0F1012" />  <circle cx="32" cy="32" r="22" fill="#E63946" /></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <style>
+    .letter { fill: #111111; }
+    .dot { fill: #BA181B; }
+    @media (prefers-color-scheme: dark) {
+      .letter { fill: #F5F5F7; }
+    }
+  </style>
+  <polygon class="letter" points="71,76 71,436 311,436 311,346 161,346 161,76" />
+  <circle class="dot" cx="396" cy="391" r="45" />
+</svg>
