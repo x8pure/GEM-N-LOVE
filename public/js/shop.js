@@ -572,20 +572,16 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
     const quickLinks = LANG === 'en'
       ? [
-          { label: 'Vibrators', query: 'Vibrator', url: '/magaza?kat=vibratori' },
-          { label: 'For Couples', query: 'For Couples', url: '/magaza?kat=ciftler' },
-          { label: 'Massage Oils & Cosmetics', query: 'Massage Oil', url: '/magaza?kat=kozmetik' },
-          { label: 'Fantasy & Costumes', query: 'Costumes', url: '/magaza?kat=fantasy' },
-          { label: 'Games & Accessories', query: 'Games', url: '/magaza?kat=oyunlar' },
-          { label: 'New Arrivals', query: 'New', url: '/magaza?filter=new' }
+          { label: 'New Arrivals', sort: 'yeni', url: '/magaza?sort=yeni' },
+          { label: 'Bestsellers', filter: 'bestsellers', url: '/magaza?filter=bestsellers' },
+          { label: 'Vibrators', cat: 'vibratorler', url: '/magaza?kat=vibratorler' },
+          { label: 'Realistic Dildos', cat: 'realistik-dildolar', url: '/magaza?kat=realistik-dildolar' }
         ]
       : [
-          { label: 'Vibratörler', query: 'Vibratör', url: '/magaza?kat=vibratori' },
-          { label: 'Çiftler İçin', query: 'Çiftler İçin', url: '/magaza?kat=ciftler' },
-          { label: 'Masaj Yağları & Kozmetik', query: 'Masaj Yağı', url: '/magaza?kat=kozmetik' },
-          { label: 'Fantezi & Kostüm', query: 'Fantezi', url: '/magaza?kat=fantasy' },
-          { label: 'Oyunlar & Aksesuarlar', query: 'Oyunlar', url: '/magaza?kat=oyunlar' },
-          { label: 'Yeni Gelenler', query: 'Yeni', url: '/magaza?filter=new' }
+          { label: 'Yeni Gelenler', sort: 'yeni', url: '/magaza?sort=yeni' },
+          { label: 'En Çok Tercih Edilenler', filter: 'bestsellers', url: '/magaza?filter=bestsellers' },
+          { label: 'Vibratörler', cat: 'vibratorler', url: '/magaza?kat=vibratorler' },
+          { label: 'Realistik Dildolar', cat: 'realistik-dildolar', url: '/magaza?kat=realistik-dildolar' }
         ];
 
     function renderDefaultSearchState() {
@@ -593,12 +589,11 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       currentResultsList = [];
       results.innerHTML = `
         <div class="qs-quick-section qs-fade-in">
-          <div class="qs-section-heading">${LANG === 'en' ? 'Quick Links' : 'Hızlı Bağlantılar'}</div>
+          <div class="qs-section-heading">${LANG === 'en' ? 'QUICK LINKS' : 'HIZLI BAĞLANTILAR'}</div>
           <div class="qs-apple-list">
             ${quickLinks.map((item, idx) => `
-              <button type="button" class="qs-apple-link" data-query="${esc(item.query)}" data-url="${esc(item.url)}" data-idx="${idx}">
-                <span>${esc(item.label)}</span>
-                <span class="qs-apple-arrow">→</span>
+              <button type="button" class="qs-apple-link" data-cat="${esc(item.cat || '')}" data-filter="${esc(item.filter || '')}" data-sort="${esc(item.sort || '')}" data-label="${esc(item.label)}" data-url="${esc(item.url)}" data-idx="${idx}">
+                <span class="qs-apple-link-text">${esc(item.label)}</span>
               </button>
             `).join('')}
           </div>
@@ -607,11 +602,23 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
       $$('.qs-apple-link', results).forEach((btn) => {
         btn.addEventListener('click', () => {
-          const q = btn.dataset.query;
-          if (q) {
-            input.value = q;
+          const cat = btn.dataset.cat;
+          const sort = btn.dataset.sort;
+          const filter = btn.dataset.filter;
+          const label = btn.dataset.label;
+          const url = btn.dataset.url;
+          if (label) {
+            input.value = label;
             if (clearBtn) clearBtn.style.display = 'flex';
-            doSearch(q, true);
+          }
+          if (sort === 'yeni') {
+            doSearch({ sort: 'yeni', label: label || 'Yeni Gelenler', url: url || '/magaza?sort=yeni' }, true);
+          } else if (filter === 'bestsellers') {
+            doSearch({ filter: 'bestsellers', label: label || 'En Çok Tercih Edilenler', url: url || '/magaza?filter=bestsellers' }, true);
+          } else if (cat) {
+            doSearch({ cat: cat, label: label, url: url || `/magaza?kat=${cat}` }, true);
+          } else {
+            doSearch(label, true);
           }
         });
       });
@@ -671,15 +678,43 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       });
     }
 
-    async function doSearch(query, immediate = false) {
-      const q = String(query || '').trim();
-      currentQuery = q;
+    async function doSearch(queryParam, immediate = false) {
+      let apiUrl = '';
+      let displayHeading = '';
+      let viewAllUrl = '';
+      let rawQueryText = '';
 
-      if (!q) {
-        if (clearBtn) clearBtn.style.display = 'none';
-        renderDefaultSearchState();
-        return;
+      if (typeof queryParam === 'object' && queryParam !== null) {
+        if (queryParam.sort === 'yeni') {
+          apiUrl = '/api/products?sort=yeni&limit=12';
+          rawQueryText = queryParam.label || 'Yeni Gelenler';
+          displayHeading = `${LANG === 'en' ? 'New Arrivals' : 'Yeni Gelen Ürünler'}`;
+          viewAllUrl = queryParam.url || '/magaza?sort=yeni';
+        } else if (queryParam.filter === 'bestsellers') {
+          apiUrl = '/api/products?filter=bestsellers&limit=12';
+          rawQueryText = queryParam.label || 'En Çok Tercih Edilenler';
+          displayHeading = `${LANG === 'en' ? 'Bestsellers' : 'En Çok Tercih Edilenler'}`;
+          viewAllUrl = queryParam.url || '/magaza?filter=bestsellers';
+        } else if (queryParam.cat) {
+          apiUrl = '/api/products?cat=' + encodeURIComponent(queryParam.cat) + '&limit=12';
+          rawQueryText = queryParam.label || queryParam.cat;
+          displayHeading = `${queryParam.label || queryParam.cat}`;
+          viewAllUrl = queryParam.url || `/magaza?kat=${encodeURIComponent(queryParam.cat)}`;
+        }
+      } else {
+        const q = String(queryParam || '').trim();
+        rawQueryText = q;
+        if (!q) {
+          if (clearBtn) clearBtn.style.display = 'none';
+          renderDefaultSearchState();
+          return;
+        }
+        apiUrl = '/api/products?q=' + encodeURIComponent(q) + '&limit=12';
+        displayHeading = `<b>"${esc(q)}"</b>`;
+        viewAllUrl = '/magaza?q=' + encodeURIComponent(q);
       }
+
+      currentQuery = rawQueryText;
       if (clearBtn) clearBtn.style.display = 'flex';
 
       const existingList = $('.qs-items-apple-list', results);
@@ -690,8 +725,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       }
 
       try {
-        const res = await api('/api/products?q=' + encodeURIComponent(q) + '&limit=12');
-        if (currentQuery !== q) return; // Prevent race conditions on rapid typing
+        const res = await api(apiUrl);
+        if (currentQuery !== rawQueryText) return; // Prevent race conditions on rapid typing
         results.classList.remove('qs-fetching');
 
         const list = (res && Array.isArray(res.products)) ? res.products : [];
@@ -701,8 +736,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         if (list.length === 0) {
           results.innerHTML = `
             <div class="qs-empty-state qs-fade-in">
-              <p><b>"${esc(q)}"</b> ${LANG === 'en' ? 'no products found' : 'için sonuç bulunamadı'}</p>
-              <span style="font-size:13px;color:#9CA3AF;margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by category or another keyword.' : 'Kategori adı veya farklı bir anahtar kelime deneyebilirsiniz.'}</span>
+              <p>${displayHeading} ${LANG === 'en' ? 'no products found' : 'için ürün bulunamadı'}</p>
+              <span style="font-size:13px;color:#9CA3AF;margin-top:6px;display:block;">${LANG === 'en' ? 'Try searching by another keyword or category.' : 'Farklı bir kategori veya anahtar kelime deneyebilirsiniz.'}</span>
             </div>
           `;
           return;
@@ -710,7 +745,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
 
         results.innerHTML = `
           <div class="qs-results-meta qs-fade-in">
-            <span>${LANG === 'en' ? `${list.length} results for` : `${list.length} ürün bulundu:`} <b>"${esc(q)}"</b></span>
+            <span>${LANG === 'en' ? `${list.length} products found:` : `${list.length} ürün listelendi:`} ${displayHeading}</span>
             <span class="qs-hint-esc">ESC</span>
           </div>
           <div class="qs-items-apple-list qs-fade-in">
@@ -736,7 +771,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
               </a>
             `).join('')}
           </div>
-          <a href="/magaza?q=${encodeURIComponent(q)}" class="qs-view-all-apple-link qs-fade-in">
+          <a href="${esc(viewAllUrl)}" class="qs-view-all-apple-link qs-fade-in">
             <span>${LANG === 'en' ? 'View all products in catalog' : 'Tüm sonuçları katalogda gör'} (${res.total || list.length})</span>
             <span>→</span>
           </a>
@@ -762,7 +797,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
           });
         });
       } catch (err) {
-        if (currentQuery === q) {
+        if (currentQuery === rawQueryText) {
           results.classList.remove('qs-fetching');
           results.innerHTML = `<div class="qs-empty-state"><p>${err.message || 'Arama hatası oluştu.'}</p></div>`;
         }

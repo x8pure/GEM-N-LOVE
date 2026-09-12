@@ -357,7 +357,7 @@ const STR: Record<string, Record<string, string>> = {
     'mq.1': 'GİZLİ PAKETLEME', 'mq.2': 'KAPIDA ÖDEME', 'mq.3': 'VÜCUT DOSTU', 'mq.4': 'AYNI GÜN KARGO', 'mq.5': '18+ YETKİN YAŞAM', 'mq.6': 'ANONİM ALIŞVERİŞ',
     'sec.cats.eb': 'Kategoriler', 'sec.cats.h2': 'Kendi <em class="em-rose">ritmini</em> bul',
     'sec.cats.p': 'Merak ettiğin her şey, saygılı bir dille ve özenle seçilmiş {n}-i aşkın ürünle.',
-    'sec.cats.link': 'Katalog', 'cats.products': 'ÜRÜN', 'bento.explore': 'Keşfet →',
+    'sec.cats.link': 'Katalog →', 'cats.products': 'ÜRÜN', 'bento.explore': 'Keşfet →',
     'bcta.kicker': 'Kataloğun tamamı', 'bcta.h3': 'Tüm Kategoriler', 'bcta.count': '{cats} KATEGORİ · {prods} ÜRÜN',
     'sec.feat.eb': 'Öne Çıkanlar', 'sec.feat.h2': 'Bu ayın <em class="em-rose">favorileri</em>', 'sec.feat.link': 'Hepsini Gör →',
     'banner.eb': 'Love Shop Güvencesi',
@@ -455,7 +455,7 @@ const STR: Record<string, Record<string, string>> = {
     'mq.1': 'DISCREET PACKAGING', 'mq.2': 'PAY AT DOOR', 'mq.3': 'BODY SAFE', 'mq.4': 'SAME-DAY SHIPPING', 'mq.5': '18+ ADULT WELLNESS', 'mq.6': 'ANONYMOUS SHOPPING',
     'sec.cats.eb': 'Categories', 'sec.cats.h2': 'Find your own <em class="em-rose">rhythm</em>',
     'sec.cats.p': 'Everything you\'re curious about, spoken in a respectful voice, with over {n} carefully curated products.',
-    'sec.cats.link': 'Catalog', 'cats.products': 'PRODUCTS', 'bento.explore': 'Explore →',
+    'sec.cats.link': 'Catalog →', 'cats.products': 'PRODUCTS', 'bento.explore': 'Explore →',
     'bcta.kicker': 'The full catalog', 'bcta.h3': 'All Categories', 'bcta.count': '{cats} CATEGORIES · {prods} PRODUCTS',
     'sec.feat.eb': 'Featured', 'sec.feat.h2': 'This month\'s <em class="em-rose">favorites</em>', 'sec.feat.link': 'See All →',
     'banner.eb': 'The Love Shop Promise',
@@ -2525,12 +2525,32 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
     const kw = q.get('q');
     if (kw) {
-      const k = kw.toLowerCase();
-      list = list.filter((p: any) =>
-        (p.name && p.name.toLowerCase().includes(k)) ||
-        (p.description && p.description.toLowerCase().includes(k)) ||
-        (p.slug && p.slug.toLowerCase().includes(k))
-      );
+      const normalizeTr = (s: string) =>
+        String(s || '')
+          .toLowerCase()
+          .replace(/[ıİ]/g, 'i')
+          .replace(/[ğĞ]/g, 'g')
+          .replace(/[üÜ]/g, 'u')
+          .replace(/[şŞ]/g, 's')
+          .replace(/[öÖ]/g, 'o')
+          .replace(/[çÇ]/g, 'c')
+          .trim();
+
+      const normKw = normalizeTr(kw);
+      if (normKw === 'yeni' || normKw === 'new' || normKw === 'yeni gelenler' || normKw === 'yeni gelen') {
+        list.sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+      } else {
+        const words = normKw.split(/\s+/).filter(Boolean);
+        list = list.filter((p: any) => {
+          const nameNorm = normalizeTr(p.name);
+          const descNorm = normalizeTr(p.description);
+          const catNorm = normalizeTr(p.category || '');
+          const catNameNorm = normalizeTr(p.categoryName || '');
+          const tagsNorm = normalizeTr(Array.isArray(p.tags) ? p.tags.join(' ') : '');
+          const combined = `${nameNorm} ${descNorm} ${catNorm} ${catNameNorm} ${tagsNorm}`;
+          return words.every((w) => combined.includes(w));
+        });
+      }
     }
     const filter = q.get('filter');
     if (filter === 'bestsellers') list = list.filter((p: any) => p.bestSeller);
@@ -2542,7 +2562,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       case 'fiyat-artan': list.sort((a: any, b: any) => a.price - b.price); break;
       case 'fiyat-azalan': list.sort((a: any, b: any) => b.price - a.price); break;
       case 'puan': list.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0)); break;
-      default: list.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
+      default: {
+        const queryTerm = kw ? kw.toLowerCase().trim() : '';
+        if (!kw || !['yeni', 'new', 'yeni gelenler', 'yeni gelen'].includes(queryTerm)) {
+          list.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
+        }
+      }
     }
     const total = list.length;
     const offset = parseInt(q.get('offset') || '0', 10) || 0;
