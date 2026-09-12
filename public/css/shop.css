@@ -5,7 +5,7 @@
   --card: rgba(255,255,255,.90);
   --card-solid: #FFFFFF;
   --card-2: rgba(247,244,238,.9);
-  --studio-card-bg: radial-gradient(circle at 50% 30%, #FFFFFF 0%, #FAF8F4 60%, #EFE9DF 100%);
+  --studio-card-bg: var(--bg); /* temporarily disabled gradient for testing */
   --line: rgba(41,37,36,.08);
   --line-strong: rgba(41,37,36,.15);
   --text: #292524;        /* sicak koyu antrasit */

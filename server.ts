@@ -3409,6 +3409,61 @@ ${rawText || name}`;
       if (idx !== -1) { db.newsletter.splice(idx, 1); await saveAsync(); }
       return json(res, 200, { ok: true });
     }
+
+    /* ================= POS / FİZİKSEL MAĞAZA KASA API ================= */
+    if (pathname === '/api/admin/pos' && method === 'GET') {
+      if (!Array.isArray(db.posSales)) db.posSales = [];
+      const sales = [...db.posSales].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      return json(res, 200, { ok: true, sales, products: db.products.map((p: any) => ({ id: p.id, name: p.name, price: p.price, originalPrice: p.originalPrice, categoryName: p.categoryName, image: p.image })) });
+    }
+
+    if (pathname === '/api/admin/pos' && method === 'POST') {
+      if (!Array.isArray(db.posSales)) db.posSales = [];
+      const b = await readBody(req);
+      const title = String(b.title || '').trim() || 'Mağaza Elden Satış';
+      const paymentMethod = ['nakit', 'pos', 'havale'].includes(b.paymentMethod) ? b.paymentMethod : 'nakit';
+      const items = Array.isArray(b.items) ? b.items.map((it: any) => ({
+        productId: it.productId || null,
+        title: String(it.title || 'Ürün').trim(),
+        price: Math.max(0, Number(it.price) || 0),
+        qty: Math.max(1, parseInt(it.qty, 10) || 1)
+      })) : [];
+
+      let total = Math.max(0, Number(b.total) || 0);
+      if (items.length > 0 && total <= 0) {
+        total = items.reduce((acc: number, it: any) => acc + (it.price * it.qty), 0);
+      }
+      if (total <= 0) {
+        return sendError(res, 400, 'Satış tutarı 0 veya daha düşük olamaz.');
+      }
+
+      const newSale = {
+        id: 'POS-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 5).toUpperCase(),
+        title,
+        paymentMethod, // 'nakit' | 'pos' | 'havale'
+        total: Math.round(total * 100) / 100,
+        items,
+        note: String(b.note || '').trim(),
+        sellerName: adm.name || 'Mağaza Yetkilisi',
+        sellerEmail: adm.email || '',
+        createdAt: new Date().toISOString()
+      };
+
+      db.posSales.unshift(newSale);
+      await saveAsync();
+      return json(res, 201, { ok: true, sale: newSale });
+    }
+
+    const posDelMatch = pathname.match(/^\/api\/admin\/pos\/([^/]+)$/);
+    if (posDelMatch && method === 'DELETE') {
+      if (!Array.isArray(db.posSales)) db.posSales = [];
+      const saleId = decodeURIComponent(posDelMatch[1]);
+      const idx = db.posSales.findIndex((s: any) => s.id === saleId);
+      if (idx === -1) return sendError(res, 404, 'Satış kaydı bulunamadı.');
+      db.posSales.splice(idx, 1);
+      await saveAsync();
+      return json(res, 200, { ok: true });
+    }
   }
 
   return sendError(res, 404, E('err.notFound404'));

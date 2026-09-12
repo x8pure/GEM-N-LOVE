@@ -187,6 +187,7 @@
       <div class="nav-section-title">Yönetim</div>
       <nav class="adm-nav">
         <a href="#/dashboard" class="${active === 'dashboard' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>Panel</a>
+        <a href="#/pos" class="${active === 'pos' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 15h2"/><path d="M10 15h6"/></svg></span>Fiziksel Kasa (POS)</a>
         <a href="#/orders" class="${active === 'orders' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>Siparişler${badge.orders ? `<span class="pill">${badge.orders}</span>` : ''}</a>
         <a href="#/products" class="${active === 'products' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>Ürünler</a>
         <a href="#/categories" class="${active === 'categories' ? 'on' : ''}"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>Kategoriler</a>
@@ -222,7 +223,7 @@
     </main>
   </div>`;
 
-  const TITLES = { dashboard: 'Genel Bakış & Analitik', orders: 'Sipariş Yönetimi', products: 'Ürün Kataloğu', categories: 'Kategori Mimarisi', reviews: 'Müşteri Değerlendirmeleri', coupons: 'Kupon & Kampanya Motoru', users: 'Kullanıcı & Müşteri Veritabanı', messages: 'Gelen Kutusu & İletişim', settings: 'Sistem & Mağaza Ayarları' };
+  const TITLES = { dashboard: 'Genel Bakış & Analitik', pos: 'Fiziksel Mağaza / Kasa (POS)', orders: 'Sipariş Yönetimi', products: 'Ürün Kataloğu', categories: 'Kategori Mimarisi', reviews: 'Müşteri Değerlendirmeleri', coupons: 'Kupon & Kampanya Motoru', users: 'Kullanıcı & Müşteri Veritabanı', messages: 'Gelen Kutusu & İletişim', settings: 'Sistem & Mağaza Ayarları' };
 
   let currentPage = null;
 
@@ -284,7 +285,8 @@
     const listEl = $('#cmd-list', m);
 
     const COMMANDS = [
-            { name: '📊 Genel Bakış Paneli', action: () => { location.hash = '#/dashboard'; m.remove(); }, badge: 'Sayfa' },
+      { name: '📊 Genel Bakış Paneli', action: () => { location.hash = '#/dashboard'; m.remove(); }, badge: 'Sayfa' },
+      { name: '💳 Fiziksel Mağaza / Kasa (POS)', action: () => { location.hash = '#/pos'; m.remove(); }, badge: 'Sayfa' },
       { name: '📦 Sipariş Yönetimi', action: () => { location.hash = '#/orders'; m.remove(); }, badge: 'Sayfa' },
       { name: '🛍️ Ürün Kataloğu', action: () => { location.hash = '#/products'; m.remove(); }, badge: 'Sayfa' },
       { name: '＋ Yeni Ürün Ekle (Manuel)', action: () => { location.hash = '#/products'; m.remove(); setTimeout(() => $('#prod-add') && $('#prod-add').click(), 100); }, badge: 'Eylem' },
@@ -861,22 +863,22 @@
 
           <!-- Quick Actions Grid -->
           <div class="quick-action-btns">
+            <a href="#/pos" class="action-btn-chip">
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><path d="M6 15h2"/><path d="M10 15h6"/></svg></span>
+              <span>Kasa Satışı (POS)</span>
+            </a>
             <a href="#/products" class="action-btn-chip" id="qa-add-prod">
-              <span class="ic">🛍️</span>
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
               <span>＋ Yeni Ürün</span>
             </a>
             <a href="#/coupons" class="action-btn-chip">
-              <span class="ic">🎟️</span>
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="12" y1="6" x2="12" y2="18" stroke-dasharray="2 2"/></svg></span>
               <span>Yeni Kupon</span>
             </a>
             <button type="button" class="action-btn-chip" id="qa-cmd">
-              <span class="ic">⚡</span>
+              <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
               <span>Komutlar (⌘K)</span>
             </button>
-            <a href="/" target="_blank" class="action-btn-chip">
-              <span class="ic">🏬</span>
-              <span>Mağaza Önizle</span>
-            </a>
           </div>
 
           <!-- Low Stock Alert Radar -->
@@ -2284,8 +2286,489 @@
     });
   }
 
+  /* ================= POS / FİZİKSEL MAĞAZA KASA MODÜLÜ (LUXURY MONOCHROME) ================= */
+  async function viewPOS() {
+    let sales = [];
+    let products = [];
+    let selectedProducts = [];
+    let activeFilter = 'today';
+    let currentPaymentMethod = 'nakit';
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    let selectedDate = todayStr;
+
+    mount('pos', `
+      <!-- TOP KPI STATS (MATCHING ADMIN DASHBOARD STAT-GRID ARCHITECTURE) -->
+      <div class="stat-grid" style="margin-bottom:24px">
+        <div class="stat-card" id="pos-card-total">
+          <div class="sc-top">
+            <span class="sc-lbl">Bugünkü Toplam Ciro</span>
+            <div class="sc-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+          </div>
+          <div class="sc-val" id="pos-kpi-total">₺0,00</div>
+          <div class="sc-sub"><span id="pos-kpi-count">0</span> işlem kaydedildi</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="sc-top">
+            <span class="sc-lbl">Nakit Kasa</span>
+            <div class="sc-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+            </div>
+          </div>
+          <div class="sc-val" id="pos-kpi-cash">₺0,00</div>
+          <div class="sc-sub">Fiziksel elden nakit</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="sc-top">
+            <span class="sc-lbl">Kredi / Banka Kartı</span>
+            <div class="sc-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            </div>
+          </div>
+          <div class="sc-val" id="pos-kpi-pos">₺0,00</div>
+          <div class="sc-sub">Terminal kart çekimleri</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="sc-top">
+            <span class="sc-lbl">Havale / EFT / Fast</span>
+            <div class="sc-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+          </div>
+          <div class="sc-val" id="pos-kpi-havale">₺0,00</div>
+          <div class="sc-sub">Banka transferleri</div>
+        </div>
+      </div>
+
+      <!-- MAIN POS WORKSPACE: 2-COLUMN LUXURY SPLIT -->
+      <div class="pos-layout">
+        <!-- LEFT: TERMINAL REGISTER PANEL -->
+        <div class="pos-card">
+          <div class="pos-card-head">
+            <div>
+              <h2>Satış Kaydı</h2>
+              <p>Kasaya anında yeni işlem işle</p>
+            </div>
+          </div>
+
+          <!-- Segmented Payment Selector -->
+          <div class="pos-segmented-group" id="pos-method-group">
+            <button type="button" class="pos-segment-btn active" data-method="nakit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+              <span>Nakit</span>
+            </button>
+            <button type="button" class="pos-segment-btn" data-method="pos">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+              <span>Kart / POS</span>
+            </button>
+            <button type="button" class="pos-segment-btn" data-method="havale">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>Havale / EFT</span>
+            </button>
+          </div>
+
+          <!-- Amount Display & Input Box -->
+          <div class="pos-amount-display">
+            <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">İşlem Tutarı</div>
+            <div class="pos-amount-input-row">
+              <span class="pos-currency-symbol">₺</span>
+              <input type="number" step="0.01" min="0" id="pos-sale-amount" placeholder="0.00" class="pos-amount-field">
+            </div>
+          </div>
+
+          <!-- Quick Preset Amounts -->
+          <div class="pos-quick-grid">
+            <button type="button" class="pos-numpad-btn pos-quick-add" data-add="50">+50 ₺</button>
+            <button type="button" class="pos-numpad-btn pos-quick-add" data-add="100">+100 ₺</button>
+            <button type="button" class="pos-numpad-btn pos-quick-add" data-add="200">+200 ₺</button>
+            <button type="button" class="pos-numpad-btn pos-quick-add" data-add="500">+500 ₺</button>
+            <button type="button" class="pos-numpad-btn pos-quick-add" data-add="1000">+1.000 ₺</button>
+            <button type="button" class="pos-numpad-btn clear" id="pos-clear-amount">Sıfırla</button>
+          </div>
+
+          <!-- Catalog Item Search (Optional) -->
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">Katalogdan Ürün Ekle (İsteğe Bağlı)</label>
+            <input type="text" id="pos-prod-search" placeholder="Ürün adı ara ve sepete ekle…" style="width:100%;font-size:13px;padding:10px 12px">
+            <div id="pos-prod-results" style="max-height:160px;overflow-y:auto;display:none;flex-direction:column;gap:4px;background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:6px;margin-top:6px"></div>
+            <div id="pos-selected-items" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+          </div>
+
+          <!-- Sale Description / Title -->
+          <div style="margin-bottom:20px">
+            <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">Satış Başlığı / Not</label>
+            <input type="text" id="pos-sale-title" placeholder="Örn: Elden Mağaza Satışı" style="width:100%;font-size:13px;padding:10px 12px">
+          </div>
+
+          <!-- Submit Button -->
+          <button type="button" class="pos-submit-button" id="pos-submit-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Kasaya İşle</span>
+          </button>
+        </div>
+
+        <!-- RIGHT: LEDGER & TRANSACTION HISTORY TABLE -->
+        <div class="pos-card">
+          <div class="pos-card-head">
+            <div>
+              <h2 id="pos-list-title">Günlük Kasa Defteri</h2>
+              <p id="pos-list-sub">Bugün mağazada gerçekleşen elden satışlar</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="date" id="pos-date-picker" value="${todayStr}" style="padding:6px 10px;font-size:12.5px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card-2);color:var(--text)">
+              <button class="btn btn-ghost btn-sm" id="pos-filter-all">Tüm Geçmiş</button>
+              <button class="btn btn-ghost btn-sm" id="pos-export-csv" title="Satışları CSV formatında indir">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Dışa Aktar
+              </button>
+            </div>
+          </div>
+
+          <div class="pos-table-wrap">
+            <table class="pos-tbl">
+              <thead>
+                <tr>
+                  <th style="width:120px">Saat</th>
+                  <th>Satış / Ürünler</th>
+                  <th style="width:180px">Ödeme</th>
+                  <th style="width:140px">Tutar</th>
+                  <th style="text-align:right;width:50px"></th>
+                </tr>
+              </thead>
+              <tbody id="pos-tbody">
+                <tr><td colspan="5" class="empty" style="padding:36px">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Bottom Ledger Summary Bar -->
+          <div class="pos-summary-bar">
+            <div class="pos-summary-item">
+              <span class="pos-summary-label">Seçili Dönem</span>
+              <span class="pos-summary-val" id="pos-summary-desc" style="font-size:13.5px">0 İşlem</span>
+            </div>
+            <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+              <div class="pos-summary-item">
+                <span class="pos-summary-label">Nakit</span>
+                <span class="pos-summary-val" id="pos-sum-nakit">₺0,00</span>
+              </div>
+              <div class="pos-summary-item">
+                <span class="pos-summary-label">POS / Kart</span>
+                <span class="pos-summary-val" id="pos-sum-pos">₺0,00</span>
+              </div>
+              <div class="pos-summary-item">
+                <span class="pos-summary-label">Havale</span>
+                <span class="pos-summary-val" id="pos-sum-havale">₺0,00</span>
+              </div>
+              <div class="pos-summary-item" style="border-left:1px solid var(--line);padding-left:16px">
+                <span class="pos-summary-label">Genel Toplam</span>
+                <span class="pos-summary-val" id="pos-sum-grand" style="font-size:18px;color:var(--text)">₺0,00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+
+    // Fetch initial data
+    try {
+      const res = await api('/api/admin/pos');
+      sales = res.sales || [];
+      products = res.products || [];
+    } catch (e) {
+      toast('Kasa verileri yüklenemedi: ' + e.message, true);
+    }
+
+    // Segmented method switcher
+    $$('#pos-method-group .pos-segment-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        $$('#pos-method-group .pos-segment-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPaymentMethod = btn.dataset.method || 'nakit';
+      });
+    });
+
+    // Quick add amount buttons
+    $$('.pos-quick-add').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const addVal = Number(btn.dataset.add) || 0;
+        const cur = Number($('#pos-sale-amount').value) || 0;
+        $('#pos-sale-amount').value = (cur + addVal).toFixed(2);
+      });
+    });
+
+    $('#pos-clear-amount').addEventListener('click', () => {
+      $('#pos-sale-amount').value = '';
+      selectedProducts = [];
+      renderSelectedItems();
+    });
+
+    // Product search in catalog
+    const prodSearchInput = $('#pos-prod-search');
+    const prodResults = $('#pos-prod-results');
+
+    prodSearchInput.addEventListener('input', () => {
+      const q = prodSearchInput.value.trim().toLowerCase();
+      if (!q || q.length < 2) {
+        prodResults.style.display = 'none';
+        prodResults.innerHTML = '';
+        return;
+      }
+      const matches = products.filter((p) => p.name.toLowerCase().includes(q) || (p.categoryName || '').toLowerCase().includes(q)).slice(0, 6);
+      if (!matches.length) {
+        prodResults.style.display = 'flex';
+        prodResults.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px">Eşleşen ürün bulunamadı.</div>';
+        return;
+      }
+      prodResults.style.display = 'flex';
+      prodResults.innerHTML = matches.map((p) => `
+        <div class="pos-prod-pick-item" data-id="${p.id}" data-name="${esc(p.name)}" data-price="${p.price}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:13px;font-weight:600;color:var(--text)">${esc(p.name)}</span>
+            <span class="muted" style="font-size:11.5px">(${esc(p.categoryName || 'Genel')})</span>
+          </div>
+          <b style="font-size:13px;color:var(--text)">${fmt(p.price)}</b>
+        </div>
+      `).join('');
+
+      $$('.pos-prod-pick-item', prodResults).forEach((item) => {
+        item.addEventListener('click', () => {
+          const id = item.dataset.id;
+          const name = item.dataset.name;
+          const price = Number(item.dataset.price) || 0;
+          
+          const existing = selectedProducts.find((x) => x.id === id);
+          if (existing) {
+            existing.qty += 1;
+          } else {
+            selectedProducts.push({ id, name, price, qty: 1 });
+          }
+
+          prodSearchInput.value = '';
+          prodResults.style.display = 'none';
+          renderSelectedItems();
+        });
+      });
+    });
+
+    function renderSelectedItems() {
+      const container = $('#pos-selected-items');
+      if (!selectedProducts.length) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = selectedProducts.map((it, idx) => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--card-2);border-radius:6px;border:1px solid var(--line);font-size:12.5px">
+          <div style="display:flex;align-items:center;gap:6px;overflow:hidden">
+            <span style="font-weight:600;color:var(--text)">${esc(it.name)}</span>
+            <span class="muted" style="font-size:11.5px">×${it.qty}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <b style="color:var(--text)">${fmt(it.price * it.qty)}</b>
+            <button type="button" class="btn-ghost pos-rem-item" data-idx="${idx}" style="color:var(--muted);padding:2px 6px;font-size:12px">✕</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Auto update total amount field
+      const calcTotal = selectedProducts.reduce((sum, it) => sum + (it.price * it.qty), 0);
+      if (calcTotal > 0) {
+        $('#pos-sale-amount').value = calcTotal.toFixed(2);
+      }
+
+      // Auto populate title if empty
+      if (!$('#pos-sale-title').value.trim()) {
+        $('#pos-sale-title').value = selectedProducts.map((it) => `${it.qty > 1 ? it.qty + 'x ' : ''}${it.name}`).join(', ');
+      }
+
+      $$('.pos-rem-item', container).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          selectedProducts.splice(idx, 1);
+          renderSelectedItems();
+        });
+      });
+    }
+
+    // Submit sale
+    $('#pos-submit-btn').addEventListener('click', async () => {
+      const btn = $('#pos-submit-btn');
+      const amount = Number($('#pos-sale-amount').value) || 0;
+      if (amount <= 0) {
+        return toast('Lütfen geçerli bir satış tutarı girin.', true);
+      }
+
+      const paymentMethod = currentPaymentMethod;
+      const title = $('#pos-sale-title').value.trim() || 'Mağaza Elden Satış';
+
+      const origContent = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span>İşleniyor...</span>';
+
+      try {
+        const payload = {
+          title,
+          paymentMethod,
+          total: amount,
+          items: selectedProducts.map((p) => ({ productId: p.id, title: p.name, price: p.price, qty: p.qty })),
+          note: ''
+        };
+        const res = await api('/api/admin/pos', { method: 'POST', body: payload });
+        if (res.ok && res.sale) {
+          sales.unshift(res.sale);
+          toast('Satış başarıyla kasaya işlendi');
+          // Reset form
+          $('#pos-sale-amount').value = '';
+          $('#pos-sale-title').value = '';
+          selectedProducts = [];
+          renderSelectedItems();
+          draw();
+        }
+      } catch (e) {
+        toast('Hata: ' + e.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origContent;
+      }
+    });
+
+    // Draw table & recalculate KPIs
+    function draw() {
+      // 1. Calculate today's KPIs
+      const todaySales = sales.filter((s) => (s.createdAt || '').slice(0, 10) === todayStr);
+      const todayTotal = todaySales.reduce((sum, s) => sum + (s.total || 0), 0);
+      const todayCash = todaySales.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
+      const todayPos = todaySales.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
+      const todayHavale = todaySales.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
+
+      $('#pos-kpi-total').textContent = fmt(todayTotal);
+      $('#pos-kpi-count').textContent = todaySales.length;
+      $('#pos-kpi-cash').textContent = fmt(todayCash);
+      $('#pos-kpi-pos').textContent = fmt(todayPos);
+      $('#pos-kpi-havale').textContent = fmt(todayHavale);
+
+      // 2. Filter list based on selected view
+      let filtered = [];
+      if (activeFilter === 'today') {
+        filtered = sales.filter((s) => (s.createdAt || '').slice(0, 10) === selectedDate);
+        $('#pos-list-title').textContent = selectedDate === todayStr ? 'Günlük Kasa Defteri' : `${selectedDate} Tarihli Kasa Defteri`;
+        $('#pos-list-sub').textContent = `${selectedDate === todayStr ? 'Bugün' : selectedDate} mağazada gerçekleşen elden satışlar (${filtered.length} kayıt)`;
+      } else {
+        filtered = sales;
+        $('#pos-list-title').textContent = 'Tüm Geçmiş Kasa Hareketleri';
+        $('#pos-list-sub').textContent = `Fiziksel mağaza tüm zamanlar satış kaydı (${filtered.length} kayıt)`;
+      }
+
+      // 3. Render table rows
+      const tbody = $('#pos-tbody');
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty" style="padding:36px;text-align:center">Bu tarih için henüz elden satış kaydı bulunmuyor.</td></tr>`;
+      } else {
+        tbody.innerHTML = filtered.map((s) => {
+          const d = new Date(s.createdAt);
+          const timeStr = d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+          const dateStr = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+          const methodLabel = s.paymentMethod === 'pos' ? 'Kredi Kartı' : (s.paymentMethod === 'havale' ? 'Havale / EFT' : 'Nakit');
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">${timeStr}</div>
+                <div class="muted" style="font-size:11px">${dateStr}</div>
+              </td>
+              <td>
+                <div style="font-weight:600;color:var(--text);font-size:13.5px">${esc(s.title || 'Mağaza Satışı')}</div>
+                ${s.items && s.items.length && (!s.title || s.title === 'Mağaza Elden Satış' || s.title === 'Mağaza Satışı') ? `<div class="muted" style="font-size:12px;margin-top:2px">${s.items.map((it) => `${it.qty > 1 ? it.qty + '× ' : ''}${esc(it.title)}`).join(', ')}</div>` : ''}
+              </td>
+              <td>
+                <span class="pos-method-chip">${methodLabel}</span>
+              </td>
+              <td>
+                <div style="font-weight:700;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums">${fmt(s.total)}</div>
+              </td>
+              <td style="text-align:right">
+                <button class="btn btn-ghost btn-sm pos-del-btn" data-id="${s.id}" title="Satış kaydını sil" style="color:var(--muted);padding:4px 8px">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 4. Calculate day summary box
+      const sumNakit = filtered.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
+      const sumPos = filtered.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
+      const sumHavale = filtered.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
+      const sumGrand = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
+
+      $('#pos-summary-desc').textContent = `${filtered.length} Satış İşlemi Toplamı`;
+      $('#pos-sum-nakit').textContent = fmt(sumNakit);
+      $('#pos-sum-pos').textContent = fmt(sumPos);
+      $('#pos-sum-havale').textContent = fmt(sumHavale);
+      $('#pos-sum-grand').textContent = fmt(sumGrand);
+
+      // Bind delete events
+      $$('.pos-del-btn', tbody).forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          if (!confirm('Bu mağaza satış kaydını silmek istediğinize emin misiniz?')) return;
+          try {
+            await api('/api/admin/pos/' + encodeURIComponent(id), { method: 'DELETE' });
+            sales = sales.filter((s) => s.id !== id);
+            toast('Satış kaydı silindi');
+            draw();
+          } catch (e) {
+            toast(e.message, true);
+          }
+        });
+      });
+    }
+
+    // Date picker filter
+    $('#pos-date-picker').addEventListener('change', (e) => {
+      selectedDate = e.target.value;
+      activeFilter = 'today';
+      draw();
+    });
+
+    // All time filter button
+    $('#pos-filter-all').addEventListener('click', () => {
+      activeFilter = activeFilter === 'all' ? 'today' : 'all';
+      $('#pos-filter-all').textContent = activeFilter === 'all' ? 'Günlük Görünüm' : 'Tüm Geçmiş';
+      draw();
+    });
+
+    // Export CSV
+    $('#pos-export-csv').addEventListener('click', () => {
+      const rows = [
+        ['Islem No', 'Tarih', 'Saat', 'Satis Basligi / Not', 'Odeme Yontemi', 'Tutar (TL)', 'Kasiyer'],
+        ...sales.map((s) => {
+          const d = new Date(s.createdAt);
+          return [
+            s.id,
+            d.toISOString().slice(0, 10),
+            d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+            s.title,
+            s.paymentMethod,
+            s.total,
+            s.sellerName || 'Admin'
+          ];
+        })
+      ];
+      exportCSV(`loveshop-kasa-pos-${new Date().toISOString().slice(0,10)}.csv`, rows);
+    });
+
+    draw();
+  }
+
   /* ================= ROUTER ================= */
-  const VIEWS = { dashboard: viewDashboard, orders: viewOrders, products: viewProducts, categories: viewCategories, reviews: viewReviews, coupons: viewCoupons, users: viewUsers, messages: viewMessages, settings: viewSettings };
+  const VIEWS = { dashboard: viewDashboard, pos: viewPOS, orders: viewOrders, products: viewProducts, categories: viewCategories, reviews: viewReviews, coupons: viewCoupons, users: viewUsers, messages: viewMessages, settings: viewSettings };
   async function route() {
     let sess;
     try { sess = await api('/api/session'); } catch { sess = { user: null }; }

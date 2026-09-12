@@ -2144,3 +2144,283 @@ img { max-width: 100%; display: block; }
   100% { border-color: var(--line) !important; box-shadow: none !important; background-color: transparent !important; }
 }
 
+/* ================= POS / FİZİKSEL MAĞAZA KASA STİLLERİ (LUXURY MONOCHROME) ================= */
+.pos-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .pos-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pos-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 24px;
+  position: relative;
+}
+
+.pos-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.pos-card-head h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.pos-card-head p {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.pos-segmented-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: var(--bg-subtle);
+  padding: 4px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+
+.pos-segment-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .18s ease;
+  user-select: none;
+}
+
+.pos-segment-btn:hover {
+  color: var(--text);
+  background: var(--card-hover);
+}
+
+.pos-segment-btn.active {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--line-strong);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pos-amount-display {
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  transition: border-color .2s ease;
+}
+
+.pos-amount-display:focus-within {
+  border-color: var(--line-strong);
+}
+
+.pos-amount-input-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pos-currency-symbol {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.pos-amount-field {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.pos-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.pos-numpad-btn {
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 8px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all .15s ease;
+  text-align: center;
+}
+
+.pos-numpad-btn:hover {
+  background: var(--card-hover);
+  border-color: var(--line-strong);
+}
+
+.pos-numpad-btn.clear {
+  color: var(--err);
+}
+
+.pos-submit-button {
+  width: 100%;
+  background: var(--text);
+  color: var(--bg) !important;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  padding: 14px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .18s ease, transform .15s ease;
+}
+
+.pos-submit-button:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.pos-submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pos-method-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.pos-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.pos-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.pos-tbl th {
+  text-align: left;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--muted);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--card-2);
+}
+
+.pos-tbl td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  color: var(--text);
+}
+
+.pos-tbl tr:last-child td {
+  border-bottom: none;
+}
+
+.pos-tbl tbody tr {
+  transition: background .15s ease;
+}
+
+.pos-tbl tbody tr:hover {
+  background: var(--card-hover);
+}
+
+.pos-summary-bar {
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 16px 20px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pos-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pos-summary-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.pos-summary-val {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+
+
