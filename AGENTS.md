@@ -27,3 +27,8 @@ Bu dosyadaki kurallar, yapay zekanın tipik "AI Slop / Generic SaaS" tuzakların
 ## 4. KARAR VE ÖNERİ PROTOKOLÜ
 - Yeni bir UI/UX kararı alırken önce "Bu bir şablon AI alışkanlığı mı yoksa markanın ağırlığına yakışan bir fonksiyon mu?" sorgusu yapılır.
 - Şüpheli her detayda şablon yerine sadeleşme (reduction) tercih edilir.
+
+## 5. GELECEK VİZYONU VE DİPNOTLAR (ELİT ŞEHİR STRATEJİSİ)
+- **Kullanıcı Tetikleyicisi:** Kurucu "Bir dipnot vardı, onu devreye alalım" dediğinde bu madde hatırlanacaktır.
+- **Strateji Özeti:** Türkiye geneline açılma (Ulusal SEO) aşamasında rakiplerin yaptığı gibi "spam, içi boş ve kopyalanmış şehir blog yazıları" (Keyword Stuffing) KULLANILMAYACAKTIR.
+- **Uygulama:** Her hedef şehir için markanın lüks ve zarif diline uygun, o şehre özel gerçek lojistik vaatleri içeren (örn. kargo süresi), yüksek dönüşüm oranlı özel "Premium İniş Sayfaları (Landing Pages)" tasarlanıp devreye alınacaktır.
