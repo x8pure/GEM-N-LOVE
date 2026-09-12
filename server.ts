@@ -10,7 +10,7 @@ import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFireba
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleGenAI, Type } from '@google/genai';
-import { GUIDES } from './data/guides.js';
+import { GUIDES } from './data/guides.ts';
 
 const isProd = process.env.NODE_ENV === 'production';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '56701005174-t1n68p29hirorldv6dis76rmij721c1t.apps.googleusercontent.com';
@@ -104,39 +104,48 @@ export async function ensureCloudDatabaseReady(force = false) {
     return;
   }
   if (!hasProducts || force) {
-    await syncWithCloud(true);
+    try {
+      await Promise.race([
+        syncWithCloud(true),
+        new Promise((resolve) => setTimeout(resolve, 3000))
+      ]);
+    } catch (e) {
+      console.error('[Server] ensureCloudDatabaseReady error:', e);
+    }
   } else if (now - lastCloudSyncTime >= 45000) {
     // Non-blocking background sync for fresh data across instances
     syncWithCloud(false).catch(() => {});
   }
 }
 
-// Initial startup cloud synchronization
-await syncWithCloud(true);
+// Initial startup cloud synchronization (non-blocking for Vercel cold-starts)
+syncWithCloud(true).then(() => {
+  if (Array.isArray(db.users)) {
+    let userFixed = false;
+    for (const u of db.users) {
+      const shouldBeAdmin = isAdminEmail(u.email);
+      if (shouldBeAdmin && u.role !== 'admin') {
+        u.role = 'admin';
+        userFixed = true;
+      } else if (!shouldBeAdmin && u.role === 'admin') {
+        u.role = 'customer';
+        userFixed = true;
+      }
+    }
+    if (userFixed) { saveAsync().catch(() => {}); }
+  }
 
-if (Array.isArray(db.users)) {
-  let userFixed = false;
-  for (const u of db.users) {
-    const shouldBeAdmin = isAdminEmail(u.email);
-    if (shouldBeAdmin && u.role !== 'admin') {
-      u.role = 'admin';
-      userFixed = true;
-    } else if (!shouldBeAdmin && u.role === 'admin') {
-      u.role = 'customer';
-      userFixed = true;
+  if (db.settings) {
+    const targetAddr = 'İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir';
+    if (!db.settings.address || !db.settings.address.includes('Tramvay') || db.settings.address.includes('No:19')) {
+      db.settings.address = targetAddr;
+      db.settings.mapsQuery = encodeURIComponent('Love Sex Shop Eskişehir Erotik Shop');
+      saveAsync().catch(() => {});
     }
   }
-  if (userFixed) await saveAsync();
-}
-
-if (db.settings) {
-  const targetAddr = 'İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir';
-  if (!db.settings.address || !db.settings.address.includes('Tramvay') || db.settings.address.includes('No:19')) {
-    db.settings.address = targetAddr;
-    db.settings.mapsQuery = encodeURIComponent('Love Sex Shop Eskişehir Erotik Shop');
-    saveAsync().catch(() => {});
-  }
-}
+}).catch((err) => {
+  console.error('[Server] Startup cloud sync failed:', err);
+});
 
 let sessions: Record<string, any> = {};
 try { sessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')); } catch { sessions = {}; }
@@ -340,7 +349,7 @@ const STR: Record<string, Record<string, string>> = {
     'foot.pay.wa': 'WhatsApp Sipariş', 'foot.pay.shop': 'Mağazada Ödeme', 'foot.pay.discreet': 'Gizli Paketleme',
     'hero.eyebrow': '✦ 18+ · Gizli Paketleme · Anonim Ödeme',
     'hero.h1': 'Tutkunuz için<br><em class="em-rose">zarif &amp; gizli</em> bir dünya.',
-    'hero.p': 'Vücut dostu, ödüllü tasarımlara sahip ürünler; kapına kadar gizlilikle, yargısız ve hızlı. 2026\'nın en iyi web deneyimiyle alışverişin en şahane hali.',
+    'hero.p': 'Kişisel zevklerinize adanmış, <strong>yargısız</strong> ve özgür bir alan. Vücut dostu materyallerle üretilmiş premium tasarımlar; <strong>mutlak gizlilik</strong> prensibi, özenli paketleme ve anonim teslimat güvencesiyle kapınıza geliyor.',
     'hero.cta.shop': 'Mağazayı Keşfet →', 'hero.cta.why': 'Neden Biz?',
     'hero.stat1': 'Özenle seçili ürün', 'hero.stat2': '%100', 'hero.stat2.label': 'Gizli paketleme', 'hero.stat3': '4.8', 'hero.stat3.label': 'Ortalama puan',
     'mq.1': 'GİZLİ PAKETLEME', 'mq.2': 'KAPIDA ÖDEME', 'mq.3': 'VÜCUT DOSTU', 'mq.4': 'AYNI GÜN KARGO', 'mq.5': '18+ YETKİN YAŞAM', 'mq.6': 'ANONİM ALIŞVERİŞ',
@@ -1243,7 +1252,7 @@ const productCardSSR = (p: any, tr: any) => {
   const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
 
   return `
-<article class="prod-card rv" data-id="${p.id}" data-slug="${esc(p.slug)}">
+<article class="prod-card rv vis" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
     ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
     <div class="card-sheen"></div>
@@ -1417,17 +1426,26 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
 function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
+  const cats = allCategories();
+  const prods = Array.isArray(db.products) ? db.products : [];
+  const initialGridHtml = prods.length
+    ? `<div class="prod-grid">${prods.slice(0, 50).map((p: any) => productCardSSR(p, tr)).join('')}</div>`
+    : `<div class="empty-state"><div class="big">🔍</div><p>${tr('shop.empty')}</p></div>`;
+
   const html = `
-<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('shop.title')}</div><h1>${tr('shop.title')}</h1><p>${tr('shop.desc', { n: C.num(db.products.length) })}</p></div>
+<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('shop.title')}</div><h1>${tr('shop.title')}</h1><p>${tr('shop.desc', { n: C.num(prods.length) })}</p></div>
 <div class="shop-layout">
   <aside class="filters">
     <div class="field"><input id="shop-search" placeholder="${tr('shop.search')}"></div>
     <h4>${tr('shop.cat')}</h4>
-    <div class="filter-chips" id="cat-chips"></div>
+    <div class="filter-chips" id="cat-chips">
+      <button class="chip on" data-cat="hepsi">${tr('shop.all')}</button>
+      ${cats.map((c: any) => `<button class="chip" data-cat="${esc(c.slug)}">${esc(c.name)}</button>`).join('')}
+    </div>
   </aside>
   <div>
     <div class="shop-toolbar">
-      <span class="results-count" id="results-count"></span>
+      <span class="results-count" id="results-count">${tr('shop.count', { n: C.num(prods.length) })}</span>
       <select id="shop-sort">
         <option value="onerilen">${tr('shop.sort.def')}</option>
         <option value="yeni">${tr('shop.sort.new')}</option>
@@ -1436,7 +1454,7 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
         <option value="puan">${tr('shop.sort.rate')}</option>
       </select>
     </div>
-    <div id="shop-root"></div>
+    <div id="shop-root">${initialGridHtml}</div>
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -2374,12 +2392,26 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   }
   if (pathname === '/api/products' && method === 'GET') {
     let list = [...db.products];
-    const cat = q.get('cat'); if (cat) list = list.filter((p: any) => p.category === cat);
+    const cat = q.get('cat') || q.get('kat');
+    if (cat && cat !== 'hepsi' && cat !== 'all') {
+      const targetCat = cat.toLowerCase();
+      list = list.filter((p: any) => {
+        if (!p.category) return false;
+        const pCat = p.category.toLowerCase();
+        if (pCat === targetCat) return true;
+        if ((targetCat.includes('vibrat') || targetCat === 'vibratorler' || targetCat === 'vibrator') && (pCat.includes('vibrat') || pCat === 'vibratorler' || pCat === 'vibrator')) return true;
+        if ((targetCat.includes('erkek') || targetCat === 'erkekler') && (pCat.includes('erkek') || pCat === 'erkekler')) return true;
+        if ((targetCat.includes('kadin') || targetCat === 'kadinlar') && (pCat.includes('kadin') || pCat === 'kadinlar')) return true;
+        if ((targetCat.includes('anal') || targetCat === 'anal-urun') && (pCat.includes('anal') || pCat === 'anal-urun')) return true;
+        if ((targetCat.includes('fetish') || targetCat.includes('fantezi')) && (pCat.includes('fetish') || pCat.includes('fantezi'))) return true;
+        return false;
+      });
+    }
     const kw = q.get('q'); if (kw) { const k = kw.toLowerCase(); list = list.filter((p: any) => p.name.toLowerCase().includes(k) || p.description.toLowerCase().includes(k) || p.slug.includes(k)); }
     if (q.get('featured') === '1') list = list.filter((p: any) => p.featured);
     if (q.get('wheel') === '1') return json(res, 200, { ok: true, total: 0, products: wheelProducts() });
     switch (q.get('sort')) {
-      case 'yeni': case 'new': list.sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)); break;
+      case 'yeni': case 'new': list.sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))); break;
       case 'fiyat-artan': list.sort((a: any, b: any) => a.price - b.price); break;
       case 'fiyat-azalan': list.sort((a: any, b: any) => b.price - a.price); break;
       case 'puan': list.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0)); break;
@@ -2387,7 +2419,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
     const total = list.length;
     const offset = parseInt(q.get('offset') || '0', 10) || 0;
-    const limit = Math.min(parseInt(q.get('limit') || '24', 10) || 24, 60);
+    const limit = Math.min(parseInt(q.get('limit') || '50', 10) || 50, 100);
     return json(res, 200, { ok: true, total, products: list.slice(offset, offset + limit) });
   }
   const pSlug = pathname.match(/^\/api\/products\/([^/]+)\/?$/);

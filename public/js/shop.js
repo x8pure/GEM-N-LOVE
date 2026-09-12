@@ -962,7 +962,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
 
     return `
-    <article class="prod-card rv" data-id="${p.id}" data-slug="${p.slug}">
+    <article class="prod-card rv vis" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
         ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
         <div class="card-sheen"></div>
@@ -1054,13 +1054,20 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   async function initShop() {
     const root = $('#shop-root');
     if (!root) return;
-    const state = { cat: new URLSearchParams(location.search).get('kat') || 'hepsi', q: '', sort: 'onerilen' };
+    const urlParams = new URLSearchParams(location.search);
+    const state = { cat: urlParams.get('kat') || urlParams.get('cat') || 'hepsi', q: '', sort: 'onerilen' };
     const catWrap = $('#cat-chips');
 
     const cats = await api('/api/categories').catch(() => ({ categories: [] }));
-    if (catWrap) {
+    if (catWrap && cats.categories && cats.categories.length) {
       catWrap.innerHTML = [`<button class="chip ${state.cat === 'hepsi' ? 'on' : ''}" data-cat="hepsi">${t('shop.all')}</button>`]
         .concat(cats.categories.map((c) => `<button class="chip ${state.cat === c.slug ? 'on' : ''}" data-cat="${c.slug}">${catName(c.slug, c.name)}</button>`)).join('');
+      $$('[data-cat]', catWrap).forEach((b) => b.addEventListener('click', () => {
+        state.cat = b.dataset.cat;
+        $$('[data-cat]', catWrap).forEach((x) => x.classList.toggle('on', x === b));
+        load();
+      }));
+    } else if (catWrap) {
       $$('[data-cat]', catWrap).forEach((b) => b.addEventListener('click', () => {
         state.cat = b.dataset.cat;
         $$('[data-cat]', catWrap).forEach((x) => x.classList.toggle('on', x === b));
@@ -1069,14 +1076,16 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     }
     const search = $('#shop-search');
     if (search) {
-      let t;
-      search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { state.q = search.value.trim(); load(); }, 300); });
+      let tTimer;
+      search.addEventListener('input', () => { clearTimeout(tTimer); tTimer = setTimeout(() => { state.q = search.value.trim(); load(); }, 300); });
     }
     const sortSel = $('#shop-sort');
     if (sortSel) sortSel.addEventListener('change', () => { state.sort = sortSel.value; load(); });
 
     async function load() {
-      root.innerHTML = '<div class="spinner"></div>';
+      if (!root.querySelector('.prod-grid')) {
+        root.innerHTML = '<div class="spinner"></div>';
+      }
       const p = new URLSearchParams();
       if (state.cat !== 'hepsi') p.set('cat', state.cat);
       if (state.q) p.set('q', state.q);
@@ -1088,6 +1097,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         ? `<div class="prod-grid">${data.products.map(productCard).join('')}</div>`
         : `<div class="empty-state"><div class="big"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><p>${t('shop.empty')}</p></div>`;
       $$('article', root).forEach((el) => { el.classList.add('vis'); });
+      refreshRevealObservers();
     }
     load();
   }

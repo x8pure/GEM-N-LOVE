@@ -340,6 +340,7 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
     `;
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
+    $('#spatial-stage-close', stage)?.addEventListener('click', closeSpatialCardZoom);
   }
 
   try {

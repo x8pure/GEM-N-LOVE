@@ -5,5 +5,10 @@
       "source": "/(.*)",
       "destination": "/api/index?__vpath=$1"
     }
-  ]
+  ],
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "data/**"
+    }
+  }
 }

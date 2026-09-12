@@ -32,7 +32,7 @@
       "email": "x8pure@gmail.com",
       "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
       "name": "Ulaş",
-      "role": "customer",
+      "role": "admin",
       "googleAuth": true,
       "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKnVsL6kmZscCWiCqAGhy0YMcZljoS0Vcw3m5bK7DATa9kOG_M=s96-c",
       "createdAt": "2026-08-26T19:23:08.444Z",
@@ -67,7 +67,7 @@
           "discreet": true
         }
       ],
-      "tokenVersion": 43
+      "tokenVersion": 45
     },
     {
       "id": "u164dff680af2",
@@ -342,14 +342,16 @@
       "bestSeller": true,
       "image": "/uploads/img7bfbe4451fed.webp",
       "gallery": [
-        "/uploads/img7bfbe4451fed.webp"
+        "/uploads/img7bfbe4451fed.webp",
+        "/uploads/img13ac884744f4.webp"
       ],
       "tags": [],
       "variants": [
         "standart"
       ],
       "createdAt": "2026-08-29T12:10:40.125Z",
-      "shortDesc": "Su bazlı, ipeksi kayganlık sağlayan dermatolojik masaj ve kayganlaştırıcı jel."
+      "shortDesc": "Su bazlı, ipeksi kayganlık sağlayan dermatolojik masaj ve kayganlaştırıcı jel.",
+      "highlights": []
     },
     {
       "id": "p5bdb3e17409d",
@@ -1037,6 +1039,100 @@
         "standart"
       ],
       "createdAt": "2026-09-10T17:43:02.916Z"
+    },
+    {
+      "id": "p44e1746e399f",
+      "slug": "rose-klitoral-emis-ve-titresim-vibratoru",
+      "name": "Rose Klitoral Emiş ve Titreşim Vibratörü",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "Şarjlı Silikon Gül Tasarımlı Uyarıcı - Sarı",
+      "longDescription": "Şık gül tasarımı ve kompakt yapısıyla dikkat çeken Rose Mini, emiş teknolojisi ve titreşim fonksiyonunu bir araya getirerek farklı duyusal deneyimler sunmak üzere tasarlanmıştır. Avuç içine sığan boyutu sayesinde kolay taşınabilir ve pratik kullanım sağlar.\n\nÖzel emiş başlığı, hassas bölgelerde temassız uyarım hissi oluştururken, farklı titreşim modları kişisel tercihlere uygun kullanım seçenekleri sunar. Kompakt boyutuna rağmen güçlü performans sağlayan motor sistemi sayesinde yoğun ve etkili bir kullanım deneyimi elde edilir.\n\nYumuşak silikon dış yüzey cilt dostu bir kullanım sunarken, ergonomik tasarımı sayesinde elde rahat tutulur. Modern gül formu ürüne estetik bir görünüm kazandırırken aynı zamanda kullanım kolaylığı sağlar.\n\nŞarj edilebilir bataryası sayesinde kablosuz kullanım imkanı sunan Rose Mini, günlük kullanım ve seyahatler için ideal boyutlara sahiptir. Sessiz çalışma özelliği sayesinde daha konforlu bir kullanım deneyimi sağlar.\n\nHem başlangıç seviyesindeki kullanıcılar hem de kompakt ve etkil",
+      "price": 959,
+      "oldPrice": 1159,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [
+        "Şarjlı Silikon Gül Tasarımlı Uyarıcı - Sarı"
+      ],
+      "image": "/uploads/img1530a155164f.webp",
+      "gallery": [
+        "/uploads/img1530a155164f.webp",
+        "/uploads/img48e4ba73dcf4.webp",
+        "/uploads/img52560ff7b45e.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-11T15:16:50.756Z"
+    },
+    {
+      "id": "p300d0f836c39",
+      "slug": "xoxo-gercekci-masturbator-mtx3xv8o",
+      "name": "XOXO Gerçekçi Mastürbatör 2 Kg",
+      "category": "ciftler",
+      "categoryName": "Realistik Vajinalar",
+      "description": "TPE Malzeme, Ten Rengi, 2 kg",
+      "longDescription": "TPE Malzeme, Ten Rengi, 2 kg",
+      "price": 3399,
+      "oldPrice": 3699,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": false,
+      "isNew": true,
+      "bestSeller": false,
+      "highlights": [
+        "TPE Malzeme",
+        "Ten Rengi",
+        "2 kg"
+      ],
+      "image": "/uploads/img93c4220e8cad.webp",
+      "gallery": [
+        "/uploads/img93c4220e8cad.webp",
+        "/uploads/img931ccf6cfbf7.webp",
+        "/uploads/img480f0e4a306c.webp",
+        "/uploads/img5a51d0f049f3.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-11T15:25:01.199Z"
+    },
+    {
+      "id": "pdbd6d93e087c",
+      "slug": "eromantica-ornella-da-3-in-1-vibrator",
+      "name": "Eromantica Ornella'da 3 in 1 Vibratör",
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "description": "masaj aleti, pembe, silikon, 21,5 cm",
+      "longDescription": "Ornella, baharatlı incelik ve hassas duygusallık için sevilir. Tanışmanızın ilk dakikalarından itibaren masum pembe bir renkle ve hoş dokunsal duygularla dokunuşlardan baştan çıkarır. Sevecen titreşimlerinin 7 çeşidini hissedeceksiniz ve onları ruh halinize göre değiştirebileceksiniz. Yumuşak yaprakların yumuşak dokunuşları klitorisin uyarılmasından canlı hislere neden olur. Ve olağanüstü bir kafaya sahip mükemmel anatomik şekil, değerli G noktasını bulmanıza ve heyecan verici vajinal orgazm yaşamanıza yardımcı olacaktır. Ornella ile kendine olan sevginin yolunu açacak ve kesinlikle bu romantizme devam etmek isteyeceksin!\n\nG noktasının uyarılması\tEvet\nKlitorisin uyarılması\tEvet\nPembe\nÇalışma uzunluğu, cm\t10Cm",
+      "price": 2899,
+      "oldPrice": 3059,
+      "stock": 10,
+      "rating": 0,
+      "reviewCount": 0,
+      "featured": true,
+      "isNew": true,
+      "bestSeller": true,
+      "highlights": [],
+      "image": "/uploads/img930516dfee2c.webp",
+      "gallery": [
+        "/uploads/img930516dfee2c.webp",
+        "/uploads/img1f1534cac94b.webp",
+        "/uploads/img831ce85393b2.webp"
+      ],
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-11T15:38:24.328Z"
     }
   ],
   "categories": [
@@ -1062,7 +1158,7 @@
       "id": "ctc3fe15335b3e",
       "slug": "vibratorler",
       "name": "Vibratörler",
-      "image": "/uploads/imgfa2478ab0e8d.webp",
+      "image": "/uploads/img5a2eb3463bfc.webp",
       "featuredOnHome": true,
       "homeOrder": 4,
       "createdAt": "2026-08-27T09:58:04.404Z"
@@ -1155,28 +1251,28 @@
   "reviews": [
     {
       "id": "r47d7041862ad",
-      "productId": "pdf2748be251d",
-      "userName": "B*** T.",
+      "productId": "pe31257abd626",
+      "userName": "C*** D.",
       "rating": 5,
-      "text": "İlk başta biraz tereddüt etmiştim ama kullanım talimatına uyup ilişkiden 15 dakika önce 2 fıs sıkınca gerçekten çok başarılı sonuç verdi. En güzel yanı hissi tamamen yok etmemesi, kontrolü elinizde tutmanızı sağlıyor. Kargo da tamamen isimsiz, içi görünmeyen kapalı kutuda geldi, teşekkürler.",
+      "text": "Eşimle birlikte denemek için aldık. Titreşim modları cidden çok başarılı, silikon malzemesi çok kaliteli ve yumuşacık hissettiriyor. Kargo paketinde hiçbir mağaza ibaresi yoktu, kuryeye de belli olmuyor, gizlilik konusunda çok titizler.",
       "approved": true,
       "createdAt": "2026-08-30T18:24:10.000Z"
     },
     {
       "id": "re2d99a5bcb55",
-      "productId": "pdf2748be251d",
-      "userName": "M*** C.",
-      "rating": 5,
-      "text": "Daha önce farklı markalar denemiştim ama ya hissi sıfırlıyordu ya da kötü kokusu oluyordu. Stag 9000 hem kokusuz hem de 2-3 puf fazlasıyla yetiyor. 20 ml şişe epey uzun süre gider gibi duruyor. Kesinlikle tavsiye ederim.",
+      "productId": "p2484e3b314df",
+      "userName": "A*** K.",
+      "rating": 4,
+      "text": "Malzeme dokusu gayet gerçekçi ve esnek. Kullanımı oldukça keyifli ancak temizliği biraz zahmetli diyebilirim, kullanımdan sonra yıkayıp kurutmak ve pudralamak gerekiyor ki ilk günkü formunda kalsın. Paketleme sağlamdı.",
       "approved": true,
       "createdAt": "2026-09-02T14:15:30.000Z"
     },
     {
       "id": "rf83b766af05c",
-      "productId": "pdf2748be251d",
-      "userName": "A*** D.",
-      "rating": 4,
-      "text": "Ürün gayet etkili fakat dozu iyi ayarlamak gerekiyor. 4 fıs sıkınca biraz fazla uyuşma yapabiliyor, benim tecrübeme göre 2 fıs tam ideal dengeyi yakalatıyor. Kargo hızı ve gizli paketleme 10/10.",
+      "productId": "pfad02d97d511",
+      "userName": "M*** T.",
+      "rating": 3,
+      "text": "Ürün malzemesi gerçekten kaliteli, metal olmasının verdiği ağırlık hissi güzel. Ancak anal denemeye yeni başladığım için setin en küçük boyu bile başlangıç için bana biraz zorlayıcı geldi, tam istediğim rahatlığı bulamadım maalesef. Belki tecrübe kazandıkça daha iyi olur. Kargolama süreci ise çok hızlı ve özenliydi.",
       "approved": true,
       "createdAt": "2026-09-05T09:40:00.000Z"
     },
@@ -1365,7 +1461,7 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-11T09:23:54.098Z",
-    "version": 1365
+    "updatedAt": "2026-09-11T16:12:22.682Z",
+    "version": 1622
   }
 }
