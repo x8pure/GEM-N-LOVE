@@ -1030,20 +1030,37 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
   }
 
   const CAT_EN = {
+    'anal-urunler': 'Anal Products',
     'anal-urun': 'Anal Products',
+    'erkek-ve-kadinlar': 'Anal Products',
     'dildo': 'Dildos',
+    'realistik-dildolar': 'Realistic Dildos',
     'erkek-cinsel-saglik-urunu': 'Men\u2019s Sexual Health',
+    'erkek-cinsel-saglik': 'Men\u2019s Sexual Health',
+    'erkekler': 'Men\u2019s Sexual Health',
     'fantezi-fetis-urunu': 'Fantasy & Fetish',
+    'fetish-urunler': 'Fetish Products',
+    'fantezi-ic-giyim': 'Fantasy Lingerie',
     'kadin-cinsel-saglik-urunu': 'Women\u2019s Sexual Health',
+    'kadin-cinsel-saglik': 'Women\u2019s Sexual Health',
+    'kadinlar': 'Women\u2019s Sexual Health',
     'sisme-manken': 'Sex Dolls',
+    'realistik-mankenler': 'Realistic Dolls',
     'vajina-masturbator': 'Vaginas & Masturbators',
+    'ciftler': 'Realistic Vaginas',
+    'realistik-vajinalar': 'Realistic Vaginas',
     'vibrator': 'Vibrators',
+    'vibratorler': 'Vibrators',
     'vibratori': 'Vibrators',
-    'ciftler': 'For Couples', 'kozmetik': 'Cosmetics', 'fantasy': 'Fantasy', 'oyunlar': 'Games', 'knot': 'Knot'
+    'kozmetik': 'Cosmetics',
+    'fantasy': 'Fantasy',
+    'oyunlar': 'Games',
+    'knot': 'Knot'
   };
   function catName(slug, name) {
     let res = name || CAT_EN[slug] || slug;
     if (slug === 'erkekler' || res === 'Erkek Sağlık' || res === 'Erkek Saglik') return 'Erkek Cinsel Sağlık';
+    if (slug === 'erkek-ve-kadinlar' || slug === 'anal-urunler' || slug === 'anal-urun') return 'Anal Ürünler';
     if (LANG === 'en' && CAT_EN[slug]) return CAT_EN[slug];
     return res;
   }
@@ -1055,41 +1072,99 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
     const root = $('#shop-root');
     if (!root) return;
     const urlParams = new URLSearchParams(location.search);
-    const state = { cat: urlParams.get('kat') || urlParams.get('cat') || 'hepsi', q: '', sort: 'onerilen' };
+    const state = {
+      cat: urlParams.get('kat') || urlParams.get('cat') || 'hepsi',
+      q: urlParams.get('q') || '',
+      sort: urlParams.get('sort') || 'onerilen',
+      filter: urlParams.get('filter') || ''
+    };
     const catWrap = $('#cat-chips');
 
-    const cats = await api('/api/categories').catch(() => ({ categories: [] }));
-    if (catWrap && cats.categories && cats.categories.length) {
-      catWrap.innerHTML = [`<button class="chip ${state.cat === 'hepsi' ? 'on' : ''}" data-cat="hepsi">${t('shop.all')}</button>`]
-        .concat(cats.categories.map((c) => `<button class="chip ${state.cat === c.slug ? 'on' : ''}" data-cat="${c.slug}">${catName(c.slug, c.name)}</button>`)).join('');
-      $$('[data-cat]', catWrap).forEach((b) => b.addEventListener('click', () => {
-        state.cat = b.dataset.cat;
-        $$('[data-cat]', catWrap).forEach((x) => x.classList.toggle('on', x === b));
-        load();
-      }));
-    } else if (catWrap) {
-      $$('[data-cat]', catWrap).forEach((b) => b.addEventListener('click', () => {
-        state.cat = b.dataset.cat;
-        $$('[data-cat]', catWrap).forEach((x) => x.classList.toggle('on', x === b));
-        load();
-      }));
+    function matchCat(pCat, fCat) {
+      if (!fCat || fCat === 'hepsi' || fCat === 'all') return true;
+      if (!pCat) return false;
+      if (pCat === fCat) return true;
+      const norm = (s) => {
+        const x = (s || '').toLowerCase().trim();
+        if (x === 'vibratorler' || x === 'vibrator' || x === 'vibratori') return 'vibratorler';
+        if (x === 'realistik-dildolar' || x === 'dildo' || x === 'dildolar') return 'realistik-dildolar';
+        if (x === 'realistik-mankenler' || x === 'sisme-manken' || x === 'mankenler' || x === 'realistik-manken') return 'realistik-mankenler';
+        if (x === 'ciftler' || x === 'realistik-vajinalar' || x === 'vajina-masturbator' || x === 'realistik-vajina') return 'ciftler';
+        if (x === 'fetish-urunler' || x === 'fetish' || x === 'fetis') return 'fetish-urunler';
+        if (x === 'fantezi-ic-giyim' || x === 'ic-giyim' || x === 'fantezi-giyim') return 'fantezi-ic-giyim';
+        if (x === 'erkekler' || x === 'erkek-cinsel-saglik' || x === 'erkek-saglik') return 'erkekler';
+        if (x === 'kadinlar' || x === 'kadin-cinsel-saglik' || x === 'kadin-saglik') return 'kadinlar';
+        if (x === 'erkek-ve-kadinlar' || x === 'anal-urunler' || x === 'anal-urun' || x === 'anal') return 'anal-urunler';
+        return x;
+      };
+      return norm(pCat) === norm(fCat);
     }
+
+    function syncChipState() {
+      if (!catWrap) return;
+      $$('[data-cat]', catWrap).forEach((b) => {
+        const bCat = b.dataset.cat;
+        const isOn = (state.cat === 'hepsi' && bCat === 'hepsi') || (state.cat !== 'hepsi' && matchCat(bCat, state.cat));
+        b.classList.toggle('on', isOn);
+      });
+    }
+
+    function bindChips() {
+      if (!catWrap) return;
+      $$('[data-cat]', catWrap).forEach((b) => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          const targetCat = b.dataset.cat;
+          if (state.cat === targetCat) return;
+          state.cat = targetCat;
+          syncChipState();
+          const p = new URLSearchParams();
+          if (state.cat !== 'hepsi') p.set('kat', state.cat);
+          if (state.q) p.set('q', state.q);
+          if (state.sort !== 'onerilen') p.set('sort', state.sort);
+          const qs = p.toString();
+          history.replaceState(null, '', qs ? `/magaza?${qs}` : '/magaza');
+          load();
+        };
+      });
+    }
+
+    bindChips();
+    syncChipState();
+
     const search = $('#shop-search');
     if (search) {
+      if (state.q && search.value !== state.q) search.value = state.q;
       let tTimer;
-      search.addEventListener('input', () => { clearTimeout(tTimer); tTimer = setTimeout(() => { state.q = search.value.trim(); load(); }, 300); });
+      search.oninput = () => {
+        clearTimeout(tTimer);
+        tTimer = setTimeout(() => {
+          state.q = search.value.trim();
+          load();
+        }, 300);
+      };
     }
+
     const sortSel = $('#shop-sort');
-    if (sortSel) sortSel.addEventListener('change', () => { state.sort = sortSel.value; load(); });
+    if (sortSel) {
+      if (state.sort) sortSel.value = state.sort;
+      sortSel.onchange = () => {
+        state.sort = sortSel.value;
+        load();
+      };
+    }
 
     async function load() {
-      if (!root.querySelector('.prod-grid')) {
+      const hasCards = !!root.querySelector('.prod-grid');
+      if (!hasCards) {
         root.innerHTML = '<div class="spinner"></div>';
       }
       const p = new URLSearchParams();
       if (state.cat !== 'hepsi') p.set('cat', state.cat);
       if (state.q) p.set('q', state.q);
-      p.set('sort', state.sort); p.set('limit', '50');
+      if (state.filter) p.set('filter', state.filter);
+      p.set('sort', state.sort);
+      p.set('limit', '50');
       const data = await api('/api/products?' + p).catch(() => ({ products: [], total: 0 }));
       const count = $('#results-count');
       if (count) count.textContent = t('shop.count', { n: data.total });
@@ -1099,7 +1174,15 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       $$('article', root).forEach((el) => { el.classList.add('vis'); });
       refreshRevealObservers();
     }
-    load();
+
+    // If root does not have server-rendered products or empty-state, fetch from API
+    const hasInitialContent = root.querySelector('.prod-grid') || root.querySelector('.empty-state');
+    if (!hasInitialContent) {
+      load();
+    } else {
+      $$('article', root).forEach((el) => { el.classList.add('vis'); });
+      refreshRevealObservers();
+    }
   }
 
   /* ================= PRODUCT DETAIL ================= */

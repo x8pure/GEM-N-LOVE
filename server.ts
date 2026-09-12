@@ -76,11 +76,13 @@ export async function syncWithCloud(force = false) {
       if (Array.isArray(db.categories)) {
         db.categories.forEach((c: any) => {
           if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') { c.name = 'Erkek Cinsel Sağlık'; changed = true; }
+          if (c.slug === 'erkek-ve-kadinlar' || c.name === 'Anal Ürünler') { c.slug = 'anal-urunler'; c.name = 'Anal Ürünler'; changed = true; }
         });
       }
       if (Array.isArray(db.products)) {
         db.products.forEach((p: any) => {
           if (p.category === 'erkekler' || p.categoryName === 'Erkek Sağlık') { p.categoryName = 'Erkek Cinsel Sağlık'; changed = true; }
+          if (p.category === 'erkek-ve-kadinlar' || p.categoryName === 'Anal Ürünler') { p.category = 'anal-urunler'; p.categoryName = 'Anal Ürünler'; changed = true; }
         });
       }
       if (changed) { await saveAsync(); }
@@ -639,17 +641,50 @@ function errT(lang: string, key: string, vars?: Record<string, any>) {
 }
 
 /* ---------------- calc helpers ---------------- */
+export function matchesCategory(productCategory: string | undefined | null, filterCategory: string | undefined | null): boolean {
+  if (!filterCategory) return true;
+  const f = filterCategory.toLowerCase().trim();
+  if (f === 'hepsi' || f === 'all' || f === '' || f === 'undefined' || f === 'null') return true;
+  if (!productCategory) return false;
+  const p = productCategory.toLowerCase().trim();
+  if (p === f) return true;
+
+  const normalize = (slug: string): string => {
+    const s = slug.toLowerCase().trim();
+    if (s === 'vibratorler' || s === 'vibrator' || s === 'vibratori') return 'vibratorler';
+    if (s === 'realistik-dildolar' || s === 'dildo' || s === 'dildolar') return 'realistik-dildolar';
+    if (s === 'realistik-mankenler' || s === 'sisme-manken' || s === 'mankenler' || s === 'realistik-manken') return 'realistik-mankenler';
+    if (s === 'ciftler' || s === 'realistik-vajinalar' || s === 'vajina-masturbator' || s === 'realistik-vajina') return 'ciftler';
+    if (s === 'fetish-urunler' || s === 'fetish' || s === 'fetis' || s === 'fetis-urunleri') return 'fetish-urunler';
+    if (s === 'fantezi-ic-giyim' || s === 'ic-giyim' || s === 'fantezi-giyim' || s === 'fantezi') return 'fantezi-ic-giyim';
+    if (s === 'erkekler' || s === 'erkek-cinsel-saglik' || s === 'erkek-saglik' || s === 'erkek-cinsel-saglik-urunu') return 'erkekler';
+    if (s === 'kadinlar' || s === 'kadin-cinsel-saglik' || s === 'kadin-saglik' || s === 'kadin-cinsel-saglik-urunu') return 'kadinlar';
+    if (s === 'erkek-ve-kadinlar' || s === 'anal-urunler' || s === 'anal-urun' || s === 'anal' || s === 'anal-plug') return 'anal-urunler';
+    return s;
+  };
+
+  return normalize(p) === normalize(f);
+}
+
 function allCategories() {
   const cats = Array.isArray(db.categories) ? [...db.categories] : [];
   for (const c of cats) {
     if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') {
       c.name = 'Erkek Cinsel Sağlık';
     }
+    if (c.slug === 'erkek-ve-kadinlar' || c.name === 'Anal Ürünler') {
+      c.slug = 'anal-urunler';
+      c.name = 'Anal Ürünler';
+    }
   }
   const known = new Set(cats.map((c: any) => c.slug));
   for (const p of db.products || []) {
     if (p.category === 'erkekler' || p.categoryName === 'Erkek Sağlık') {
       p.categoryName = 'Erkek Cinsel Sağlık';
+    }
+    if (p.category === 'erkek-ve-kadinlar' || p.categoryName === 'Anal Ürünler') {
+      p.category = 'anal-urunler';
+      p.categoryName = 'Anal Ürünler';
     }
     if (p.category && !known.has(p.category)) {
       known.add(p.category);
@@ -784,8 +819,23 @@ function findCoupon(code: string, lang = 'tr') {
 
 /* ---------------- layout ---------------- */
 const CAT_EN: Record<string, string> = {
+  'anal-urunler': 'Anal Products',
+  'anal-urun': 'Anal Products',
+  'erkek-ve-kadinlar': 'Anal Products',
+  'vibratorler': 'Vibrators',
+  'vibrator': 'Vibrators',
   'vibratori': 'Vibrators',
-  'ciftler': 'For Couples',
+  'realistik-dildolar': 'Realistic Dildos',
+  'dildo': 'Dildos',
+  'realistik-mankenler': 'Realistic Dolls',
+  'ciftler': 'Realistic Vaginas',
+  'realistik-vajinalar': 'Realistic Vaginas',
+  'fantezi-ic-giyim': 'Fantasy Lingerie',
+  'fetish-urunler': 'Fetish Products',
+  'erkekler': "Men's Sexual Health",
+  'erkek-cinsel-saglik': "Men's Sexual Health",
+  'kadinlar': "Women's Sexual Health",
+  'kadin-cinsel-saglik': "Women's Sexual Health",
   'kozmetik': 'Cosmetics',
   'fantasy': 'Fantasy & Costume',
   'oyunlar': 'Games & Accessories'
@@ -1294,7 +1344,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
       homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99
     };
   });
-  const exactSlugs = ['vibratorler', 'realistik-dildolar', 'erkek-ve-kadinlar', 'fetish-urunler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'erkekler'];
+  const exactSlugs = ['vibratorler', 'realistik-dildolar', 'anal-urunler', 'erkek-ve-kadinlar', 'fetish-urunler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'erkekler', 'kadinlar'];
   const topCats = exactSlugs.map(slug => allCats.find(c => c.slug === slug)).filter(Boolean);
   const homeRemaining = allCats.filter((c) => !topCats.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
   const top = [...topCats, ...homeRemaining].slice(0, 8);
@@ -1427,38 +1477,110 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
   const cats = allCategories();
-  const prods = Array.isArray(db.products) ? db.products : [];
+
+  // Parse query parameters from request URL
+  const parsedUrl = new URL(req.url || '/magaza', 'http://localhost');
+  const catParam = (parsedUrl.searchParams.get('kat') || parsedUrl.searchParams.get('cat') || 'hepsi').trim();
+  const sortParam = (parsedUrl.searchParams.get('sort') || 'onerilen').trim();
+  const filterParam = (parsedUrl.searchParams.get('filter') || '').trim();
+  const qParam = (parsedUrl.searchParams.get('q') || '').trim();
+  const kw = qParam.toLowerCase();
+
+  let prods = Array.isArray(db.products) ? [...db.products] : [];
+
+  // Filter by category
+  const isHepsi = !catParam || catParam === 'hepsi' || catParam === 'all';
+  if (!isHepsi) {
+    prods = prods.filter((p: any) => matchesCategory(p.category, catParam));
+  }
+
+  // Filter by keyword
+  if (kw) {
+    prods = prods.filter((p: any) =>
+      (p.name && p.name.toLowerCase().includes(kw)) ||
+      (p.description && p.description.toLowerCase().includes(kw)) ||
+      (p.slug && p.slug.toLowerCase().includes(kw))
+    );
+  }
+
+  // Filter by badge / type
+  if (filterParam === 'bestsellers') {
+    prods = prods.filter((p: any) => p.bestSeller);
+  } else if (filterParam === 'new') {
+    prods = prods.filter((p: any) => p.isNew);
+  }
+
+  // Sort with identical algorithm to /api/products
+  switch (sortParam) {
+    case 'yeni':
+    case 'new':
+      prods.sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+      break;
+    case 'fiyat-artan':
+      prods.sort((a: any, b: any) => a.price - b.price);
+      break;
+    case 'fiyat-azalan':
+      prods.sort((a: any, b: any) => b.price - a.price);
+      break;
+    case 'puan':
+      prods.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
+      break;
+    default:
+      prods.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
+  }
+
+  // Find active category for title and breadcrumbs
+  const activeCat = !isHepsi ? cats.find((c: any) => matchesCategory(c.slug, catParam)) : null;
+  const activeCatName = activeCat ? (C.lang === 'en' ? catNameEN(activeCat.slug, activeCat.name) : activeCat.name) : '';
+  const pageHeading = activeCatName || tr('shop.title');
+  const pageSub = tr('shop.desc', { n: C.num(prods.length) });
+
+  const crumbsHtml = activeCatName
+    ? `<a href="/">${tr('shop.crumb.home')}</a> / <a href="/magaza">${tr('shop.title')}</a> / ${esc(activeCatName)}`
+    : `<a href="/">${tr('shop.crumb.home')}</a> / ${tr('shop.title')}`;
+
   const initialGridHtml = prods.length
     ? `<div class="prod-grid">${prods.slice(0, 50).map((p: any) => productCardSSR(p, tr)).join('')}</div>`
-    : `<div class="empty-state"><div class="big">🔍</div><p>${tr('shop.empty')}</p></div>`;
+    : `<div class="empty-state"><div class="big"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><p>${tr('shop.empty')}</p></div>`;
 
   const html = `
-<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('shop.title')}</div><h1>${tr('shop.title')}</h1><p>${tr('shop.desc', { n: C.num(prods.length) })}</p></div>
+<div class="page-head">
+  <div class="crumbs">${crumbsHtml}</div>
+  <h1 id="shop-page-title">${esc(pageHeading)}</h1>
+  <p id="shop-page-sub">${pageSub}</p>
+</div>
 <div class="shop-layout">
   <aside class="filters">
-    <div class="field"><input id="shop-search" placeholder="${tr('shop.search')}"></div>
+    <div class="field"><input id="shop-search" placeholder="${tr('shop.search')}" value="${esc(qParam)}"></div>
     <h4>${tr('shop.cat')}</h4>
     <div class="filter-chips" id="cat-chips">
-      <button class="chip on" data-cat="hepsi">${tr('shop.all')}</button>
-      ${cats.map((c: any) => `<button class="chip" data-cat="${esc(c.slug)}">${esc(c.name)}</button>`).join('')}
+      <button class="chip ${isHepsi ? 'on' : ''}" data-cat="hepsi">${tr('shop.all')}</button>
+      ${cats.map((c: any) => {
+        const isOn = !isHepsi && matchesCategory(c.slug, catParam);
+        const name = C.lang === 'en' ? catNameEN(c.slug, c.name) : c.name;
+        return `<button class="chip ${isOn ? 'on' : ''}" data-cat="${esc(c.slug)}">${esc(name)}</button>`;
+      }).join('')}
     </div>
   </aside>
   <div>
     <div class="shop-toolbar">
       <span class="results-count" id="results-count">${tr('shop.count', { n: C.num(prods.length) })}</span>
       <select id="shop-sort">
-        <option value="onerilen">${tr('shop.sort.def')}</option>
-        <option value="yeni">${tr('shop.sort.new')}</option>
-        <option value="fiyat-artan">${tr('shop.sort.asc')}</option>
-        <option value="fiyat-azalan">${tr('shop.sort.desc')}</option>
-        <option value="puan">${tr('shop.sort.rate')}</option>
+        <option value="onerilen" ${sortParam === 'onerilen' ? 'selected' : ''}>${tr('shop.sort.def')}</option>
+        <option value="yeni" ${sortParam === 'yeni' || sortParam === 'new' ? 'selected' : ''}>${tr('shop.sort.new')}</option>
+        <option value="fiyat-artan" ${sortParam === 'fiyat-artan' ? 'selected' : ''}>${tr('shop.sort.asc')}</option>
+        <option value="fiyat-azalan" ${sortParam === 'fiyat-azalan' ? 'selected' : ''}>${tr('shop.sort.desc')}</option>
+        <option value="puan" ${sortParam === 'puan' ? 'selected' : ''}>${tr('shop.sort.rate')}</option>
       </select>
     </div>
     <div id="shop-root">${initialGridHtml}</div>
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'Shop' : 'Tüm Ürünler — Seks Shop & Erotik Shop', html, {
+  const titleStr = activeCatName
+    ? `${activeCatName} — ${C.lang === 'en' ? 'Shop' : 'Seks Shop & Erotik Shop'}`
+    : (C.lang === 'en' ? 'Shop' : 'Tüm Ürünler — Seks Shop & Erotik Shop');
+  res.end(layout(titleStr, html, {
     description: 'Eskişehir Love Seks Shop & Erotik Shop online kataloğu. Kadın, erkek, çiftler için vücut dostu ürünler, kayganlaştırıcılar, iç giyim ve aksesuarlar.'
   }, C));
 }
@@ -2399,20 +2521,20 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     let list = [...db.products];
     const cat = q.get('cat') || q.get('kat');
     if (cat && cat !== 'hepsi' && cat !== 'all') {
-      const targetCat = cat.toLowerCase();
-      list = list.filter((p: any) => {
-        if (!p.category) return false;
-        const pCat = p.category.toLowerCase();
-        if (pCat === targetCat) return true;
-        if ((targetCat.includes('vibrat') || targetCat === 'vibratorler' || targetCat === 'vibrator') && (pCat.includes('vibrat') || pCat === 'vibratorler' || pCat === 'vibrator')) return true;
-        if ((targetCat.includes('erkek') || targetCat === 'erkekler') && (pCat.includes('erkek') || pCat === 'erkekler')) return true;
-        if ((targetCat.includes('kadin') || targetCat === 'kadinlar') && (pCat.includes('kadin') || pCat === 'kadinlar')) return true;
-        if ((targetCat.includes('anal') || targetCat === 'anal-urun') && (pCat.includes('anal') || pCat === 'anal-urun')) return true;
-        if ((targetCat.includes('fetish') || targetCat.includes('fantezi')) && (pCat.includes('fetish') || pCat.includes('fantezi'))) return true;
-        return false;
-      });
+      list = list.filter((p: any) => matchesCategory(p.category, cat));
     }
-    const kw = q.get('q'); if (kw) { const k = kw.toLowerCase(); list = list.filter((p: any) => p.name.toLowerCase().includes(k) || p.description.toLowerCase().includes(k) || p.slug.includes(k)); }
+    const kw = q.get('q');
+    if (kw) {
+      const k = kw.toLowerCase();
+      list = list.filter((p: any) =>
+        (p.name && p.name.toLowerCase().includes(k)) ||
+        (p.description && p.description.toLowerCase().includes(k)) ||
+        (p.slug && p.slug.toLowerCase().includes(k))
+      );
+    }
+    const filter = q.get('filter');
+    if (filter === 'bestsellers') list = list.filter((p: any) => p.bestSeller);
+    if (filter === 'new') list = list.filter((p: any) => p.isNew);
     if (q.get('featured') === '1') list = list.filter((p: any) => p.featured);
     if (q.get('wheel') === '1') return json(res, 200, { ok: true, total: 0, products: wheelProducts() });
     switch (q.get('sort')) {
