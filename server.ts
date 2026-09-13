@@ -6,7 +6,19 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { load, save, uid, nextId, hashPassword, setMemoryDb, saveAsync } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
-import { loadFromCloudFirestore, saveImageToCloud, getImageFromCloud, initFirebase, flushPendingSave, saveToCloudFirestore } from './lib/firebase.js';
+import {
+  loadFromCloudFirestore,
+  saveImageToCloud,
+  getImageFromCloud,
+  initFirebase,
+  flushPendingSave,
+  saveToCloudFirestore,
+  saveWheelSettingsToCloud,
+  loadWheelSettingsFromCloud,
+  savePosSaleToCloud,
+  deletePosSaleFromCloud,
+  loadPosSalesFromCloud
+} from './lib/firebase.js';
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleGenAI, Type } from '@google/genai';
@@ -67,53 +79,105 @@ function isAdminEmail(email?: string | null): boolean {
 
 let lastCloudSyncTime = 0;
 let isSyncing = false;
+let syncPromise: Promise<void> | null = null;
 let initialSyncDone = false;
 
-export async function syncWithCloud(force = false) {
-  if (isSyncing) return;
-  isSyncing = true;
-  try {
-    initFirebase();
-    const localDb = load();
-    const cloudState = await loadFromCloudFirestore();
-    
-    if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
-      setMemoryDb(cloudState, true);
-      db = load();
-      let changed = false;
-      if (Array.isArray(db.categories)) {
-        db.categories.forEach((c: any) => {
-          if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') { c.name = 'Erkek Cinsel Sağlık'; changed = true; }
-          if (c.slug === 'erkek-ve-kadinlar' || c.name === 'Anal Ürünler') { c.slug = 'anal-urunler'; c.name = 'Anal Ürünler'; changed = true; }
-        });
-      }
-      if (Array.isArray(db.products)) {
-        db.products.forEach((p: any) => {
-          if (p.category === 'erkekler' || p.categoryName === 'Erkek Sağlık') { p.categoryName = 'Erkek Cinsel Sağlık'; changed = true; }
-          if (p.category === 'erkek-ve-kadinlar' || p.categoryName === 'Anal Ürünler') { p.category = 'anal-urunler'; p.categoryName = 'Anal Ürünler'; changed = true; }
-        });
-      }
-      if (changed) { await saveAsync(); }
-      lastCloudSyncTime = Date.now();
-      initialSyncDone = true;
-      console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories, ${db.orders?.length || 0} orders, ${db.posSales?.length || 0} POS sales.`);
-
-      // Check if local had new posSales or orders merged into db that cloudState didn't have
-      const cloudOrdersCount = Array.isArray(cloudState.orders) ? cloudState.orders.length : 0;
-      const cloudPosCount = Array.isArray(cloudState.posSales) ? cloudState.posSales.length : 0;
-      if (db.orders.length > cloudOrdersCount || db.posSales.length > cloudPosCount) {
-        await saveAsync();
-      }
-    } else if (localDb && Array.isArray(localDb.products) && localDb.products.length > 0) {
-      await saveAsync();
-      lastCloudSyncTime = Date.now();
-      initialSyncDone = true;
+export async function syncWithCloud(force = false): Promise<void> {
+  if (isSyncing && syncPromise) {
+    if (force) {
+      await syncPromise;
+    } else {
+      return syncPromise;
     }
-  } catch (err) {
-    console.error('[Server] Cloud sync error:', err);
-  } finally {
-    isSyncing = false;
   }
+  isSyncing = true;
+  syncPromise = (async () => {
+    try {
+      initFirebase();
+      const localDb = load();
+      const cloudState = await loadFromCloudFirestore();
+      
+      if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+        setMemoryDb(cloudState, true);
+        db = load();
+        let changed = false;
+        if (Array.isArray(db.categories)) {
+          db.categories.forEach((c: any) => {
+            if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') { c.name = 'Erkek Cinsel Sağlık'; changed = true; }
+            if (c.slug === 'erkek-ve-kadinlar' || c.name === 'Anal Ürünler') { c.slug = 'anal-urunler'; c.name = 'Anal Ürünler'; changed = true; }
+          });
+        }
+        if (Array.isArray(db.products)) {
+          db.products.forEach((p: any) => {
+            if (p.category === 'erkekler' || p.categoryName === 'Erkek Sağlık') { p.categoryName = 'Erkek Cinsel Sağlık'; changed = true; }
+            if (p.category === 'erkek-ve-kadinlar' || p.categoryName === 'Anal Ürünler') { p.category = 'anal-urunler'; p.categoryName = 'Anal Ürünler'; changed = true; }
+          });
+        }
+        if (changed) { await saveAsync(); }
+
+        // Sync dedicated Firestore wheel settings
+        try {
+          const cloudWheel = await loadWheelSettingsFromCloud();
+          if (Array.isArray(cloudWheel) && cloudWheel.length > 0) {
+            if (!db.settings) db.settings = {};
+            db.settings.wheelIds = cloudWheel;
+          } else if (Array.isArray(db.settings?.wheelIds) && db.settings.wheelIds.length > 0) {
+            await saveWheelSettingsToCloud(db.settings.wheelIds);
+          }
+        } catch (e) {
+          console.error('[Server] Dedicated wheel settings sync error:', e);
+        }
+
+        // Sync dedicated Firestore POS sales
+        try {
+          const cloudPosSales = await loadPosSalesFromCloud();
+          if (Array.isArray(cloudPosSales) && cloudPosSales.length > 0) {
+            const posMap = new Map();
+            cloudPosSales.forEach((s: any) => s && s.id && posMap.set(s.id, s));
+            (db.posSales || []).forEach((s: any) => {
+              if (s && s.id && !posMap.has(s.id)) {
+                posMap.set(s.id, s);
+                savePosSaleToCloud(s).catch(() => {});
+              }
+            });
+            db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+          } else if (Array.isArray(db.posSales) && db.posSales.length > 0) {
+            for (const s of db.posSales) {
+              await savePosSaleToCloud(s);
+            }
+          }
+        } catch (e) {
+          console.error('[Server] Dedicated POS sales sync error:', e);
+        }
+
+        save();
+        lastCloudSyncTime = Date.now();
+        initialSyncDone = true;
+        console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories, ${db.orders?.length || 0} orders, ${db.posSales?.length || 0} POS sales.`);
+      } else if (localDb && Array.isArray(localDb.products) && localDb.products.length > 0) {
+        // Sync dedicated Firestore wheel and pos sales even when localDb is primary
+        try {
+          const cloudWheel = await loadWheelSettingsFromCloud();
+          if (Array.isArray(cloudWheel) && cloudWheel.length > 0) {
+            if (!db.settings) db.settings = {};
+            db.settings.wheelIds = cloudWheel;
+          }
+          const cloudPos = await loadPosSalesFromCloud();
+          if (Array.isArray(cloudPos) && cloudPos.length > 0) {
+            db.posSales = cloudPos;
+          }
+        } catch {}
+        await saveAsync();
+        lastCloudSyncTime = Date.now();
+        initialSyncDone = true;
+      }
+    } catch (err) {
+      console.error('[Server] Cloud sync error:', err);
+    } finally {
+      isSyncing = false;
+    }
+  })();
+  return syncPromise;
 }
 
 export async function ensureCloudDatabaseReady(force = false) {
@@ -3269,6 +3333,15 @@ ${rawText || name}`;
 
     /* --- wheel --- */
     if (pathname === '/api/admin/wheel' && method === 'GET') {
+      try {
+        const cloudWheel = await loadWheelSettingsFromCloud();
+        if (Array.isArray(cloudWheel) && cloudWheel.length > 0) {
+          if (!db.settings) db.settings = {};
+          db.settings.wheelIds = cloudWheel;
+        }
+      } catch (err) {
+        console.error('[Wheel GET] Error loading dedicated settings:', err);
+      }
       if (!Array.isArray(db.settings.wheelIds)) db.settings.wheelIds = [];
       const wp = wheelProducts();
       return json(res, 200, { ok: true, ids: db.settings.wheelIds, products: wp });
@@ -3283,7 +3356,9 @@ ${rawText || name}`;
           if (p && !seen.has(p.id)) { clean.push(p.id); seen.add(p.id); }
           if (clean.length >= 8) break;
         }
-        db.settings.wheelIds = clean; await saveAsync();
+        db.settings.wheelIds = clean;
+        await saveWheelSettingsToCloud(clean);
+        await saveAsync();
         return json(res, 200, { ok: true, ids: db.settings.wheelIds });
       }
       if (b.toggle) {
@@ -3294,6 +3369,7 @@ ${rawText || name}`;
           if (db.settings.wheelIds.length >= 8) return sendError(res, 400, E('err.wheelFull'));
           db.settings.wheelIds.push(p.id);
         }
+        await saveWheelSettingsToCloud(db.settings.wheelIds);
         await saveAsync();
         return json(res, 200, { ok: true, ids: db.settings.wheelIds });
       }
@@ -3419,6 +3495,22 @@ ${rawText || name}`;
 
     /* ================= POS / FİZİKSEL MAĞAZA KASA API ================= */
     if (pathname === '/api/admin/pos' && method === 'GET') {
+      try {
+        const cloudSales = await loadPosSalesFromCloud();
+        if (Array.isArray(cloudSales) && cloudSales.length > 0) {
+          const posMap = new Map();
+          cloudSales.forEach((s: any) => s && s.id && posMap.set(s.id, s));
+          (db.posSales || []).forEach((s: any) => {
+            if (s && s.id && !posMap.has(s.id)) {
+              posMap.set(s.id, s);
+              savePosSaleToCloud(s).catch(() => {});
+            }
+          });
+          db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        }
+      } catch (err) {
+        console.error('[POS GET] Error loading from cloud:', err);
+      }
       if (!Array.isArray(db.posSales)) db.posSales = [];
       const sales = [...db.posSales].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       return json(res, 200, { ok: true, sales, products: db.products.map((p: any) => ({ id: p.id, name: p.name, price: p.price, originalPrice: p.originalPrice, categoryName: p.categoryName, image: p.image })) });
@@ -3457,6 +3549,7 @@ ${rawText || name}`;
       };
 
       db.posSales.unshift(newSale);
+      await savePosSaleToCloud(newSale);
       await saveAsync();
       return json(res, 201, { ok: true, sale: newSale });
     }
@@ -3468,6 +3561,7 @@ ${rawText || name}`;
       const idx = db.posSales.findIndex((s: any) => s.id === saleId);
       if (idx === -1) return sendError(res, 404, 'Satış kaydı bulunamadı.');
       db.posSales.splice(idx, 1);
+      await deletePosSaleFromCloud(saleId);
       await saveAsync();
       return json(res, 200, { ok: true });
     }

@@ -1446,13 +1446,13 @@
     "instagram": "@loveeroticshop",
     "wheelIds": [
       "p2484e3b314df",
+      "pe31257abd626",
       "pb8933905dc29",
-      "p56895cc74a84",
+      "pb7847614536e",
       "pdf2748be251d",
-      "pe6440906f9a6",
-      "pbcfa6505bc8d",
-      "pd2d3abea895e",
-      "pc673785d558d"
+      "p56895cc74a84",
+      "pc8f905e761bf",
+      "pe6440906f9a6"
     ]
   },
   "meta": {
@@ -1461,8 +1461,25 @@
       "product": 0,
       "order": 24
     },
-    "updatedAt": "2026-09-13T09:49:00.384Z",
-    "version": 1663
+    "updatedAt": "2026-09-13T11:00:23.567Z",
+    "version": 1675
   },
-  "posSales": []
+  "posSales": [
+    {
+      "createdAt": "2026-09-13T10:59:38.245Z",
+      "id": "POS-VERIFY-123",
+      "total": 350.5,
+      "title": "Nakit Test Satışı",
+      "items": [
+        {
+          "title": "Ürün 1",
+          "price": 350.5,
+          "productId": "p1",
+          "qty": 1
+        }
+      ],
+      "sellerName": "Yetkili",
+      "paymentMethod": "nakit"
+    }
+  ]
 }

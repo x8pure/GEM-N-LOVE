@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "posSale": {
+      "title": "POS Sale",
+      "description": "Physical cash register sales recorded in the store",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "total": { "type": "number" },
+        "items": { "type": "array" },
+        "note": { "type": "string" },
+        "sellerName": { "type": "string" },
+        "sellerEmail": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "paymentMethod", "total", "createdAt"]
+    },
+    "appSettings": {
+      "title": "App Settings",
+      "description": "Global store configuration such as 3D wheel product IDs",
+      "type": "object",
+      "properties": {
+        "ids": { "type": "array" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["updatedAt"]
+    }
+  },
+  "firestore": {
+    "/pos_sales/{saleId}": {
+      "schema": "posSale",
+      "description": "Individual store physical POS sales"
+    },
+    "/app_settings/{settingId}": {
+      "schema": "appSettings",
+      "description": "Store configuration and 3D wheel settings"
+    }
+  }
+}
