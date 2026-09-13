@@ -44,7 +44,14 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
-const DEFAULT_ADMIN_EMAILS = ['cemal.ulas@gmail.com'];
+const DEFAULT_ADMIN_EMAILS = [
+  'x8pure@gmail.com',
+  'cemal.ulas@gmail.com',
+  'admin@loveshop.com.tr',
+  'admin@loveshop.tr',
+  'info@loveshop.com.tr',
+  'support@loveshop.com.tr'
+];
 const ENV_ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '')
   .split(',')
   .map((e) => e.trim().toLowerCase())
@@ -60,6 +67,7 @@ function isAdminEmail(email?: string | null): boolean {
 
 let lastCloudSyncTime = 0;
 let isSyncing = false;
+let initialSyncDone = false;
 
 export async function syncWithCloud(force = false) {
   if (isSyncing) return;
@@ -87,10 +95,19 @@ export async function syncWithCloud(force = false) {
       }
       if (changed) { await saveAsync(); }
       lastCloudSyncTime = Date.now();
-      console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories.`);
+      initialSyncDone = true;
+      console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories, ${db.orders?.length || 0} orders, ${db.posSales?.length || 0} POS sales.`);
+
+      // Check if local had new posSales or orders merged into db that cloudState didn't have
+      const cloudOrdersCount = Array.isArray(cloudState.orders) ? cloudState.orders.length : 0;
+      const cloudPosCount = Array.isArray(cloudState.posSales) ? cloudState.posSales.length : 0;
+      if (db.orders.length > cloudOrdersCount || db.posSales.length > cloudPosCount) {
+        await saveAsync();
+      }
     } else if (localDb && Array.isArray(localDb.products) && localDb.products.length > 0) {
       await saveAsync();
       lastCloudSyncTime = Date.now();
+      initialSyncDone = true;
     }
   } catch (err) {
     console.error('[Server] Cloud sync error:', err);
@@ -100,22 +117,22 @@ export async function syncWithCloud(force = false) {
 }
 
 export async function ensureCloudDatabaseReady(force = false) {
-  const hasProducts = db && Array.isArray(db.products) && db.products.length > 0;
   const now = Date.now();
-  if (!force && hasProducts && (now - lastCloudSyncTime < 45000)) {
+  if (initialSyncDone && !force && (now - lastCloudSyncTime < 30000)) {
     return;
   }
-  if (!hasProducts || force) {
+  if (!initialSyncDone || force) {
     try {
       await Promise.race([
         syncWithCloud(true),
-        new Promise((resolve) => setTimeout(resolve, 3000))
+        new Promise((resolve) => setTimeout(resolve, 2500))
       ]);
+      initialSyncDone = true;
     } catch (e) {
       console.error('[Server] ensureCloudDatabaseReady error:', e);
     }
-  } else if (now - lastCloudSyncTime >= 45000) {
-    // Non-blocking background sync for fresh data across instances
+  } else if (now - lastCloudSyncTime >= 30000) {
+    // Non-blocking periodic background sync
     syncWithCloud(false).catch(() => {});
   }
 }
@@ -128,9 +145,6 @@ syncWithCloud(true).then(() => {
       const shouldBeAdmin = isAdminEmail(u.email);
       if (shouldBeAdmin && u.role !== 'admin') {
         u.role = 'admin';
-        userFixed = true;
-      } else if (!shouldBeAdmin && u.role === 'admin') {
-        u.role = 'customer';
         userFixed = true;
       }
     }
@@ -288,9 +302,8 @@ function getAuthUser(req: http.IncomingMessage, sess?: any) {
     user = db.users.find((x: any) => x.id === sess.userId) || null;
   }
   if (user) {
-    const calculatedRole = isAdminEmail(user.email) ? 'admin' : 'customer';
-    if (user.role !== calculatedRole) {
-      user.role = calculatedRole;
+    if (isAdminEmail(user.email) && user.role !== 'admin') {
+      user.role = 'admin';
       saveAsync().catch(() => {});
     }
   }
@@ -1034,7 +1047,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" /></noscript>
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<!-- <link rel="icon" type="image/x-icon" href="/favicon.ico"> removed -->
 <link rel="apple-touch-icon" href="/favicon.svg">
 <script>try{var d=localStorage.getItem('ls_theme');if(d==='dark'||((d===null||d==='')&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');var isBot=/bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(navigator.userAgent);if(!isBot&&(localStorage.getItem('ls_age_ok_v11')!=='1'||new URLSearchParams(location.search).has('gate')||new URLSearchParams(location.search).has('yas')))document.documentElement.classList.add('gate-active-init');}catch(e){}</script>
 <style>html:not(.gate-active-init) #age-gate { display: none !important; }</style>
@@ -1351,7 +1364,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
   const totalCount = allCats.reduce((s, c) => s + c.count, 0);
   const featured = db.products.filter((p: any) => p.featured).slice(0, 10);
-  const heroProds = (db.products.filter((p: any) => p.wheelPrize || p.featured).length ? db.products.filter((p: any) => p.wheelPrize || p.featured) : db.products).slice(0, 8);
+  const heroProds = wheelProducts();
   const news = [...db.products].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6);
   const reviews = db.reviews.filter((r: any) => r.approved).slice(0, 3);
   const heroJson = JSON.stringify(heroProds.map((p: any) => ({
@@ -2254,7 +2267,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   });
 }
 
-const uploadCache = new Map<string, string>();
+
 
 async function saveUpload(dataUrl: string): Promise<string> {
   if (!dataUrl || typeof dataUrl !== 'string') return '';
@@ -2262,14 +2275,13 @@ async function saveUpload(dataUrl: string): Promise<string> {
   if (trimmed.startsWith('/uploads/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     return trimmed;
   }
-  if (uploadCache.has(trimmed)) {
-    return uploadCache.get(trimmed)!;
-  }
+
   const base64Index = trimmed.indexOf(';base64,');
   if (trimmed.startsWith('data:image/') && base64Index !== -1) {
     const header = trimmed.substring(5, base64Index);
     const rawType = header.replace(/^image\//, '').split(';')[0].trim().toLowerCase();
     const rawBase64 = trimmed.substring(base64Index + 8);
+
     const extMap: Record<string, string> = {
       'svg+xml': 'svg', 'svg': 'svg',
       'png': 'png', 'x-png': 'png',
@@ -2278,6 +2290,7 @@ async function saveUpload(dataUrl: string): Promise<string> {
     };
     const ext = extMap[rawType] || 'jpg';
     const mimeType = rawType === 'svg' || rawType === 'svg+xml' ? 'image/svg+xml' : (rawType === 'jpg' ? 'image/jpeg' : `image/${rawType}`);
+
     try {
       const cleanBase64 = rawBase64.replace(/[\s\r\n]+/g, '');
       const buf = Buffer.from(cleanBase64, 'base64');
@@ -2294,11 +2307,6 @@ async function saveUpload(dataUrl: string): Promise<string> {
               token: process.env.BLOB_READ_WRITE_TOKEN
             });
             if (blob && blob.url) {
-              uploadCache.set(trimmed, blob.url);
-              if (uploadCache.size > 200) {
-                const firstKey = uploadCache.keys().next().value;
-                if (firstKey) uploadCache.delete(firstKey);
-              }
               return blob.url;
             }
           } catch (blobErr) {
@@ -2310,20 +2318,19 @@ async function saveUpload(dataUrl: string): Promise<string> {
         const uploadDir = path.join(PUB, 'uploads');
         try { fs.mkdirSync(uploadDir, { recursive: true }); } catch {}
         try { fs.writeFileSync(path.join(uploadDir, name), buf); } catch {}
+        
         const savedPath = '/uploads/' + name;
-        uploadCache.set(trimmed, savedPath);
-        if (uploadCache.size > 200) {
-          const firstKey = uploadCache.keys().next().value;
-          if (firstKey) uploadCache.delete(firstKey);
-        }
+
         // Persist to Cloud Firestore so container rebuilds never lose the photo
         await saveImageToCloud(name, trimmed).catch(() => {});
+
         return savedPath;
       }
     } catch (err) {
       console.error('saveUpload error:', err);
     }
   }
+
   return trimmed.startsWith('data:') ? '' : trimmed;
 }
 
@@ -3478,7 +3485,6 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=()');
 
-  await ensureCloudDatabaseReady();
   let url: URL;
   let pathname = '/';
   try {
@@ -3495,6 +3501,13 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   } catch {
     url = new URL('/', 'http://localhost');
     pathname = '/';
+  }
+
+  // Ensure fresh database state on cold starts for API routes and dynamic pages
+  if (pathname.startsWith('/api/') || pathname.startsWith('/admin') || pathname === '/' || pathname === '/magaza') {
+    await ensureCloudDatabaseReady();
+  } else {
+    ensureCloudDatabaseReady().catch(() => {});
   }
   try {
     // 301 Permanent Redirects (Fixing 404s for Google Index & Legacy Links across all methods)

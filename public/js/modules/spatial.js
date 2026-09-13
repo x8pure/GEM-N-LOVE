@@ -345,15 +345,19 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
   try {
     const cleanKey = String(productIdOrSlug || '').replace(/^\/urun\//, '').replace(/\/+$/, '').trim();
-    const res = await api('/api/products/' + encodeURIComponent(cleanKey));
+    const fetchTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error(LANG === 'en' ? 'Server timeout. Please try again.' : 'Sunucu yanıtı zaman aşımına uğradı. Lütfen tekrar deneyiniz.')), 7000));
+    const res = await Promise.race([api('/api/products/' + encodeURIComponent(cleanKey)), fetchTimeout]);
     if (reqId !== activeZoomRequestId) return;
     const p = (res && res.product) ? res.product : res;
-    if (!p || !p.id) throw new Error('Ürün bulunamadı');
+    if (!p || !p.id) throw new Error(LANG === 'en' ? 'Product not found' : 'Ürün bulunamadı');
     
     // Auto-fetch playlist for infinite browsing
     if (p.category && activeCategory !== p.category) {
       try {
-        const catRes = await api('/api/products?limit=100&cat=' + encodeURIComponent(p.category));
+        const catRes = await Promise.race([
+          api('/api/products?limit=100&cat=' + encodeURIComponent(p.category)),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
+        ]);
         if (catRes && catRes.products) {
           activePlaylist = catRes.products;
           activeCategory = p.category;
@@ -878,13 +882,16 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
       }
     }
   } catch (err) {
-    if (reqId !== activeZoomRequestId) return;
+    if (!stage) return;
     stage.innerHTML = `
-      <button type="button" class="spatial-stage-close" id="spatial-stage-close">✕</button>
-      <div class="empty-state" style="padding:60px 20px;">
-        <p>${err.message || 'Ürün detayları yüklenemedi.'}</p>
+      <button type="button" class="spatial-stage-close" id="spatial-stage-close" aria-label="${LANG === 'en' ? 'Close' : 'Kapat'}">✕</button>
+      <div class="empty-state" style="padding:60px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:300px;">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p style="margin:0;font-size:15px;color:var(--text);font-weight:500;">${esc(err.message || (LANG === 'en' ? 'Product details could not be loaded.' : 'Ürün detayları yüklenemedi.'))}</p>
+        <button type="button" class="btn btn-ghost" id="spatial-retry-btn" style="margin-top:4px;font-size:13px;">${LANG === 'en' ? 'Try Again' : 'Yeniden Dene'}</button>
       </div>`;
     $('#spatial-stage-close', stage)?.addEventListener('click', closeSpatialCardZoom);
+    $('#spatial-retry-btn', stage)?.addEventListener('click', () => openSpatialCardZoom(productIdOrSlug, originCard));
   }
 }
 

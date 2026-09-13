@@ -2,13 +2,42 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!css/|js/|favicon\\.svg|robots\\.txt|googled2d4255e0f685daf\\.html).*)",
       "destination": "/api/index?__vpath=$1"
     }
   ],
   "functions": {
     "api/index.ts": {
-      "includeFiles": "data/**"
+      "includeFiles": "{data/**,public/**,firebase-applet-config.json}"
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/css/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/uploads/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
 }

@@ -2770,9 +2770,20 @@
   /* ================= ROUTER ================= */
   const VIEWS = { dashboard: viewDashboard, pos: viewPOS, orders: viewOrders, products: viewProducts, categories: viewCategories, reviews: viewReviews, coupons: viewCoupons, users: viewUsers, messages: viewMessages, settings: viewSettings };
   async function route() {
-    let sess;
-    try { sess = await api('/api/session'); } catch { sess = { user: null }; }
-    if (!sess.user || sess.user.role !== 'admin') return loginScreen(sess.user);
+    let sess = null;
+    try {
+      sess = await api('/api/session');
+    } catch (err) {
+      if (window.__me && window.__me.role === 'admin') {
+        sess = { user: window.__me };
+      } else {
+        sess = { user: null };
+      }
+    }
+    if (!sess || !sess.user || sess.user.role !== 'admin') {
+      window.__me = null;
+      return loginScreen(sess ? sess.user : null);
+    }
     window.__me = sess.user;
     try {
       const st = (await api('/api/admin/stats')).stats;
@@ -2834,5 +2845,5 @@
         }
       }
     } catch (e) {}
-  }, 8000); // Check every 8 seconds
+  }, 45000); // Check every 45 seconds instead of 8 seconds
 })();

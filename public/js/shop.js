@@ -2363,20 +2363,23 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       if (dest.origin !== location.origin) return;
       if (dest.pathname.startsWith('/admin') || dest.pathname.startsWith('/api/')) return;
 
-      // If user is clicking category chip inside shop page and already in /magaza, let shop filter handle it
-      if (location.pathname === '/magaza' && dest.pathname === '/magaza' && dest.searchParams.has('kat')) {
-        const cat = dest.searchParams.get('kat');
-        const chip = $(`#cat-chips [data-cat="${cat}"]`);
-        if (chip) {
-          e.preventDefault();
-          const currentY = window.scrollY || window.pageYOffset || 0;
-          scrollPositions.set(location.pathname + location.search, currentY);
-          try { sessionStorage.setItem('ls_scr_' + location.pathname + location.search, currentY.toString()); } catch(e) {}
-          
-          chip.click();
-          history.pushState({}, '', link.href);
-          lastNavUrlStr = link.href;
-          return;
+      // If user is clicking category chip/link inside shop page and already in /magaza, let shop filter handle it
+      if (location.pathname === '/magaza' && dest.pathname === '/magaza' && (dest.searchParams.has('kat') || dest.searchParams.has('cat'))) {
+        const cat = dest.searchParams.get('kat') || dest.searchParams.get('cat') || '';
+        if (cat) {
+          const allChips = $$('#cat-chips [data-cat]');
+          const chip = allChips.find(el => el.dataset.cat === cat || el.dataset.cat.toLowerCase() === cat.toLowerCase());
+          if (chip) {
+            e.preventDefault();
+            const currentY = window.scrollY || window.pageYOffset || 0;
+            scrollPositions.set(location.pathname + location.search, currentY);
+            try { sessionStorage.setItem('ls_scr_' + location.pathname + location.search, currentY.toString()); } catch(e) {}
+            
+            chip.click();
+            history.pushState({}, '', link.href);
+            lastNavUrlStr = link.href;
+            return;
+          }
         }
       }
 
