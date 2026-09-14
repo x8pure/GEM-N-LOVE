@@ -4120,10 +4120,10 @@ footer { border-top: 1px solid var(--line); padding: 50px 5vw 30px; background: 
 .pay-chips span { border: 1px solid var(--line-strong); border-radius: 6px; padding: 6px 14px; font-size: 11px; background: var(--card); }
 
 /* ==== Shop page ==== */
-.page-head { padding: 56px 5vw 30px; width: 100%; max-width: 100%; box-sizing: border-box; }
-.page-head h1 { font-family: var(--font-display); font-size: clamp(34px, 4.5vw, 62px); font-weight: 650; letter-spacing: -1.6px; }
-.page-head p { color: var(--muted); margin-top: 8px; }
-.crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; letter-spacing: .5px; }
+.page-head { padding: 48px 5vw 24px; width: 100%; max-width: 100%; box-sizing: border-box; }
+.page-head h1 { font-family: var(--font-display); font-size: clamp(34px, 4.5vw, 56px); font-weight: 650; letter-spacing: -1.6px; line-height: 1.1; margin: 0; }
+.page-head p { color: var(--muted); margin-top: 10px; font-size: 14.5px; max-width: 65ch; line-height: 1.6; }
+.crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; letter-spacing: .5px; }
 .crumbs a:hover { color: var(--rose); }
 .shop-layout {
   display: grid;
@@ -4139,7 +4139,20 @@ footer { border-top: 1px solid var(--line); padding: 50px 5vw 30px; background: 
 }
 .shop-layout > * { min-width: 0; max-width: 100%; }
 .shop-layout aside.filters { min-width: 0; max-width: 100%; width: 100%; }
-.filters h4 { font-family: var(--font-display); font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; margin: 22px 0 12px; color: var(--muted); font-weight: 500; }
+.shop-layout aside.filters .field input {
+  border-radius: 100px;
+  padding: 10px 18px;
+  font-size: 13px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-strong);
+  transition: all .25s ease;
+}
+.shop-layout aside.filters .field input:focus {
+  background: var(--card);
+  border-color: var(--text);
+  box-shadow: none;
+}
+.filters h4 { font-family: var(--font-display); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin: 20px 0 10px; color: var(--muted); font-weight: 500; }
 .filter-chips { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; max-width: 100%; }
 .chip {
   padding: 8px 16px; border-radius: 100px; border: 1px solid var(--line-strong);
@@ -4162,13 +4175,38 @@ html.dark .chip.on, [data-theme="dark"] .chip.on {
   border-color: var(--text);
   color: var(--bg);
 }
-.shop-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 14px; flex-wrap: wrap; width: 100%; max-width: 100%; }
-.shop-toolbar select {
-  background: rgba(255,255,255,.85); backdrop-filter: blur(6px);
-  color: var(--text); border: 1px solid var(--line-strong);
-  border-radius: 100px; padding: 9px 18px; font-size: 13px; outline: none;
+.shop-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
 }
-.results-count { font-size: 13px; color: var(--muted); }
+.shop-toolbar select {
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(6px);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.shop-toolbar select:hover { border-color: var(--text); }
+.results-count {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: .2px;
+  color: var(--muted);
+}
 
 /* ==== Product detail (Luxury Editorial Architecture) ==== */
 .pd-layout {

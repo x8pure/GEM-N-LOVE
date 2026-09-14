@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
-import { load, save, uid, nextId, hashPassword, setMemoryDb, saveAsync } from './lib/db.js';
+import { load, save, saveLocal, uid, nextId, hashPassword, setMemoryDb, saveAsync } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
 import {
   loadFromCloudFirestore,
@@ -17,7 +17,16 @@ import {
   loadWheelSettingsFromCloud,
   savePosSaleToCloud,
   deletePosSaleFromCloud,
-  loadPosSalesFromCloud
+  loadPosSalesFromCloud,
+  saveOrderToCloud,
+  deleteOrderFromCloud,
+  loadOrdersFromCloud,
+  saveProductToCloud,
+  deleteProductFromCloud,
+  loadProductsFromCloud,
+  saveCategoryToCloud,
+  deleteCategoryFromCloud,
+  loadCategoriesFromCloud
 } from './lib/firebase.js';
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
@@ -97,7 +106,7 @@ export async function syncWithCloud(force = false): Promise<void> {
       const localDb = load();
       const cloudState = await loadFromCloudFirestore();
       
-      if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+        if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
         setMemoryDb(cloudState, true);
         db = load();
         let changed = false;
@@ -113,22 +122,20 @@ export async function syncWithCloud(force = false): Promise<void> {
             if (p.category === 'erkek-ve-kadinlar' || p.categoryName === 'Anal Ürünler') { p.category = 'anal-urunler'; p.categoryName = 'Anal Ürünler'; changed = true; }
           });
         }
-        if (changed) { await saveAsync(); }
+        if (changed) { saveLocal(); }
 
-        // Sync dedicated Firestore wheel settings
+        // Sync dedicated Firestore wheel settings (READ ONLY - never write during sync)
         try {
           const cloudWheel = await loadWheelSettingsFromCloud();
           if (Array.isArray(cloudWheel) && cloudWheel.length > 0) {
             if (!db.settings) db.settings = {};
             db.settings.wheelIds = cloudWheel;
-          } else if (Array.isArray(db.settings?.wheelIds) && db.settings.wheelIds.length > 0) {
-            await saveWheelSettingsToCloud(db.settings.wheelIds);
           }
         } catch (e) {
           console.error('[Server] Dedicated wheel settings sync error:', e);
         }
 
-        // Sync dedicated Firestore POS sales
+        // Sync dedicated Firestore POS sales (READ ONLY - never write during sync)
         try {
           const cloudPosSales = await loadPosSalesFromCloud();
           if (Array.isArray(cloudPosSales) && cloudPosSales.length > 0) {
@@ -137,25 +144,61 @@ export async function syncWithCloud(force = false): Promise<void> {
             (db.posSales || []).forEach((s: any) => {
               if (s && s.id && !posMap.has(s.id)) {
                 posMap.set(s.id, s);
-                savePosSaleToCloud(s).catch(() => {});
               }
             });
             db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-          } else if (Array.isArray(db.posSales) && db.posSales.length > 0) {
-            for (const s of db.posSales) {
-              await savePosSaleToCloud(s);
-            }
           }
         } catch (e) {
           console.error('[Server] Dedicated POS sales sync error:', e);
         }
 
-        save();
+        // Sync atomic Firestore Orders (Never overwrite newer orders across instances)
+        try {
+          const cloudOrders = await loadOrdersFromCloud();
+          if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+            const orderMap = new Map();
+            // Start with local/cloudState orders
+            (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+            // Overlay dedicated orders (always authoritative)
+            cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+            db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+          }
+        } catch (e) {
+          console.error('[Server] Dedicated orders sync error:', e);
+        }
+
+        // Sync atomic Firestore Products
+        try {
+          const cloudProducts = await loadProductsFromCloud();
+          if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+            const prodMap = new Map();
+            (db.products || []).forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+            cloudProducts.forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+            db.products = Array.from(prodMap.values());
+          }
+        } catch (e) {
+          console.error('[Server] Dedicated products sync error:', e);
+        }
+
+        // Sync atomic Firestore Categories
+        try {
+          const cloudCategories = await loadCategoriesFromCloud();
+          if (Array.isArray(cloudCategories) && cloudCategories.length > 0) {
+            const catMap = new Map();
+            (db.categories || []).forEach((c: any) => c && c.id && catMap.set(c.id, c));
+            cloudCategories.forEach((c: any) => c && c.id && catMap.set(c.id, c));
+            db.categories = Array.from(catMap.values());
+          }
+        } catch (e) {
+          console.error('[Server] Dedicated categories sync error:', e);
+        }
+
+        saveLocal();
         lastCloudSyncTime = Date.now();
         initialSyncDone = true;
         console.log(`[Server] Synced with Cloud Firestore: ${db.products.length} products, ${db.categories?.length || 0} categories, ${db.orders?.length || 0} orders, ${db.posSales?.length || 0} POS sales.`);
       } else if (localDb && Array.isArray(localDb.products) && localDb.products.length > 0) {
-        // Sync dedicated Firestore wheel and pos sales even when localDb is primary
+        // Sync dedicated Firestore wheel, pos sales, orders, products, and categories even when localDb is primary
         try {
           const cloudWheel = await loadWheelSettingsFromCloud();
           if (Array.isArray(cloudWheel) && cloudWheel.length > 0) {
@@ -166,8 +209,29 @@ export async function syncWithCloud(force = false): Promise<void> {
           if (Array.isArray(cloudPos) && cloudPos.length > 0) {
             db.posSales = cloudPos;
           }
+          const cloudOrders = await loadOrdersFromCloud();
+          if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+            const orderMap = new Map();
+            (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+            cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+            db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+          }
+          const cloudProducts = await loadProductsFromCloud();
+          if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+            const prodMap = new Map();
+            (db.products || []).forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+            cloudProducts.forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+            db.products = Array.from(prodMap.values());
+          }
+          const cloudCategories = await loadCategoriesFromCloud();
+          if (Array.isArray(cloudCategories) && cloudCategories.length > 0) {
+            const catMap = new Map();
+            (db.categories || []).forEach((c: any) => c && c.id && catMap.set(c.id, c));
+            cloudCategories.forEach((c: any) => c && c.id && catMap.set(c.id, c));
+            db.categories = Array.from(catMap.values());
+          }
         } catch {}
-        await saveAsync();
+        saveLocal();
         lastCloudSyncTime = Date.now();
         initialSyncDone = true;
       }
@@ -212,7 +276,7 @@ syncWithCloud(true).then(() => {
         userFixed = true;
       }
     }
-    if (userFixed) { saveAsync().catch(() => {}); }
+    if (userFixed) { saveLocal(); }
   }
 
   if (db.settings) {
@@ -220,7 +284,7 @@ syncWithCloud(true).then(() => {
     if (!db.settings.address || !db.settings.address.includes('Tramvay') || db.settings.address.includes('No:19')) {
       db.settings.address = targetAddr;
       db.settings.mapsQuery = encodeURIComponent('Love Sex Shop Eskişehir Erotik Shop');
-      saveAsync().catch(() => {});
+      saveLocal();
     }
   }
 }).catch((err) => {
@@ -368,7 +432,7 @@ function getAuthUser(req: http.IncomingMessage, sess?: any) {
   if (user) {
     if (isAdminEmail(user.email) && user.role !== 'admin') {
       user.role = 'admin';
-      saveAsync().catch(() => {});
+      saveLocal();
     }
   }
   return user;
@@ -457,6 +521,7 @@ const STR: Record<string, Record<string, string>> = {
     'curator.bundle': 'Paket Olarak Sepete Ekle (%15 İndirimli)',
     'shop.crumb.home': 'Anasayfa', 'shop.title': 'Mağaza',
     'shop.desc': '{n} özenle seçilmiş ürün — hepsi vücut dostu, hepsi sessiz kargoda.',
+    'shop.count': '{n} ürün',
     'shop.search': 'Ürün ara…', 'shop.cat': 'Kategori', 'shop.all': 'Tümü',
     'shop.sort.def': 'Sırala: Önerilen', 'shop.sort.new': 'En Yeniler', 'shop.sort.asc': 'Fiyat: Düşükten Yükseğe',
     'shop.sort.desc': 'Fiyat: Yüksekten Düşüğe', 'shop.sort.rate': 'En Yüksek Puan',
@@ -555,6 +620,7 @@ const STR: Record<string, Record<string, string>> = {
     'curator.bundle': 'Add Curated Bundle to Cart (15% Off)',
     'shop.crumb.home': 'Home', 'shop.title': 'Shop',
     'shop.desc': '{n} carefully curated products — all body-safe, all shipped silently.',
+    'shop.count': '{n} products',
     'shop.search': 'Search products…', 'shop.cat': 'Category', 'shop.all': 'All',
     'shop.sort.def': 'Sort: Recommended', 'shop.sort.new': 'Newest First', 'shop.sort.asc': 'Price: Low to High',
     'shop.sort.desc': 'Price: High to Low', 'shop.sort.rate': 'Highest Rated',
@@ -797,7 +863,7 @@ function wheelProducts() {
   }
   if (changed) {
     db.settings.wheelIds = validIds;
-    save();
+    saveLocal();
   }
   if (chosen.length < 8) {
     for (const p of db.products.filter((x: any) => (x.featured || x.bestSeller) && !ids.has(x.id)).slice(0, 8 - chosen.length)) {
@@ -2784,7 +2850,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     };
     for (const i of c.items) {
       const p = db.products.find((x: any) => x.id === i.productId);
-      if (p) p.stock = Math.max(0, p.stock - i.qty);
+      if (p) {
+        p.stock = Math.max(0, p.stock - i.qty);
+        saveProductToCloud(p).catch(() => {});
+      }
     }
     if (c.coupon) { c.coupon.used++; }
     if (user) {
@@ -2792,6 +2861,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
     db.orders.push(order);
     sess.cart = []; sess.coupon = null; sess.lastGuestEmail = email || null;
+    await saveOrderToCloud(order);
     await saveAsync(); persistSessions();
 
     const lines = [
@@ -3032,12 +3102,18 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
           if (b.status === 'cancelled') {
             for (const item of o.items) {
               const p = db.products.find((x: any) => x.id === item.productId);
-              if (p) p.stock += item.qty;
+              if (p) {
+                p.stock += item.qty;
+                saveProductToCloud(p).catch(() => {});
+              }
             }
           } else if (o.status === 'cancelled') {
             for (const item of o.items) {
               const p = db.products.find((x: any) => x.id === item.productId);
-              if (p) p.stock = Math.max(0, p.stock - item.qty);
+              if (p) {
+                p.stock = Math.max(0, p.stock - item.qty);
+                saveProductToCloud(p).catch(() => {});
+              }
             }
           }
           o.status = b.status;
@@ -3046,19 +3122,26 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (b.trackingNumber !== undefined) o.trackingNumber = String(b.trackingNumber).trim();
       if (b.carrier !== undefined) o.carrier = String(b.carrier).trim();
       if (b.adminNote !== undefined) o.adminNote = String(b.adminNote).trim();
+      await saveOrderToCloud(o);
       await saveAsync();
       return json(res, 200, { ok: true, order: o });
     }
     if (pathname === '/api/admin/orders/clear-all' && method === 'POST') {
       const deletedCount = db.orders.length;
+      const idsToDelete = (db.orders || []).map((o: any) => o.id);
       db.orders = [];
+      for (const oid of idsToDelete) {
+        await deleteOrderFromCloud(oid);
+      }
       await saveAsync();
       return json(res, 200, { ok: true, message: 'Tüm siparişler başarıyla temizlendi.', deletedCount });
     }
     if (oUp && method === 'DELETE') {
-      const idx = db.orders.findIndex((x: any) => x.id === decodeURIComponent(oUp[1]));
+      const id = decodeURIComponent(oUp[1]);
+      const idx = db.orders.findIndex((x: any) => x.id === id);
       if (idx === -1) return sendError(res, 404, E('err.noOrder'));
       db.orders.splice(idx, 1);
+      await deleteOrderFromCloud(id);
       await saveAsync();
       return json(res, 200, { ok: true });
     }
@@ -3107,7 +3190,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         highlights: Array.isArray(b.highlights) ? b.highlights.map(String).map(s => s.trim()).filter(Boolean) : (typeof b.highlights === 'string' ? b.highlights.split(',').map(s => s.trim()).filter(Boolean) : []),
         image, gallery, tags: [], variants: ['standart'], createdAt: new Date().toISOString()
       };
-      db.products.push(p); await saveAsync();
+      db.products.push(p);
+      await saveProductToCloud(p);
+      await saveAsync();
       return json(res, 200, { ok: true, product: p });
     }
     const pUp = pathname.match(/^\/api\/admin\/products\/([^/]+)$/);
@@ -3151,6 +3236,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         p.image = p.gallery[0];
       }
 
+      await saveProductToCloud(p);
       await saveAsync();
       return json(res, 200, { ok: true, product: p });
     }
@@ -3160,7 +3246,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (idx === -1) return sendError(res, 404, E('err.noProd'));
       db.products.splice(idx, 1);
       for (const s of Object.values(sessions)) s.cart = (s.cart || []).filter((l: any) => l.productId !== id);
-      persistSessions(); await saveAsync();
+      persistSessions();
+      await deleteProductFromCloud(id);
+      await saveAsync();
       return json(res, 200, { ok: true });
     }
 
@@ -3273,7 +3361,9 @@ ${rawText || name}`;
       const featuredOnHome = !!b.featuredOnHome;
       const homeOrder = typeof b.homeOrder === 'number' ? Number(b.homeOrder) : (featuredOnHome ? 1 : 99);
       const c = { id: uid('ct'), slug, name, image, featuredOnHome, homeOrder, createdAt: new Date().toISOString() };
-      db.categories.push(c); await saveAsync();
+      db.categories.push(c);
+      await saveCategoryToCloud(c);
+      await saveAsync();
       return json(res, 200, { ok: true, category: c });
     }
     const ctUp = pathname.match(/^\/api\/admin\/categories\/([^/]+)$/);
@@ -3299,6 +3389,7 @@ ${rawText || name}`;
       }
       if (typeof b.featuredOnHome !== 'undefined') c.featuredOnHome = !!b.featuredOnHome;
       if (typeof b.homeOrder !== 'undefined') c.homeOrder = Number(b.homeOrder) || 1;
+      await saveCategoryToCloud(c);
       await saveAsync();
       return json(res, 200, { ok: true, category: c });
     }
@@ -3317,6 +3408,7 @@ ${rawText || name}`;
       }
       c.featuredOnHome = !c.featuredOnHome;
       if (c.featuredOnHome && (!c.homeOrder || c.homeOrder > 10)) c.homeOrder = 1;
+      await saveCategoryToCloud(c);
       await saveAsync();
       return json(res, 200, { ok: true, category: c });
     }
@@ -3327,6 +3419,7 @@ ${rawText || name}`;
       const count = db.products.filter((p: any) => p.category === c.slug).length;
       if (count > 0) return sendError(res, 400, `Bu kategoride ${count} ürün var. Önce ürünleri taşı veya sil.`);
       db.categories = db.categories.filter((x: any) => x.id !== id);
+      await deleteCategoryFromCloud(id);
       await saveAsync();
       return json(res, 200, { ok: true });
     }
@@ -3388,6 +3481,7 @@ ${rawText || name}`;
       if (p) {
         p.rating = Math.round(((p.rating || 0) * (p.reviewCount || 0) + r.rating) / ((p.reviewCount || 0) + 1) * 10) / 10;
         p.reviewCount = (p.reviewCount || 0) + 1;
+        saveProductToCloud(p).catch(() => {});
       }
       await saveAsync();
       return json(res, 200, { ok: true });
@@ -3503,7 +3597,6 @@ ${rawText || name}`;
           (db.posSales || []).forEach((s: any) => {
             if (s && s.id && !posMap.has(s.id)) {
               posMap.set(s.id, s);
-              savePosSaleToCloud(s).catch(() => {});
             }
           });
           db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
@@ -3678,6 +3771,9 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       
       if (pathname === '/robots.txt') {
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        const host = (req.headers['x-forwarded-host'] as string) || req.headers.host || 'loveeroticshop.com';
+        const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
+        const baseUrl = `${proto}://${host}`;
         return res.end(`User-agent: *
 Allow: /
 Allow: /magaza
@@ -3697,14 +3793,20 @@ Disallow: /odeme
 Disallow: /hesap
 Disallow: /profil
 
-Sitemap: https://loveeroticshop.com/sitemap.xml
+Sitemap: ${baseUrl}/sitemap.xml
 `);
       }
+
+      if (pathname === '/sitemap.xlm' || pathname === '/sitemap') {
+        res.writeHead(301, { Location: '/sitemap.xml' });
+        return res.end();
+      }
+
       if (pathname === '/sitemap.xml') {
         res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-        const host = req.headers.host || 'loveeroticshop.com';
+        const host = (req.headers['x-forwarded-host'] as string) || req.headers.host || 'loveeroticshop.com';
         const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
-        const baseUrl = host.includes('localhost') ? `${proto}://${host}` : 'https://loveeroticshop.com';
+        const baseUrl = `${proto}://${host}`;
         const today = new Date().toISOString().split('T')[0];
 
         const staticUrls = [
