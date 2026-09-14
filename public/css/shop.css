@@ -5997,7 +5997,7 @@ html.dark .checkout-cta-btn:hover {
 .pay-option input { accent-color: var(--rose); }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.rich:has(.contact-cards) { max-width: 1100px; }
+.rich:has(.contact-cards) { width: 100%; max-width: 100%; }
 .contact-cards { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 .contact-cards .feature { align-items: stretch; }
 @media (max-width: 860px) { .contact-cards { grid-template-columns: 1fr !important; } }
@@ -6559,7 +6559,14 @@ html.dark .acc-card-panel {
 @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
 
 /* ==== Misc pages ==== */
-.rich { max-width: 820px; margin: 0 auto; padding: 40px 5vw 90px; position: relative; z-index: 2; }
+.rich, .page-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 48px 5vw 90px;
+  position: relative;
+  z-index: 2;
+}
 .rich h2 { font-family: var(--font-display); font-weight: 650; letter-spacing: -.6px; margin: 34px 0 12px; }
 .rich p { color: var(--muted); margin-bottom: 14px; }
 .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
@@ -6576,7 +6583,7 @@ html.dark .acc-card-panel {
 .empty-state .big { font-size: 44px; margin-bottom: 12px; }
 
 /* ==== Content width constraint ==== */
-.mm-head, nav.top, nav.top.scrolled, header:nth-of-type(1) > nav:nth-of-type(1).scrolled, .hero, section.block, .page-head, .shop-layout, .pd-layout, .cart-layout, .check-layout, .acc-layout, .auth-wrap, .success-wrap, footer {
+.mm-head, nav.top, nav.top.scrolled, header:nth-of-type(1) > nav:nth-of-type(1).scrolled, .hero, section.block, .page-head, .shop-layout, .pd-layout, .cart-layout, .check-layout, .acc-layout, .auth-wrap, .success-wrap, .rich, .page-container, footer {
   padding-inline: max(5vw, calc((100% - 1440px) / 2));
 }
 
@@ -6651,6 +6658,7 @@ html.dark .acc-card-panel {
   .icon-btn svg, .icon-svg { width: 20px; height: 20px; }
   .lang-btn { width: 42px; height: 42px; font-size: 12px; font-weight: 600; }
   .page-head { padding: 20px 5vw 10px; }
+  .rich, .page-container { padding: 28px 5vw 60px !important; }
   .page-head h1 { font-size: clamp(26px, 6vw, 32px); letter-spacing: -1px; }
   .page-head p, .page-head .crumbs { display: none; }
   .shop-layout aside.filters h4 { display: none; }
@@ -7111,6 +7119,7 @@ html.dark .acc-card-panel {
   .cf-bar { margin-top: 10px !important; gap: 10px !important; }
   .marquee { margin: 6px 4vw 0 !important; }
   .page-head { padding: 16px 4.5vw 8px; }
+  .rich, .page-container { padding: 22px 4.5vw 50px !important; }
   .page-head h1 { font-size: 24px; letter-spacing: -0.6px; }
   .page-head p, .page-head .crumbs { display: none; }
   .shop-layout { padding: 0 4.5vw 40px !important; }
