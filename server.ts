@@ -106,9 +106,35 @@ export async function syncWithCloud(force = false): Promise<void> {
       const localDb = load();
       const cloudState = await loadFromCloudFirestore();
       
-        if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+      if (cloudState && Array.isArray(cloudState.products) && cloudState.products.length > 0) {
+        // Keep any existing items in memory before replacing with cloud state
+        const inMemProds = Array.isArray(db?.products) ? db.products : [];
+        const inMemCats = Array.isArray(db?.categories) ? db.categories : [];
+        const inMemOrders = Array.isArray(db?.orders) ? db.orders : [];
+
         setMemoryDb(cloudState, true);
         db = load();
+
+        // Preserve and merge in-memory products/categories/orders so nothing in flight gets wiped
+        if (inMemProds.length > 0) {
+          const prodMap = new Map();
+          (db.products || []).forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+          inMemProds.forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+          db.products = Array.from(prodMap.values());
+        }
+        if (inMemCats.length > 0) {
+          const catMap = new Map();
+          (db.categories || []).forEach((c: any) => c && c.id && catMap.set(c.id, c));
+          inMemCats.forEach((c: any) => c && c.id && catMap.set(c.id, c));
+          db.categories = Array.from(catMap.values());
+        }
+        if (inMemOrders.length > 0) {
+          const orderMap = new Map();
+          (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          inMemOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        }
+
         let changed = false;
         if (Array.isArray(db.categories)) {
           db.categories.forEach((c: any) => {
