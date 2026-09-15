@@ -2453,13 +2453,16 @@ async function saveUpload(dataUrl: string): Promise<string> {
         const name = uid('img') + '.' + ext;
 
         // 1. Primary for Vercel: If Vercel Blob Token is set, upload to Vercel Blob Storage CDN
-        if (process.env.BLOB_READ_WRITE_TOKEN) {
+        const rawBlobToken = process.env.BLOB_READ_WRITE_TOKEN;
+        if (rawBlobToken) {
+          const blobTokenMatch = rawBlobToken.match(/vercel_blob_rw_[A-Za-z0-9_]+/);
+          const blobToken = blobTokenMatch ? blobTokenMatch[0] : rawBlobToken.trim();
           try {
             const blob = await put(`uploads/${name}`, buf, {
               access: 'public',
               addRandomSuffix: true,
               contentType: mimeType,
-              token: process.env.BLOB_READ_WRITE_TOKEN
+              token: blobToken
             });
             if (blob && blob.url) {
               return blob.url;
