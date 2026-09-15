@@ -1260,6 +1260,61 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
       const rawDesc = `${prod.name || ''} ${prod.description || ''} ${prod.longDescription || ''}`;
       const text = rawDesc.toLowerCase();
 
+      // Intelligent text extractor helpers
+      function extractUsageInstruction(rawText) {
+        if (!rawText) return null;
+        // Check for explicit "Kullanım şekli:", "Kullanımı:", "Nasıl kullanılır:"
+        const explicitMatch = rawText.match(/(?:kullanım(?:\s*şekli|ı)?|nasıl\s+kullanılır)\s*[:：-]\s*([^\n\r]+)/i);
+        if (explicitMatch && explicitMatch[1].trim().length > 8) {
+          let s = explicitMatch[1].trim();
+          const firstDot = s.indexOf('.');
+          if (firstDot > 15 && firstDot < s.length - 1) {
+            s = s.slice(0, firstDot + 1);
+          }
+          return s;
+        }
+
+        // Search for sentences describing application or consumption
+        const sentences = rawText.split(/(?<=[.!?])\s+|\n+/);
+        for (const sen of sentences) {
+          const s = sen.trim();
+          const sLower = s.toLowerCase();
+          if (
+            (sLower.includes('uygulanır') || sLower.includes('masaj') || sLower.includes('sürülür') || 
+             sLower.includes('damlatılır') || sLower.includes('püskürtülür') || sLower.includes('tüketilir') ||
+             sLower.includes('öncesinde') || sLower.includes('kullanılır')) &&
+            s.length >= 15 && s.length <= 250
+          ) {
+            return s;
+          }
+        }
+        return null;
+      }
+
+      function extractUsesCount(rawText) {
+        if (!rawText) return null;
+        const match = rawText.match(/(\d+\s*\+?\s*(?:kullanım|doz|puf|püskürtme|porsiyon|damla))/i);
+        return match ? match[1].trim() : null;
+      }
+
+      function extractEffectOrFormula(rawText) {
+        if (!rawText) return null;
+        const sentences = rawText.split(/(?<=[.!?])\s+|\n+/);
+        for (const sen of sentences) {
+          const s = sen.trim();
+          const sLower = s.toLowerCase();
+          if (
+            (sLower.includes('etki') || sLower.includes('uyarıcı') || sLower.includes('karıncalanma') ||
+             sLower.includes('ısınma') || sLower.includes('dolaşım') || sLower.includes('yoğunluk') ||
+             sLower.includes('haz') || sLower.includes('formül') || sLower.includes('hassasiyet')) &&
+            s.length >= 20 && s.length <= 200
+          ) {
+            return s;
+          }
+        }
+        return null;
+      }
+
       // Helper metric extractors
       const mlMatch = text.match(/(\d+(?:[.,]\d+)?)\s*(?:ml|mililitre)/i);
       const mlVal = mlMatch ? `${mlMatch[1].replace(',', '.')} ml` : null;
@@ -1337,26 +1392,30 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         const isSpray = name.includes('sprey') || name.includes('spray') || name.includes('stag');
         const isCream = name.includes('krem') || name.includes('cream');
         const isLube = name.includes('jel') || name.includes('gel') || name.includes('lube') || name.includes('kayganlaştırıcı') || name.includes('glide');
-        const isDrops = name.includes('damla') || name.includes('drop') || name.includes('takviye') || name.includes('macun') || (cat === 'kadin-cinsel-saglik' && !isLube) || text.includes('bitkisel ekstrakt');
+        const isDrops = name.includes('damla') || name.includes('drop') || name.includes('takviye') || name.includes('macun') || (cat === 'kadin-cinsel-saglik' && !isLube);
         const isOil = (name.includes('yağ') || name.includes('oil') || text.includes('masaj yağı')) && !isDrops;
         const hasLidocaine = text.includes('lidokain') || text.includes('anestezik');
 
+        const detectedUsage = extractUsageInstruction(rawDesc);
+        const usesCount = extractUsesCount(rawDesc);
+        const detectedEffect = extractEffectOrFormula(rawDesc);
+
         if (isSpray) {
+          const usageStr = detectedUsage || 'İlişkiden 10-15 dakika önce temiz bölgeye 2-3 püskürtme uygulayıp hafifçe masaj yaparak emilmesini sağlayınız.';
           return {
             chips: [
               { k: 'Ürün Formu', v: 'Geciktirici Sprey' },
-              { k: 'Net Hacim', v: mlVal || '20 ml (~100 Puf)' },
+              { k: 'Net Hacim', v: mlVal ? (usesCount ? `${mlVal} (~${usesCount})` : mlVal) : (usesCount ? `Doz Şişe (~${usesCount})` : '20 ml (~100 Doz)') },
               { k: 'Etki Süresi', v: '45 - 60 Dakika' },
               { k: 'Cilt Uyumu', v: 'Dermatolojik Onaylı' }
             ],
             table: [
               ['Ürün Adı', prod.name],
               ['Ürün Formu', 'Geciktirici & Performans Spreyi'],
-              ['Net Hacim', mlVal ? `${mlVal} (~100 Püskürtme)` : '20 ml (~100 Doz)'],
-              ['Etkin Formül', hasLidocaine ? 'Lokal Etkili Geciktirici (%10 Lidokain Formülasyonu)' : 'Klinik Onaylı Aktif Bileşenler'],
-              ['Cilt Uyumluluğu', 'Dermatolojik testlerden geçmiş, pH dengeli formül'],
+              ['Net Hacim', mlVal ? (usesCount ? `${mlVal} (~${usesCount})` : mlVal) : (usesCount ? `Doz Şişe (~${usesCount})` : '20 ml (~100 Doz)')],
+              ['Kullanım Şekli', usageStr],
+              ['Etkin Formül', detectedEffect || (hasLidocaine ? 'Lokal Etkili Geciktirici (%10 Lidokain Formülasyonu)' : 'Klinik Onaylı Doku Uyumlu Formül')],
               ['Kondom & Lateks Uyumu', 'Prezervatif ile %100 uyumludur, latekse zarar vermez'],
-              ['Etki Başlangıcı', 'Uygulamadan 10-15 dakika sonra tam aktif kontrol'],
               ['Saklama Koşulları', '25°C altında oda sıcaklığında, güneş ışığından uzakta kapalı kutuda']
             ],
             careTitle: 'Kullanım ve Saklama Talimatı',
@@ -1365,6 +1424,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         }
 
         if (isCream) {
+          const usageStr = detectedUsage || 'Aktiviteden yaklaşık 15 dakika önce temiz cilt yüzeyine nohut büyüklüğünde sürerek hafif masaj hareketleriyle uygulayınız.';
           return {
             chips: [
               { k: 'Ürün Formu', v: 'Performans Kremi' },
@@ -1376,10 +1436,9 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
               ['Ürün Adı', prod.name],
               ['Ürün Formu', 'Erkeklere Özel Performans & Geciktirici Krem'],
               ['Net Miktar', mlVal || '59 ml'],
-              ['Etkin Formül', hasLidocaine ? 'Topikal Etkili Formül (%10 Lidokain)' : 'Özel Geliştirilmiş Doku Uyumlu Formül'],
-              ['Cilt Uyumluluğu', 'Kokusuz, renksiz ve tatsız; cilde zarar vermeyen yapı'],
+              ['Kullanım Şekli', usageStr],
+              ['Etkin Formül', detectedEffect || (hasLidocaine ? 'Topikal Etkili Formül (%10 Lidokain)' : 'Özel Geliştirilmiş Doku Uyumlu Formül')],
               ['Kondom Uyumu', 'Lateks prezervatifler ile %100 güvenle kullanılabilir'],
-              ['Etki Başlangıcı', '15 dakika içinde emilir ve etkisini hissettirir'],
               ['Saklama Koşulları', 'Oda sıcaklığında, doğrudan ısı ve ışıktan uzakta saklayınız']
             ],
             careTitle: 'Kullanım ve Saklama Talimatı',
@@ -1388,28 +1447,62 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         }
 
         if (isDrops) {
-          return {
-            chips: [
-              { k: 'Ürün Formu', v: 'Bitkisel Sıvı Damla' },
-              { k: 'Net Hacim', v: mlVal || '10 ml' },
-              { k: 'İçerik', v: 'Bitkisel Ekstrakt & Vitamin' },
-              { k: 'Kullanım', v: 'İçeceğe Damlatılarak' }
-            ],
-            table: [
-              ['Ürün Adı', prod.name],
-              ['Ürün Tipi', 'Kadın Cinsel Sağlık & Bitkisel Sıvı Takviye Damla'],
-              ['Net Hacim', mlVal || '10 ml'],
-              ['Formül Yapısı', 'Bitkisel ekstraktlar, C vitamini, L-Arjinin ve amino asit bileşenli sıvı takviye'],
-              ['Kullanım Şekli', 'Alkolsüz ve asitsiz içeceklerle veya suya damlatılarak tüketilir'],
-              ['Kalite & Güvenlik', 'Hijyenik damlalıklı cam şişe, koruyuculu ve pH dengeli formülasyon'],
-              ['Saklama Koşulları', '25°C altında oda sıcaklığında, doğrudan ışık ve ısıdan uzakta saklayınız']
-            ],
-            careTitle: 'Kullanım ve Tüketim Rehberi',
-            careText: 'Kullanmadan önce şişeyi hafifçe çalkalayınız. Bir bardak suya veya arzu edilen alkolsüz ve asitsiz soğuk/ılık içeceğe ambalaj üzerinde önerilen damla miktarında ilave ederek tüketiniz. Günlük tavsiye edilen porsiyon miktarını aşmayınız. Çocukların ulaşamayacağı, doğrudan güneş ışığı almayan serin ve kuru bir yerde muhafaza ediniz.'
-          };
+          // STRICT SAFETY CHECK: Oral dietary supplement vs. Topical/Intimate external drops
+          const isExplicitOral = (
+            text.includes('suya damlat') || text.includes('içeceğe damlat') || text.includes('içilerek') ||
+            text.includes('oral damla') || text.includes('sıvı takviye edici gıda') || text.includes('içecekle tüketilir')
+          ) && !text.includes('harici kullanım') && !text.includes('bölgeye') && !text.includes('masaj');
+
+          if (!isExplicitOral) {
+            // EXTERNAL TOPICAL INTIMATE DROPS (Harici Uyarıcı Damla)
+            const usageText = detectedUsage || 'İlişki veya ön sevişme öncesinde istenen bölgeye birkaç damla uygulanır ve nazikçe masaj yapılarak yayılır.';
+            const volumeStr = mlVal ? (usesCount ? `${mlVal} (Yaklaşık ${usesCount})` : mlVal) : (usesCount ? `Damlalıklı Şişe (${usesCount})` : 'Damlalıklı Cam Şişe');
+            const formulaStr = detectedEffect || 'Hassas bölgede mikro kan dolaşımını, uyarımı ve duyarlılığı artıran aktif formül';
+
+            return {
+              chips: [
+                { k: 'Ürün Tipi', v: 'Harici Uyarıcı Damla' },
+                { k: 'Net Hacim', v: mlVal || (usesCount ? usesCount : 'Damlalıklı Şişe') },
+                { k: 'Uygulama', v: 'Bölgesel Masaj' },
+                { k: 'Güvenlik', v: 'Yalnızca Harici Kullanım' }
+              ],
+              table: [
+                ['Ürün Adı', prod.name],
+                ['Ürün Tipi', 'İntim Bölgeye Özel Harici Uyarıcı Damla'],
+                ['Net Hacim', volumeStr],
+                ['Kullanım Şekli', `${usageText} — Yalnızca Harici Kullanım`],
+                ['Etki Mekanizması', formulaStr],
+                ['Kalite & Güvenlik', 'Yalnızca harici kullanım içindir. Kesinlikle içilmez veya yutulmaz. Ten dostu ve pH dengeli formülasyon.'],
+                ['Saklama Koşulları', '25°C altında oda sıcaklığında, doğrudan ışık ve ısıdan uzakta saklayınız']
+              ],
+              careTitle: 'Harici Kullanım ve Güvenlik Talimatı',
+              careText: 'YALNIZCA HARİCİ KULLANIM İÇİNDİR. Kesinlikle içilmez, yutulmaz veya içeceklere damlatılarak tüketilmez. İlişki veya ön sevişme öncesinde istenen bölgeye birkaç damla uygulayarak nazikçe masaj yapınız. Gözle temasından kaçınınız. Çocukların ulaşamayacağı, oda sıcaklığında ve kuru bir yerde muhafaza ediniz.'
+            };
+          } else {
+            // ONLY IF EXPLICITLY WRITTEN IN PRODUCT TEXT AS ORAL DRINK
+            const usageText = detectedUsage || 'Ambalaj üzerinde önerilen damla miktarında soğuk/ılık içeceğe ilave edilerek tüketilir.';
+            return {
+              chips: [
+                { k: 'Ürün Formu', v: 'Sıvı Takviye Damla' },
+                { k: 'Net Hacim', v: mlVal || 'Standart Şişe' },
+                { k: 'Kullanım', v: 'İçeceğe Damlatılarak' },
+                { k: 'Tüketim', v: 'Ağız Yoluyla' }
+              ],
+              table: [
+                ['Ürün Adı', prod.name],
+                ['Ürün Tipi', 'Sıvı Takviye Damlası'],
+                ['Net Hacim', mlVal || 'Standart Şişe'],
+                ['Kullanım Şekli', usageText],
+                ['Güvenlik & Saklama', 'Tavsiye edilen günlük porsiyonu aşmayınız. 25°C altında doğrudan güneş ışığından uzakta muhafaza ediniz.']
+              ],
+              careTitle: 'Kullanım ve Tüketim Rehberi',
+              careText: 'Kullanmadan önce şişeyi hafifçe çalkalayınız. Tavsiye edilen damla miktarında soğuk/ılık içeceğe ilave ederek tüketiniz. Çocukların ulaşamayacağı serin ve kuru bir yerde saklayınız.'
+            };
+          }
         }
 
         if (isOil) {
+          const usageStr = detectedUsage || 'Yeterli miktarda yağı avucunuza alıp hafifçe ısıttıktan sonra dairesel masaj hareketleriyle cilde uygulayınız.';
           return {
             chips: [
               { k: 'Ürün Formu', v: 'Masaj & Bakım Yağı' },
@@ -1421,28 +1514,31 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
               ['Ürün Adı', prod.name],
               ['Ürün Tipi', 'Besleyici Vücut & Masaj Yağı'],
               ['Net Hacim', mlVal || '100 ml'],
-              ['Formül Yapısı', 'Doğal bitkisel yağ kompleksi ile zenginleştirilmiş besleyici doku'],
+              ['Kullanım Şekli', `${usageStr} (Yalnızca Harici Kullanım)`],
+              ['Formül Yapısı', detectedEffect || 'Doğal bitkisel yağ kompleksi ile zenginleştirilmiş besleyici doku'],
               ['Cilt Uyumlu', 'Dermatolojik testlerden geçmiş, tüm cilt tiplerine uygun hafif yapılı formül'],
               ['Temizlik & Bakım', 'Ilık su ve duş jeli ile cildinizi zahmetsizce temizleyebilirsiniz']
             ],
             careTitle: 'Kullanım ve Masaj Rehberi',
-            careText: 'Yeterli miktarda yağı avucunuza alıp hafifçe ısıttıktan sonra dairesel masaj hareketleriyle cilde uygulayınız. Harici kullanım içidir. Direkt güneş ışığından uzakta, serin ve kuru yerde saklayınız.'
+            careText: 'Yeterli miktarda yağı avucunuza alıp hafifçe ısıttıktan sonra dairesel masaj hareketleriyle cilde uygulayınız. Harici kullanım içindir. Kesinlikle içilmez. Direkt güneş ışığından uzakta, serin ve kuru yerde saklayınız.'
           };
         }
 
         // Lube / Gel
+        const usageStr = detectedUsage || 'İhtiyaç duyulan bölgeye veya yetişkin oyuncağının üzerine arzu edilen miktarda uygulayınız.';
         return {
           chips: [
-            { k: 'Formül', v: 'Su Bazlı Formül' },
+            { k: 'Formül', v: text.includes('silikon bazlı') ? 'Silikon Bazlı' : 'Su Bazlı Formül' },
             { k: 'Net Hacim', v: mlVal || '250 ml' },
             { k: 'Doku', v: 'İpeksi & Yağsız' },
             { k: 'Uyum', v: 'Lateks & Oyuncak' }
           ],
           table: [
             ['Ürün Adı', prod.name],
-            ['Ürün Tipi', 'Su Bazlı Medikal Kayganlaştırıcı Jel'],
+            ['Ürün Tipi', text.includes('silikon bazlı') ? 'Silikon Bazlı Medikal Kayganlaştırıcı Jel' : 'Su Bazlı Medikal Kayganlaştırıcı Jel'],
             ['Net Hacim', mlVal || '250 ml'],
-            ['Formül Yapısı', 'Tamamen su bazlı, yağsız, leke ve yapışkanlık bırakmayan ipeksi yapı'],
+            ['Kullanım Şekli', usageStr],
+            ['Formül Yapısı', detectedEffect || 'Tamamen su bazlı, yağsız, leke ve yapışkanlık bırakmayan ipeksi yapı'],
             ['Oyuncak & Kondom Uyumu', '%100 Uyumlu (Lateks kondomlar, silikon ve TPE ürünlerle güvenli)'],
             ['Temizlik Kolaylığı', 'Yalnızca ılık su ile zahmetsizce ciltten ve kumaşlardan arınır'],
             ['Güvenlik Standartları', 'Hipoalerjenik, parabensiz, pH dengeli klinik formül']
