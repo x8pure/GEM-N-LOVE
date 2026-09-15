@@ -32,6 +32,11 @@ import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleGenAI, Type } from '@google/genai';
 import { GUIDES } from './data/guides.ts';
+import {
+  COMMERCE_CONFIG,
+  getProductShippingDetailsSchema,
+  getMerchantReturnPolicySchema
+} from './config/commerce.ts';
 
 const isProd = process.env.NODE_ENV === 'production';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '56701005174-t1n68p29hirorldv6dis76rmij721c1t.apps.googleusercontent.com';
@@ -1083,7 +1088,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
         "latitude": 39.7767,
         "longitude": 30.5206
       },
-      "hasMap": "https://maps.google.com/?q=39.7767,30.5206"
+      "hasMap": "https://maps.google.com/?q=39.7767,30.5206",
+      "hasMerchantReturnPolicy": getMerchantReturnPolicySchema()
     }
   ];
 
@@ -1107,6 +1113,9 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
         "price": prod.price,
         "availability": (prod.stock ?? 1) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
         "itemCondition": "https://schema.org/NewCondition",
+        "priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        "shippingDetails": getProductShippingDetailsSchema(Number(prod.price || 0)),
+        "hasMerchantReturnPolicy": getMerchantReturnPolicySchema(),
         "seller": {
           "@type": "Organization",
           "name": "Love Erotik Shop Eskişehir"
@@ -3778,6 +3787,8 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
       return res.end();
     }
 
+    if (pathname.startsWith('/api/')) return await handleApi(req, res, pathname, url);
+
     if (req.method === 'GET' || req.method === 'HEAD') {
       if (pathname === '/favicon.ico' || pathname === '/apple-touch-icon.png') {
         const fp = path.join(ROOT, 'public', pathname.replace(/^\//, ''));
@@ -3908,7 +3919,7 @@ ${prodUrls.map(u => `  <url>
           const itemLink = `${baseUrl}/urun/${esc(p.slug || p.id)}`;
           const priceStr = `${Number(p.price || 0).toFixed(2)} TRY`;
           const cleanDesc = (p.description || p.shortDesc || p.name).replace(/<[^>]+>/g, '').trim();
-          const shippingCost = Number(p.price || 0) >= (db.settings.freeShippingThreshold || 2000) ? '0.00 TRY' : `${Number(db.settings.shippingFee || 99).toFixed(2)} TRY`;
+          const shippingCost = Number(p.price || 0) >= (db.settings.freeShippingThreshold || COMMERCE_CONFIG.shipping.freeShippingThreshold) ? '0.00 TRY' : `${Number(db.settings.shippingFee || COMMERCE_CONFIG.shipping.defaultShippingFee).toFixed(2)} TRY`;
           
           return `    <item>
       <g:id>${esc(p.id)}</g:id>
