@@ -317,7 +317,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js';
         <button type="button" class="user-btn ${isAdmin ? 'is-admin' : ''}" id="user-menu-btn" aria-haspopup="true" aria-expanded="false" title="${esc(displayName)}${isAdmin ? ' (Yönetici)' : ''}">
           <span class="user-btn-avatar">
             ${avatarHtml}
-            ${isAdmin ? '<span class="user-btn-crown" title="Yönetici"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--rose)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>' : '<span class="user-btn-online" title="Aktif Oturum"></span>'}
+            ${isAdmin ? '<span class="user-btn-crown" title="Yönetici"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>' : '<span class="user-btn-online" title="Aktif Oturum"></span>'}
           </span>
           <span class="user-btn-name">${esc(displayName)}</span>
           <svg class="user-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
