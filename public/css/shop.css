@@ -103,8 +103,9 @@ html.dark .pd-media img,
 }
 html.dark .bento-cta,
 [data-theme="dark"] .bento-cta {
-  border-color: rgba(255,123,114,0.3) !important;
-  background: radial-gradient(circle at 50% 35%, #242730 0%, #17191D 65%, #0F1012 100%) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: #FFFFFF !important;
+  color: #18181B !important;
 }
 html.dark .banner,
 [data-theme="dark"] .banner { background: #141619 !important; border-color: rgba(255, 255, 255, 0.08) !important; }
@@ -2135,7 +2136,7 @@ html.dark .link-more:hover,
   margin-top: 2px;
 }
 
-/* ==== Bento CTA — Tüm Kategoriler (Lüks Monokrom Titanyum / Derin Siyah Kart - Sıfır Pembe/Rose) ==== */
+/* ==== Bento CTA — Tüm Kategoriler (Aydınlık Temada Siyah / Koyu Titanyum Kart) ==== */
 .bento-cta {
   position: relative;
   border-radius: 24px;
@@ -2156,8 +2157,9 @@ html.dark .link-more:hover,
 }
 .bento-cta:hover {
   transform: translateY(-4px);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: radial-gradient(circle at 80% 20%, #22252B 0%, #16181C 65%, #0F1012 100%) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.25) !important;
 }
 .cta-inner { position: relative; z-index: 2; max-width: 85%; }
 .cta-kicker {
@@ -2235,34 +2237,50 @@ html.dark .bento-meta .bcount,
   color: #71717A !important;
 }
 
+/* Dark Mode: "Tüm Kategoriler" grid kartı aydınlık tema renginde (Lüks Saf Beyaz / Yüksek Kontrast) */
 html.dark .bento-cta,
-[data-theme="dark"] .bento-cta {
-  background: radial-gradient(circle at 80% 20%, #1A1C20 0%, #131417 65%, #0D0E10 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6) !important;
+[data-theme="dark"] .bento-cta,
+html.dark .bento-card.bento-cta,
+[data-theme="dark"] .bento-card.bento-cta,
+html.dark .bento > a.bento-cta,
+html.dark .bento > a.bento-card-g {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  color: #18181B !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35) !important;
 }
 html.dark .cta-glow,
 [data-theme="dark"] .cta-glow {
   display: none !important;
 }
 html.dark .bento-cta:hover,
-[data-theme="dark"] .bento-cta:hover {
-  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
-  border-color: rgba(255, 255, 255, 0.28) !important;
+[data-theme="dark"] .bento-cta:hover,
+html.dark .bento-card.bento-cta:hover,
+[data-theme="dark"] .bento-card.bento-cta:hover {
+  background: #FFFFFF !important;
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.45) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
 }
-html.dark .cta-inner h3,
-[data-theme="dark"] .cta-inner h3 {
-  color: #FFFFFF !important;
+html.dark .bento-cta .cta-inner h3,
+[data-theme="dark"] .bento-cta .cta-inner h3,
+html.dark .bento-card.bento-cta .cta-inner h3 {
+  color: #18181B !important;
 }
-html.dark .cta-count,
-[data-theme="dark"] .cta-count {
-  color: #A1A1AA !important;
+html.dark .bento-cta .dot-rose,
+[data-theme="dark"] .bento-cta .dot-rose,
+html.dark .bento-card.bento-cta .dot-rose {
+  color: #71717A !important;
 }
-html.dark .cta-list,
-[data-theme="dark"] .cta-list {
-  border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
-  color: #A1A1AA !important;
+html.dark .bento-cta .cta-count,
+[data-theme="dark"] .bento-cta .cta-count,
+html.dark .bento-card.bento-cta .cta-count {
+  color: #71717A !important;
+}
+html.dark .bento-cta .cta-list,
+[data-theme="dark"] .bento-cta .cta-list,
+html.dark .bento-card.bento-cta .cta-list {
+  border-top: 1px solid rgba(24, 24, 27, 0.10) !important;
+  color: #52525B !important;
 }
 
 /* ==== Product grid/cards (Luxury Expansive Archetype & 3D Tilt Sheen) ==== */
@@ -7016,6 +7034,22 @@ html.dark .acc-card-panel {
     overflow: hidden !important;
   }
 
+  /* Karanlık Temada Mobil: Beyaz Kart */
+  html.dark .bento-card.bento-cta,
+  html.dark .bento-card.bento-card-g,
+  html.dark .bento-cta,
+  html.dark .bento-card-g,
+  html.dark .bento > a.bento-cta,
+  html.dark .bento > a.bento-card-g,
+  html.dark main#app-main > section:nth-of-type(2) > div:nth-of-type(2) > a.bento-cta,
+  html.dark main#app-main > section:nth-of-type(2) .bento a.bento-cta,
+  html.dark main#app-main > section:nth-of-type(2) .bento a.bento-card-g {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+    color: #18181B !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  }
+
   .bento-card-g::before,
   .bento-cta::before,
   .bento-card.bento-cta::before {
@@ -7062,9 +7096,20 @@ html.dark .acc-card-panel {
     flex-shrink: 0 !important;
   }
 
+  html.dark .bento-card-g .cta-inner h3,
+  html.dark .bento-cta .cta-inner h3,
+  html.dark .bento-card.bento-cta .cta-inner h3 {
+    color: #18181B !important;
+  }
+
   .bento-card-g .cta-inner h3 .dot-rose,
   .bento-cta .cta-inner h3 .dot-rose {
     color: #A1A1AA !important;
+  }
+
+  html.dark .bento-card-g .cta-inner h3 .dot-rose,
+  html.dark .bento-cta .cta-inner h3 .dot-rose {
+    color: #71717A !important;
   }
 
   .bento-card-g .cta-count,
@@ -7074,11 +7119,17 @@ html.dark .acc-card-panel {
     margin: 0 !important;
     letter-spacing: 0.2px !important;
     color: #A1A1AA !important;
-    font-weight: 450 !important;
+    font-weight: 500 !important;
     white-space: nowrap !important;
     text-align: right !important;
     flex-shrink: 1 !important;
     overflow: visible !important;
+  }
+
+  html.dark .bento-card-g .cta-count,
+  html.dark .bento-cta .cta-count,
+  html.dark .bento-card.bento-cta .cta-count {
+    color: #71717A !important;
   }
 
   .bento-card-g .cta-list,
@@ -7351,9 +7402,9 @@ html.dark main#app-main > section:nth-of-type(2) > div:nth-of-type(2) > a.bento-
 }
 
 html.dark main#app-main > section:nth-of-type(2) > div:nth-of-type(2) > a.bento-cta {
-  background: radial-gradient(circle at 80% 20%, #1A1C20 0%, #131417 65%, #0D0E10 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  color: #FFFFFF !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  color: #18181B !important;
 }
 
 html.dark main#app-main > section:nth-of-type(2) .bento-bg:not(.bento-card-a .bento-bg) {

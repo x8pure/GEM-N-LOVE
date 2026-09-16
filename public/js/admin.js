@@ -1115,7 +1115,7 @@
       </div>
       <div class="modal-foot">
         <button type="button" class="btn btn-ghost" id="om-delete-order" style="color:var(--rose,#ff3366);margin-right:auto">🗑️ Siparişi Sil</button>
-        <button type="button" class="btn btn-ghost" data-cancel="true">Kapat</button>
+        <button type="button" class="btn btn-ghost" id="om-close-btn" data-cancel="true">Kapat</button>
         <button type="button" class="btn btn-primary" id="om-save-track">Kargo Bilgisini Kaydet</button>
       </div>
     </div>`;
@@ -1123,50 +1123,85 @@
 
     const closeModal = () => {
       window.removeEventListener('keydown', handleKey);
-      m.remove();
+      if (m && m.parentNode) {
+        m.remove();
+      }
     };
     const handleKey = (e) => {
       if (e.key === 'Escape') closeModal();
     };
     window.addEventListener('keydown', handleKey);
 
-    $('.modal-close, [data-cancel]', m).forEach((b) => b.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (confirm('Kaydedilmemiş verileriniz olabilir, çıkmak istediğinize emin misiniz?')) {
+    // Kapat ve Çarpı butonları (onay popup'ına takılmadan doğrudan ve anında kapatır)
+    $$('.modal-close, [data-cancel], #om-close-btn', m).forEach((b) => {
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         closeModal();
-      }
-    }));
-    m.addEventListener('click', (e) => { if (e.target === m) closeModal(); });
+      });
+    });
 
-    $('#ord-print-btn', m).addEventListener('click', () => window.print());
+    m.addEventListener('click', (e) => {
+      if (e.target === m) closeModal();
+    });
 
-    const delOrderBtn = $('#om-delete-order', m);
-    if (delOrderBtn) {
-      delOrderBtn.addEventListener('click', async () => {
-        if (!confirm(`${o.id} numaralı siparişi silmek istediğinize emin misiniz?`)) return;
-        try {
-          await api('/api/admin/orders/' + encodeURIComponent(o.id), { method: 'DELETE' });
-          toast('Sipariş başarıyla silindi');
-          closeModal();
-          viewOrders();
-        } catch (e) { toast(e.message, true); }
+    const printBtn = $('#ord-print-btn', m);
+    if (printBtn) {
+      printBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.print();
       });
     }
 
-    $('#om-save-track', m).addEventListener('click', async () => {
-      const carrier = $('#om-carrier', m).value.trim();
-      const trackingNumber = $('#om-track', m).value.trim();
-      try {
-        await api('/api/admin/orders/' + encodeURIComponent(o.id), {
-          method: 'POST',
-          body: { carrier, trackingNumber, status: trackingNumber && o.status === 'processing' ? 'shipped' : o.status }
-        });
-        toast('Kargo takip bilgileri kaydedildi 🚚');
-        closeModal();
-        viewOrders();
-      } catch (e) { toast(e.message, true); }
-    });
+    const delOrderBtn = $('#om-delete-order', m);
+    if (delOrderBtn) {
+      delOrderBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!confirm(`${o.id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz?`)) return;
+        delOrderBtn.disabled = true;
+        delOrderBtn.textContent = 'Siliniyor...';
+        try {
+          await api('/api/admin/orders/' + encodeURIComponent(o.id), { method: 'DELETE' });
+          toast('Sipariş başarıyla silindi 🗑️');
+          closeModal();
+          viewOrders();
+        } catch (err) {
+          toast(err.message || 'Sipariş silinemedi', true);
+          delOrderBtn.disabled = false;
+          delOrderBtn.textContent = '🗑️ Siparişi Sil';
+        }
+      });
+    }
+
+    const saveTrackBtn = $('#om-save-track', m);
+    if (saveTrackBtn) {
+      saveTrackBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const carrier = ($('#om-carrier', m)?.value || '').trim();
+        const trackingNumber = ($('#om-track', m)?.value || '').trim();
+        saveTrackBtn.disabled = true;
+        saveTrackBtn.textContent = 'Kaydediliyor...';
+        try {
+          await api('/api/admin/orders/' + encodeURIComponent(o.id), {
+            method: 'POST',
+            body: {
+              carrier,
+              trackingNumber,
+              status: trackingNumber && o.status === 'processing' ? 'shipped' : o.status
+            }
+          });
+          toast('Kargo takip bilgileri kaydedildi 🚚');
+          closeModal();
+          viewOrders();
+        } catch (err) {
+          toast(err.message || 'Kargo bilgisi kaydedilemedi', true);
+          saveTrackBtn.disabled = false;
+          saveTrackBtn.textContent = 'Kargo Bilgisini Kaydet';
+        }
+      });
+    }
   }
 
   /* ================= CATEGORY STATE MANAGER (CENTRALIZED) ================= */
@@ -2294,37 +2329,52 @@
     let activeFilter = 'today';
     let currentPaymentMethod = 'nakit';
 
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const currentMonthStr = todayStr.slice(0, 7);
+    const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    const currentMonthName = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
     let selectedDate = todayStr;
 
     mount('pos', `
-      <!-- TOP KPI STATS (MATCHING ADMIN DASHBOARD STAT-GRID ARCHITECTURE) -->
-      <div class="stat-grid" style="margin-bottom:24px">
-        <div class="stat-card" id="pos-card-total">
+      <!-- TOP KPI STATS (5-COLUMN BALANCED REGISTER ARCHITECTURE) -->
+      <div class="pos-stat-grid">
+        <div class="stat-card" id="pos-card-today">
           <div class="sc-top">
-            <span class="sc-lbl">Bugünkü Toplam Ciro</span>
+            <span class="sc-lbl">Bugünkü Ciro</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </div>
           </div>
           <div class="sc-val" id="pos-kpi-total">₺0,00</div>
-          <div class="sc-sub"><span id="pos-kpi-count">0</span> işlem kaydedildi</div>
+          <div class="sc-sub"><span id="pos-kpi-count">0</span> işlem (Bugün)</div>
+        </div>
+
+        <div class="stat-card" id="pos-card-month">
+          <div class="sc-top">
+            <span class="sc-lbl">Bu Ayki Toplam Ciro</span>
+            <div class="sc-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+            </div>
+          </div>
+          <div class="sc-val" id="pos-kpi-month-total">₺0,00</div>
+          <div class="sc-sub"><span id="pos-kpi-month-name">${currentMonthName}</span> • <span id="pos-kpi-month-count">0</span> işlem</div>
         </div>
 
         <div class="stat-card">
           <div class="sc-top">
-            <span class="sc-lbl">Nakit Kasa</span>
+            <span class="sc-lbl">Nakit Kasa (Bugün)</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
             </div>
           </div>
           <div class="sc-val" id="pos-kpi-cash">₺0,00</div>
-          <div class="sc-sub">Fiziksel elden nakit</div>
+          <div class="sc-sub">Çekmecedeki fiziki nakit</div>
         </div>
 
         <div class="stat-card">
           <div class="sc-top">
-            <span class="sc-lbl">Kredi / Banka Kartı</span>
+            <span class="sc-lbl">Kredi / Banka Kartı (Bugün)</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
             </div>
@@ -2335,7 +2385,7 @@
 
         <div class="stat-card">
           <div class="sc-top">
-            <span class="sc-lbl">Havale / EFT / Fast</span>
+            <span class="sc-lbl">Havale / FAST (Bugün)</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </div>
@@ -2419,9 +2469,13 @@
               <h2 id="pos-list-title">Günlük Kasa Defteri</h2>
               <p id="pos-list-sub">Bugün mağazada gerçekleşen elden satışlar</p>
             </div>
-            <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div class="pos-filter-group" id="pos-filter-tabs">
+                <button type="button" class="pos-filter-btn active" data-filter="today">Bugün</button>
+                <button type="button" class="pos-filter-btn" data-filter="month">Bu Ay</button>
+                <button type="button" class="pos-filter-btn" data-filter="all">Tüm Geçmiş</button>
+              </div>
               <input type="date" id="pos-date-picker" value="${todayStr}" style="padding:6px 10px;font-size:12.5px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card-2);color:var(--text)">
-              <button class="btn btn-ghost btn-sm" id="pos-filter-all">Tüm Geçmiş</button>
               <button class="btn btn-ghost btn-sm" id="pos-export-csv" title="Satışları CSV formatında indir">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                 Dışa Aktar
@@ -2646,28 +2700,43 @@
       const todayPos = todaySales.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
       const todayHavale = todaySales.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
 
+      // 2. Calculate current month's KPIs
+      const monthSales = sales.filter((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr);
+      const monthTotal = monthSales.reduce((sum, s) => sum + (s.total || 0), 0);
+      const monthCount = monthSales.length;
+
       $('#pos-kpi-total').textContent = fmt(todayTotal);
       $('#pos-kpi-count').textContent = todaySales.length;
+      $('#pos-kpi-month-total').textContent = fmt(monthTotal);
+      $('#pos-kpi-month-count').textContent = monthCount;
       $('#pos-kpi-cash').textContent = fmt(todayCash);
       $('#pos-kpi-pos').textContent = fmt(todayPos);
       $('#pos-kpi-havale').textContent = fmt(todayHavale);
 
-      // 2. Filter list based on selected view
+      // 3. Filter list based on selected view
       let filtered = [];
       if (activeFilter === 'today') {
+        filtered = sales.filter((s) => (s.createdAt || '').slice(0, 10) === todayStr);
+        $('#pos-list-title').textContent = 'Günlük Kasa Defteri';
+        $('#pos-list-sub').textContent = `Bugün mağazada gerçekleşen elden satışlar (${filtered.length} kayıt)`;
+      } else if (activeFilter === 'month') {
+        filtered = sales.filter((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr);
+        $('#pos-list-title').textContent = `${currentMonthName} Kasa Defteri`;
+        $('#pos-list-sub').textContent = `${currentMonthName} ayı boyunca mağazada gerçekleşen elden satışlar (${filtered.length} kayıt)`;
+      } else if (activeFilter === 'custom_date') {
         filtered = sales.filter((s) => (s.createdAt || '').slice(0, 10) === selectedDate);
-        $('#pos-list-title').textContent = selectedDate === todayStr ? 'Günlük Kasa Defteri' : `${selectedDate} Tarihli Kasa Defteri`;
-        $('#pos-list-sub').textContent = `${selectedDate === todayStr ? 'Bugün' : selectedDate} mağazada gerçekleşen elden satışlar (${filtered.length} kayıt)`;
+        $('#pos-list-title').textContent = `${selectedDate} Tarihli Kasa Defteri`;
+        $('#pos-list-sub').textContent = `${selectedDate} tarihinde gerçekleşen satışlar (${filtered.length} kayıt)`;
       } else {
         filtered = sales;
         $('#pos-list-title').textContent = 'Tüm Geçmiş Kasa Hareketleri';
         $('#pos-list-sub').textContent = `Fiziksel mağaza tüm zamanlar satış kaydı (${filtered.length} kayıt)`;
       }
 
-      // 3. Render table rows
+      // 4. Render table rows
       const tbody = $('#pos-tbody');
       if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty" style="padding:36px;text-align:center">Bu tarih için henüz elden satış kaydı bulunmuyor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="empty" style="padding:36px;text-align:center">Bu dönem için henüz elden satış kaydı bulunmuyor.</td></tr>`;
       } else {
         tbody.innerHTML = filtered.map((s) => {
           const d = new Date(s.createdAt);
@@ -2701,13 +2770,17 @@
         }).join('');
       }
 
-      // 4. Calculate day summary box
+      // 5. Calculate day summary box
       const sumNakit = filtered.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
       const sumPos = filtered.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
       const sumHavale = filtered.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
       const sumGrand = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
 
-      $('#pos-summary-desc').textContent = `${filtered.length} Satış İşlemi Toplamı`;
+      const periodDesc = activeFilter === 'today' ? 'Bugünkü Satışlar'
+        : (activeFilter === 'month' ? `${currentMonthName} Satışları`
+        : (activeFilter === 'custom_date' ? `${selectedDate} Satışları` : 'Tüm Dönem Satışları'));
+
+      $('#pos-summary-desc').textContent = `${periodDesc} (${filtered.length} İşlem)`;
       $('#pos-sum-nakit').textContent = fmt(sumNakit);
       $('#pos-sum-pos').textContent = fmt(sumPos);
       $('#pos-sum-havale').textContent = fmt(sumHavale);
@@ -2730,22 +2803,31 @@
       });
     }
 
+    // Filter tabs switcher (Bugün, Bu Ay, Tüm Geçmiş)
+    $$('#pos-filter-tabs .pos-filter-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        $$('#pos-filter-tabs .pos-filter-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        if (activeFilter === 'today') {
+          selectedDate = todayStr;
+          $('#pos-date-picker').value = todayStr;
+        }
+        draw();
+      });
+    });
+
     // Date picker filter
     $('#pos-date-picker').addEventListener('change', (e) => {
       selectedDate = e.target.value;
-      activeFilter = 'today';
-      draw();
-    });
-
-    // All time filter button
-    $('#pos-filter-all').addEventListener('click', () => {
-      activeFilter = activeFilter === 'all' ? 'today' : 'all';
-      $('#pos-filter-all').textContent = activeFilter === 'all' ? 'Günlük Görünüm' : 'Tüm Geçmiş';
+      activeFilter = 'custom_date';
+      $$('#pos-filter-tabs .pos-filter-btn').forEach((b) => b.classList.remove('active'));
       draw();
     });
 
     // Export CSV
     $('#pos-export-csv').addEventListener('click', () => {
+      const exportList = activeFilter === 'all' ? sales : (sales.filter((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr).length ? sales : sales);
       const rows = [
         ['Islem No', 'Tarih', 'Saat', 'Satis Basligi / Not', 'Odeme Yontemi', 'Tutar (TL)', 'Kasiyer'],
         ...sales.map((s) => {
@@ -2761,7 +2843,7 @@
           ];
         })
       ];
-      exportCSV(`loveshop-kasa-pos-${new Date().toISOString().slice(0,10)}.csv`, rows);
+      exportCSV(`loveshop-kasa-${new Date().toISOString().slice(0,10)}.csv`, rows);
     });
 
     draw();

@@ -2145,6 +2145,59 @@ img { max-width: 100%; display: block; }
 }
 
 /* ================= POS / FİZİKSEL MAĞAZA KASA STİLLERİ (LUXURY MONOCHROME) ================= */
+.pos-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+@media (max-width: 1400px) {
+  .pos-stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .pos-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 580px) {
+  .pos-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pos-filter-group {
+  display: inline-flex;
+  align-items: center;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 3px;
+  gap: 3px;
+}
+.pos-filter-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s ease;
+  user-select: none;
+}
+.pos-filter-btn:hover {
+  color: var(--text);
+}
+.pos-filter-btn.active {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--line-strong);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
 .pos-layout {
   display: grid;
   grid-template-columns: 420px 1fr;
