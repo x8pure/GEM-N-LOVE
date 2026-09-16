@@ -1442,36 +1442,9 @@ ${body}
 
 function cleanEditorialTitle(name: string): string {
   if (!name) return '';
-  const s = name.trim();
-  if (s.includes('3 in 1')) return '3 in 1 Realistik';
-  if (s.toLowerCase().includes('wand vibratör')) return 'Wand Vibratör';
-  if (s.toLowerCase().startsWith('oscar')) return 'Oscar Realistik';
-  if (s.toLowerCase().startsWith('steve')) return 'Steve Realistik';
-  if (s.toLowerCase().includes('stag 9000')) return 'Stag 9000 Sprey';
-  if (s.toLowerCase().includes('anal plug')) return 'LOVE. Anal Plug';
-  if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
-  if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
-  if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
-  if (s.toLowerCase().includes('proling') && (s.toLowerCase().includes('krem') || s.toLowerCase().includes('cream'))) return 'Proling Krem';
-  if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
-
-  let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();
-  clean = clean.replace(/telefon\s+kontrollü/gi, '')
-               .replace(/ultra\s+yumuşak\s+dokulu/gi, '')
-               .replace(/bükülebilir\s+başlıklı/gi, '')
-               .replace(/hareketli/gi, '')
-               .replace(/özel\s+geliştirilmiş/gi, '')
-               .replace(/şarjlı/gi, '')
-               .replace(/su\s+bazlı/gi, '')
-               .replace(/realistik/gi, '')
-               .replace(/\s{2,}/g, ' ')
-               .trim();
-
-  const words = clean.split(' ').filter(Boolean);
-  if (words.length > 3) {
-    return words.slice(0, 2).join(' ');
-  }
-  return clean || name;
+  let s = String(name).replace(/\s+/g, ' ').trim();
+  s = s.replace(/[\s\-\–\—\:\/\|]+$/, '').trim();
+  return s;
 }
 
 const productCardSSR = (p: any, tr: any) => {
@@ -3212,7 +3185,17 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         if (saved && !gallery.includes(saved)) gallery.push(saved);
       }
 
-      let image = b.image ? await saveUpload(b.image) : (gallery[0] || '');
+      let image = '';
+      if (b.image) {
+        const rawIdx = rawGallery.indexOf(b.image);
+        if (rawIdx !== -1 && gallery[rawIdx]) {
+          image = gallery[rawIdx];
+        } else {
+          image = await saveUpload(b.image);
+        }
+      } else {
+        image = gallery[0] || '';
+      }
       if (image && !gallery.includes(image)) gallery.unshift(image);
       if (!gallery.length && image) gallery = [image];
       gallery = Array.from(new Set(gallery.filter(Boolean)));
@@ -3261,8 +3244,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       }
 
       if (b.image) {
-        const savedCover = await saveUpload(b.image);
-        if (savedCover) p.image = savedCover;
+        const rawGallery = Array.isArray(b.gallery) ? b.gallery : (Array.isArray(b.images) ? b.images : []);
+        const rawIdx = rawGallery.indexOf(b.image);
+        if (rawIdx !== -1 && Array.isArray(p.gallery) && p.gallery[rawIdx]) {
+          p.image = p.gallery[rawIdx];
+        } else {
+          const savedCover = await saveUpload(b.image);
+          if (savedCover) p.image = savedCover;
+        }
       }
       
       if (!Array.isArray(p.gallery) || !p.gallery.length) {

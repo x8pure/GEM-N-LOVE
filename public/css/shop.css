@@ -33,7 +33,7 @@ html.dark {
   --card: rgba(24, 26, 30, 0.85);
   --card-solid: #181A1E;  /* firÃ§alanmis titanyum mat */
   --card-2: rgba(28, 30, 35, 0.9);
-  --studio-card-bg: radial-gradient(circle at 50% 35%, #242730 0%, #17191D 65%, #0F1012 100%);
+  --studio-card-bg: radial-gradient(circle at 50% 35%, #181A1E 0%, #121316 65%, #0D0E10 100%);
   --line: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.16);
   --text: #EDEDF0;        /* saf ipeksi beyaz / platin */
@@ -76,7 +76,7 @@ html.dark .cart-line-thumb,
 [data-theme="dark"] .cart-line-thumb,
 html.dark .spatial-visual-hero,
 [data-theme="dark"] .spatial-visual-hero {
-  background: radial-gradient(circle at 50% 35%, #242730 0%, #17191D 65%, #0F1012 100%) !important;
+  background: radial-gradient(circle at 50% 35%, #181A1E 0%, #121316 65%, #0D0E10 100%) !important;
   border-color: rgba(255, 255, 255, 0.09) !important;
 }
 html.dark .bento-card,
@@ -89,8 +89,8 @@ html.dark .bento-card::before,
 }
 html.dark .bento-card:hover,
 [data-theme="dark"] .bento-card:hover {
-  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 123, 114, 0.25) !important;
-  border-color: rgba(255, 123, 114, 0.35) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
 }
 html.dark .bento-card .bento-bg,
 [data-theme="dark"] .bento-card .bento-bg,
@@ -116,7 +116,7 @@ html.dark .cf-card,
 [data-theme="dark"] .cf-card,
 html.dark .cf-pos .cf-card,
 [data-theme="dark"] .cf-pos .cf-card {
-  background: radial-gradient(circle at 50% 35%, #242730 0%, #17191D 65%, #0F1012 100%) !important;
+  background: radial-gradient(circle at 50% 35%, #181A1E 0%, #121316 65%, #0D0E10 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.09) !important;
   box-shadow: 0 calc(14px + 22px * var(--f, 0)) calc(30px + 30px * var(--f, 0)) rgba(0, 0, 0, calc(.65 + .3 * var(--f, 0))), 0 0 0 1px rgba(255, 123, 114, calc(.18 * var(--f, 0))) !important;
 }
@@ -1644,7 +1644,7 @@ html.dark .cf-cap,
 .cf-cap b {
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13px; font-weight: 600; letter-spacing: -0.1px;
-  line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;
   color: #18181B;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1977,10 +1977,11 @@ html.dark .link-more:hover,
     transform: translateZ(0) !important;
   }
 
-  /* Clean separation in dark mode: a refined dark shadow behind the product box that cuts the background cleanly without spilling onto the text */
+  /* Clean, halo-free render in Dark Mode */
   html.dark .bento-card-a .bento-bg,
   [data-theme="dark"] .bento-card-a .bento-bg {
-    filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.75)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.90)) !important;
+    filter: none !important;
+    opacity: 1 !important;
   }
 }
 
@@ -2185,7 +2186,7 @@ html.dark .link-more:hover,
 /* ==== Bento Dark Mode (Monochrome Luxury with Ambient Depth) ==== */
 html.dark .bento-card,
 [data-theme="dark"] .bento-card {
-  background: radial-gradient(circle at 50% 30%, #1D2026 0%, #15171B 65%, #0F1012 100%) !important;
+  background: radial-gradient(circle at 50% 30%, #181A1E 0%, #121316 65%, #0D0E10 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.09) !important;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6) !important;
 }
@@ -2193,6 +2194,12 @@ html.dark .bento-card:hover,
 [data-theme="dark"] .bento-card:hover {
   box-shadow: 0 24px 56px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Card A (Vibratörler): Pure untouched image render with zero artificial filter */
+html.dark .bento-card-a .bento-bg,
+[data-theme="dark"] .bento-card-a .bento-bg {
+  filter: none !important;
 }
 html.dark .bento-card:not(.bento-card-a) .bento-bg,
 [data-theme="dark"] .bento-card:not(.bento-card-a) .bento-bg {
@@ -7396,7 +7403,7 @@ main#app-main > section:nth-of-type(2) .bento-bg {
 }
 
 html.dark main#app-main > section:nth-of-type(2) > div:nth-of-type(2) > a.bento-card {
-  background: radial-gradient(circle at 50% 35%, #242730 0%, #17191D 65%, #0F1012 100%) !important;
+  background: radial-gradient(circle at 50% 35%, #181A1E 0%, #121316 65%, #0D0E10 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.09) !important;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
 }
@@ -8872,11 +8879,15 @@ html.dark .prod-card:hover .prod-media img {
   font-weight: 600 !important;
   color: #27272A !important;
   text-decoration: none !important;
-  line-height: 1.25 !important;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  line-height: 1.35 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  min-height: 2.7em !important;
+  max-height: 2.7em !important;
+  word-break: break-word !important;
   letter-spacing: -0.15px;
   margin: 0 !important;
   padding: 0 !important;
@@ -9123,7 +9134,15 @@ html.dark .editorial-add-btn.added .btn-check-icon {
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
     font-size: 13.5px !important;
     font-weight: 600 !important;
-    line-height: 1.25 !important;
+    line-height: 1.3 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    min-height: 2.6em !important;
+    max-height: 2.6em !important;
+    word-break: break-word !important;
     margin: 0 !important;
     padding: 0 !important;
     position: relative !important;

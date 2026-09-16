@@ -7,37 +7,9 @@ const t = (...args) => (window.LS && window.LS.t ? window.LS.t(...args) : args[0
 
 function cleanEditorialTitle(name) {
   if (!name) return '';
-  const s = name.trim();
-  if (s.includes('3 in 1')) return '3 in 1 Realistik';
-  if (s.toLowerCase().includes('wand vibratör')) return 'Wand Vibratör';
-  if (s.toLowerCase().startsWith('oscar')) return 'Oscar Realistik';
-  if (s.toLowerCase().startsWith('steve')) return 'Steve Realistik';
-  if (s.toLowerCase().includes('stag 9000')) return 'Stag 9000 Sprey';
-  if (s.toLowerCase().includes('anal plug')) return 'LOVE. Anal Plug';
-  if (s.toLowerCase().includes('noctis')) return 'Noctis Vibratör';
-  if (s.toLowerCase().includes('rabbit')) return 'Rabbit Vibratör';
-  if (s.toLowerCase().includes('cabs glide')) return 'Cabs Glide Jel';
-  if (s.toLowerCase().includes('proling') && (s.toLowerCase().includes('krem') || s.toLowerCase().includes('cream'))) return 'Proling Krem';
-  if (s.toLowerCase().startsWith('proling')) return 'Proling Sprey';
-
-  let clean = s.split(/\s*[-—–|:(/]\s*/)[0].trim();
-  clean = clean.replace(/\b\d+(\.\d+)?\s*(ml|gr|g|cm|mm|adet|li|'li|’li|lü|'lü)\b/gi, '')
-               .replace(/telefon\s+kontrollü/gi, '')
-               .replace(/ultra\s+yumuşak\s+dokulu/gi, '')
-               .replace(/bükülebilir\s+başlıklı/gi, '')
-               .replace(/hareketli/gi, '')
-               .replace(/özel\s+geliştirilmiş/gi, '')
-               .replace(/şarjlı/gi, '')
-               .replace(/su\s+bazlı/gi, '')
-               .replace(/realistik/gi, '')
-               .replace(/\s{2,}/g, ' ')
-               .trim();
-
-  const words = clean.split(/\s+/).filter(Boolean);
-  if (words.length > 3) {
-    return words.slice(0, 3).join(' ');
-  }
-  return clean || name;
+  let s = String(name).replace(/\s+/g, ' ').trim();
+  s = s.replace(/[\s\-\–\—\:\/\|]+$/, '').trim();
+  return s;
 }
 
 let activeCoverflowCleaner = null;
