@@ -388,7 +388,7 @@ nav.top {
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(41, 37, 36, 0.1);
-  box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 123, 114, 0.06);
+  box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
   transition: width 0.38s cubic-bezier(0.16, 1, 0.3, 1),
               max-width 0.38s cubic-bezier(0.16, 1, 0.3, 1),
               margin 0.38s cubic-bezier(0.16, 1, 0.3, 1),
@@ -406,7 +406,7 @@ html.dark header:nth-of-type(1) > nav:nth-of-type(1),
 html.dark nav.top {
   background: rgba(18, 20, 24, 0.86);
   border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 123, 114, 0.14);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.10);
 }
 
 /* Completely remove Nav light beam / light shimmer */
