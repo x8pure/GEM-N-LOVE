@@ -46,71 +46,163 @@ export function initTiltPhysics() {
   });
 }
 
-// Compute Smart Dynamic Specs (Custom Highlights > Category Rules > Universal Safe Specs)
-export function getProductSpecs(prod) {
-  if (Array.isArray(prod.highlights) && prod.highlights.length) {
-    const icons = [
-      '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>',
-      '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>',
-      '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>',
-      '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>'
-    ];
-    return prod.highlights.slice(0, 4).map((text, i) => ({
-      icon: icons[i % icons.length],
-      text: String(text).trim()
-    }));
+// Helper: Select context-appropriate minimalist SVG icon based on spec text
+function getSpecIcon(text) {
+  const t = String(text || '').toLowerCase();
+  if (t.includes('ipx') || t.includes('su geçirmez') || t.includes('waterproof') || t.includes('suya dayanıklı')) {
+    return '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>';
+  }
+  if (t.includes('şarj') || t.includes('pil') || t.includes('batarya') || t.includes('charge') || t.includes('usb')) {
+    return '<rect x="4" y="6.5" width="13" height="11" rx="2.5"/><path d="M20 10v4M10.5 9.5 9 12h3.5l-1.5 2.5"/>';
+  }
+  if (t.includes('mod') || t.includes('titreşim') || t.includes('hız') || t.includes('ritim') || t.includes('motor')) {
+    return '<path d="M3 12h2M7.5 8v8M12 5v14M16.5 8v8M21 12h-2"/>';
+  }
+  if (t.includes('ağız') || t.includes('içecek') || t.includes('tüketilir') || t.includes('damla') || t.includes('takviye')) {
+    return '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>';
+  }
+  if (t.includes('harici') || t.includes('içilmez') || t.includes('güvenlik') || t.includes('masaj')) {
+    return '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  }
+  if (t.includes('silikon') || t.includes('tpe') || t.includes('çelik') || t.includes('cam') || t.includes('malzeme') || t.includes('deri')) {
+    return '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>';
+  }
+  if (t.includes('uygulama') || t.includes('bluetooth') || t.includes('telefon')) {
+    return '<rect x="6" y="2.5" width="12" height="19" rx="3"/><line x1="10.5" y1="18" x2="13.5" y2="18"/>';
+  }
+  if (t.includes('paket') || t.includes('kutu') || t.includes('kargo')) {
+    return '<rect x="3.5" y="6.5" width="17" height="13" rx="2.5"/><path d="M3.5 11h17M12 6.5v13"/>';
+  }
+  return '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>';
+}
+
+// Extract strict, honest highlights directly from product text (NO HALLUCINATIONS)
+function extractRealHighlights(prod) {
+  const fullText = `${prod.name || ''} ${prod.description || ''} ${prod.longDescription || ''}`;
+  const lower = fullText.toLowerCase();
+  const list = [];
+
+  // =========================================================================
+  // 1. CRITICAL HEALTH & USAGE ROUTE (ORAL VS TOPICAL VS MECHANICAL)
+  // =========================================================================
+  const isExplicitOral = (
+    lower.includes('içecek') || lower.includes('içeceğe') || lower.includes('suya damlat') ||
+    lower.includes('dilaltı') || lower.includes('dil altı') || lower.includes('içilir') ||
+    lower.includes('tüketilir') || lower.includes('oral damla') || lower.includes('sıvı takviye')
+  ) && !lower.includes('harici kullanım') && !lower.includes('masaj damlası') && !lower.includes('bölgeye damlat');
+
+  const isMechanicalOrApparatus = lower.includes('mastürbatör') || lower.includes('masturbat') ||
+    lower.includes('dildo') || lower.includes('vibratör') || lower.includes('manken') ||
+    lower.includes('kelepçe') || lower.includes('halka') || lower.includes('plug') ||
+    lower.includes('pompa') || lower.includes('maske');
+
+  const isDropsOrLiquid = !isMechanicalOrApparatus && (
+    lower.includes('damla') || lower.includes('drop') || lower.includes('serum') ||
+    lower.includes('yağ') || lower.includes('sprey') || lower.includes('krem') ||
+    lower.includes('jel') || lower.includes('lube') || lower.includes('kayganlaştırıcı')
+  );
+
+  if (isExplicitOral) {
+    list.push('Ağızdan İçeceğe Karıştırılarak Tüketilir');
+    list.push('Bitkisel Sıvı Destek Damlası');
+  } else if (isDropsOrLiquid) {
+    list.push('YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ');
+    const isDurationSupport = lower.includes('süreyi') || lower.includes('süre destek') || lower.includes('birliktelik süresi') || lower.includes('geciktir') || lower.includes('delay') || lower.includes('stag') || lower.includes('proling');
+    if (isDurationSupport) {
+      list.push('Birliktelik Süresini Destekleyici Formül');
+    }
+    if (lower.includes('damla') || lower.includes('drop')) list.push('Bölgesel Masaj & Uyarıcı Damla');
+    else if (lower.includes('sprey')) list.push('Lokal Püskürtme Uygulaması');
+    else if (lower.includes('krem')) list.push('Bölgesel Masajla Emilim');
+    else if (lower.includes('serum')) list.push('Konsantre Harici Serum');
   }
 
-  const cat = String(prod.category || '').toLowerCase();
-  const name = String(prod.name || '').toLowerCase();
-
-  // Electronic / Vibrators / Masturbators / Dolls / Rechargeable
-  if (cat.includes('vibrator') || cat.includes('masturbator') || cat.includes('vajina') || cat.includes('sisme') || name.includes('vibratör') || name.includes('şarjlı') || name.includes('motor') || name.includes('masaj')) {
-    return [
-      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? 'Medical Silicone' : '%100 Medikal Silikon' },
-      { icon: '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>', text: LANG === 'en' ? 'IPX7 Waterproof' : 'IPX7 Su Geçirmez' },
-      { icon: '<rect x="4" y="6.5" width="13" height="11" rx="2.5"/><path d="M20 10v4M10.5 9.5 9 12h3.5l-1.5 2.5"/>', text: LANG === 'en' ? 'Magnetic Fast Charge' : 'Manyetik Hızlı Şarj' },
-      { icon: '<path d="M3 12h2M7.5 8v8M12 5v14M16.5 8v8M21 12h-2"/>', text: LANG === 'en' ? '<40dB Whisper Motor' : '<40dB Fısıltı Motoru' }
-    ];
+  // 2. EXACT IPX / WATERPROOF (ONLY IF PRESENT IN REAL TEXT - NEVER INVENTED)
+  const ipxMatch = fullText.match(/\bip(?:x|v)?([0-9])\b/i);
+  if (ipxMatch) {
+    const lvl = ipxMatch[1];
+    if (lvl === '1' || lvl === '2') list.push(`IPX${lvl} Damlama Korumalı`);
+    else if (lvl === '3') list.push('IPX3 Sıçrama Korumalı');
+    else if (lvl === '4') list.push('IPX4 Sıçrama Korumalı');
+    else if (lvl === '5') list.push('IPX5 Su Püskürtme Dayanımlı');
+    else if (lvl === '6') list.push('IPX6 Güçlü Su Dayanımlı');
+    else if (lvl === '7') list.push('IPX7 Su Geçirmez');
+    else if (lvl === '8') list.push('IPX8 Tam Su Altı Geçirmez');
+    else list.push(`IPX${lvl} Sertifikalı`);
+  } else if (lower.includes('tamamen su geçirmez') || lower.includes('%100 su geçirmez') || lower.includes('100% su geçirmez')) {
+    list.push('%100 Su Geçirmez');
+  } else if (lower.includes('su geçirmezlik: evet') || (lower.includes('su geçirmez') && !lower.includes('su geçirmez değildir'))) {
+    list.push('Su Geçirmez Gövde');
   }
 
-  // Cosmetics / Oils / Lubricants / Sprays / Care / Gels
-  if (cat.includes('kozmetik') || cat.includes('saglik') || name.includes('jel') || name.includes('yağ') || name.includes('sprey') || name.includes('krem') || name.includes('lube') || name.includes('stag') || name.includes('geciktirici')) {
-    return [
-      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? 'Dermatologically Tested' : 'Dermatolojik Onaylı' },
-      { icon: '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>', text: LANG === 'en' ? 'Skin-Friendly Formula' : 'Ciltle Uyumlu Formül' },
-      { icon: '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>', text: LANG === 'en' ? 'Fast & Long-Lasting' : 'Hızlı & Uzun Etki' },
-      { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Stain-Free & Clean' : 'Leke Bırakmaz & Temiz' }
-    ];
+  // 3. MATERIAL (VERIFIED)
+  if (lower.includes('medikal platin') || lower.includes('platinum silikon')) list.push('Medikal Platinum Silikon');
+  else if (lower.includes('sıvı silikon') || lower.includes('liquid silicone')) list.push('Medikal Sıvı Silikon');
+  else if (lower.includes('medikal silikon') || lower.includes('tıbbi sınıf')) list.push('%100 Medikal Silikon');
+  else if (lower.includes('tpe') || lower.includes('cyberskin') || lower.includes('tpr')) list.push('Gerçekçi Medikal TPE');
+  else if (lower.includes('borosilikat') || lower.includes('cam dildo')) list.push('Borosilikat Medikal Cam');
+  else if (lower.includes('paslanmaz çelik') || lower.includes('metal plug') || lower.includes('çelik')) list.push('Medikal Paslanmaz Çelik');
+  else if (lower.includes('vegan deri') || lower.includes('suni deri')) list.push('Yumuşak Vegan Deri');
+  else if (lower.includes('peluş')) list.push('Peluş Kaplamalı Metal');
+  else if (lower.includes('lateks')) list.push('Klinik Doğal Lateks');
+
+  // 4. POWER / CHARGE (VERIFIED)
+  if (lower.includes('manyetik') && (lower.includes('şarj') || lower.includes('usb'))) list.push('Manyetik Hızlı Şarj');
+  else if (lower.includes('type-c') || lower.includes('type c')) list.push('Type-C Hızlı Şarj');
+  else if (lower.includes('usb') && (lower.includes('şarj') || lower.includes('kablo'))) list.push('USB Şarj Edilebilir');
+  else if (lower.includes('2aaa') || lower.includes('2xaaa') || lower.includes('2 adet aaa')) list.push('2x AAA Pille Çalışır');
+  else if (lower.includes('1aaa') || lower.includes('1xaaa') || lower.includes('1 adet aaa')) list.push('1x AAA Pille Çalışır');
+  else if (lower.includes('2aa') || lower.includes('2xaa') || lower.includes('2 adet aa')) list.push('2x AA Pille Çalışır');
+  else if (lower.includes('şarj edilebilir') || lower.includes('şarjlı')) list.push('Şarj Edilebilir Batarya');
+
+  // 5. FUNCTION / MODES (VERIFIED)
+  const modeMatch = fullText.match(/(\d+)\s*(?:farklı\s*)?(?:titreşim|hız|frekans|mod|program|fonksiyon)/i);
+  if (modeMatch) {
+    list.push(`${modeMatch[1]} Titreşim Modu`);
+  }
+  if (lower.includes('çift motor') || lower.includes('iki motor')) list.push('Çift Bağımsız Motor');
+  if (lower.includes('app') || lower.includes('telefon kontrollü') || lower.includes('bluetooth')) list.push('Mobil Uygulama Kontrollü');
+  if (lower.includes('ısıtma') || lower.includes('ısıtmalı')) list.push('Vücut Sıcaklığında Isıtma');
+  if (lower.includes('360°') || lower.includes('dönen başlık')) list.push('360° Dönen Başlık');
+  if (lower.includes('sessiz') || lower.includes('45db') || lower.includes('40db')) list.push('<45dB Fısıltı Motoru');
+  if (lower.includes('vantuz')) list.push('Güçlü Sabitleme Vantuzu');
+  if (lower.includes('dermatolojik')) list.push('Dermatolojik Onaylı');
+
+  // 6. COSMETICS / VOLUME (VERIFIED)
+  const mlMatch = fullText.match(/(\d+)\s*ml\b/i);
+  if (mlMatch && (lower.includes('jel') || lower.includes('sprey') || lower.includes('damla') || lower.includes('krem') || lower.includes('yağ') || lower.includes('serum'))) {
+    list.push(`${mlMatch[1]} ml Net Hacim`);
   }
 
-  // Lingerie / Costume / Fantasy
-  if (cat.includes('fantezi') || cat.includes('fantasy') || cat.includes('kostum') || cat.includes('giyim') || name.includes('çorap') || name.includes('gecelik') || name.includes('deri') || name.includes('dantel')) {
-    return [
-      { icon: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/>', text: LANG === 'en' ? 'Soft Touch Fabric' : 'Hassas & İpeksi Doku' },
-      { icon: '<path d="M7 4H4v3M20 7V4h-3M4 17v3h3M17 20h3v-3"/>', text: LANG === 'en' ? 'Ergonomic Elastic Fit' : 'Esnek & Rahat Kalıp' },
-      { icon: '<path d="M12 4v4M7 7l3 3M17 7l-3 3M4 16c2.5-2 5.5-2 8 0s5.5 2 8 0"/>', text: LANG === 'en' ? 'Breathable Fabric' : 'Nefes Alan Kumaş' },
-      { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Reinforced Stitching' : 'Dayanıklı Özel Dikiş' }
-    ];
-  }
-
-  // Dildos / Anal / Non-electric Body Safe Products
-  if (cat.includes('dildo') || cat.includes('anal') || cat.includes('knot')) {
-    return [
-      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? 'Body-Safe Material' : '%100 Vücut Dostu' },
-      { icon: '<path d="M12 3.5c-3.2 4-5.5 7.2-5.5 10.2a5.5 5.5 0 0 0 11 0c0-3-2.3-6.2-5.5-10.2z"/>', text: LANG === 'en' ? '100% Waterproof' : '%100 Su Geçirmez' },
-      { icon: '<circle cx="12" cy="12" r="8.5"/><path d="M7.5 12h9M12 7.5v9"/>', text: LANG === 'en' ? 'Smooth & Hypoallergenic' : 'Pürüzsüz & Hipoalerjenik' },
-      { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Easy Sterilization' : 'Kolay Temizlenebilir' }
-    ];
-  }
-
-  // Universal Default Trust & Quality Specs
-  return [
-    { icon: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/>', text: LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı' },
-    { icon: '<rect x="3.5" y="6.5" width="17" height="13" rx="2.5"/><path d="M3.5 11h17M12 6.5v13"/>', text: LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme' },
-    { icon: '<path d="M13 2.5 5.5 13h5.5l-1 8.5 7.5-10.5H12l1-8.5z"/>', text: LANG === 'en' ? 'Same Day Dispatch (1-3 Days)' : '14:00 Öncesi Aynı Gün Kargo' },
-    { icon: '<path d="M12 3c0 4.5-4.5 9-9 9 4.5 0 9 4.5 9 9 0-4.5 4.5-9 9-9-4.5 0-9-4.5-9-9z"/>', text: LANG === 'en' ? 'Premium Grade Standard' : 'Yüksek Kalite Standardı' }
+  // 7. NEUTRAL VERIFIABLE FALLBACKS (NEVER INVENT WATERPROOF, DOSE OR FAKE SPECS)
+  const safeFallbacks = [
+    LANG === 'en' ? '100% Original & Invoiced' : '%100 Orijinal & Faturalı',
+    LANG === 'en' ? 'Discreet Packaging' : '%100 Gizli Paketleme',
+    LANG === 'en' ? 'Hygienic Factory Seal' : 'Hijyenik Koruma Mührü'
   ];
+  for (const item of safeFallbacks) {
+    if (list.length >= 3) break;
+    if (!list.includes(item)) list.push(item);
+  }
+
+  return list.slice(0, 4);
+}
+
+// Compute Smart Dynamic Specs (Custom Highlights > Strict Text Extraction > Safe Universal)
+export function getProductSpecs(prod) {
+  let specTexts = [];
+  if (Array.isArray(prod.highlights) && prod.highlights.length) {
+    specTexts = prod.highlights.map(s => String(s).trim()).filter(Boolean);
+  }
+
+  if (specTexts.length === 0) {
+    specTexts = extractRealHighlights(prod);
+  }
+
+  return specTexts.slice(0, 4).map(text => ({
+    icon: getSpecIcon(text),
+    text: String(text).trim()
+  }));
 }
 
 // Compute Dynamic Context-Aware Highlight Badge (No generic "Orijinal Formül" on devices/dolls)

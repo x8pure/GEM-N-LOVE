@@ -32,6 +32,8 @@ import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
 import { GoogleGenAI, Type } from '@google/genai';
 import { GUIDES } from './data/guides.ts';
+import { CITIES, CityLanding, ESKISEHIR_STORE } from './data/cities.ts';
+import { SHIPPING_REGIONS, PACKAGING_STEPS, SHIPPING_FAQS } from './data/shipping.ts';
 import {
   COMMERCE_CONFIG,
   getProductShippingDetailsSchema,
@@ -1027,20 +1029,20 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const dark = C.theme === 'dark';
   const appVersion = `${APP_VERSION}-${APP_BUILD_TIME}`;
   const desc = opts.description || (C.lang === 'en' 
-    ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery.'
-    : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.');
+    ? 'LOVE: Modern Sexual Wellness & Intimacy store. 100% discreet packaging, anonymous payment, certified body-safe products with express delivery across Turkey.'
+    : 'LOVE: Modern Sexual Wellness & Cinsel Sağlık Platformu. Beden dostu medikal teknolojiler, masaj aletleri ve organik formüller. %100 çift mühürlü gizli paketleme, tüm Türkiye\'ye aynı gün kargo ve Eskişehir 15 yıllık köklü mağaza güvencesi.');
   const canonicalUrl = opts.canonical || (`https://loveeroticshop.com${C.path || '/'}`);
   const ogImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveeroticshop.com/test.png');
 
-  // 2026 Enhanced Structured Data (JSON-LD) for Local SEO & Search Intent
+  // 2026 Enhanced Structured Data (JSON-LD) for Search Intent & Brand Authority
   const schemaGraph: any[] = [
     {
       "@type": "WebSite",
       "@id": "https://loveeroticshop.com/#website",
       "url": "https://loveeroticshop.com/",
-      "name": "Love Erotik & Seks Shop Eskişehir",
-      "alternateName": ["Love Sex Shop", "Love Erotik Shop", "Love Seks Shop", "Love Shop", "Eskişehir Sex Shop", "Eskişehir Erotik Shop"],
-      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. %100 gizli paketleme, aynı gün 2-3 saatte kurye teslimat ve orijinal ürünler.",
+      "name": "LOVE — Sexual Wellness & Intimacy",
+      "alternateName": ["LOVE Sexual Wellness", "LOVE Cinsel Sağlık", "Love Sex Shop", "Love Erotik Shop", "Love Seks Shop", "Love Shop"],
+      "description": "Türkiye'nin lider modern Sexual Wellness & Cinsel Sağlık platformu. %100 gizli çift mühürlü paketleme, aynı gün hızlı kargo ve medikal standartlar.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://loveeroticshop.com/magaza?q={search_term_string}",
@@ -1048,15 +1050,34 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       }
     },
     {
-      "@type": "Store",
-      "@id": "https://loveeroticshop.com/#store",
-      "name": "Love Erotik & Seks Shop Eskişehir",
-      "legalName": "Love Erotik Shop Eskişehir",
-      "alternateName": ["Love Sex Shop", "Love Seks Shop", "Love Erotik Shop", "Love Shop", "Eskişehir Sex Shop", "Eskişehir Erotik Shop"],
+      "@type": "Organization",
+      "@id": "https://loveeroticshop.com/#organization",
+      "name": "LOVE — Sexual Wellness",
       "url": "https://loveeroticshop.com/",
       "logo": "https://loveeroticshop.com/test.png",
+      "description": "Türkiye genelinde %100 çift mühürlü gizli paketleme ile hizmet veren modern sexual wellness ve intimate body care platformu.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": st.supportPhone || "+90 543 633 13 25",
+        "contactType": "customer service",
+        "areaServed": "TR",
+        "availableLanguage": ["Turkish", "English"]
+      }
+    }
+  ];
+
+  // Store / LocalBusiness schema MUST ONLY be present on physical store page or contact page
+  if (opts.includeStoreSchema) {
+    schemaGraph.push({
+      "@type": "Store",
+      "@id": "https://loveeroticshop.com/#store",
+      "name": "LOVE — Sexual Wellness & Cinsel Sağlık (Eskişehir Mağazası)",
+      "legalName": "Love Erotik Shop Eskişehir",
+      "alternateName": ["Eskişehir Sex Shop", "Eskişehir Erotik Shop", "Love Shop Eskişehir"],
+      "url": "https://loveeroticshop.com/sehir/eskisehir",
+      "logo": "https://loveeroticshop.com/test.png",
       "image": "https://loveeroticshop.com/test.png",
-      "description": "Eskişehir'in lider ve güvenilir seks shop & erotik shop mağazası. Tepebaşı ve Odunpazarı içi 2-3 saatte özel gizli kurye teslimat, mağazadan randevusuz elden teslim alma, %100 orijinal, barkodlu ve faturalı ürünler.",
+      "description": "Eskişehir Tepebaşı & Odunpazarı içi 2-3 saatte özel gizli kurye ve fiziksel mağazadan elden teslim. %100 gizli çift katlı mühürlü paketleme, orijinal faturalı ve beden dostu medikal teknolojiler.",
       "priceRange": "₺₺",
       "telephone": st.supportPhone || "+90 543 633 13 25",
       "currenciesAccepted": "TRY",
@@ -1064,8 +1085,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       "areaServed": [
         { "@type": "City", "name": "Eskişehir" },
         { "@type": "AdministrativeArea", "name": "Tepebaşı" },
-        { "@type": "AdministrativeArea", "name": "Odunpazarı" },
-        { "@type": "Country", "name": "Türkiye" }
+        { "@type": "AdministrativeArea", "name": "Odunpazarı" }
       ],
       "openingHoursSpecification": [
         {
@@ -1090,8 +1110,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       },
       "hasMap": "https://maps.google.com/?q=39.7767,30.5206",
       "hasMerchantReturnPolicy": getMerchantReturnPolicySchema()
-    }
-  ];
+    });
+  }
 
   if (opts.product) {
     const prod = opts.product;
@@ -1196,11 +1216,11 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(title)} | Premium Kişisel Bakım</title>
+<title>${esc(title)} | LOVE Sexual Wellness</title>
 <meta name="description" content="${esc(desc)}">
 <meta name="google-site-verification" content="googled2d4255e0f685daf">
-<meta property="og:site_name" content="Love Erotik & Seks Shop">
-<meta property="og:title" content="${esc(title)} | Premium Kişisel Bakım">
+<meta property="og:site_name" content="LOVE — Sexual Wellness & Intimacy">
+<meta property="og:title" content="${esc(title)} | LOVE Sexual Wellness">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(ogImage)}">
 <meta property="og:url" content="${esc(canonicalUrl)}">
@@ -1208,8 +1228,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" media="print" onload="this.media='all'" />
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" /></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" /></noscript>
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <!-- <link rel="icon" type="image/x-icon" href="/favicon.ico"> removed -->
@@ -1370,14 +1390,24 @@ ${body}
       <a href="/" class="brand foot-brand">LOVE<span class="dot">.</span></a>
       <p class="foot-desc"><b>${esc(st.storeName)}</b>${tr('foot.desc')}</p>
     </div>
-    <nav class="foot-links">
-      <a href="/magaza">${tr('foot.all')}</a>
-      <a href="/rehber">${C.lang === 'en' ? 'Guides' : 'Rehber & Sağlık'}</a>
-      <a href="/hakkimizda">${tr('foot.about')}</a>
-      <a href="/hakkimizda#gizlilik">${tr('foot.discreet')}</a>
-      <a href="/hakkimizda#iade">${tr('foot.returns')}</a>
-      <a href="/iletisim">${tr('foot.contact')}</a>
-    </nav>
+    <div class="foot-nav-groups">
+      <div class="foot-col">
+        <h4 class="foot-col-title">${C.lang === 'en' ? 'SHOP' : 'MAĞAZA'}</h4>
+        <nav class="foot-col-links">
+          <a href="/magaza">${tr('foot.all')}</a>
+          <a href="/rehber">${C.lang === 'en' ? 'Guides & Health' : 'Rehber & Sağlık'}</a>
+        </nav>
+      </div>
+      <div class="foot-col">
+        <h4 class="foot-col-title">${C.lang === 'en' ? 'CORPORATE' : 'KURUMSAL'}</h4>
+        <nav class="foot-col-links">
+          <a href="/hakkimizda">${tr('foot.about')}</a>
+          <a href="/iletisim">${tr('foot.contact')}</a>
+          <a href="/hakkimizda#iade">${tr('foot.returns')}</a>
+          <a href="/kargo-ve-teslimat">${C.lang === 'en' ? 'Shipping & Delivery' : 'Kargo & Teslimat'}</a>
+        </nav>
+      </div>
+    </div>
     <div class="foot-contact">
       <a class="foot-phone" href="${esc(st.whatsapp)}" target="_blank" rel="noopener">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
@@ -1388,7 +1418,20 @@ ${body}
   <div class="foot-bottom">
     <span>© ${new Date().getFullYear()} ${esc(st.storeName)}${tr('foot.rights')}</span>
     <button type="button" onclick="window.showAgeGate && window.showAgeGate()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;margin:0 8px;" title="Doğrulama Ekranını Yeniden Göster">+18 Yaş Doğrulama</button>
-    <div class="pay-chips"><span>${tr('foot.pay.wa')}</span><span>${tr('foot.pay.shop')}</span><span>${tr('foot.pay.discreet')}</span></div>
+    <div class="pay-chips">
+      <span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+        ${tr('foot.pay.wa')}
+      </span>
+      <span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        ${tr('foot.pay.shop')}
+      </span>
+      <span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        ${tr('foot.pay.discreet')}
+      </span>
+    </div>
   </div>
 </footer>
 
@@ -1615,10 +1658,10 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   ];
 
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'LOVE. — Premium Adult Store' : 'Love Seks Shop & Erotik Shop Eskişehir | %100 Gizli Teslimat', html, {
+  res.end(layout(C.lang === 'en' ? 'LOVE — Sexual Wellness & Intimacy' : 'LOVE — Modern Sexual Wellness & Cinsel Sağlık | %100 Gizli Teslimat', html, {
     description: C.lang === 'en'
-      ? 'Love Shop: 100% discreet packaging, anonymous payment, body-safe adult lifestyle store with express delivery in Turkey.'
-      : 'Eskişehir Love Erotik & Seks Shop: %100 gizli paketleme, güvenli ödeme, aynı gün hızlı teslimat ve orijinal vücut dostu ürünler. Seçkin ve güvenli yetişkin mağazası.',
+      ? 'LOVE: 100% discreet packaging, anonymous payment, certified body-safe adult wellness store with express delivery across Turkey.'
+      : 'LOVE: Modern Sexual Wellness & Cinsel Sağlık Platformu. Beden dostu medikal teknolojiler, masaj aletleri ve organik formüller. %100 çift mühürlü gizli paketleme, aynı gün kargo ve Eskişehir 15 yıllık köklü mağaza güvencesi.',
     faq: homeFaqs,
     preloadImages: heroFirstImg ? [heroFirstImg] : []
   }, C));
@@ -1992,8 +2035,7 @@ function pageGuides(req: http.IncomingMessage, res: http.ServerResponse) {
   <div class="guide-breadcrumbs">
     <a href="/">Ana Sayfa</a> <span>/</span> <span class="current">Rehber & Cinsel Sağlık</span>
   </div>
-  <span class="eyebrow">BİLGİ & UZMANLIK MERKEZİ (EEAT)</span>
-  <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1;margin:12px 0 16px;">Rehber & Cinsel Sağlık</h1>
+  <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1;margin:16px 0 16px;">Rehber & Cinsel Sağlık</h1>
   <p style="font-size:16px;line-height:1.7;max-width:700px;color:var(--muted)">Eskişehir Love Shop uzmanları tarafından hazırlanan; doğru ürün seçimi, medikal standartlar, geciktirici ve kayganlaştırıcı rehberleri, gizli paketleme ve ürün hijyeni hakkında kapsamlı makaleler.</p>
 
   <div class="guide-grid">
@@ -2039,11 +2081,35 @@ function pageGuides(req: http.IncomingMessage, res: http.ServerResponse) {
 
 function pageGuideDetail(req: http.IncomingMessage, res: http.ServerResponse, slug: string) {
   const C = pageCtx(req);
+  const tr = C.t;
   const guide = GUIDES.find(g => g.slug === slug);
   if (!guide) {
     res.writeHead(302, { Location: '/rehber' });
     return res.end();
   }
+
+  // Recommended products matching guide topics
+  const allProds = db.products || [];
+  let recommendedProducts: any[] = [];
+  if (guide.productSlugs && guide.productSlugs.length > 0) {
+    recommendedProducts = guide.productSlugs
+      .map(ps => allProds.find((p: any) => p.slug === ps))
+      .filter(Boolean);
+  }
+  // Fallback if needed to guarantee at least 2 curated products
+  if (recommendedProducts.length < 2) {
+    const fallbackProds = allProds.filter((p: any) => {
+      const name = (p.name || '').toLowerCase();
+      return name.includes('vibratör') || name.includes('jel') || name.includes('lelo') || name.includes('flovetta');
+    }).slice(0, 3);
+    for (const fp of fallbackProds) {
+      if (!recommendedProducts.some(rp => rp.id === fp.id) && recommendedProducts.length < 3) {
+        recommendedProducts.push(fp);
+      }
+    }
+  }
+
+  const recProdsCardsHtml = recommendedProducts.map(p => productCardSSR(p, tr)).join('\n');
 
   const html = `
 <div class="rich">
@@ -2073,6 +2139,21 @@ function pageGuideDetail(req: http.IncomingMessage, res: http.ServerResponse, sl
     <div class="guide-tags-row">
       ${guide.tags.map(t => `<span class="guide-tag">#${esc(t)}</span>`).join('')}
     </div>
+  ` : ''}
+
+  ${recommendedProducts.length > 0 ? `
+    <section class="guide-recommended-section">
+      <div class="guide-rec-head">
+        <div>
+          <h2 class="guide-rec-title">${C.lang === 'en' ? 'Featured &amp; Recommended Products' : 'Rehberde Önerilen ve İncelenen Ürünler'}</h2>
+          <p class="guide-rec-sub">${C.lang === 'en' ? 'Authentic, body-safe sexual wellness products mentioned in this clinical guide.' : 'Bu makalede incelenen, %100 orijinal ve medikal standartlara uygun seçkin modeller.'}</p>
+        </div>
+        <a href="/magaza" class="link-more" style="font-weight:600;font-size:13px;">${C.lang === 'en' ? 'View Catalog →' : 'Tüm Kataloğu İncele →'}</a>
+      </div>
+      <div class="prod-grid">
+        ${recProdsCardsHtml}
+      </div>
+    </section>
   ` : ''}
 
   ${guide.faqs && guide.faqs.length > 0 ? `
@@ -2108,6 +2189,346 @@ function pageGuideDetail(req: http.IncomingMessage, res: http.ServerResponse, sl
     ],
     article: guide,
     faq: guide.faqs
+  }, C));
+}
+
+function pageShippingAndDelivery(req: http.IncomingMessage, res: http.ServerResponse) {
+  const C = pageCtx(req);
+  const tr = C.t;
+  const st = db.settings;
+
+  const html = `
+<div class="shipping-page">
+  <div class="shipping-hero rv">
+    <h1 class="shipping-h1">${C.lang === 'en' ? 'Shipping, Discretion & Turkey Delivery Times' : 'Kargo, Gizlilik ve Türkiye Geneli Teslimat Süreleri'}</h1>
+    <p class="shipping-lead">
+      ${C.lang === 'en' 
+        ? 'All orders are dispatched in 100% opaque, double-sealed neutral packaging with zero external branding. Enjoy fast express delivery across all 81 provinces in Turkey, backed by our 256-bit SSL anonymous billing guarantee.'
+        : 'Tüm siparişleriniz, dışarıdan içeriği kesinlikle anlaşılamayan çift katlı mühürlü nötr ambalajlarla hazırlanır. Saat 16:30\'a kadar verilen siparişler aynı gün kargoya teslim edilir; 256-bit SSL gizli ekstre güvencesiyle Türkiye\'nin 81 iline hızla ulaştırılır.'}
+    </p>
+
+    <div class="shipping-pill-row">
+      <div class="shipping-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>16:30'a Kadar Aynı Gün Sevkiyat</span>
+      </div>
+      <div class="shipping-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>%100 Çift Katlı Gizli Paketleme</span>
+      </div>
+      <div class="shipping-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/></svg>
+        <span>Kargo Şubesinden veya Otomattan Teslim</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Regional Logistics Table -->
+  <section class="shipping-section rv">
+    <div class="shipping-section-head">
+      <h2 class="shipping-section-title">${C.lang === 'en' ? 'Regional Logistics & Estimated Delivery Table' : 'Bölgesel Lojistik & Tahmini Teslimat Tablosu'}</h2>
+      <p class="shipping-section-desc">${C.lang === 'en' ? 'Central dispatch from our certified warehouse. Direct partner networks with Yurtiçi, Aras, and MNG Express.' : 'Eskişehir ana transfer depomuzdan Türkiye geneline doğrudan çıkış. Yurtiçi Kargo, MNG ve Aras Kargo entegrasyonu ile kapıda veya şubede teslim.'}</p>
+    </div>
+
+    <div class="shipping-table-container">
+      <table class="shipping-table">
+        <thead>
+          <tr>
+            <th style="width: 28%;">${C.lang === 'en' ? 'Region / Hub' : 'Bölge / Kapsam'}</th>
+            <th style="width: 32%;">${C.lang === 'en' ? 'Covered Cities' : 'Başlıca İller'}</th>
+            <th style="width: 18%;">${C.lang === 'en' ? 'Transit Time' : 'Teslimat Süresi'}</th>
+            <th style="width: 22%;">${C.lang === 'en' ? 'Carrier Method' : 'Gönderim Yöntemi'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${SHIPPING_REGIONS.map(r => `
+          <tr class="${r.region.includes('Eskişehir') ? 'highlight-eskisehir' : ''}">
+            <td>
+              <strong>${esc(r.region)}</strong>
+              <div class="shipping-table-sub">${esc(r.notes)}</div>
+            </td>
+            <td>${esc(r.cities)}</td>
+            <td>
+              <span class="shipping-time-tag">${esc(r.duration)}</span>
+            </td>
+            <td>
+              <span>${esc(r.method)}</span>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Eskişehir Hub Callout -->
+    <div class="shipping-hub-card rv">
+      <div class="shipping-hub-content">
+        <h3 class="shipping-hub-title">Eskişehir'de Misiniz? 2-3 Saatte Özel Gizli Kurye & Elden Mağazadan Teslim</h3>
+        <p class="shipping-hub-desc">
+          Tepebaşı, Odunpazarı ve merkez ilçelere kendi özel saha kuryemizle 2 ila 3 saat içinde kapıda mühürlü nötr kutu teslimatı sunuyoruz. Ayrıca İsmet İnönü Tramvay Durağı karşısındaki Ilgaz İş Hanı Kat:1 mağazamızı ziyaret ederek randevusuz elden teslim alabilirsiniz.
+        </p>
+      </div>
+      <div class="shipping-hub-action">
+        <a href="/sehir/eskisehir" class="btn btn-primary" style="white-space:nowrap;">Eskişehir Mağazamızı İnceleyin →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5-Step Discretion Protocol -->
+  <section class="shipping-section rv" id="gizlilik-protokolu">
+    <div class="shipping-section-head">
+      <h2 class="shipping-section-title">${C.lang === 'en' ? '5-Step Discretion & Anonymity Charter' : '5 Aşamalı %100 Gizlilik ve Güvenlik Protokolü'}</h2>
+      <p class="shipping-section-desc">${C.lang === 'en' ? 'From package preparation to payment statement, your absolute privacy is guaranteed.' : 'Siparişin paketlenmesinden kargo etiketine ve banka ekstresine kadar gizliliğiniz tavizsiz şekilde korunur.'}</p>
+    </div>
+
+    <div class="shipping-steps-grid">
+      ${PACKAGING_STEPS.map(s => `
+      <div class="shipping-step-card">
+        <span class="shipping-step-num">Aşama 0${s.step}</span>
+        <h3 class="shipping-step-title">${esc(s.title)}</h3>
+        <p class="shipping-step-desc">${esc(s.desc)}</p>
+      </div>`).join('')}
+    </div>
+  </section>
+
+  <!-- Shipping FAQs -->
+  <section class="shipping-section rv">
+    <div class="shipping-section-head">
+      <h2 class="shipping-section-title">${C.lang === 'en' ? 'Frequently Asked Questions' : 'Kargo ve Teslimat Hakkında Sıkça Sorulanlar'}</h2>
+      <p class="shipping-section-desc">${C.lang === 'en' ? 'Clear answers to the most common delivery and privacy questions.' : 'Paketleme, teslimat adresleri ve ödeme güvenliği hakkında merak edilenler.'}</p>
+    </div>
+
+    <div class="city-faqs-container">
+      ${SHIPPING_FAQS.map((f, i) => `
+      <details class="city-faq-item"${i === 0 ? ' open' : ''}>
+        <summary class="city-faq-summary">
+          <span class="city-faq-q">${esc(f.q)}</span>
+          <span class="city-faq-chevron" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="city-faq-body">
+          <p>${esc(f.a)}</p>
+        </div>
+      </details>`).join('')}
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="banner rv" style="margin-top:40px;text-align:center;position:relative;z-index:1;isolation:isolate;">
+    <h2 style="margin:0 auto;position:relative;z-index:2;">${C.lang === 'en' ? 'Explore Certified Wellness Collection' : 'Beden Dostu & Orijinal Ürünleri Keşfedin'}</h2>
+    <p style="margin:14px auto 28px;position:relative;z-index:2;color:var(--muted)">Tüm Türkiye'ye aynı gün kargo ve %100 çift mühürlü nötr paket güvencesiyle sipariş verin.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:10;">
+      <a href="/magaza" class="btn btn-primary" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">Kataloğu İncele</a>
+      <a href="${esc(st.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener noreferrer" class="btn btn-wa" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">Gizli WhatsApp Danışma</a>
+    </div>
+  </div>
+</div>`;
+
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(layout(
+    C.lang === 'en' ? 'Shipping, Discretion & Delivery Times — LOVE' : 'Kargo, Gizlilik ve Teslimat Süreleri — LOVE Cinsel Sağlık',
+    html,
+    {
+      description: 'Türkiye geneli 24 saatte hızlı teslimat ve %100 çift katlı mühürlü gizli paketleme. Şubeden anonim teslimat, ekstre gizliliği ve bölgesel kargo süreleri tablosu.',
+      canonical: 'https://loveeroticshop.com/kargo-ve-teslimat',
+      breadcrumbs: [
+        { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+        { name: 'Kargo ve Teslimat', url: 'https://loveeroticshop.com/kargo-ve-teslimat' }
+      ],
+      faq: SHIPPING_FAQS
+    },
+    C
+  ));
+}
+
+function pageCityLanding(req: http.IncomingMessage, res: http.ServerResponse, citySlug: string) {
+  // Google Doorway Page Protection: Only the genuine physical Eskişehir store is kept as a city landing.
+  // Other virtual city requests are permanently redirected (301) to the authoritative /kargo-ve-teslimat page.
+  if (citySlug !== 'eskisehir') {
+    res.writeHead(301, { Location: '/kargo-ve-teslimat' });
+    return res.end();
+  }
+
+  const city = CITIES[0] || ESKISEHIR_STORE;
+  const C = pageCtx(req);
+  const tr = C.t;
+  const st = db.settings;
+
+  // Curated showcase products: Strictly sexual wellness & intimate body care
+  const excludedKeywords = ['kelepçe', 'maske', 'fetiş', 'fetish', 'manken', 'doll', 'vajina', 'mastürbatör', 'suni', 'kalça', 'peluş', 'dildo'];
+  const allProds = db.products || [];
+  
+  const wellnessProds = allProds.filter((p: any) => {
+    const nameLower = (p.name || '').toLowerCase();
+    const cat = (p.category || '').toLowerCase();
+    if (cat === 'fetish-urunler' || cat === 'realistik-mankenler' || cat === 'realistik-dildolar') return false;
+    if (excludedKeywords.some(kw => nameLower.includes(kw))) return false;
+    
+    const isTarget = cat === 'vibratorler' || cat === 'kadinlar' || cat === 'ciftler' ||
+                     nameLower.includes('vibratör') || nameLower.includes('uyarıcı') ||
+                     nameLower.includes('jel') || nameLower.includes('damla') ||
+                     nameLower.includes('lube') || nameLower.includes('lelo') ||
+                     nameLower.includes('flovetta') || nameLower.includes('floretta') ||
+                     nameLower.includes('g-spot') || nameLower.includes('wand');
+    return isTarget;
+  });
+
+  const curated = [...wellnessProds].sort((a: any, b: any) => {
+    const aL = (a.name || '').toLowerCase().includes('lelo') ? 1 : 0;
+    const bL = (b.name || '').toLowerCase().includes('lelo') ? 1 : 0;
+    if (bL !== aL) return bL - aL;
+    const aFeat = (a.featured || a.bestSeller) ? 1 : 0;
+    const bFeat = (b.featured || b.bestSeller) ? 1 : 0;
+    return bFeat - aFeat;
+  }).slice(0, 10);
+
+  const benefitIcons = [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`
+  ];
+
+  const prodCardsHtml = curated.map((p: any) => productCardSSR(p, tr)).join('\n');
+
+  const html = `
+<div class="city-landing">
+  <!-- City Hero (Eskişehir Authentic Physical Store & Central Logistics Hub) -->
+  <section class="block city-hero rv">
+    <div class="city-hero-inner">
+      <h1 class="city-hero-h1"><span class="city-hero-title-main">Eskişehir Sexual Wellness &amp;</span> <span class="city-hero-title-sub"><em class="city-italic">15 Yıllık Köklü Mağaza</em></span></h1>
+      <p class="city-hero-lead">${esc(city.heroSub)}</p>
+      
+      <div class="city-hero-cta">
+        <a href="/magaza" class="btn btn-primary">${C.lang === 'en' ? 'Explore Collection' : 'Kataloğu Keşfet'}</a>
+        <a href="${esc(st.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+          ${C.lang === 'en' ? 'Discreet WhatsApp Inquiry' : 'Gizli Kurye / WhatsApp Sipariş'}
+        </a>
+      </div>
+
+      <div class="city-metrics-bar">
+        <div class="city-metric-item">
+          <strong>2-3 Saatte Kurye</strong>
+          <span>Tepebaşı & Odunpazarı Özel Kurye</span>
+        </div>
+        <div class="city-metric-item">
+          <strong>Mağazadan Teslim</strong>
+          <span>İsmet İnönü Tramvay Durağı Karşısı</span>
+        </div>
+        <div class="city-metric-item">
+          <strong>15 Yıllık Güven</strong>
+          <span>2012'den Beri Aynı Adreste Kesintisiz</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curated Sexual Wellness Showcase -->
+  <section class="block rv">
+    <div class="section-head">
+      <div>
+        <h2>Seçkin Sexual Wellness <em class="city-italic">Koleksiyonu</em></h2>
+        <p>Eskişehir mağazamızda fiziki olarak stokta bulunan, doğrudan elden teslim alabileceğiniz veya kuryemizle 2-3 saatte kapınıza gelecek medikal sertifikalı ürünler.</p>
+      </div>
+      <a href="/magaza" class="link-more">${C.lang === 'en' ? 'View All' : 'Tümünü Gör'}</a>
+    </div>
+    <div class="prod-grid">
+      ${prodCardsHtml}
+    </div>
+  </section>
+
+  <!-- Logistics & Discretion Protocol -->
+  <section class="block city-protocol-section rv">
+    <div class="section-head">
+      <div>
+        <h2>Eskişehir İçi Hızlı Lojistik ve <em class="city-italic">Mağaza Bilgileri</em></h2>
+        <p>${esc(city.logisticsDetail)}</p>
+      </div>
+    </div>
+    
+    <div class="features">
+      ${city.keyBenefits.map((b: any, idx: number) => `
+      <div class="feature rv rv-d${idx}">
+        <div class="fi">${benefitIcons[idx] || benefitIcons[0]}</div>
+        <div>
+          <h3>${esc(b.title)}</h3>
+          <p>${esc(b.desc)}</p>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Supported Districts -->
+    <div class="city-districts-box">
+      <div class="city-districts-header">
+        <h3 class="city-districts-title">Eskişehir Kurye Kapsamındaki Başlıca Semtler</h3>
+        <span class="city-districts-note">Özel saha kuryemiz ile aynı gün 2-3 saatte adreste</span>
+      </div>
+      <div class="city-districts-tags">
+        ${city.districts.map((d: string) => `<span class="city-district-tag">${esc(d)}</span>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- Store Location Map & Address Details -->
+  <section class="block rv" style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-md);padding:28px;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div>
+        <h2>Fiziksel Mağazamız ve <em class="city-italic">Adres Tarifi</em></h2>
+        <p>İsmet İnönü-1 Cd. No:52/2 Ilgaz İş Hanı Kat:1 Daire:2 (İsmet İnönü Tramvay Durağı Tam Karşısı, Watsons &amp; Yves Rocher Yanı) Tepebaşı / Eskişehir</p>
+      </div>
+    </div>
+    <iframe src="https://www.google.com/maps?q=${esc(st.mapsQuery || '39.7767,30.5206')}&output=embed" style="width:100%;height:320px;border:1px solid var(--line);border-radius:var(--r-md)" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Love Sex Shop Eskişehir Mağazası"></iframe>
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
+      <a href="https://www.google.com/maps/search/?api=1&query=${esc(st.mapsQuery || '39.7767,30.5206')}" target="_blank" rel="noopener" class="btn btn-primary">Google Haritalarda Aç</a>
+      <a href="${esc(st.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener" class="btn btn-ghost">Kurye Çağır / Konum İste</a>
+    </div>
+  </section>
+
+  <!-- City FAQs -->
+  <section class="block city-faq-section rv">
+    <div class="section-head">
+      <div>
+        <h2>Sıkça Sorulan <em class="city-italic">Sorular</em></h2>
+        <p>Eskişehir kurye teslimatı, mağazadan elden teslim alma ve gizlilik süreci hakkında merak edilenler.</p>
+      </div>
+    </div>
+    <div class="city-faqs-container">
+      ${city.faqs.map((f: any, i: number) => `
+      <details class="city-faq-item"${i === 0 ? ' open' : ''}>
+        <summary class="city-faq-summary">
+          <span class="city-faq-q">${esc(f.q)}</span>
+          <span class="city-faq-chevron" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="city-faq-body">
+          <p>${esc(f.a)}</p>
+        </div>
+      </details>`).join('')}
+    </div>
+  </section>
+
+  <!-- Turkey Wide Shipping Link -->
+  <section class="block city-switch-section rv" style="text-align:center;padding:32px 24px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--bg-alt, rgba(255,255,255,0.02));">
+    <h3 style="font-family:var(--font-display);font-size:20px;font-weight:650;margin:0 0 10px;">Farklı Bir Şehirde Misiniz?</h3>
+    <p style="font-size:14.5px;color:var(--muted);max-width:600px;margin:0 auto 20px;">
+      İstanbul, Ankara, İzmir, Bursa, Antalya ve tüm Türkiye'ye 24 saatte hızlı teslimat ve %100 gizli kargo sürelerimizi inceleyin.
+    </p>
+    <a href="/kargo-ve-teslimat" class="btn btn-primary">Türkiye Geneli Kargo ve Teslimat Süreleri →</a>
+  </section>
+</div>`;
+
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(layout(city.metaTitle, html, {
+    description: city.metaDesc,
+    canonical: `https://loveeroticshop.com/sehir/eskisehir`,
+    breadcrumbs: [
+      { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+      { name: 'Eskişehir Mağazamız', url: 'https://loveeroticshop.com/sehir/eskisehir' }
+    ],
+    faq: city.faqs,
+    includeStoreSchema: true
   }, C));
 }
 
@@ -2254,7 +2675,8 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'Contact' : 'İletişim & Mağaza Adresi — Love Seks Shop Eskişehir', html, {
-    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. İsmet İnönü Tramvay Durağı Karşısı, Ilgaz İş Hanı Kat:1 D:2 (Yves Rocher & Watsons Yanı). 7/24 gizli WhatsApp hattı.'
+    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. İsmet İnönü Tramvay Durağı Karşısı, Ilgaz İş Hanı Kat:1 D:2 (Yves Rocher & Watsons Yanı). 7/24 gizli WhatsApp hattı.',
+    includeStoreSchema: true
   }, C));
 }
 
@@ -2962,29 +3384,128 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     return json(res, 200, { ok: true });
   }
 
+  // Universal, strict, safety-first extraction of product highlights from actual description text (NO HALLUCINATIONS)
+  function extractProductHighlights(prod: any): string[] {
+    const name = String(prod.name || '');
+    const desc = String(prod.description || '');
+    const longDesc = String(prod.longDescription || '');
+    const fullText = `${name} ${desc} ${longDesc}`;
+    const lower = fullText.toLowerCase();
+
+    const highlights: string[] = [];
+
+    // =========================================================================
+    // 1. CRITICAL HEALTH & USAGE ROUTE (ORAL VS TOPICAL VS MECHANICAL)
+    // =========================================================================
+    const isExplicitOral = (
+      lower.includes('içecek') || lower.includes('içeceğe') || lower.includes('suya damlat') ||
+      lower.includes('dilaltı') || lower.includes('dil altı') || lower.includes('içilir') ||
+      lower.includes('tüketilir') || lower.includes('oral damla') || lower.includes('sıvı takviye')
+    ) && !lower.includes('harici kullanım') && !lower.includes('masaj damlası') && !lower.includes('bölgeye damlat');
+
+    const isMechanicalOrApparatus = lower.includes('mastürbatör') || lower.includes('masturbat') ||
+      lower.includes('dildo') || lower.includes('vibratör') || lower.includes('manken') ||
+      lower.includes('kelepçe') || lower.includes('halka') || lower.includes('plug') ||
+      lower.includes('pompa') || lower.includes('maske');
+
+    const isDropsOrLiquid = !isMechanicalOrApparatus && (
+      lower.includes('damla') || lower.includes('drop') || lower.includes('serum') ||
+      lower.includes('yağ') || lower.includes('sprey') || lower.includes('krem') ||
+      lower.includes('jel') || lower.includes('lube') || lower.includes('kayganlaştırıcı')
+    );
+
+    if (isExplicitOral) {
+      highlights.push('Ağızdan İçeceğe Karıştırılarak Tüketilir');
+      highlights.push('Bitkisel Sıvı Destek Damlası');
+    } else if (isDropsOrLiquid) {
+      highlights.push('YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ');
+      const isDurationSupport = lower.includes('süreyi') || lower.includes('süre destek') || lower.includes('birliktelik süresi') || lower.includes('geciktir') || lower.includes('delay') || lower.includes('stag') || lower.includes('proling');
+      if (isDurationSupport) {
+        highlights.push('Birliktelik Süresini Destekleyici Formül');
+      }
+      if (lower.includes('damla') || lower.includes('drop')) highlights.push('Bölgesel Masaj & Uyarıcı Damla');
+      else if (lower.includes('sprey')) highlights.push('Lokal Püskürtme Uygulaması');
+      else if (lower.includes('krem')) highlights.push('Bölgesel Masajla Emilim');
+      else if (lower.includes('serum')) highlights.push('Konsantre Harici Serum');
+    }
+
+    // 2. EXACT IPX / WATERPROOF (ONLY IF PRESENT IN REAL TEXT - NEVER INVENTED)
+    const ipxMatch = fullText.match(/\bip(?:x|v)?([0-9])\b/i);
+    if (ipxMatch) {
+      const lvl = ipxMatch[1];
+      if (lvl === '1' || lvl === '2') highlights.push(`IPX${lvl} Damlama Korumalı`);
+      else if (lvl === '3') highlights.push('IPX3 Sıçrama Korumalı');
+      else if (lvl === '4') highlights.push('IPX4 Sıçrama Korumalı');
+      else if (lvl === '5') highlights.push('IPX5 Su Püskürtme Dayanımlı');
+      else if (lvl === '6') highlights.push('IPX6 Güçlü Su Dayanımlı');
+      else if (lvl === '7') highlights.push('IPX7 Su Geçirmez');
+      else if (lvl === '8') highlights.push('IPX8 Tam Su Altı Geçirmez');
+      else highlights.push(`IPX${lvl} Sertifikalı`);
+    } else if (lower.includes('tamamen su geçirmez') || lower.includes('%100 su geçirmez') || lower.includes('100% su geçirmez')) {
+      highlights.push('%100 Su Geçirmez');
+    } else if (lower.includes('su geçirmezlik: evet') || (lower.includes('su geçirmez') && !lower.includes('su geçirmez değildir'))) {
+      highlights.push('Su Geçirmez Gövde');
+    }
+
+    // 3. MATERIAL (VERIFIED FROM ACTUAL TEXT)
+    if (lower.includes('medikal platin') || lower.includes('platinum silikon')) highlights.push('Medikal Platinum Silikon');
+    else if (lower.includes('sıvı silikon') || lower.includes('liquid silicone')) highlights.push('Medikal Sıvı Silikon');
+    else if (lower.includes('medikal silikon') || lower.includes('tıbbi sınıf')) highlights.push('%100 Medikal Silikon');
+    else if (lower.includes('tpe') || lower.includes('cyberskin') || lower.includes('tpr')) highlights.push('Gerçekçi Medikal TPE');
+    else if (lower.includes('borosilikat') || lower.includes('cam dildo')) highlights.push('Borosilikat Medikal Cam');
+    else if (lower.includes('paslanmaz çelik') || lower.includes('metal plug') || lower.includes('metal') || lower.includes('çelik')) highlights.push('Medikal Paslanmaz Çelik');
+    else if (lower.includes('vegan deri') || lower.includes('suni deri')) highlights.push('Yumuşak Vegan Deri');
+    else if (lower.includes('peluş')) highlights.push('Peluş Kaplamalı Metal');
+    else if (lower.includes('lateks') || lower.includes('prezervatif')) highlights.push('Klinik Doğal Lateks');
+
+    // 4. POWER / CHARGE (VERIFIED)
+    if (lower.includes('manyetik') && (lower.includes('şarj') || lower.includes('usb'))) highlights.push('Manyetik Hızlı Şarj');
+    else if (lower.includes('type-c') || lower.includes('type c')) highlights.push('Type-C Hızlı Şarj');
+    else if (lower.includes('usb') && (lower.includes('şarj') || lower.includes('kablo'))) highlights.push('USB Şarj Edilebilir');
+    else if (lower.includes('2aaa') || lower.includes('2xaaa') || lower.includes('2 adet aaa')) highlights.push('2x AAA Pille Çalışır');
+    else if (lower.includes('1aaa') || lower.includes('1xaaa') || lower.includes('1 adet aaa')) highlights.push('1x AAA Pille Çalışır');
+    else if (lower.includes('2aa') || lower.includes('2xaa') || lower.includes('2 adet aa')) highlights.push('2x AA Pille Çalışır');
+    else if (lower.includes('şarj edilebilir') || lower.includes('şarjlı')) highlights.push('Şarj Edilebilir Batarya');
+
+    // 5. FUNCTION / MODES (VERIFIED)
+    const modeMatch = fullText.match(/(\d+)\s*(?:farklı\s*)?(?:titreşim|hız|frekans|mod|program|fonksiyon)/i);
+    if (modeMatch) {
+      highlights.push(`${modeMatch[1]} Titreşim Modu`);
+    }
+    if (lower.includes('çift motor') || lower.includes('iki motor')) highlights.push('Çift Bağımsız Motor');
+    if (lower.includes('app') || lower.includes('telefon kontrollü') || lower.includes('bluetooth')) highlights.push('Mobil Uygulama Kontrollü');
+    if (lower.includes('ısıtma') || lower.includes('ısıtmalı')) highlights.push('Vücut Sıcaklığında Isıtma');
+    if (lower.includes('360°') || lower.includes('dönen başlık')) highlights.push('360° Dönen Başlık');
+    if (lower.includes('sessiz') || lower.includes('45db') || lower.includes('40db') || lower.includes('50db')) highlights.push('<45dB Fısıltı Motoru');
+    if (lower.includes('vantuz') || lower.includes('sabitleme')) highlights.push('Güçlü Sabitleme Vantuzu');
+    if (lower.includes('dermatolojik') || lower.includes('klinik test')) highlights.push('Dermatolojik Onaylı');
+
+    // 6. VOLUME / FORMULA (VERIFIED)
+    const mlMatch = fullText.match(/(\d+)\s*ml\b/i);
+    if (mlMatch && (lower.includes('jel') || lower.includes('sprey') || lower.includes('damla') || lower.includes('krem') || lower.includes('yağ') || lower.includes('serum'))) {
+      highlights.push(`${mlMatch[1]} ml Net Hacim`);
+    }
+    if (lower.includes('su bazlı')) highlights.push('Su Bazlı Formül');
+    if (lower.includes('silikon bazlı')) highlights.push('Silikon Bazlı Formül');
+
+    // 7. SAFE NEUTRAL FALLBACKS (NEVER INVENT WATERPROOF, DOSE OR FAKE SPECS)
+    const neutralFallbacks = [
+      '%100 Orijinal & Faturalı',
+      'Gizli Paketleme & Express Teslimat',
+      'Hijyenik Koruma Mühürlü'
+    ];
+    for (const n of neutralFallbacks) {
+      if (highlights.length >= 3) break;
+      if (!highlights.includes(n)) highlights.push(n);
+    }
+
+    return highlights.slice(0, 4);
+  }
+
   function fallbackPolishProduct(name: string, category: string, rawText: string) {
     const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
     const cleanTitle = name || (lines[0] ? lines[0].slice(0, 65) : 'Özel Seri Ürün');
-    const lower = rawText.toLowerCase();
-
-    const highlights: string[] = [];
-    if (lower.includes('silikon') || lower.includes('medikal')) highlights.push('%100 Medikal Silikon');
-    if (lower.includes('hız') || lower.includes('kademe')) highlights.push('Çok Kademeli Hız Kontrolü');
-    if (lower.includes('titreşim') || lower.includes('mod')) highlights.push('Özelleştirilebilir Titreşim');
-    if (lower.includes('şarj') || lower.includes('manyetik') || lower.includes('pil')) highlights.push('Manyetik Hızlı Şarj');
-    if (lower.includes('su geçirmez') || lower.includes('ipx')) highlights.push('IPX Su Geçirmez Gövde');
-    if (lower.includes('sprey') || lower.includes('geciktirici')) highlights.push('Klinik Testli', 'Hızlı Etki', 'Güvenilir Formül');
-    if (lower.includes('esnek') || lower.includes('bükülebilir')) highlights.push('Ergonomik & Esnek Başlık');
-    
-    if (highlights.length < 3) {
-      if (category.toLowerCase().includes('sprey') || category.toLowerCase().includes('sağlık') || category.toLowerCase().includes('krem')) {
-        highlights.push('Özel Formül', 'Etkili Çözüm', 'Güvenli Kullanım');
-      } else if (category.toLowerCase().includes('dildo') || category.toLowerCase().includes('manken') || category.toLowerCase().includes('anal')) {
-        highlights.push('Gerçekçi Ten Hissi', 'Vücut Uyumlu Ergonomi', 'Kolay Temizlenebilir');
-      } else {
-        highlights.push('Ergonomik Tasarım', 'Premium Kalite', 'Kolay Kullanım');
-      }
-    }
+    const highlights = extractProductHighlights({ name: cleanTitle, category, description: rawText, longDescription: rawText });
 
     let lead = `${cleanTitle}, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.`;
     if (category.toLowerCase().includes('sprey') || category.toLowerCase().includes('sağlık')) {
@@ -2999,7 +3520,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     return {
       name: cleanTitle,
       description: lead,
-      highlights: highlights.slice(0, 5),
+      highlights,
       longDescription: `${lead}${bulletText}`
     };
   }
@@ -3200,6 +3721,16 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (!gallery.length && image) gallery = [image];
       gallery = Array.from(new Set(gallery.filter(Boolean)));
 
+      let parsedHighlights = Array.isArray(b.highlights) ? b.highlights.map(String).map(s => s.trim()).filter(Boolean) : (typeof b.highlights === 'string' ? b.highlights.split(',').map(s => s.trim()).filter(Boolean) : []);
+      if (parsedHighlights.length === 0) {
+        parsedHighlights = extractProductHighlights({
+          name: b.name,
+          category: b.category,
+          description: b.description,
+          longDescription: b.longDescription
+        });
+      }
+
       const p = {
         id: uid('p'), slug, name: String(b.name).trim(),
         category: b.category || 'ciftler', categoryName: b.categoryName || 'Genel',
@@ -3207,7 +3738,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         price: Math.max(0, Number(b.price)), oldPrice: b.oldPrice ? Number(b.oldPrice) : null,
         stock: Math.max(0, parseInt(b.stock, 10) || 0), rating: Number(b.rating) || 0, reviewCount: 0,
         featured: !!b.featured, isNew: !!b.isNew, bestSeller: !!b.bestSeller,
-        highlights: Array.isArray(b.highlights) ? b.highlights.map(String).map(s => s.trim()).filter(Boolean) : (typeof b.highlights === 'string' ? b.highlights.split(',').map(s => s.trim()).filter(Boolean) : []),
+        highlights: parsedHighlights,
         image, gallery, tags: [], variants: ['standart'], createdAt: new Date().toISOString()
       };
       db.products.push(p);
@@ -3262,9 +3793,23 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         p.image = p.gallery[0];
       }
 
+      if (!Array.isArray(p.highlights) || p.highlights.length === 0) {
+        p.highlights = extractProductHighlights(p);
+      }
+
       await saveProductToCloud(p);
       await saveAsync();
       return json(res, 200, { ok: true, product: p });
+    }
+    if (pathname === '/api/admin/sync-highlights' && method === 'POST') {
+      let count = 0;
+      for (const prod of db.products) {
+        prod.highlights = extractProductHighlights(prod);
+        await saveProductToCloud(prod);
+        count++;
+      }
+      await saveAsync();
+      return json(res, 200, { ok: true, count, products: db.products });
     }
     if (pUp && method === 'DELETE') {
       const id = decodeURIComponent(pUp[1]);
@@ -3291,29 +3836,34 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const ai = getAiClient();
       if (ai) {
         try {
-          const prompt = `Aşağıda toptancıdan veya senin yazdığın ham ürün bilgisi yer almaktadır.
-Lütfen bu metni Türkiye'nin en seçkin lüks yetişkin sağlık ve yaşam mağazası LOVE SHOP standartlarına uygun, cezbedici, net ve profesyonel bir e-ticaret metnine dönüştür.
+          const prompt = `Aşağıda toptancıdan veya kullanıcının girdiği ham ürün bilgisi yer almaktadır.
+Lütfen bu metni Türkiye'nin en seçkin lüks yetişkin sağlık ve yaşam mağazası LOVE SHOP standartlarına uygun, cezbedici, net, dürüst ve profesyonel bir e-ticaret metnine dönüştür.
 
-ÖNEMLİ: Bu ürünün kategorisi "${category}" dir. 
-E�er ürün Realistik Dildolar, Realistik Mankenler, Erkek Cinsel Sağlık (Sprey/Krem) veya Anal Ürünler ise, ASLA "Sessiz Motor", "Titreşim", "Manyetik Şarj" veya "Su Geçirmez Gövde" GİBİ ELEKTRONİK/MOTORLU ÖZELLİKLER YAZMA!
-Sprey veya sağlık ürünleri ise "Klinik Testli", "Hızlı Etki", "Özel Formül" gibi mantıklı terimler kullan.
-Sadece metinde gerçekten var olan ve ürünün doğasına uygun gerçek özelliklerini çıkar (Örn: "Gerçekçi Ten Hissi", "Güçlü Vantuz Taban", "%100 Medikal Silikon").
-E�er ürün Vibratörler ise o zaman "Sessiz Motor", "20 Titreşim Modu" gibi özellikleri kullanabilirsin.
+Kategori: "${category}"
+
+HAYATİ VE MUTLAK GÜVENLİK KURALLARI (SIFIR HALÜSİNASYON):
+1. TÜKETİM VE KULLANIM GÜVENLİĞİ (EN YÜKSEK ÖNCELİK):
+   - Eğer ürün bir damla, şurup veya sıvı takviye ise ve içecekle/ağızdan tüketiliyorsa (metinde içecek, suya damlatma, dilaltı vb. geçiyorsa): Highlights listesinin İLK sırasına kesinlikle "Ağızdan İçeceğe Karıştırılarak Tüketilir" koy.
+   - Eğer ürün harici olarak cilde/bölgeye sürülen veya püskürtülen bir ürün ise (damla, krem, sprey, jel, yağ, serum): Highlights listesinin İLK sırasına mutlaka "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ" koy.
+   - Kullanım Şekli Belirsizse: Metinde nasıl kullanılacağı açıkça yazmıyorsa ASLA süre, dakika veya doz uydurma! Sadece ambalaja yönlendir veya diğer net nitelikleri yaz.
+2. TEKNİK ÖZELLİKLER VE SU GEÇİRMEZLİK:
+   - SADECE metinde açıkça "IPX..." veya "su geçirmez" yazıyorsa su koruması kartı üret. Metinde yazmıyorsa ASLA IPX veya su geçirmezlik uydurma!
+   - Motorlu olmayan ürünlere (dildo, anal plug, manken, sprey, krem, giyim, kelepçe) ASLA motor, titreşim, şarj veya IPX rozeti yazma!
+   - Malzemeyi sadece metinde varsa çıkar (Örn: "Medikal Paslanmaz Çelik", "Borosilikat Medikal Cam", "%100 Medikal Silikon", "Realistik Medikal TPE").
 
 Kurallar:
 1. Ürün Adı: Net, estetik ve profesyonel olsun.
-2. Kısa Açıklama (description): 1-2 cümlelik vurucu, öz, merak uyandıran şık bir tanıtım cümlesi.
-3. Öne Çıkan Özellikler (highlights): 4 ila 6 adet hap bilgi niteliğinde rozet özelliği. EZBERE KONUŞMA, SADECE HAM İÇERİKTEN VE KATEGORİYE UYGUN ÖZELLİKLERİ ÇIKAR!
-4. Detaylı Açıklama (longDescription): Girişte akıcı ve lüks 1-2 paragraf; ardından madde imleriyle (•) toparlanmış detaylar.
+2. Kısa Açıklama (description): 1-2 cümlelik vurucu, öz, lüks bir tanıtım cümlesi.
+3. Öne Çıkan Özellikler (highlights): 3 ila 4 adet NET, DOĞRU ve HAYATİ rozet özelliği.
+4. Detaylı Açıklama (longDescription): Girişte akıcı ve lüks 1-2 paragraf; ardından madde imleriyle (•) toparlanmış detaylar ve güvenlik uyarısı.
 
 Girdi Bilgileri:
 Ürün Adı: ${name || 'Belirtilmedi'}
 Kategori: ${category}
 Ham İçerik:
 ${rawText || name}`;
-
           const response = await ai.models.generateContent({
-            model: 'gemini-3.6-flash',
+            model: 'gemini-2.5-flash',
             contents: prompt,
             config: {
               systemInstruction: "Sen lüks e-ticaret markaları için kıdemli bir ürün metin yazarı ve içerik mimarısın. Toptancı metinlerini temizler, lüks ve akıcı satış diline dönüştürürsün.",
@@ -3840,6 +4390,7 @@ Sitemap: ${baseUrl}/sitemap.xml
         const staticUrls = [
           { loc: `${baseUrl}/`, priority: '1.0', changefreq: 'daily' },
           { loc: `${baseUrl}/magaza`, priority: '0.9', changefreq: 'daily' },
+          { loc: `${baseUrl}/kargo-ve-teslimat`, priority: '0.9', changefreq: 'weekly' },
           { loc: `${baseUrl}/rehber`, priority: '0.9', changefreq: 'weekly' },
           { loc: `${baseUrl}/hakkimizda`, priority: '0.7', changefreq: 'monthly' },
           { loc: `${baseUrl}/iletisim`, priority: '0.7', changefreq: 'monthly' },
@@ -3860,6 +4411,15 @@ Sitemap: ${baseUrl}/sitemap.xml
           lastmod: g.date
         }));
 
+        const cityUrls = [
+          {
+            loc: `${baseUrl}/sehir/eskisehir`,
+            priority: '0.85',
+            changefreq: 'weekly',
+            lastmod: today
+          }
+        ];
+
         const prodUrls = (db.products || []).map((p: any) => {
           let fullImg = p.image || '';
           if (fullImg && !fullImg.startsWith('http://') && !fullImg.startsWith('https://')) {
@@ -3879,6 +4439,7 @@ Sitemap: ${baseUrl}/sitemap.xml
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${staticUrls.map(u => `  <url><loc>${u.loc}</loc><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 ${catUrls.map(u => `  <url><loc>${u.loc}</loc><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${cityUrls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 ${guideUrls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 ${prodUrls.map(u => `  <url>
     <loc>${u.loc}</loc>
@@ -3995,14 +4556,27 @@ ${localItemsXml}
       if (pathname === '/rehber') return pageGuides(req, res);
       const guideMatch = pathname.match(/^\/rehber\/([^/]+)$/);
       if (guideMatch) return pageGuideDetail(req, res, decodeURIComponent(guideMatch[1]));
+      if (pathname === '/kargo-ve-teslimat' || pathname === '/kargo' || pathname === '/kargo-takip') {
+        return pageShippingAndDelivery(req, res);
+      }
+      if (pathname === '/sehir' || pathname === '/sehirler') {
+        res.writeHead(301, { Location: '/kargo-ve-teslimat' });
+        return res.end();
+      }
+      const cityMatch = pathname.match(/^\/sehir\/([^/]+)$/);
+      if (cityMatch) return pageCityLanding(req, res, decodeURIComponent(cityMatch[1]));
       if (pathname === '/hakkimizda') return pageAbout(req, res);
       if (pathname === '/iletisim') return pageContact(req, res);
       if (pathname === '/admin' || pathname === '/admin/login') return pageAdmin(req, res);
 
       if (pathname === '/gizlilik' || pathname === '/gizlilik-politikasi' || pathname === '/privacy-policy') return pagePrivacy(req, res);
       if (pathname === '/kullanim-kosullari' || pathname === '/terms-of-service' || pathname === '/mesafeli-satis' || pathname === '/mesafeli-satis-sozlesmesi') return pageTerms(req, res);
-      if (pathname === '/teslimat' || pathname === '/teslimat-ve-iade' || pathname === '/iade') {
-        res.writeHead(302, { Location: '/hakkimizda#gizlilik' });
+      if (pathname === '/teslimat' || pathname === '/teslimat-ve-iade') {
+        res.writeHead(301, { Location: '/kargo-ve-teslimat' });
+        return res.end();
+      }
+      if (pathname === '/iade') {
+        res.writeHead(302, { Location: '/hakkimizda#iade' });
         return res.end();
       }
       if (pathname === '/sss' || pathname === '/faq') {

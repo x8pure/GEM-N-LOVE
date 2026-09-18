@@ -4218,15 +4218,19 @@ footer { border-top: 1px solid var(--line); padding: 50px 5vw 30px; background: 
 .foot-brand { font-size: 32px; letter-spacing: -1.2px; font-style: normal; }
 .foot-desc { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
 .foot-desc b { color: var(--text); font-weight: 500; margin-right: 6px; }
-.foot-links { display: flex; flex-direction: column; gap: 14px; font-size: 13.5px; font-weight: 500; color: var(--text); }
-.foot-links a { transition: color .2s; }
-.foot-links a:hover { color: var(--rose); }
+.foot-nav-groups { display: flex; gap: 52px; flex-wrap: wrap; }
+.foot-col { display: flex; flex-direction: column; gap: 14px; min-width: 120px; }
+.foot-col-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.foot-col-links { display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; font-weight: 500; color: var(--text); }
+.foot-col-links a { transition: color .2s; }
+.foot-col-links a:hover { color: var(--rose); }
 .foot-contact { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
 .foot-phone { display: inline-flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 500; color: var(--text); padding: 12px 24px; border: 1px solid var(--line-strong); border-radius: 100px; transition: all .3s; }
 .foot-phone:hover { border-color: var(--rose); color: var(--rose); background: rgba(220,113,113,0.04); transform: translateY(-2px); }
 .foot-bottom { border-top: 1px solid var(--line); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
-.pay-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.pay-chips span { border: 1px solid var(--line-strong); border-radius: 6px; padding: 6px 14px; font-size: 11px; background: var(--card); }
+.pay-chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.pay-chips span { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 6px 14px; font-size: 11px; background: var(--card); color: var(--muted); cursor: default; user-select: none; }
+.pay-chips span svg { opacity: 0.75; }
 
 /* ==== Shop page ==== */
 .page-head { padding: 48px 5vw 24px; width: 100%; max-width: 100%; box-sizing: border-box; }
@@ -8738,6 +8742,249 @@ html.dark .spatial-highlight-whisper {
   margin: 0;
 }
 
+/* Guide In-text Product Links & Showcase */
+.guide-inline-prod-link {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--rose);
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(225, 29, 72, 0.05);
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+.guide-inline-prod-link:hover {
+  background: var(--rose);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.guide-recommended-section {
+  margin: 48px 0 36px 0;
+  padding: 32px 28px;
+  background: var(--bg-alt, rgba(255,255,255,0.02));
+  border: 1px solid var(--line);
+  border-radius: var(--r-md, 12px);
+}
+.guide-rec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.guide-rec-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.4vw, 25px);
+  margin: 0;
+  color: var(--text);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.guide-rec-sub {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+/* ================= Kargo, Gizlilik ve Teslimat Sayfası (Quiet Luxury Editorial) ================= */
+.shipping-page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+.shipping-hero {
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 48px;
+}
+.shipping-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+.shipping-lead {
+  font-size: clamp(16px, 1.8vw, 18px);
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 780px;
+  margin: 0 0 28px;
+}
+.shipping-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.shipping-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg-alt, rgba(255,255,255,0.03));
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 16px;
+}
+.shipping-pill svg {
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.shipping-section {
+  margin-bottom: 60px;
+}
+.shipping-section-head {
+  margin-bottom: 24px;
+}
+.shipping-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.5vw, 28px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.shipping-section-desc {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Regional Table */
+.shipping-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md, 12px);
+  background: var(--bg-alt, rgba(255,255,255,0.02));
+}
+.shipping-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14.5px;
+  min-width: 640px;
+}
+.shipping-table th {
+  padding: 16px 20px;
+  background: var(--line-light, rgba(255,255,255,0.04));
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+.shipping-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.shipping-table tr:last-child td {
+  border-bottom: none;
+}
+.shipping-table tr.highlight-eskisehir {
+  background: rgba(225, 29, 72, 0.04);
+}
+.shipping-time-tag {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--text);
+  font-size: 13.5px;
+}
+.shipping-table-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Privacy Protocol Steps */
+.shipping-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.shipping-step-card {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md, 12px);
+  background: var(--bg-alt, rgba(255,255,255,0.02));
+  display: flex;
+  flex-direction: column;
+}
+.shipping-step-num {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.shipping-step-title {
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--text);
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+.shipping-step-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Hub Card (Eskişehir Physical Store Feature) */
+.shipping-hub-card {
+  padding: 32px 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md, 12px);
+  background: var(--bg-alt, rgba(255,255,255,0.02));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.shipping-hub-content {
+  flex: 1 1 500px;
+}
+.shipping-hub-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+.shipping-hub-desc {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+.shipping-hub-action {
+  flex-shrink: 0;
+}
+
+
 /* ================= QUIET LUXURY / LEMONTINI MONOLITHIC CARD TRIAL (#featured-grid ONLY) ================= */
 #featured-grid {
   display: grid;
@@ -9234,6 +9481,334 @@ html.dark .rich-about em.em-rose,
     display: inline;
   }
 }
+
+/* City Landing Pages (Pure Outfit Luxury Architecture & Master Grid Aligned) */
+.city-landing,
+.city-landing * {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+.city-landing em,
+.city-landing .city-italic {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-style: italic !important;
+  font-weight: 300 !important;
+  letter-spacing: -0.01em;
+}
+.city-landing {
+  width: 100%;
+  display: block;
+}
+.city-hero {
+  padding-top: 48px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+}
+.city-hero-inner {
+  max-width: 920px;
+}
+.city-hero-h1 {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: clamp(34px, 4.4vw, 56px) !important;
+  font-weight: 650 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--text) !important;
+  margin: 0 0 18px 0 !important;
+}
+.city-hero-title-main {
+  display: block;
+}
+.city-hero-title-sub {
+  display: block;
+  margin-top: 4px;
+}
+.city-hero-lead {
+  font-size: 16.5px !important;
+  line-height: 1.65 !important;
+  color: var(--muted) !important;
+  margin: 0 0 28px 0 !important;
+  max-width: 65ch !important;
+  font-weight: 400 !important;
+}
+.city-hero-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 36px;
+}
+.city-metrics-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 22px 28px;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  max-width: 860px;
+}
+.city-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.city-metric-item strong {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.city-metric-item span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.city-metric-divider {
+  display: none;
+}
+@media (max-width: 700px) {
+  .city-metrics-bar {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px 20px;
+  }
+}
+
+/* Headings in City Landing */
+.city-landing h2 {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: clamp(24px, 3.2vw, 36px) !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.2 !important;
+  color: var(--text) !important;
+  margin-bottom: 6px !important;
+}
+.city-landing .section-head {
+  margin-bottom: 28px;
+}
+.city-landing .section-head p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 65ch;
+  margin: 0;
+}
+
+/* Districts Box */
+.city-districts-box {
+  margin-top: 28px;
+  padding: 24px 28px;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+.city-districts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.city-districts-title {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--text) !important;
+  margin: 0 !important;
+}
+.city-districts-note {
+  font-size: 13px;
+  color: var(--muted);
+}
+.city-districts-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.city-district-tag {
+  font-size: 13px;
+  padding: 6px 14px;
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  opacity: 0.88;
+}
+
+/* FAQ Interactive Accordion */
+.city-faqs-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  margin-top: 24px;
+  max-width: 960px;
+}
+.city-faq-item {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.15s ease;
+}
+.city-faq-item:last-child {
+  border-bottom: none;
+}
+.city-faq-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.city-faq-summary:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+html:not(.dark) .city-faq-summary:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+.city-faq-summary::-webkit-details-marker {
+  display: none;
+}
+.city-faq-q {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  padding-right: 16px;
+}
+.city-faq-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.city-faq-item[open] .city-faq-chevron {
+  transform: rotate(180deg);
+  color: var(--text);
+}
+.city-faq-body {
+  padding: 0 24px 22px;
+}
+.city-faq-body p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Switcher */
+.city-switch-section {
+  padding-bottom: 96px;
+}
+.city-switch-title {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.city-switch-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.city-switch-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.city-switch-pill small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.city-switch-pill:hover {
+  border-color: rgba(181, 138, 94, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Footer cities line (Option 1: Minimalist Editorial Strip) */
+.foot-cities {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.foot-cities-label {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.foot-cities-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.foot-cities a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0.82;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.foot-cities a small {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 400;
+  margin-left: 3px;
+}
+.foot-cities a:hover {
+  opacity: 1;
+  color: var(--rose);
+}
+.foot-cities-dot {
+  color: var(--line-strong);
+  font-size: 12px;
+  user-select: none;
+  opacity: 0.5;
+}
+@media (max-width: 768px) {
+  .foot-cities {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 18px 0;
+  }
+}
+
 
 
 
