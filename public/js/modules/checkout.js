@@ -39,6 +39,14 @@ export async function initCheckout() {
           <div class="field"><label>${window.LS.t('ck.phone')}</label><input id="ck-phone" value="${addr ? addr.phone || '' : ''}" placeholder="${window.LS.t('ck.phone.ph')}"></div>
         </div>
         <div class="checkbox-row"><input type="checkbox" id="ck-discreet" checked><label for="ck-discreet">${window.LS.t('ck.discreet')}</label></div>
+        <div class="checkbox-row" style="margin-top:12px;align-items:flex-start;font-size:12px;line-height:1.4;">
+          <input type="checkbox" id="ck-legal-consent" style="margin-top:3px;flex-shrink:0;">
+          <label for="ck-legal-consent" style="color:var(--text);cursor:pointer;">
+            ${window.LS.lang === 'en'
+              ? 'I declare that I am 18 years of age or older; I have read and agree to the <a href="/terms-of-service" target="_blank" rel="noopener" style="text-decoration:underline;color:inherit;">Distance Sales Contract</a> and <a href="/privacy-policy" target="_blank" rel="noopener" style="text-decoration:underline;color:inherit;">Privacy Policy</a>.'
+              : '18 yaşını doldurmuş reşit bir birey olduğumu beyan ederim; <a href="/kullanim-kosullari" target="_blank" rel="noopener" style="text-decoration:underline;color:inherit;">Mesafeli Satış Sözleşmesi</a> ve <a href="/gizlilik-politikasi" target="_blank" rel="noopener" style="text-decoration:underline;color:inherit;">Gizlilik & KVKK Aydınlatma Metni</a>\'ni okudum, onaylıyorum.'}
+          </label>
+        </div>
         <div class="field" style="margin-top:14px"><label>${window.LS.t('ck.note')}</label><input id="ck-note" placeholder="${window.LS.t('ck.note.ph')}"></div>
       </div>
       <div class="check-step">
@@ -94,6 +102,17 @@ export async function initCheckout() {
     }
     if (!body.name || !body.phone) return toast(window.LS.t('ck.required'), '⚠️');
     if (method === 'whatsapp' && (!body.address || !body.city)) return toast(window.LS.t('ck.addrreq'), '⚠️');
+    const legalCheckbox = $('#ck-legal-consent');
+    if (legalCheckbox && !legalCheckbox.checked) {
+      return toast(
+        window.LS.lang === 'en'
+          ? 'Please verify that you are at least 18 years old and accept the Distance Sales Contract.'
+          : 'Lütfen 18 yaşından büyük olduğunuzu ve Mesafeli Satış Sözleşmesi\'ni onaylayınız.',
+        '⚠️'
+      );
+    }
+    body.ageAffirmed = true;
+    body.legalConsentTimestamp = new Date().toISOString();
     const btn = $('#ck-submit'); btn.disabled = true; btn.textContent = window.LS.t('ck.preparing');
     try {
       const r = await api('/api/checkout', { method: 'POST', body });

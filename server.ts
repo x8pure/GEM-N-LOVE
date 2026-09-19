@@ -13,6 +13,10 @@ import {
   initFirebase,
   flushPendingSave,
   saveToCloudFirestore,
+  saveSettingsToCloud,
+  loadSettingsFromCloud,
+  saveOrderSeqToCloud,
+  loadOrderSeqFromCloud,
   saveWheelSettingsToCloud,
   loadWheelSettingsFromCloud,
   savePosSaleToCloud,
@@ -34,6 +38,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { GUIDES } from './data/guides.ts';
 import { CITIES, CityLanding, ESKISEHIR_STORE } from './data/cities.ts';
 import { SHIPPING_REGIONS, PACKAGING_STEPS, SHIPPING_FAQS } from './data/shipping.ts';
+import { getPrivacyPolicyHtml, getTermsOfServiceHtml } from './data/legal.ts';
 import {
   COMMERCE_CONFIG,
   getProductShippingDetailsSchema,
@@ -157,6 +162,21 @@ export async function syncWithCloud(force = false): Promise<void> {
         }
         if (changed) { saveLocal(); }
 
+        // Sync dedicated Firestore general store settings (READ ONLY - never write during sync)
+        try {
+          const cloudSettings = await loadSettingsFromCloud();
+          if (cloudSettings && typeof cloudSettings === 'object' && Object.keys(cloudSettings).length > 0) {
+            if (!db.settings) db.settings = {};
+            const curWheel = db.settings.wheelIds;
+            Object.assign(db.settings, cloudSettings);
+            if (curWheel && (!cloudSettings.wheelIds || !cloudSettings.wheelIds.length)) {
+              db.settings.wheelIds = curWheel;
+            }
+          }
+        } catch (e) {
+          console.error('[Server] Dedicated store settings sync error:', e);
+        }
+
         // Sync dedicated Firestore wheel settings (READ ONLY - never write during sync)
         try {
           const cloudWheel = await loadWheelSettingsFromCloud();
@@ -198,6 +218,27 @@ export async function syncWithCloud(force = false): Promise<void> {
           }
         } catch (e) {
           console.error('[Server] Dedicated orders sync error:', e);
+        }
+
+        // Sync dedicated Firestore order sequence & sync with existing order IDs
+        try {
+          const cloudSeq = await loadOrderSeqFromCloud();
+          let maxExistingOrderNum = 1000;
+          (db.orders || []).forEach((o: any) => {
+            if (o && o.id) {
+              const m = String(o.id).match(/LS-(\d+)/i);
+              if (m) {
+                const n = parseInt(m[1], 10);
+                if (!isNaN(n) && n > maxExistingOrderNum) maxExistingOrderNum = n;
+              }
+            }
+          });
+          if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+          if (!db.meta.seq) db.meta.seq = { product: 0, order: 0, pos: 0 };
+          const baseSeq = Math.max(db.meta.seq.order || 0, maxExistingOrderNum - 1000);
+          db.meta.seq.order = typeof cloudSeq === 'number' ? Math.max(baseSeq, cloudSeq) : baseSeq;
+        } catch (e) {
+          console.error('[Server] Dedicated order sequence sync error:', e);
         }
 
         // Sync atomic Firestore Products
@@ -1405,6 +1446,8 @@ ${body}
           <a href="/iletisim">${tr('foot.contact')}</a>
           <a href="/hakkimizda#iade">${tr('foot.returns')}</a>
           <a href="/kargo-ve-teslimat">${C.lang === 'en' ? 'Shipping & Delivery' : 'Kargo & Teslimat'}</a>
+          <a href="/gizlilik-politikasi">${C.lang === 'en' ? 'Privacy Policy & KVKK' : 'Gizlilik & KVKK'}</a>
+          <a href="/kullanim-kosullari">${C.lang === 'en' ? 'Terms & Distance Sales' : 'Mesafeli Satış & Şartlar'}</a>
         </nav>
       </div>
     </div>
@@ -1417,7 +1460,11 @@ ${body}
   </div>
   <div class="foot-bottom">
     <span>© ${new Date().getFullYear()} ${esc(st.storeName)}${tr('foot.rights')}</span>
-    <button type="button" onclick="window.showAgeGate && window.showAgeGate()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;margin:0 8px;" title="Doğrulama Ekranını Yeniden Göster">+18 Yaş Doğrulama</button>
+    <a href="/gizlilik-politikasi" style="color:var(--muted);font-size:12px;margin:0 6px;text-decoration:none;">${C.lang === 'en' ? 'Privacy' : 'Gizlilik'}</a>
+    <span style="color:var(--line);font-size:11px;">·</span>
+    <a href="/kullanim-kosullari" style="color:var(--muted);font-size:12px;margin:0 6px;text-decoration:none;">${C.lang === 'en' ? 'Terms' : 'Kullanım Koşulları'}</a>
+    <span style="color:var(--line);font-size:11px;">·</span>
+    <button type="button" onclick="window.showAgeGate && window.showAgeGate()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;margin:0 6px;" title="Doğrulama Ekranını Yeniden Göster">+18 Yaş Doğrulama</button>
     <div class="pay-chips">
       <span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
@@ -2578,44 +2625,28 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
 
 function pagePrivacy(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
-  const title = C.lang === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası';
-  const html = `<div class="rich">
-    <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1">${title}</h1>
-    <p><strong>Son Güncelleme: ${new Date().toLocaleDateString('tr-TR')}</strong></p>
-    <h2>1. Veri Toplama</h2>
-    <p>Size daha iyi hizmet verebilmek amacıyla adınız, e-posta adresiniz, fatura ve teslimat adresiniz gibi temel bilgileri topluyoruz.</p>
-    <h2>2. Veri Kullanımı</h2>
-    <p>Topladığımız veriler siparişlerinizin teslimatı, müşteri destek hizmetleri ve bilgilendirme amaçlı kullanılmaktadır.</p>
-    <h2>3. Üçüncü Taraflarla Paylaşım</h2>
-    <p>Kişisel bilgileriniz, yasal zorunluluklar veya kargo firmaları gibi hizmet sağlayıcılarımız haricinde hiçbir 3. taraf ile paylaşılmaz veya satılmaz.</p>
-    <h2>4. Çerezler (Cookies)</h2>
-    <p>Sitemizde oturum yönetimi ve site tercihlerini (dil, tema) hatırlamak için zorunlu çerezler kullanılmaktadır.</p>
-    <h2>5. İletişim</h2>
-    <p>Gizlilik politikamız hakkında sorularınız için bizimle iletişime geçebilirsiniz.</p>
-  </div>`;
+  const st = db.settings;
+  const title = C.lang === 'en' ? 'Privacy Policy & KVKK Statement' : 'Gizlilik Politikası ve KVKK Aydınlatma Metni';
+  const html = getPrivacyPolicyHtml(C, st);
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(title, html, {}, C));
+  res.end(layout(title, html, {
+    description: C.lang === 'en'
+      ? 'Official Privacy Policy and Personal Data Protection (KVKK Law No. 6698) clarification statement for loveeroticshop.com. Review data retention, data subject statutory rights, and our 100% neutral packaging commitment.'
+      : 'loveeroticshop.com 6698 Sayılı KVKK ve tüketici mevzuatına uygun resmi Gizlilik Politikası ve Aydınlatma Metni. Kişisel verilerin korunması, çerez tercihleri ve %100 gizli paketleme güvencemiz.'
+  }, C));
 }
 
 function pageTerms(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
-  const title = C.lang === 'en' ? 'Terms of Service' : 'Kullanım Koşulları';
-  const html = `<div class="rich">
-    <h1 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1">${title}</h1>
-    <p><strong>Son Güncelleme: ${new Date().toLocaleDateString('tr-TR')}</strong></p>
-    <h2>1. Kabul Beyanı</h2>
-    <p>Bu siteyi kullanarak ve alışveriş yaparak bu kullanım koşullarını kabul etmiş sayılırsınız.</p>
-    <h2>2. Hizmet Kapsamı</h2>
-    <p>Platformumuz üzerinden sunulan ürünler, stoklarla sınırlıdır ve firmamız ürün fiyatları ve özelliklerinde değişiklik yapma hakkını saklı tutar.</p>
-    <h2>3. Kullanıcı Yükümlülükleri</h2>
-    <p>Siteye üye olurken ve sipariş verirken doğru ve güncel bilgiler sağlamakla yükümlüsünüz. Hesabınızın güvenliği sizin sorumluluğunuzdadır.</p>
-    <h2>4. İptal ve İade Koşulları</h2>
-    <p>Alıcı, ürünü teslim aldıktan sonra mevzuatta belirtilen yasal süre içerisinde iade veya iptal hakkını kullanabilir.</p>
-    <h2>5. Fikri Mülkiyet</h2>
-    <p>Bu sitedeki tüm içerik, logo ve materyallerin telif hakları saklıdır.</p>
-  </div>`;
+  const st = db.settings;
+  const title = C.lang === 'en' ? 'Terms of Service & Distance Sales Contract' : 'Kullanım Koşulları ve Mesafeli Satış Sözleşmesi';
+  const html = getTermsOfServiceHtml(C, st);
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(title, html, {}, C));
+  res.end(layout(title, html, {
+    description: C.lang === 'en'
+      ? 'Statutory Distance Sales Contract and Terms of Service pursuant to Turkish Law No. 6502 and the Regulation on Distance Contracts. Essential terms on +18 age representation and hygiene return exceptions.'
+      : 'loveeroticshop.com 6502 Sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği\'ne uygun yasal Mesafeli Satış Sözleşmesi, +18 yaş beyanı ve hijyen iade istisnaları.'
+  }, C));
 }
 
 function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -3269,7 +3300,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!pickup && (!address || !city)) return sendError(res, 400, E('err.address'));
     const shipping = pickup ? 0 : c.shipping;
     const total = Math.round((c.subtotal - c.discount + shipping) * 100) / 100;
-    const orderId = 'LS-' + (1000 + nextId('order'));
+    const nextSeq = nextId('order');
+    const orderId = 'LS-' + (1000 + nextSeq);
     const email = user ? user.email : String(b.email || '').trim().toLowerCase() || sess.lastGuestEmail || '';
     const order = {
       id: orderId, userId: user ? user.id : null, userEmail: email, customerName: name,
@@ -3294,6 +3326,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     db.orders.push(order);
     sess.cart = []; sess.coupon = null; sess.lastGuestEmail = email || null;
     await saveOrderToCloud(order);
+    await saveOrderSeqToCloud(nextSeq);
     await saveAsync(); persistSessions();
 
     const lines = [
@@ -4133,6 +4166,7 @@ ${rawText || name}`;
       const b = await readBody(req);
       for (const k of ['storeName', 'announcement', 'supportEmail', 'supportPhone', 'instagram', 'whatsapp', 'address', 'mapsQuery']) if (b[k] !== undefined) db.settings[k] = String(b[k]);
       for (const k of ['freeShippingThreshold', 'shippingFee', 'kdvRate']) if (b[k] !== undefined) db.settings[k] = Number(b[k]) || 0;
+      await saveSettingsToCloud(db.settings);
       await saveAsync();
       return json(res, 200, { ok: true, settings: db.settings });
     }
@@ -4569,8 +4603,8 @@ ${localItemsXml}
       if (pathname === '/iletisim') return pageContact(req, res);
       if (pathname === '/admin' || pathname === '/admin/login') return pageAdmin(req, res);
 
-      if (pathname === '/gizlilik' || pathname === '/gizlilik-politikasi' || pathname === '/privacy-policy') return pagePrivacy(req, res);
-      if (pathname === '/kullanim-kosullari' || pathname === '/terms-of-service' || pathname === '/mesafeli-satis' || pathname === '/mesafeli-satis-sozlesmesi') return pageTerms(req, res);
+      if (pathname === '/gizlilik' || pathname === '/gizlilik-politikasi' || pathname === '/privacy-policy' || pathname === '/privacy' || pathname === '/kvkk' || pathname === '/kvkk-aydinlatma-metni') return pagePrivacy(req, res);
+      if (pathname === '/kullanim-kosullari' || pathname === '/terms-of-service' || pathname === '/mesafeli-satis' || pathname === '/mesafeli-satis-sozlesmesi' || pathname === '/terms' || pathname === '/sozlesme' || pathname === '/satis-sozlesmesi') return pageTerms(req, res);
       if (pathname === '/teslimat' || pathname === '/teslimat-ve-iade') {
         res.writeHead(301, { Location: '/kargo-ve-teslimat' });
         return res.end();
