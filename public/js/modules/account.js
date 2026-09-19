@@ -1,5 +1,5 @@
 import { api } from './api.js';
-import { toast } from './ui.js';
+import { toast } from './ui.js?v=2.2.0';
 import { performLogout } from './auth.js';
 
 const $ = (s, r) => (r || document).querySelector(s);

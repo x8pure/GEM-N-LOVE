@@ -1493,12 +1493,66 @@
     const cats = await ensureCats();
     const isEdit = !!p;
     
-    // Merge existing product or prefilled scraped data
+    // Subcategory mapping matching server definition
+    const subcatsMap = {
+      'vibratorler': [
+        { slug: 'rabbit', name: 'Rabbit' },
+        { slug: 'klitoral', name: 'Klitoral' },
+        { slug: 'cift-motor', name: 'Çift Motor' },
+        { slug: 'akilli-app', name: 'Akıllı / App' },
+        { slug: 'dilli-rotary', name: 'Dilli / Rotary' }
+      ],
+      'realistik-dildolar': [
+        { slug: 'vantuzlu', name: 'Vantuzlu' },
+        { slug: 'damarli', name: 'Damarlı' },
+        { slug: 'buyuk-boy', name: 'Büyük Boy' },
+        { slug: 'baslangic', name: 'Başlangıç' }
+      ],
+      'fantezi-ic-giyim': [
+        { slug: 'body-teddy', name: 'Body & Teddy' },
+        { slug: 'jartiyer', name: 'Jartiyer' },
+        { slug: 'seffaf-takim', name: 'Şeffaf Takım' }
+      ],
+      'anal-urunler': [
+        { slug: 'plug', name: 'Plug' },
+        { slug: 'titresimli', name: 'Titreşimli' },
+        { slug: 'boncuk-kilif', name: 'Boncuk & Kılıf' }
+      ],
+      'ciftler': [
+        { slug: 'titresimli-vajina', name: 'Titreşimli Vajina' },
+        { slug: 'manuel-vajina', name: 'Manuel Vajina' },
+        { slug: 'agiz-oral', name: 'Ağız & Oral' },
+        { slug: 'cift-girisli', name: 'Çift Girişli' }
+      ],
+      'realistik-mankenler': [
+        { slug: 'tam-boy-manken', name: 'Tam Boy Manken' },
+        { slug: 'torso-govde', name: 'Torso Gövde' },
+        { slug: 'kalca-vajina', name: 'Kalça & Vajina' }
+      ],
+      'erkekler': [
+        { slug: 'geciktirici', name: 'Geciktirici & Krem' },
+        { slug: 'pompa-vakum', name: 'Pompa & Vakum' },
+        { slug: 'halka-kilif', name: 'Halka & Kılıf' },
+        { slug: 'masturbator', name: 'Mastürbatör' }
+      ],
+      'kadinlar': [
+        { slug: 'kayganlastirici', name: 'Kayganlaştırıcı' },
+        { slug: 'kegel-toplari', name: 'Kegel Topları' },
+        { slug: 'istek-artirici', name: 'İstek Artırıcı' }
+      ],
+      'fetish-urunler': [
+        { slug: 'baglama-kelepce', name: 'Bağlama & Kelepçe' },
+        { slug: 'kirbac-spank', name: 'Kırbaç & Spank' },
+        { slug: 'maske-kostum', name: 'Maske & Kostüm' }
+      ]
+    };
+
     const initialData = p || prefillData || {};
     const v = {
       name: initialData.name || '',
       category: initialData.category || (cats[0] ? cats[0].slug : 'ciftler'),
       categoryName: initialData.categoryName || (cats[0] ? cats[0].name : ''),
+      subcategory: initialData.subcategory || '',
       description: initialData.description || '',
       longDescription: initialData.longDescription || '',
       price: initialData.price !== undefined ? initialData.price : '',
@@ -1533,14 +1587,23 @@
       <div class="modal-body">
         <div class="grid-2">
           <div class="field"><label>Ürün Adı *</label><input id="pm-name" value="${esc(v.name)}"></div>
-          <div class="field"><label>Kategori</label>
+          <div class="field"><label>Ana Kategori</label>
             <select id="pm-cat">${cats.map((c) => `<option value="${c.slug}" ${v.category === c.slug ? 'selected' : ''}>${esc(c.name)}</option>`).join('') || '<option value="ciftler">Genel</option>'}</select>
           </div>
         </div>
-        <div class="grid-3">
+        <div class="grid-2">
+          <div class="field">
+            <label>Alt Kategori (Özel Filtreleme)</label>
+            <select id="pm-subcat">
+              <option value="">-- Alt Kategori Seçin (İsteğe Bağlı) --</option>
+            </select>
+            <div class="hint">Ürünün listeleneceği spesifik alt kategoriyi buradan belirleyebilirsiniz.</div>
+          </div>
+          <div class="field"><label>Stok Adedi</label><input id="pm-stock" type="number" min="0" value="${esc(v.stock)}"></div>
+        </div>
+        <div class="grid-2">
           <div class="field"><label>Fiyat (₺) *</label><input id="pm-price" type="number" min="0" step="0.01" value="${esc(v.price)}"></div>
           <div class="field"><label>İndirim Öncesi Fiyat (₺)</label><input id="pm-old" type="number" min="0" step="0.01" value="${esc(v.oldPrice || '')}" placeholder="Yoksa boş bırakın"></div>
-          <div class="field"><label>Stok Adedi</label><input id="pm-stock" type="number" min="0" value="${esc(v.stock)}"></div>
         </div>
         
         <div class="field">
@@ -1613,6 +1676,25 @@
     });
 
     const drop = $('#pm-drop', m), fileIn = $('#pm-file', m), addPhotoBtn = $('#pm-add-photo-btn', m), grid = $('#pm-gallery-grid', m), countEl = $('#pm-photo-count', m);
+    const catSelect = $('#pm-cat', m), subcatSelect = $('#pm-subcat', m);
+
+    function updateSubcatOptions(selectedCat, currentSubcatVal) {
+      const list = subcatsMap[selectedCat] || [];
+      if (!list.length) {
+        subcatSelect.innerHTML = '<option value="">-- Bu kategoride alt kategori yok --</option>';
+        return;
+      }
+      subcatSelect.innerHTML = '<option value="">-- Alt Kategori Seçin (İsteğe Bağlı) --</option>' +
+        list.map(s => `<option value="${s.slug}" ${currentSubcatVal === s.slug ? 'selected' : ''}>${esc(s.name)}</option>`).join('');
+    }
+
+    // Initial populate
+    updateSubcatOptions(v.category, v.subcategory);
+
+    // On category change
+    catSelect.addEventListener('change', () => {
+      updateSubcatOptions(catSelect.value, '');
+    });
     
     addPhotoBtn.addEventListener('click', () => fileIn.click());
     drop.addEventListener('click', () => fileIn.click());
@@ -1721,9 +1803,12 @@
         gallery = [coverImage, ...remaining];
       }
 
+      const subcatSlug = $('#pm-subcat', m) ? $('#pm-subcat', m).value : '';
+
       const body = {
         name,
         category: catSlug, categoryName: catObj ? catObj.name : catSlug,
+        subcategory: subcatSlug || '',
         price,
         oldPrice: $('#pm-old', m).value === '' ? null : Number($('#pm-old', m).value),
         stock: Number($('#pm-stock', m).value),

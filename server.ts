@@ -883,6 +883,115 @@ export function matchesCategory(productCategory: string | undefined | null, filt
   return normalize(p) === normalize(f);
 }
 
+export const SUBCATEGORIES_MAP: Record<string, { slug: string; name: string; nameEn?: string }[]> = {
+  'vibratorler': [
+    { slug: 'rabbit', name: 'Rabbit', nameEn: 'Rabbit Vibrators' },
+    { slug: 'klitoral', name: 'Klitoral', nameEn: 'Clitoral' },
+    { slug: 'cift-motor', name: 'Çift Motor', nameEn: 'Dual Motor' },
+    { slug: 'akilli-app', name: 'Akıllı / App', nameEn: 'App Controlled' },
+    { slug: 'dilli-rotary', name: 'Dilli / Rotary', nameEn: 'Tongue & Thrusting' }
+  ],
+  'realistik-dildolar': [
+    { slug: 'vantuzlu', name: 'Vantuzlu', nameEn: 'Suction Base' },
+    { slug: 'damarli', name: 'Damarlı', nameEn: 'Veined & Realistic' },
+    { slug: 'buyuk-boy', name: 'Büyük Boy', nameEn: 'Large Size' },
+    { slug: 'baslangic', name: 'Başlangıç', nameEn: 'Beginner / Small' }
+  ],
+  'fantezi-ic-giyim': [
+    { slug: 'body-teddy', name: 'Body & Teddy', nameEn: 'Bodysuits' },
+    { slug: 'jartiyer', name: 'Jartiyer', nameEn: 'Garter Sets' },
+    { slug: 'seffaf-takim', name: 'Şeffaf Takım', nameEn: 'Sheer Sets' }
+  ],
+  'anal-urunler': [
+    { slug: 'plug', name: 'Plug', nameEn: 'Anal Plugs' },
+    { slug: 'titresimli', name: 'Titreşimli', nameEn: 'Vibrating Anal' },
+    { slug: 'boncuk-kilif', name: 'Boncuk & Kılıf', nameEn: 'Beads & Sleeves' }
+  ],
+  'ciftler': [
+    { slug: 'titresimli-vajina', name: 'Titreşimli Vajina', nameEn: 'Vibrating Flesh' },
+    { slug: 'manuel-vajina', name: 'Manuel Vajina', nameEn: 'Manual Flesh' },
+    { slug: 'agiz-oral', name: 'Ağız & Oral', nameEn: 'Mouth / Oral' },
+    { slug: 'cift-girisli', name: 'Çift Girişli', nameEn: 'Dual Entry' }
+  ],
+  'realistik-mankenler': [
+    { slug: 'tam-boy-manken', name: 'Tam Boy Manken', nameEn: 'Full Body' },
+    { slug: 'torso-govde', name: 'Torso Gövde', nameEn: 'Torso' },
+    { slug: 'kalca-vajina', name: 'Kalça & Vajina', nameEn: 'Hip & Vagina' }
+  ],
+  'erkekler': [
+    { slug: 'geciktirici', name: 'Geciktirici & Krem', nameEn: 'Delay & Creams' },
+    { slug: 'pompa-vakum', name: 'Pompa & Vakum', nameEn: 'Pumps & Vacuums' },
+    { slug: 'halka-kilif', name: 'Halka & Kılıf', nameEn: 'Rings & Sleeves' },
+    { slug: 'masturbator', name: 'Mastürbatör', nameEn: 'Masturbators' }
+  ],
+  'kadinlar': [
+    { slug: 'kayganlastirici', name: 'Kayganlaştırıcı', nameEn: 'Lubricants' },
+    { slug: 'kegel-toplari', name: 'Kegel Topları', nameEn: 'Kegel Balls' },
+    { slug: 'istek-artirici', name: 'İstek Artırıcı', nameEn: 'Arousal' }
+  ],
+  'fetish-urunler': [
+    { slug: 'baglama-kelepce', name: 'Bağlama & Kelepçe', nameEn: 'Restraints' },
+    { slug: 'kirbac-spank', name: 'Kırbaç & Spank', nameEn: 'Whips' },
+    { slug: 'maske-kostum', name: 'Maske & Kostüm', nameEn: 'Masks & Costumes' }
+  ]
+};
+
+export function matchesSubcategory(p: any, subcat: string | undefined | null): boolean {
+  if (!subcat) return true;
+  const s = String(subcat).toLowerCase().trim();
+  
+  // 1. Exact direct match on assigned subcategory slug
+  if (p && p.subcategory && String(p.subcategory).toLowerCase().trim() === s) return true;
+  
+  // 2. Legacy fallback fuzzy matching for backward compatibility
+  const name = String(p?.name || '').toLowerCase();
+  const desc = String(p?.description || '').toLowerCase();
+  const text = `${name} ${desc}`;
+  
+  if (s === 'rabbit' || s === 'rabbit-vibratorler') return text.includes('rabbit');
+  if (s === 'cift-motor' || s === 'cift-motorlu') return text.includes('çift motor') || text.includes('u tipi') || text.includes('noctis') || text.includes('ornella') || text.includes('mika');
+  if (s === 'akilli-app' || s === 'telefon-kontrollu') return text.includes('telefon') || text.includes('app') || text.includes('bluetooth');
+  if (s === 'klitoral' || s === 'klitoral-uyarici') return text.includes('klitoral') || text.includes('emiş') || text.includes('wand') || text.includes('petunia') || text.includes('wisteria') || text.includes('lilu') || text.includes('flax') || text.includes('azalia') || text.includes('lelo');
+  if (s === 'dilli-rotary' || s === 'dilli-hareketli') return text.includes('dilli') || text.includes('hareketli') || text.includes('begonia');
+  
+  if (s === 'vantuzlu') return text.includes('vantuz') || text.includes('steve') || text.includes('oscar');
+  if (s === 'damarli' || s === 'damarli-realistik') return text.includes('damar') || text.includes('realistik') || text.includes('steve') || text.includes('oscar');
+  if (s === 'buyuk-boy') return text.includes('büyük') || text.includes('xl');
+  if (s === 'baslangic' || s === 'baslangic-seviyesi') return text.includes('küçük') || text.includes('başlangıç');
+  
+  if (s === 'plug') return text.includes('plug') || text.includes('elmas') || text.includes('metal') || text.includes('yapay penis');
+  if (s === 'boncuk-kilif' || s === 'boncuklu') return text.includes('boncuk') || text.includes('kılıf') || text.includes('eridani');
+  if (s === 'titresimli' || s === 'titresimli-anal') return text.includes('titreşim') || text.includes('stimülatör') || text.includes('telefon') || text.includes('dorado');
+  
+  if (s === 'body-teddy' || s === 'body') return text.includes('body') || text.includes('teddy');
+  if (s === 'jartiyer' || s === 'jartiyer-takim') return text.includes('jartiyer');
+  if (s === 'seffaf-takim') return text.includes('şeffaf') || text.includes('tül');
+
+  if (s === 'titresimli-vajina') return text.includes('titreşim') || text.includes('motor');
+  if (s === 'manuel-vajina') return text.includes('manuel') || text.includes('cep') || text.includes('egg');
+  if (s === 'agiz-oral') return text.includes('oral') || text.includes('ağız') || text.includes('dudak');
+  if (s === 'cift-girisli') return text.includes('çift') || text.includes('2 giriş') || text.includes('tünel');
+
+  if (s === 'tam-boy-manken') return text.includes('tam boy') || text.includes('160') || text.includes('165') || text.includes('158');
+  if (s === 'torso-govde') return text.includes('torso') || text.includes('gövde');
+  if (s === 'kalca-vajina') return text.includes('kalça') || text.includes('bacak');
+
+  if (s === 'geciktirici') return text.includes('geciktirici') || text.includes('sprey') || text.includes('krem');
+  if (s === 'pompa-vakum') return text.includes('pompa') || text.includes('vakum') || text.includes('otomatik pompa');
+  if (s === 'halka-kilif') return text.includes('halka') || text.includes('kılıf') || text.includes('ring');
+  if (s === 'masturbator') return text.includes('mastürbatör') || text.includes('cup') || text.includes('otomatik');
+
+  if (s === 'kayganlastirici') return text.includes('kayganlaştırıcı') || text.includes('jel') || text.includes('lubricant');
+  if (s === 'kegel-toplari') return text.includes('kegel') || text.includes('top');
+  if (s === 'istek-artirici') return text.includes('istek') || text.includes('damla') || text.includes('uyarıcı jel');
+
+  if (s === 'baglama-kelepce') return text.includes('kelepçe') || text.includes('bağlama') || text.includes('halat') || text.includes('tasma');
+  if (s === 'kirbac-spank') return text.includes('kırbaç') || text.includes('spank') || text.includes('şaklatıcı');
+  if (s === 'maske-kostum') return text.includes('maske') || text.includes('kostüm') || text.includes('deri');
+  
+  return false;
+}
+
 function allCategories() {
   const cats = Array.isArray(db.categories) ? [...db.categories] : [];
   for (const c of cats) {
@@ -907,6 +1016,9 @@ function allCategories() {
       known.add(p.category);
       cats.push({ id: 'ct_' + p.category, slug: p.category, name: p.categoryName || p.category, image: '', featuredOnHome: false, homeOrder: 99, createdAt: p.createdAt });
     }
+  }
+  for (const c of cats) {
+    c.subcategories = SUBCATEGORIES_MAP[c.slug] || [];
   }
   return cats;
 }
@@ -1722,6 +1834,7 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   // Parse query parameters from request URL
   const parsedUrl = new URL(req.url || '/magaza', 'http://localhost');
   const catParam = (parsedUrl.searchParams.get('kat') || parsedUrl.searchParams.get('cat') || 'hepsi').trim();
+  const subcatParam = (parsedUrl.searchParams.get('altkat') || parsedUrl.searchParams.get('subcat') || '').trim();
   const sortParam = (parsedUrl.searchParams.get('sort') || 'onerilen').trim();
   const filterParam = (parsedUrl.searchParams.get('filter') || '').trim();
   const qParam = (parsedUrl.searchParams.get('q') || '').trim();
@@ -1733,6 +1846,9 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   const isHepsi = !catParam || catParam === 'hepsi' || catParam === 'all';
   if (!isHepsi) {
     prods = prods.filter((p: any) => matchesCategory(p.category, catParam));
+  }
+  if (subcatParam) {
+    prods = prods.filter((p: any) => matchesSubcategory(p, subcatParam));
   }
 
   // Filter by keyword
@@ -1770,15 +1886,23 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
       prods.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
   }
 
-  // Find active category for title and breadcrumbs
+  // Find active category and subcategory for title and breadcrumbs
   const activeCat = !isHepsi ? cats.find((c: any) => matchesCategory(c.slug, catParam)) : null;
   const activeCatName = activeCat ? (C.lang === 'en' ? catNameEN(activeCat.slug, activeCat.name) : activeCat.name) : '';
-  const pageHeading = activeCatName || tr('shop.title');
+  const activeSubcat = (activeCat && subcatParam && Array.isArray(activeCat.subcategories)) ? activeCat.subcategories.find((sc: any) => sc.slug === subcatParam) : null;
+  const activeSubcatName = activeSubcat ? (C.lang === 'en' && activeSubcat.nameEn ? activeSubcat.nameEn : activeSubcat.name) : '';
+
+  const pageHeading = activeSubcatName || activeCatName || tr('shop.title');
   const pageSub = tr('shop.desc', { n: C.num(prods.length) });
 
-  const crumbsHtml = activeCatName
-    ? `<a href="/">${tr('shop.crumb.home')}</a> / <a href="/magaza">${tr('shop.title')}</a> / ${esc(activeCatName)}`
-    : `<a href="/">${tr('shop.crumb.home')}</a> / ${tr('shop.title')}`;
+  let crumbsHtml = `<a href="/">${tr('shop.crumb.home')}</a> / <a href="/magaza">${tr('shop.title')}</a>`;
+  if (activeCatName) {
+    if (activeSubcatName) {
+      crumbsHtml += ` / <a href="/magaza?kat=${esc(activeCat.slug)}">${esc(activeCatName)}</a> / ${esc(activeSubcatName)}`;
+    } else {
+      crumbsHtml += ` / ${esc(activeCatName)}`;
+    }
+  }
 
   const initialGridHtml = prods.length
     ? `<div class="prod-grid">${prods.slice(0, 50).map((p: any) => productCardSSR(p, tr)).join('')}</div>`
@@ -1787,39 +1911,102 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   const html = `
 <div class="page-head">
   <div class="crumbs">${crumbsHtml}</div>
-  <h1 id="shop-page-title">${esc(pageHeading)}</h1>
+  <div class="page-head-title-row">
+    <h1 id="shop-page-title">${esc(pageHeading)}</h1>
+    <span class="shop-results-count" id="results-count">${tr('shop.count', { n: C.num(prods.length) })}</span>
+  </div>
   <p id="shop-page-sub">${pageSub}</p>
 </div>
 <div class="shop-layout">
-  <aside class="filters">
+  <aside class="filters" id="shop-filters-aside">
+    <div class="filters-drawer-head">
+      <div class="filters-drawer-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        <span>${C.lang === 'en' ? 'Categories' : 'Kategoriler'}</span>
+      </div>
+      <button type="button" class="filters-drawer-close" id="filters-drawer-close" aria-label="${C.lang === 'en' ? 'Close' : 'Kapat'}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
     <div class="field"><input id="shop-search" placeholder="${tr('shop.search')}" value="${esc(qParam)}"></div>
     <h4>${tr('shop.cat')}</h4>
     <div class="filter-chips" id="cat-chips">
       <button class="chip ${isHepsi ? 'on' : ''}" data-cat="hepsi">${tr('shop.all')}</button>
       ${cats.map((c: any) => {
-        const isOn = !isHepsi && matchesCategory(c.slug, catParam);
+        const isCatMatch = !isHepsi && matchesCategory(c.slug, catParam);
+        const hasSubcats = Array.isArray(c.subcategories) && c.subcategories.length > 0;
+        const isOpen = isCatMatch && hasSubcats;
         const name = C.lang === 'en' ? catNameEN(c.slug, c.name) : c.name;
-        return `<button class="chip ${isOn ? 'on' : ''}" data-cat="${esc(c.slug)}">${esc(name)}</button>`;
+        return `
+        <div class="cat-accordion-group" data-group-cat="${esc(c.slug)}">
+          <button class="chip ${isCatMatch ? 'on' : ''} ${hasSubcats ? 'has-sub' : ''}" data-cat="${esc(c.slug)}" aria-expanded="${isOpen ? 'true' : 'false'}">
+            <span class="chip-label">${esc(name)}</span>
+            ${hasSubcats ? `<svg class="chevron-icon ${isOpen ? 'rotated' : ''}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>` : ''}
+          </button>
+          ${hasSubcats ? `
+          <div class="subcat-panel ${isOpen ? 'open' : ''}" style="${isOpen ? '' : 'max-height:0;opacity:0;'}">
+            <div class="subcat-list">
+              ${c.subcategories.map((sc: any) => {
+                const isSubOn = isCatMatch && subcatParam === sc.slug;
+                const subName = C.lang === 'en' && sc.nameEn ? sc.nameEn : sc.name;
+                return `<button class="subchip ${isSubOn ? 'on' : ''}" data-cat="${esc(c.slug)}" data-subcat="${esc(sc.slug)}">${esc(subName)}</button>`;
+              }).join('')}
+            </div>
+          </div>
+          ` : ''}
+        </div>`;
       }).join('')}
     </div>
   </aside>
+  <div class="filters-backdrop" id="filters-backdrop"></div>
   <div>
     <div class="shop-toolbar">
-      <span class="results-count" id="results-count">${tr('shop.count', { n: C.num(prods.length) })}</span>
-      <select id="shop-sort">
-        <option value="onerilen" ${sortParam === 'onerilen' ? 'selected' : ''}>${tr('shop.sort.def')}</option>
-        <option value="yeni" ${sortParam === 'yeni' || sortParam === 'new' ? 'selected' : ''}>${tr('shop.sort.new')}</option>
-        <option value="fiyat-artan" ${sortParam === 'fiyat-artan' ? 'selected' : ''}>${tr('shop.sort.asc')}</option>
-        <option value="fiyat-azalan" ${sortParam === 'fiyat-azalan' ? 'selected' : ''}>${tr('shop.sort.desc')}</option>
-        <option value="puan" ${sortParam === 'puan' ? 'selected' : ''}>${tr('shop.sort.rate')}</option>
-      </select>
+      <button type="button" class="mobile-filter-trigger" id="mobile-filter-trigger" aria-label="${C.lang === 'en' ? 'Select Category' : 'Kategori Seç'}">
+        <svg class="pill-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        <span class="pill-text">${C.lang === 'en' ? 'Category' : 'Kategori'}: <strong id="mobile-filter-active-label">${esc(activeSubcatName || activeCatName || tr('shop.all'))}</strong></span>
+      </button>
+
+      <div class="shop-sort-pill" id="shop-sort-pill" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${C.lang === 'en' ? 'Sort' : 'Sırala'}">
+        <svg class="pill-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+        <span class="pill-text" id="sort-pill-display">${C.lang === 'en' ? 'Sort' : 'Sırala'}: <strong id="sort-active-label">${sortParam === 'yeni' || sortParam === 'new' ? tr('shop.sort.new') : sortParam === 'fiyat-artan' ? tr('shop.sort.asc') : sortParam === 'fiyat-azalan' ? tr('shop.sort.desc') : sortParam === 'puan' ? tr('shop.sort.rate') : (C.lang === 'en' ? 'Recommended' : 'Önerilen')}</strong></span>
+        <svg class="pill-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div class="shop-sort-menu" id="shop-sort-menu" role="listbox">
+          <button type="button" class="sort-menu-item ${sortParam === 'onerilen' || !sortParam ? 'active' : ''}" data-val="onerilen" role="option">
+            <span>${C.lang === 'en' ? 'Recommended' : 'Önerilen'}</span>
+            <svg class="sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button type="button" class="sort-menu-item ${sortParam === 'yeni' || sortParam === 'new' ? 'active' : ''}" data-val="yeni" role="option">
+            <span>${tr('shop.sort.new')}</span>
+            <svg class="sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button type="button" class="sort-menu-item ${sortParam === 'fiyat-artan' ? 'active' : ''}" data-val="fiyat-artan" role="option">
+            <span>${tr('shop.sort.asc')}</span>
+            <svg class="sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button type="button" class="sort-menu-item ${sortParam === 'fiyat-azalan' ? 'active' : ''}" data-val="fiyat-azalan" role="option">
+            <span>${tr('shop.sort.desc')}</span>
+            <svg class="sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button type="button" class="sort-menu-item ${sortParam === 'puan' ? 'active' : ''}" data-val="puan" role="option">
+            <span>${tr('shop.sort.rate')}</span>
+            <svg class="sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+        <select id="shop-sort" class="shop-sort-native" aria-hidden="true" tabindex="-1">
+          <option value="onerilen" ${sortParam === 'onerilen' ? 'selected' : ''}>${tr('shop.sort.def')}</option>
+          <option value="yeni" ${sortParam === 'yeni' || sortParam === 'new' ? 'selected' : ''}>${tr('shop.sort.new')}</option>
+          <option value="fiyat-artan" ${sortParam === 'fiyat-artan' ? 'selected' : ''}>${tr('shop.sort.asc')}</option>
+          <option value="fiyat-azalan" ${sortParam === 'fiyat-azalan' ? 'selected' : ''}>${tr('shop.sort.desc')}</option>
+          <option value="puan" ${sortParam === 'puan' ? 'selected' : ''}>${tr('shop.sort.rate')}</option>
+        </select>
+      </div>
     </div>
     <div id="shop-root">${initialGridHtml}</div>
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  const titleStr = activeCatName
-    ? `${activeCatName} — ${C.lang === 'en' ? 'Shop' : 'Seks Shop & Erotik Shop'}`
+  const titleStr = (activeSubcatName || activeCatName)
+    ? `${activeSubcatName ? activeSubcatName + ' — ' : ''}${activeCatName || ''} — ${C.lang === 'en' ? 'Shop' : 'Seks Shop & Erotik Shop'}`
     : (C.lang === 'en' ? 'Shop' : 'Tüm Ürünler — Seks Shop & Erotik Shop');
   res.end(layout(titleStr, html, {
     description: 'Eskişehir Love Seks Shop & Erotik Shop online kataloğu. Kadın, erkek, çiftler için vücut dostu ürünler, kayganlaştırıcılar, iç giyim ve aksesuarlar.'
@@ -2799,12 +2986,13 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   fs.stat(p, (serr, st) => {
     if (serr) { return sendSvgFallback(); }
     
-    const isVersioned = pathname.includes('?v=') || pathname.includes('v=');
-    let cacheControl = 'public, max-age=86400';
+    const reqUrl = req.url || '';
+    const isVersioned = reqUrl.includes('?v=') || reqUrl.includes('&v=');
+    let cacheControl = 'no-cache, must-revalidate';
     if (ext === '.woff2' || ext === '.ttf' || pathname.startsWith('/uploads/') || ext === '.webp' || ext === '.png' || ext === '.jpg' || ext === '.svg' || ext === '.ico') {
       cacheControl = 'public, max-age=31536000, immutable';
     } else if (isScriptOrStyle) {
-      cacheControl = isVersioned ? 'public, max-age=31536000, immutable' : 'public, max-age=86400';
+      cacheControl = isVersioned ? 'public, max-age=31536000, immutable' : 'no-cache, must-revalidate';
     }
 
     // Support HTTP Range requests for video/media playback (Essential for iOS Safari & Chrome)
@@ -3113,7 +3301,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       image: c.image || '',
       featuredOnHome: !!c.featuredOnHome,
       homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99,
-      count: db.products.filter((p: any) => p.category === c.slug).length
+      subcategories: c.subcategories || [],
+      count: db.products.filter((p: any) => matchesCategory(p.category, c.slug)).length
     }));
     return json(res, 200, { ok: true, categories: cats });
   }
@@ -3122,6 +3311,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const cat = q.get('cat') || q.get('kat');
     if (cat && cat !== 'hepsi' && cat !== 'all') {
       list = list.filter((p: any) => matchesCategory(p.category, cat));
+    }
+    const subcat = q.get('subcat') || q.get('altkat');
+    if (subcat) {
+      list = list.filter((p: any) => matchesSubcategory(p, subcat));
     }
     const kw = q.get('q');
     if (kw) {
@@ -3767,6 +3960,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const p = {
         id: uid('p'), slug, name: String(b.name).trim(),
         category: b.category || 'ciftler', categoryName: b.categoryName || 'Genel',
+        subcategory: b.subcategory ? String(b.subcategory).trim() : '',
         description: String(b.description || ''), longDescription: String(b.longDescription || b.description || ''),
         price: Math.max(0, Number(b.price)), oldPrice: b.oldPrice ? Number(b.oldPrice) : null,
         stock: Math.max(0, parseInt(b.stock, 10) || 0), rating: Number(b.rating) || 0, reviewCount: 0,
@@ -3784,12 +3978,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const p = db.products.find((x: any) => x.id === decodeURIComponent(pUp[1]));
       if (!p) return sendError(res, 404, E('err.noProd'));
       const b = await readBody(req);
-      const f = ['name', 'category', 'categoryName', 'description', 'longDescription', 'price', 'oldPrice', 'stock', 'rating', 'featured', 'isNew', 'bestSeller', 'slug', 'highlights'];
+      const f = ['name', 'category', 'categoryName', 'subcategory', 'description', 'longDescription', 'price', 'oldPrice', 'stock', 'rating', 'featured', 'isNew', 'bestSeller', 'slug', 'highlights'];
       for (const k of f) if (b[k] !== undefined) {
         if (k === 'featured' || k === 'isNew' || k === 'bestSeller') {
           p[k] = !!b[k];
         } else if (k === 'highlights') {
           p[k] = Array.isArray(b[k]) ? b[k].map(String).map(s => s.trim()).filter(Boolean) : (typeof b[k] === 'string' ? b[k].split(',').map(s => s.trim()).filter(Boolean) : []);
+        } else if (k === 'subcategory') {
+          p[k] = b[k] ? String(b[k]).trim() : '';
         } else {
           p[k] = b[k];
         }
