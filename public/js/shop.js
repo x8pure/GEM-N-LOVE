@@ -1083,7 +1083,6 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     const urlParams = new URLSearchParams(location.search);
     const state = {
       cat: urlParams.get('kat') || urlParams.get('cat') || 'hepsi',
-      subcat: urlParams.get('altkat') || urlParams.get('subcat') || '',
       q: urlParams.get('q') || '',
       sort: urlParams.get('sort') || 'onerilen',
       filter: urlParams.get('filter') || ''
@@ -1110,115 +1109,20 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       return norm(pCat) === norm(fCat);
     }
 
-    function closeAccordion(groupEl) {
-      if (!groupEl) return;
-      const panel = groupEl.querySelector('.subcat-panel');
-      const btn = groupEl.querySelector('.chip');
-      const chevron = groupEl.querySelector('.chevron-icon');
-      if (panel) {
-        panel.style.maxHeight = '0px';
-        panel.style.opacity = '0';
-        panel.classList.remove('open');
-      }
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-      if (chevron) chevron.classList.remove('rotated');
-    }
-
-    function openAccordion(groupEl) {
-      if (!groupEl) return;
-      const panel = groupEl.querySelector('.subcat-panel');
-      const btn = groupEl.querySelector('.chip');
-      const chevron = groupEl.querySelector('.chevron-icon');
-      if (panel) {
-        panel.classList.add('open');
-        panel.style.maxHeight = (panel.scrollHeight || 300) + 'px';
-        panel.style.opacity = '1';
-      }
-      if (btn) btn.setAttribute('aria-expanded', 'true');
-      if (chevron) chevron.classList.add('rotated');
-    }
-
-    function closeAllAccordions(exceptGroupEl = null) {
-      if (!catWrap) return;
-      $$('.cat-accordion-group', catWrap).forEach((g) => {
-        if (g !== exceptGroupEl) {
-          closeAccordion(g);
-        }
-      });
-    }
-
-    function updateMobileLabel() {
-      const activeLabelEl = $('#mobile-filter-active-label');
-      if (!activeLabelEl) return;
-      if (state.cat === 'hepsi' || !state.cat) {
-        activeLabelEl.textContent = t('shop.all');
-        return;
-      }
-      let foundName = '';
-      if (state.subcat && catWrap) {
-        const activeSubBtn = catWrap.querySelector(`.subchip[data-subcat="${state.subcat}"]`);
-        if (activeSubBtn) {
-          foundName = activeSubBtn.textContent.trim();
-        }
-      }
-      if (!foundName && catWrap) {
-        const activeCatBtn = catWrap.querySelector(`.chip[data-cat="${state.cat}"] .chip-label, .chip[data-cat="${state.cat}"]`);
-        if (activeCatBtn) {
-          foundName = activeCatBtn.textContent.trim();
-        } else {
-          foundName = state.cat;
-        }
-      }
-      activeLabelEl.textContent = foundName || t('shop.all');
-    }
-
     function syncChipState() {
       if (!catWrap) return;
       const isHepsi = state.cat === 'hepsi' || !state.cat;
 
-      // "Tümü" chip
-      const hepsiChip = catWrap.querySelector('[data-cat="hepsi"]');
-      if (hepsiChip) hepsiChip.classList.toggle('on', isHepsi);
-
-      // Accordion groups
-      $$('.cat-accordion-group', catWrap).forEach((group) => {
-        const groupCat = group.dataset.groupCat;
-        const isCatMatch = !isHepsi && matchCat(groupCat, state.cat);
-        const mainChip = group.querySelector('.chip');
-        if (mainChip) {
-          mainChip.classList.toggle('on', isCatMatch);
-        }
-
-        // Subchips
-        $$('.subchip', group).forEach((subBtn) => {
-          const sSlug = subBtn.dataset.subcat;
-          const isSubOn = isCatMatch && (state.subcat === sSlug);
-          subBtn.classList.toggle('on', isSubOn);
-        });
-
-        // Ensure ONLY the active category accordion is open; others are strictly closed
-        const hasSub = !!group.querySelector('.subcat-panel');
-        if (isCatMatch && hasSub) {
-          closeAllAccordions(group);
-          openAccordion(group);
-        } else if (!isCatMatch) {
-          closeAccordion(group);
-        }
-      });
-
-      // Update any stand-alone chips (without subcategories)
-      $$('#cat-chips > .chip:not([data-cat="hepsi"])', catWrap).forEach((b) => {
+      $$('[data-cat]', catWrap).forEach((b) => {
         const bCat = b.dataset.cat;
-        b.classList.toggle('on', !isHepsi && matchCat(bCat, state.cat));
+        const isActive = (bCat === 'hepsi') ? isHepsi : (!isHepsi && matchCat(bCat, state.cat));
+        b.classList.toggle('on', isActive);
       });
-
-      updateMobileLabel();
     }
 
     function updateUrl() {
       const p = new URLSearchParams();
       if (state.cat && state.cat !== 'hepsi') p.set('kat', state.cat);
-      if (state.subcat) p.set('altkat', state.subcat);
       if (state.q) p.set('q', state.q);
       if (state.sort && state.sort !== 'onerilen') p.set('sort', state.sort);
       if (state.filter) p.set('filter', state.filter);
@@ -1226,171 +1130,18 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       history.replaceState(null, '', qs ? `/magaza?${qs}` : '/magaza');
     }
 
-    // Mobile drawer controls
-    const asideFilters = $('#shop-filters-aside');
-    const backdrop = $('#filters-backdrop');
-    const mobileTrigger = $('#mobile-filter-trigger');
-    const closeBtn = $('#filters-drawer-close');
-
-    function openMobileDrawer() {
-      if (!asideFilters) return;
-      asideFilters.classList.add('drawer-open');
-      if (backdrop) backdrop.classList.add('active');
-      lockBodyScroll();
-    }
-
-    function closeMobileDrawer() {
-      if (!asideFilters) return;
-      if (!asideFilters.classList.contains('drawer-open')) return;
-      asideFilters.classList.remove('drawer-open');
-      if (backdrop) backdrop.classList.remove('active');
-      unlockBodyScroll();
-    }
-
-    if (mobileTrigger) {
-      mobileTrigger.onclick = (e) => {
-        e.preventDefault();
-        openMobileDrawer();
-      };
-    }
-    if (closeBtn) {
-      closeBtn.onclick = (e) => {
-        e.preventDefault();
-        closeMobileDrawer();
-      };
-    }
-    if (backdrop) {
-      backdrop.onclick = () => {
-        closeMobileDrawer();
-      };
-      // Prevent any touch scrolling on the backdrop from propagating to underlying page
-      backdrop.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-      }, { passive: false });
-    }
-
-    if (asideFilters) {
-      let touchStartY = 0;
-      asideFilters.addEventListener('touchstart', (e) => {
-        if (e.touches && e.touches.length) {
-          touchStartY = e.touches[0].clientY;
-        }
-      }, { passive: true });
-
-      asideFilters.addEventListener('touchmove', (e) => {
-        if (!asideFilters.classList.contains('drawer-open')) return;
-        if (!e.touches || !e.touches.length) return;
-        const touchY = e.touches[0].clientY;
-        const deltaY = touchY - touchStartY;
-        const isAtTop = asideFilters.scrollTop <= 0;
-        const isAtBottom = asideFilters.scrollTop + asideFilters.clientHeight >= asideFilters.scrollHeight - 1;
-
-        // Prevent iOS Safari rubber-band scrolling when pulling past top or bottom boundaries
-        if (isAtTop && deltaY > 0) {
-          e.preventDefault();
-        } else if (isAtBottom && deltaY < 0) {
-          e.preventDefault();
-        }
-      }, { passive: false });
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && asideFilters && asideFilters.classList.contains('drawer-open')) {
-        closeMobileDrawer();
-      }
-    });
-
     function bindChips() {
       if (!catWrap) return;
-
-      // 1. "Tümü" button: resets cat to hepsi, closes any open accordion, filters all products
-      const hepsiBtn = catWrap.querySelector('[data-cat="hepsi"]');
-      if (hepsiBtn) {
-        hepsiBtn.onclick = (e) => {
-          e.preventDefault();
-          state.cat = 'hepsi';
-          state.subcat = '';
-          closeAllAccordions();
-          syncChipState();
-          updateUrl();
-          closeMobileDrawer();
-          load();
-        };
-      }
-
-      // 2. Category group buttons
-      $$('.cat-accordion-group', catWrap).forEach((group) => {
-        const chipBtn = group.querySelector('.chip');
-        const panel = group.querySelector('.subcat-panel');
-        const hasSub = chipBtn && chipBtn.classList.contains('has-sub') && !!panel;
-        const targetCat = group.dataset.groupCat;
-
-        if (chipBtn) {
-          chipBtn.onclick = (e) => {
-            e.preventDefault();
-            if (!hasSub) {
-              // Single-level category (no subcategories)
-              closeAllAccordions();
-              state.cat = targetCat;
-              state.subcat = '';
-              syncChipState();
-              updateUrl();
-              closeMobileDrawer();
-              load();
-              return;
-            }
-
-            // Category WITH subcategories
-            const isCurrentlyOpen = panel.classList.contains('open');
-            if (isCurrentlyOpen) {
-              // If already open and clicked, toggle close, but preserve category filter
-              closeAccordion(group);
-            } else {
-              // Close any other open category accordion! Only 1 can be open!
-              closeAllAccordions(group);
-              openAccordion(group);
-              state.cat = targetCat;
-              state.subcat = ''; // Reset subcategory when switching main category
-              syncChipState();
-              updateUrl();
-              load();
-            }
-          };
-        }
-
-        // 3. Subcategory buttons
-        $$('.subchip', group).forEach((subBtn) => {
-          subBtn.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const parentCat = subBtn.dataset.cat || targetCat;
-            const targetSub = subBtn.dataset.subcat;
-
-            state.cat = parentCat;
-            state.subcat = targetSub;
-
-            // Make sure only this group is open
-            closeAllAccordions(group);
-            openAccordion(group);
-            syncChipState();
-            updateUrl();
-            closeMobileDrawer();
-            load();
-          };
-        });
-      });
-
-      // 4. Any direct chips not in an accordion group
-      $$('#cat-chips > .chip:not([data-cat="hepsi"])', catWrap).forEach((b) => {
+      $$('[data-cat]', catWrap).forEach((b) => {
         b.onclick = (e) => {
           e.preventDefault();
-          closeAllAccordions();
-          state.cat = b.dataset.cat;
-          state.subcat = '';
+          state.cat = b.dataset.cat || 'hepsi';
           syncChipState();
           updateUrl();
-          closeMobileDrawer();
           load();
+          try {
+            b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          } catch {}
         };
       });
     }
@@ -1490,7 +1241,6 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       }
       const p = new URLSearchParams();
       if (state.cat && state.cat !== 'hepsi') p.set('cat', state.cat);
-      if (state.subcat) p.set('subcat', state.subcat);
       if (state.q) p.set('q', state.q);
       if (state.filter) p.set('filter', state.filter);
       p.set('sort', state.sort);
@@ -1503,7 +1253,6 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
         : `<div class="empty-state"><div class="big"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><p>${t('shop.empty')}</p></div>`;
       $$('article', root).forEach((el) => { el.classList.add('vis'); });
       refreshRevealObservers();
-      updateMobileLabel();
       updateSortLabel();
     }
 
@@ -1511,7 +1260,6 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     window.addEventListener('popstate', () => {
       const up = new URLSearchParams(location.search);
       state.cat = up.get('kat') || up.get('cat') || 'hepsi';
-      state.subcat = up.get('altkat') || up.get('subcat') || '';
       state.q = up.get('q') || '';
       state.sort = up.get('sort') || 'onerilen';
       state.filter = up.get('filter') || '';

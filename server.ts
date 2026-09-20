@@ -1408,6 +1408,13 @@ ${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID
 ${opts.noChrome ? body : `
 ${C.isBot ? '' : `
 <div id="age-gate">
+  <video class="age-bg-video" autoplay loop muted playsinline preload="auto">
+    <source src="/uploads/age-gate-bg.mp4" type="video/mp4">
+    <source src="/videos/age-gate-bg.mp4" type="video/mp4">
+    <source src="/age-gate-bg.mp4" type="video/mp4">
+    <source src="/uploads/video.mp4" type="video/mp4">
+  </video>
+  <div class="age-video-overlay"></div>
   <div class="age-content">
     <h2 class="brand age-brand">LOVE<span class="dot">.</span></h2>
     <div class="age-title" style="font-size:32px;font-weight:700;margin-bottom:12px">${tr('age.title')}</div>
@@ -1834,7 +1841,6 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   // Parse query parameters from request URL
   const parsedUrl = new URL(req.url || '/magaza', 'http://localhost');
   const catParam = (parsedUrl.searchParams.get('kat') || parsedUrl.searchParams.get('cat') || 'hepsi').trim();
-  const subcatParam = (parsedUrl.searchParams.get('altkat') || parsedUrl.searchParams.get('subcat') || '').trim();
   const sortParam = (parsedUrl.searchParams.get('sort') || 'onerilen').trim();
   const filterParam = (parsedUrl.searchParams.get('filter') || '').trim();
   const qParam = (parsedUrl.searchParams.get('q') || '').trim();
@@ -1846,9 +1852,6 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   const isHepsi = !catParam || catParam === 'hepsi' || catParam === 'all';
   if (!isHepsi) {
     prods = prods.filter((p: any) => matchesCategory(p.category, catParam));
-  }
-  if (subcatParam) {
-    prods = prods.filter((p: any) => matchesSubcategory(p, subcatParam));
   }
 
   // Filter by keyword
@@ -1886,22 +1889,16 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
       prods.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
   }
 
-  // Find active category and subcategory for title and breadcrumbs
+  // Find active category for title and breadcrumbs
   const activeCat = !isHepsi ? cats.find((c: any) => matchesCategory(c.slug, catParam)) : null;
   const activeCatName = activeCat ? (C.lang === 'en' ? catNameEN(activeCat.slug, activeCat.name) : activeCat.name) : '';
-  const activeSubcat = (activeCat && subcatParam && Array.isArray(activeCat.subcategories)) ? activeCat.subcategories.find((sc: any) => sc.slug === subcatParam) : null;
-  const activeSubcatName = activeSubcat ? (C.lang === 'en' && activeSubcat.nameEn ? activeSubcat.nameEn : activeSubcat.name) : '';
 
-  const pageHeading = activeSubcatName || activeCatName || tr('shop.title');
+  const pageHeading = activeCatName || tr('shop.title');
   const pageSub = tr('shop.desc', { n: C.num(prods.length) });
 
   let crumbsHtml = `<a href="/">${tr('shop.crumb.home')}</a> / <a href="/magaza">${tr('shop.title')}</a>`;
   if (activeCatName) {
-    if (activeSubcatName) {
-      crumbsHtml += ` / <a href="/magaza?kat=${esc(activeCat.slug)}">${esc(activeCatName)}</a> / ${esc(activeSubcatName)}`;
-    } else {
-      crumbsHtml += ` / ${esc(activeCatName)}`;
-    }
+    crumbsHtml += ` / ${esc(activeCatName)}`;
   }
 
   const initialGridHtml = prods.length
@@ -1919,53 +1916,19 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>
 <div class="shop-layout">
   <aside class="filters" id="shop-filters-aside">
-    <div class="filters-drawer-head">
-      <div class="filters-drawer-title">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-        <span>${C.lang === 'en' ? 'Categories' : 'Kategoriler'}</span>
-      </div>
-      <button type="button" class="filters-drawer-close" id="filters-drawer-close" aria-label="${C.lang === 'en' ? 'Close' : 'Kapat'}">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
     <div class="field"><input id="shop-search" placeholder="${tr('shop.search')}" value="${esc(qParam)}"></div>
     <h4>${tr('shop.cat')}</h4>
     <div class="filter-chips" id="cat-chips">
       <button class="chip ${isHepsi ? 'on' : ''}" data-cat="hepsi">${tr('shop.all')}</button>
       ${cats.map((c: any) => {
         const isCatMatch = !isHepsi && matchesCategory(c.slug, catParam);
-        const hasSubcats = Array.isArray(c.subcategories) && c.subcategories.length > 0;
-        const isOpen = isCatMatch && hasSubcats;
         const name = C.lang === 'en' ? catNameEN(c.slug, c.name) : c.name;
-        return `
-        <div class="cat-accordion-group" data-group-cat="${esc(c.slug)}">
-          <button class="chip ${isCatMatch ? 'on' : ''} ${hasSubcats ? 'has-sub' : ''}" data-cat="${esc(c.slug)}" aria-expanded="${isOpen ? 'true' : 'false'}">
-            <span class="chip-label">${esc(name)}</span>
-            ${hasSubcats ? `<svg class="chevron-icon ${isOpen ? 'rotated' : ''}" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>` : ''}
-          </button>
-          ${hasSubcats ? `
-          <div class="subcat-panel ${isOpen ? 'open' : ''}" style="${isOpen ? '' : 'max-height:0;opacity:0;'}">
-            <div class="subcat-list">
-              ${c.subcategories.map((sc: any) => {
-                const isSubOn = isCatMatch && subcatParam === sc.slug;
-                const subName = C.lang === 'en' && sc.nameEn ? sc.nameEn : sc.name;
-                return `<button class="subchip ${isSubOn ? 'on' : ''}" data-cat="${esc(c.slug)}" data-subcat="${esc(sc.slug)}">${esc(subName)}</button>`;
-              }).join('')}
-            </div>
-          </div>
-          ` : ''}
-        </div>`;
+        return `<button class="chip ${isCatMatch ? 'on' : ''}" data-cat="${esc(c.slug)}">${esc(name)}</button>`;
       }).join('')}
     </div>
   </aside>
-  <div class="filters-backdrop" id="filters-backdrop"></div>
   <div>
     <div class="shop-toolbar">
-      <button type="button" class="mobile-filter-trigger" id="mobile-filter-trigger" aria-label="${C.lang === 'en' ? 'Select Category' : 'Kategori Seç'}">
-        <svg class="pill-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-        <span class="pill-text">${C.lang === 'en' ? 'Category' : 'Kategori'}: <strong id="mobile-filter-active-label">${esc(activeSubcatName || activeCatName || tr('shop.all'))}</strong></span>
-      </button>
-
       <div class="shop-sort-pill" id="shop-sort-pill" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${C.lang === 'en' ? 'Sort' : 'Sırala'}">
         <svg class="pill-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
         <span class="pill-text" id="sort-pill-display">${C.lang === 'en' ? 'Sort' : 'Sırala'}: <strong id="sort-active-label">${sortParam === 'yeni' || sortParam === 'new' ? tr('shop.sort.new') : sortParam === 'fiyat-artan' ? tr('shop.sort.asc') : sortParam === 'fiyat-azalan' ? tr('shop.sort.desc') : sortParam === 'puan' ? tr('shop.sort.rate') : (C.lang === 'en' ? 'Recommended' : 'Önerilen')}</strong></span>
@@ -2005,8 +1968,8 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   </div>
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  const titleStr = (activeSubcatName || activeCatName)
-    ? `${activeSubcatName ? activeSubcatName + ' — ' : ''}${activeCatName || ''} — ${C.lang === 'en' ? 'Shop' : 'Seks Shop & Erotik Shop'}`
+  const titleStr = activeCatName
+    ? `${activeCatName} — ${C.lang === 'en' ? 'Shop' : 'Seks Shop & Erotik Shop'}`
     : (C.lang === 'en' ? 'Shop' : 'Tüm Ürünler — Seks Shop & Erotik Shop');
   res.end(layout(titleStr, html, {
     description: 'Eskişehir Love Seks Shop & Erotik Shop online kataloğu. Kadın, erkek, çiftler için vücut dostu ürünler, kayganlaştırıcılar, iç giyim ve aksesuarlar.'

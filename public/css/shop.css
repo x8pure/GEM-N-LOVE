@@ -215,20 +215,41 @@ html.dark em.em-rose,
 }
 @media (hover: none) { #cursor-glow { display: none; } }
 
-/* ==== Age gate (Boxless Minimalist Typography — Exact Dark Theme #0F1012) ==== */
+/* ==== Age gate (Video Portal & Minimalist Typography) ==== */
 #age-gate {
   position: fixed; inset: 0; z-index: 999999;
-  background: #0F1012 !important;
-  color: #EDEDF0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  background: #FFFFFF !important;
+  color: #18181B;
+  overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   padding: 32px 24px;
 }
 #age-gate.hidden { display: none !important; }
+
+.age-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.95;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.age-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.45) 45%, rgba(255, 255, 255, 0.88) 85%, #FFFFFF 100%);
+}
+
 .age-content {
-  position: relative; z-index: 2;
-  max-width: 560px; width: 100%; text-align: center;
+  position: relative; z-index: 3;
+  max-width: 580px; width: 100%; text-align: center;
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -240,11 +261,11 @@ html.dark em.em-rose,
 }
 .age-content .age-brand {
   font-family: var(--font-display);
-  font-size: clamp(44px, 7vw, 56px);
+  font-size: clamp(44px, 7vw, 58px);
   font-weight: 600;
   letter-spacing: -2px;
-  color: #FFFFFF;
-  margin-bottom: 22px;
+  color: #18181B;
+  margin-bottom: 18px;
   display: inline-flex;
   align-items: baseline;
   justify-content: center;
@@ -256,23 +277,23 @@ html.dark em.em-rose,
   margin-left: 2px;
   animation: beat 2.4s ease-in-out infinite;
   transform-origin: center bottom;
-  text-shadow: 0 0 16px rgba(230, 57, 70, 0.6);
+  text-shadow: 0 0 16px rgba(230, 57, 70, 0.4);
 }
 .age-title {
   font-family: var(--font-display);
   font-size: clamp(26px, 4.5vw, 36px);
   font-weight: 600;
   letter-spacing: -0.6px;
-  color: #FFFFFF;
-  margin-bottom: 16px;
+  color: #18181B;
+  margin-bottom: 14px;
   line-height: 1.25;
 }
 .age-legal {
-  color: #9EA3AE;
+  color: #52525B;
   font-size: 15px;
   line-height: 1.75;
   max-width: 480px;
-  margin: 0 auto 34px;
+  margin: 0 auto 32px;
   letter-spacing: 0.1px;
 }
 .age-actions {
@@ -282,37 +303,95 @@ html.dark em.em-rose,
   align-items: center;
 }
 #age-gate .btn-primary {
-  background: #EDEDF0;
-  color: #0F1012;
-  font-weight: 650;
-  padding: 13px 30px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+  background: #18181B;
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 13px 32px;
+  box-shadow: 0 10px 26px rgba(24, 24, 27, 0.25);
   border: 1px solid transparent;
 }
 #age-gate .btn-primary:hover {
-  background: #FFFFFF;
-  color: #0F1012;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.7);
+  background: #000000;
+  color: #FFFFFF;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 #age-gate .btn-ghost {
-  color: #9EA3AE;
-  border-color: rgba(255, 255, 255, 0.14);
-  background: transparent;
-  padding: 13px 26px;
+  color: #18181B;
+  border-color: rgba(24, 24, 27, 0.2);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 13px 28px;
 }
 #age-gate .btn-ghost:hover {
-  border-color: #EDEDF0;
-  color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.06);
+  border-color: #18181B;
+  color: #000000;
+  background: rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
 }
 .age-small {
   display: block;
-  margin-top: 30px;
-  color: #636875;
+  margin-top: 28px;
+  color: #71717A;
   font-size: 12px;
   line-height: 1.5;
+}
+
+/* Dark Mode Age Gate */
+html.dark #age-gate,
+[data-theme="dark"] #age-gate {
+  background: #0F1012 !important;
+  color: #EDEDF0;
+}
+html.dark .age-bg-video,
+[data-theme="dark"] .age-bg-video {
+  filter: invert(1);
+  opacity: 0.85;
+}
+html.dark .age-video-overlay,
+[data-theme="dark"] .age-video-overlay {
+  background: radial-gradient(circle at 50% 50%, rgba(15, 16, 18, 0.65) 0%, rgba(15, 16, 18, 0.4) 45%, rgba(15, 16, 18, 0.85) 85%, #0F1012 100%);
+}
+html.dark .age-content .age-brand,
+[data-theme="dark"] .age-content .age-brand {
+  color: #FFFFFF;
+}
+html.dark .age-title,
+[data-theme="dark"] .age-title {
+  color: #FFFFFF;
+}
+html.dark .age-legal,
+[data-theme="dark"] .age-legal {
+  color: #9EA3AE;
+}
+html.dark #age-gate .btn-primary,
+[data-theme="dark"] #age-gate .btn-primary {
+  background: #FFFFFF;
+  color: #0F1012;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+html.dark #age-gate .btn-primary:hover,
+[data-theme="dark"] #age-gate .btn-primary:hover {
+  background: #EDEDF0;
+  color: #0F1012;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.7);
+}
+html.dark #age-gate .btn-ghost,
+[data-theme="dark"] #age-gate .btn-ghost {
+  color: #9EA3AE;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(15, 16, 18, 0.6);
+}
+html.dark #age-gate .btn-ghost:hover,
+[data-theme="dark"] #age-gate .btn-ghost:hover {
+  border-color: #EDEDF0;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+html.dark .age-small,
+[data-theme="dark"] .age-small {
+  color: #636875;
 }
 
 /* ==== Buttons ==== */
@@ -4314,117 +4393,7 @@ html.dark .chip.on, [data-theme="dark"] .chip.on {
   color: var(--bg);
 }
 
-/* Category Accordion Architecture */
-.cat-accordion-group {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.chip.has-sub {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 170px;
-}
-.chip-label {
-  flex: 1 1 auto;
-  text-align: left;
-}
-.chevron-icon {
-  flex-shrink: 0;
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.7;
-}
-.chevron-icon.rotated {
-  transform: rotate(180deg);
-}
-.subcat-panel {
-  width: 100%;
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
-}
-.subcat-panel.open {
-  opacity: 1;
-}
-.subcat-list {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-  padding: 8px 0 6px 14px;
-  margin-left: 14px;
-  margin-top: 4px;
-  border-left: 1px solid var(--line-strong);
-  max-height: 220px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-.subchip {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--muted);
-  font-size: 11.5px;
-  padding: 5px 12px;
-  border-radius: 99px;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  font-weight: 400;
-  text-align: left;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: inherit;
-}
-.subchip:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--line-strong);
-}
-.subchip.on {
-  color: var(--text);
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--line-strong);
-}
-html.dark .subchip.on, [data-theme="dark"] .subchip.on {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.24);
-}
-html:not(.dark) .subchip.on {
-  color: #18181b;
-  background: #f4f4f5;
-  border-color: #d4d4d8;
-}
 
-.filters-backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(4px) !important;
-  z-index: 99999 !important;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
-}
-.filters-backdrop.active {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-.filters-drawer-head {
-  display: none;
-}
-.mobile-filter-trigger {
-  display: none;
-}
 .shop-toolbar {
   position: relative;
   z-index: 60;
@@ -6992,92 +6961,57 @@ html.dark .acc-card-panel {
     overflow-x: hidden;
   }
   .shop-layout aside.filters {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    top: auto !important;
     width: 100% !important;
     max-width: 100% !important;
-    max-height: 86vh !important;
-    background: var(--bg) !important;
+    min-width: 0 !important;
+    margin-bottom: 4px !important;
+    position: static !important;
+    background: transparent !important;
     border: none !important;
-    border-top: 1px solid var(--line-strong) !important;
-    border-radius: 20px 20px 0 0 !important;
-    padding: 20px 20px calc(48px + env(safe-area-inset-bottom, 24px)) !important;
-    z-index: 100000 !important;
-    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45) !important;
-    transform: translateY(100%) !important;
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    overscroll-behavior: contain !important;
-    touch-action: pan-y !important;
-    margin: 0 !important;
-    display: block !important;
-    box-sizing: border-box !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    transform: none !important;
+    border-radius: 0 !important;
   }
-  .shop-layout aside.filters.drawer-open {
-    transform: translateY(0) !important;
+  .shop-layout aside.filters h4 {
+    margin: 8px 0 8px;
+    font-size: 11.5px;
   }
-
-  body.body-scroll-locked {
-    overflow: hidden !important;
-    overscroll-behavior: none !important;
-    touch-action: none !important;
-  }
-  body.body-scroll-locked #app-main {
-    z-index: 99999 !important;
-  }
-  body.body-scroll-locked footer {
-    z-index: 0 !important;
-  }
-  body.body-scroll-locked .shop-layout aside.filters.drawer-open {
-    touch-action: pan-y !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-  .filters-drawer-head {
+  .shop-layout .filter-chips {
     display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 12px;
-    margin-bottom: 14px;
-    border-bottom: 1px solid var(--line);
-  }
-  .filters-drawer-title {
-    font-family: var(--font-display);
-    font-size: 13.5px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
     gap: 8px;
-    color: var(--text);
+    padding: 4px 2px 10px;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .filters-drawer-close {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--line);
-    color: var(--text);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  .shop-layout .filter-chips::-webkit-scrollbar {
+    display: none;
   }
-  .filters-drawer-close:hover {
-    background: rgba(255, 255, 255, 0.16);
+  .shop-layout .filter-chips .chip {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+    width: auto !important;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    border-radius: 99px !important;
   }
   .shop-toolbar {
     position: relative !important;
     z-index: 60 !important;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
     width: 100% !important;
     max-width: 100% !important;
     margin-bottom: 16px !important;
@@ -7091,18 +7025,16 @@ html.dark .acc-card-panel {
   .shop-sort-pill.open {
     z-index: 10000 !important;
   }
-  .mobile-filter-trigger,
   .shop-sort-pill {
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     height: 38px !important;
     min-height: 38px !important;
     max-height: 38px !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    width: auto !important;
     min-width: 0 !important;
-    padding: 0 12px !important;
+    padding: 0 14px !important;
     border-radius: 99px !important;
     border: 1px solid var(--line-strong) !important;
     background: rgba(255, 255, 255, 0.85) !important;
@@ -7117,66 +7049,21 @@ html.dark .acc-card-panel {
     user-select: none !important;
     transition: all 0.2s ease !important;
   }
-  html.dark .mobile-filter-trigger,
   html.dark .shop-sort-pill,
-  [data-theme="dark"] .mobile-filter-trigger,
   [data-theme="dark"] .shop-sort-pill {
     background: rgba(255, 255, 255, 0.06) !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
   }
-  .mobile-filter-trigger:active,
   .shop-sort-pill:active {
     transform: scale(0.98);
   }
   .pill-text {
-    flex: 1 1 auto !important;
-    text-align: center !important;
     font-size: 12px !important;
     white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
   }
-  .mobile-filter-trigger strong,
   .shop-sort-pill strong {
     font-weight: 600 !important;
     color: var(--text) !important;
-  }
-  .shop-layout aside.filters h4 {
-    display: block !important;
-    margin: 14px 0 10px !important;
-    font-size: 11px !important;
-  }
-  .shop-layout .filter-chips {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 9px !important;
-    padding: 2px 0 calc(36px + env(safe-area-inset-bottom, 20px)) !important;
-    overflow-x: visible !important;
-    overflow-y: visible !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  .shop-layout .filter-chips .chip {
-    flex: 1 1 auto;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: border-box;
-    padding: 9px 16px !important;
-    font-size: 13px !important;
-  }
-  .subcat-list {
-    width: 100%;
-    box-sizing: border-box;
-    margin-left: 12px;
-    padding-left: 12px;
-    gap: 6px;
-  }
-  .subchip {
-    padding: 7px 14px;
-    font-size: 12px;
   }
 }
 @media (max-width: 860px) {
