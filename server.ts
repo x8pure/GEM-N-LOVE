@@ -77,6 +77,83 @@ const SESSIONS_FILE = path.join(DATA, 'sessions.json');
 
 let db = load();
 
+export const VERCEL_BLOB_MIGRATION_MAP: Record<string, string> = {
+  '/uploads/imgc9d944cf081f.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgc9d944cf081f-uL8MbP8sR1jI0TEzQ2SIe8qnzM6k9B.webp',
+  '/uploads/img9e07bc4135e6.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img9e07bc4135e6-ZApEFSfDKEnw4tcVkrAax5GjoDeI1X.webp',
+  '/uploads/img47ff3f704382.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img47ff3f704382-Fag7qlNWju3AOleIdjGwy1pU0qw0hi.webp',
+  '/uploads/img7cd0b0c96ffb.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img7cd0b0c96ffb-bySgzjlvTQ4O0QHS6rYIjgHibnRFeX.webp',
+  '/uploads/imga4a8234f1ff3.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imga4a8234f1ff3-1cIvy5HtAtF4AbNYCEfMtsqJTyByIq.webp',
+  '/uploads/imgd267384deafd.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgd267384deafd-EK1yln74sdenFffR8Bjh8E9xT4UJzT.webp',
+  '/uploads/img580b51ebddd4.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img580b51ebddd4-ngxTvl6pEtRLRrXJF3NmDNp5ENq9Wv.webp',
+  '/uploads/img05c9213f3af4.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img05c9213f3af4-uFdXrC8EuukfdBIz6s2Gc4CKTHm7nP.webp',
+  '/uploads/img0d2d99cdf9f2.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img0d2d99cdf9f2-wwk2otwKqQGTc4gujkR48IWoLOSorv.webp',
+  '/uploads/imge27f6d0f3c12.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imge27f6d0f3c12-1RDdiu3NxUIwb0HJuFzQC8eIfQqjhk.webp',
+  '/uploads/imgcffcb0f80585.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgcffcb0f80585-K4yqkb6Tca0t6rGgccSQsTudpyqdOf.webp',
+  '/uploads/img57661690c1b7.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img57661690c1b7-9hqmW5U0YigkohdTjGunjce8ll02G4.webp',
+  '/uploads/img24e5e9f1e07b.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img24e5e9f1e07b-QDb9Og4zBIU6c5qR76PmsSZOOCOzcQ.webp',
+  '/uploads/img4d97de58afe0.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img4d97de58afe0-4IKZng2n1RNz0Yci1XwcmAEclKqnTh.webp',
+  '/uploads/imgbde43a3310b1.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgbde43a3310b1-ybFKIqoJ1IRVukxzKodkT2ZjQvdJFk.webp',
+  '/uploads/img3e89ecf65246.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img3e89ecf65246-ng3r5zC3q5YJjLI7s96n8Pd7OgKM4g.webp',
+  '/uploads/img51c6e719d7cf.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img51c6e719d7cf-gsGPw3Qtq8IazLRM1LvFzFbohKfGiQ.webp',
+  '/uploads/img5a716bb89f3d.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img5a716bb89f3d-KTAzNQcUam9oFOk92Eiuk6xXY73D0i.webp',
+  '/uploads/imgf66cae282e4f.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgf66cae282e4f-z46RIEbEEbKCj2Us4lxlp1Ln8nTIaa.webp',
+  '/uploads/img9094ecffb649.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img9094ecffb649-DdMBcdWNOqrs4T3l9hIHQWy4ksZjd6.webp',
+  '/uploads/img0f13810957bc.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img0f13810957bc-UxPtsxASkdYhucThuuoAK9OthzNhmE.webp',
+  '/uploads/imga88427766ac5.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imga88427766ac5-IlgfKxf9v0sHc5a4eZa9UGtbJfCls7.webp',
+  '/uploads/imgd205c8e4789e.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgd205c8e4789e-DNtHb45UldiAood9B3eXb3IFx5VR83.webp',
+  '/uploads/img839c1727c525.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img839c1727c525-uGCnWxV4HaOZAPDxfhvyWPFTD2LQ7d.webp',
+  '/uploads/imgdac473d15cd3.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgdac473d15cd3-GsYOWZsCmqADWKtP0uM39az0OyKHik.webp',
+  '/uploads/imgb5b1547874ab.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgb5b1547874ab-1sVx4fv8bQtqxXgRGfYcjiF9TA1WDz.webp',
+  '/uploads/img5b3c2434087e.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img5b3c2434087e-b8vPBfaEpMCLscH8sElAXMKTPtIR7J.webp',
+  '/uploads/imgd4f555a7cc9b.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imgd4f555a7cc9b-BszgpmCX0rH8Nd8ymEocRMZYLx2r0F.webp',
+  '/uploads/img730cb989f5cb.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img730cb989f5cb-no3PzYSG4HiS4QcgZ8Ye6hT3OYq1Xc.webp',
+  '/uploads/img82504226320c.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img82504226320c-T4EN2dhByWzUyRWvfUz3hFbQ6a9v96.webp',
+  '/uploads/imga0e4ec0c2889.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/imga0e4ec0c2889-KGBmxrcCur1Xmv5eBpra0auwy6ahQA.webp',
+  '/uploads/img29ddf6f3cd5d.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img29ddf6f3cd5d-mDR3E7TvMZGTRcNxvVEnyApAMqYkrn.webp',
+  '/uploads/img78ce17680b4a.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img78ce17680b4a-jJjKet2OzRtXmlsdf7CI7rkIM0uXfm.webp',
+  '/uploads/img9df218458020.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img9df218458020-cHC9d0A6yx4kbCjfMm5DMViVv5cfm6.webp',
+  '/uploads/img359aae873747.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img359aae873747-597fLn4V7imeE3UxPaacIckPDJKwAV.webp',
+  '/uploads/img09f5ce6898cd.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img09f5ce6898cd-LOhWwXrV0dksF7Jo2LZhOjKiK7L32e.webp',
+  '/uploads/img77c9e20d7328.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img77c9e20d7328-FAG7MrrHgAZRkIqwwkS8uyfpfXwW10.webp',
+  '/uploads/imgda56448ed613.webp': 'https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/img82504226320c-T4EN2dhByWzUyRWvfUz3hFbQ6a9v96.webp'
+};
+
+function ensureBlobUrls(targetDb: any): boolean {
+  if (!targetDb) return false;
+  let changed = false;
+  if (Array.isArray(targetDb.products)) {
+    for (const p of targetDb.products) {
+      if (p.image && VERCEL_BLOB_MIGRATION_MAP[p.image]) {
+        p.image = VERCEL_BLOB_MIGRATION_MAP[p.image];
+        changed = true;
+      }
+      if (Array.isArray(p.images)) {
+        p.images = p.images.map((img: string) => {
+          if (VERCEL_BLOB_MIGRATION_MAP[img]) {
+            changed = true;
+            return VERCEL_BLOB_MIGRATION_MAP[img];
+          }
+          return img;
+        });
+      }
+    }
+  }
+  if (Array.isArray(targetDb.categories)) {
+    for (const c of targetDb.categories) {
+      if (c.image && VERCEL_BLOB_MIGRATION_MAP[c.image]) {
+        c.image = VERCEL_BLOB_MIGRATION_MAP[c.image];
+        changed = true;
+      }
+    }
+  }
+  return changed;
+}
+
+// Ensure in-memory db starts with pure blob URLs
+if (ensureBlobUrls(db)) {
+  saveLocal();
+}
+
 const DEFAULT_ADMIN_EMAILS = [
   'x8pure@gmail.com',
   'cemal.ulas@gmail.com',
@@ -131,14 +208,42 @@ export async function syncWithCloud(force = false): Promise<void> {
         if (inMemProds.length > 0) {
           const prodMap = new Map();
           (db.products || []).forEach((p: any) => p && p.id && prodMap.set(p.id, p));
-          inMemProds.forEach((p: any) => p && p.id && prodMap.set(p.id, p));
+          inMemProds.forEach((p: any) => {
+            if (!p || !p.id) return;
+            if (!prodMap.has(p.id)) {
+              prodMap.set(p.id, p);
+            } else {
+              const existing = prodMap.get(p.id);
+              if (existing.image && existing.image.startsWith('http') && p.image && !p.image.startsWith('http')) {
+                // keep existing cloud blob URL
+              } else if (p.image && p.image.startsWith('http')) {
+                existing.image = p.image;
+              }
+            }
+          });
           db.products = Array.from(prodMap.values());
         }
         if (inMemCats.length > 0) {
           const catMap = new Map();
           (db.categories || []).forEach((c: any) => c && c.id && catMap.set(c.id, c));
-          inMemCats.forEach((c: any) => c && c.id && catMap.set(c.id, c));
+          inMemCats.forEach((c: any) => {
+            if (!c || !c.id) return;
+            if (!catMap.has(c.id)) {
+              catMap.set(c.id, c);
+            } else {
+              const existing = catMap.get(c.id);
+              if (existing.image && existing.image.startsWith('http') && c.image && !c.image.startsWith('http')) {
+                // keep existing cloud blob URL
+              } else if (c.image && c.image.startsWith('http')) {
+                existing.image = c.image;
+              }
+            }
+          });
           db.categories = Array.from(catMap.values());
+        }
+        let changed = false;
+        if (ensureBlobUrls(db)) {
+          changed = true;
         }
         if (inMemOrders.length > 0) {
           const orderMap = new Map();
@@ -146,8 +251,6 @@ export async function syncWithCloud(force = false): Promise<void> {
           inMemOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
           db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
         }
-
-        let changed = false;
         if (Array.isArray(db.categories)) {
           db.categories.forEach((c: any) => {
             if (c.slug === 'erkekler' || c.name === 'Erkek Sağlık') { c.name = 'Erkek Cinsel Sağlık'; changed = true; }
@@ -1660,11 +1763,12 @@ const productCardSSR = (p: any, tr: any) => {
   const displayName = cleanEditorialTitle(p.name);
   const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
   const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
+  const imgUrl = (p.image && VERCEL_BLOB_MIGRATION_MAP[p.image]) ? VERCEL_BLOB_MIGRATION_MAP[p.image] : (p.image || '');
 
   return `
 <article class="prod-card rv vis" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
-    ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
+    ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
     <div class="card-sheen"></div>
   </a>
   <div class="prod-info">
@@ -2898,6 +3002,15 @@ const MIME: Record<string, string> = {
 };
 
 function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathname: string) {
+  // 1. Instant 301 Permanent Redirect to Vercel Blob for all migrated uploads
+  if ((pathname.startsWith('/uploads/') || pathname.includes('/uploads/')) && VERCEL_BLOB_MIGRATION_MAP[pathname]) {
+    res.writeHead(301, {
+      'Location': VERCEL_BLOB_MIGRATION_MAP[pathname],
+      'Cache-Control': 'public, max-age=31536000, immutable'
+    });
+    return res.end();
+  }
+
   const p = path.normalize(path.join(PUB, pathname));
   if (!p.startsWith(PUB)) { res.writeHead(403); return res.end(); }
   const ext = path.extname(p).toLowerCase();
@@ -3010,10 +3123,62 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
 
 
 
+function getCleanBlobToken(): string {
+  const raw = process.env.BLOB_READ_WRITE_TOKEN || '';
+  const match = raw.match(/vercel_blob_rw_[A-Za-z0-9_]+/);
+  if (match) return match[0];
+  return raw.replace(/^["']|["']$/g, '').trim();
+}
+
 async function saveUpload(dataUrl: string): Promise<string> {
   if (!dataUrl || typeof dataUrl !== 'string') return '';
   const trimmed = dataUrl.trim();
-  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  const blobToken = getCleanBlobToken();
+
+  // If already an /uploads/ path, return mapped Vercel Blob URL or auto-migrate
+  if (trimmed.startsWith('/uploads/')) {
+    if (VERCEL_BLOB_MIGRATION_MAP[trimmed]) {
+      return VERCEL_BLOB_MIGRATION_MAP[trimmed];
+    }
+    const fileName = path.basename(trimmed);
+    const localFile = path.join(PUB, 'uploads', fileName);
+    let buf: Buffer | null = null;
+    let mimeType = 'image/webp';
+    if (fs.existsSync(localFile)) {
+      try { buf = fs.readFileSync(localFile); } catch {}
+    }
+    if (!buf) {
+      try {
+        const cloudBase64 = await getImageFromCloud(fileName);
+        if (cloudBase64) {
+          const m = cloudBase64.match(/^data:image\/([a-zA-Z0-9\+\-\.]+);base64,(.+)$/);
+          if (m) {
+            buf = Buffer.from(m[2], 'base64');
+            mimeType = `image/${m[1]}`;
+          }
+        }
+      } catch {}
+    }
+    if (buf && buf.length > 0 && blobToken) {
+      try {
+        const blob = await put(`uploads/${fileName}`, buf, {
+          access: 'public',
+          addRandomSuffix: true,
+          contentType: mimeType,
+          token: blobToken
+        });
+        if (blob && blob.url) {
+          console.log(`[Vercel Blob] Auto-migrated ${trimmed} -> ${blob.url}`);
+          return blob.url;
+        }
+      } catch (err) {
+        console.error('[Vercel Blob] Auto-migration error:', err);
+      }
+    }
     return trimmed;
   }
 
@@ -3038,11 +3203,8 @@ async function saveUpload(dataUrl: string): Promise<string> {
       if (buf.length > 0) {
         const name = uid('img') + '.' + ext;
 
-        // 1. Primary for Vercel: If Vercel Blob Token is set, upload to Vercel Blob Storage CDN
-        const rawBlobToken = process.env.BLOB_READ_WRITE_TOKEN;
-        if (rawBlobToken) {
-          const blobTokenMatch = rawBlobToken.match(/vercel_blob_rw_[A-Za-z0-9_]+/);
-          const blobToken = blobTokenMatch ? blobTokenMatch[0] : rawBlobToken.trim();
+        // 1. Primary: Upload directly to Vercel Blob Storage CDN
+        if (blobToken) {
           try {
             const blob = await put(`uploads/${name}`, buf, {
               access: 'public',
@@ -3051,10 +3213,11 @@ async function saveUpload(dataUrl: string): Promise<string> {
               token: blobToken
             });
             if (blob && blob.url) {
+              console.log(`[Vercel Blob] Uploaded successfully: ${blob.url}`);
               return blob.url;
             }
           } catch (blobErr) {
-            console.error('Vercel Blob upload failed, falling back:', blobErr);
+            console.error('[Vercel Blob] Upload failed, falling back:', blobErr);
           }
         }
 
@@ -4124,8 +4287,7 @@ ${rawText || name}`;
       let slug = String(b.slug || name).trim().toLowerCase().replace(/i̇/g, 'i').replace(/[çğıöşü]/g, (c) => ({ 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' }[c] || c)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid('ct');
       if (allCategories().some((c: any) => c.slug === slug)) return sendError(res, 409, `Bu bağlantı (slug: ${slug}) zaten başka bir kategori tarafından kullanılıyor. Lütfen farklı bir isim deneyin.`);
       let image = '';
-      if (b.image && (String(b.image).startsWith('data:image/') || String(b.image).startsWith('http'))) image = await saveUpload(b.image);
-      else if (b.image && String(b.image).startsWith('/uploads/')) image = b.image;
+      if (b.image) image = await saveUpload(b.image);
       const featuredOnHome = !!b.featuredOnHome;
       const homeOrder = typeof b.homeOrder === 'number' ? Number(b.homeOrder) : (featuredOnHome ? 1 : 99);
       const c = { id: uid('ct'), slug, name, image, featuredOnHome, homeOrder, createdAt: new Date().toISOString() };
@@ -4149,8 +4311,7 @@ ${rawText || name}`;
         }
       }
       if (b.name) c.name = String(b.name).trim();
-      if (b.image && (String(b.image).startsWith('data:image/') || String(b.image).startsWith('http'))) c.image = await saveUpload(b.image);
-      else if (b.image && String(b.image).startsWith('/uploads/')) c.image = b.image;
+      if (b.image) c.image = await saveUpload(b.image);
       else if (b.useAutoCover) {
         const cover = db.products.find((p: any) => p.category === c.slug && p.bestSeller) || db.products.find((p: any) => p.category === c.slug);
         c.image = cover ? cover.image : '';
