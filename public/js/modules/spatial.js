@@ -495,9 +495,10 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
       <div class="spatial-grid ${isAlreadyOpen ? 'crossfade-in' : ''}">
-        <div class="spatial-visual-hero">
+        <div class="spatial-visual-hero ${!inStock ? 'is-out-of-stock' : ''}">
           <div class="spatial-ambient-glow" id="spatial-ambient-glow"></div>
           <img id="spatial-main-image" src="${imgSrc(p.image)}" alt="${esc(p.name)}">
+          ${!inStock ? `<div class="card-out-badge"><span>${LANG === 'en' ? 'OUT OF STOCK' : 'TÜKENDİ'}</span></div>` : ''}
           <div class="spatial-badge-cluster">
             ${p.isNew ? `<span>${t('badge.new')}</span>` : ''}
             ${p.oldPrice ? `<span>${t('badge.sale')}</span>` : ''}
@@ -524,9 +525,14 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
               <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="spatial-cat-editorial" title="${catName(p.category, p.categoryName)}">
                 <span>${catName(p.category, p.categoryName)}</span>
               </a>
-              <div class="spatial-stock-whisper">
-                <span class="pulse-indicator ${inStock ? 'live-green' : 'live-red'}"></span>
-                <span>${inStock ? (LANG === 'en' ? 'In Stock' : 'Stokta') : (LANG === 'en' ? 'Out of Stock' : 'Tükendi')}</span>
+              <div class="spatial-stock-whisper ${!inStock ? 'is-out' : ''}">
+                ${inStock ? `
+                  <span class="pulse-indicator live-green"></span>
+                  <span>${LANG === 'en' ? 'In Stock' : 'Stokta'}</span>
+                ` : `
+                  <span class="spatial-stock-badge-out">${LANG === 'en' ? 'TÜKENDİ' : 'TÜKENDİ'}</span>
+                  <span class="spatial-out-whisper-text">${LANG === 'en' ? 'Temporarily out of stock' : 'Geçici olarak temin edilemiyor'}</span>
+                `}
               </div>
             </div>
 
@@ -572,13 +578,14 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
               </a>
             </div>
+            ${inStock ? `
             <div class="spatial-dynamic-pill">
               <div class="spatial-pill-stepper">
                 <button type="button" class="spatial-qty-btn" id="spatial-qty-dec" aria-label="Azalt">−</button>
                 <span class="spatial-qty-val" id="spatial-qty-val">1</span>
                 <button type="button" class="spatial-qty-btn" id="spatial-qty-inc" aria-label="Artır">+</button>
               </div>
-              <button type="button" class="spatial-pill-cta" id="spatial-add-btn" data-product-id="${p.id}" ${!inStock ? 'disabled' : ''}>
+              <button type="button" class="spatial-pill-cta" id="spatial-add-btn" data-product-id="${p.id}">
                 <svg class="pill-bag-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                   <line x1="3" y1="6" x2="21" y2="6"/>
@@ -589,6 +596,17 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
                 <span class="pill-cta-price" id="spatial-pill-price">${fmt(p.price)}</span>
               </button>
             </div>
+            ` : `
+            <div class="spatial-dynamic-pill is-out">
+              <button type="button" class="spatial-pill-cta is-out" id="spatial-add-btn" disabled aria-disabled="true">
+                <svg class="pill-bag-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                </svg>
+                <span class="pill-cta-label">${LANG === 'en' ? 'OUT OF STOCK' : 'STOKTA TÜKENDİ'}</span>
+              </button>
+            </div>
+            `}
           </div>
         </div>
       </div>

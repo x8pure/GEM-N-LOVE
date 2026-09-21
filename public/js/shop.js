@@ -762,7 +762,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
                   <div class="qs-item-price-row">
                     <span class="qs-item-price">${fmt(p.price)}</span>
                     ${p.oldPrice ? `<span class="qs-item-old-price">${fmt(p.oldPrice)}</span>` : ''}
-                    ${p.stock > 0 ? `<span class="qs-item-stock">● ${LANG === 'en' ? 'In Stock' : 'Stokta'}</span>` : `<span class="qs-item-stock out">● ${LANG === 'en' ? 'Out of Stock' : 'Tükendi'}</span>`}
+                    ${p.stock > 0 ? `<span class="qs-item-stock">● ${LANG === 'en' ? 'In Stock' : 'Stokta'}</span>` : `<span class="qs-item-stock out">${LANG === 'en' ? 'TÜKENDİ' : 'TÜKENDİ'}</span>`}
                   </div>
                 </div>
                 <div class="qs-item-action">
@@ -966,26 +966,32 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
 
   /* ---------- product card template ---------- */
   function productCard(p) {
+    const isOut = !p.stock || p.stock <= 0;
     const displayName = cleanEditorialTitle(p.name);
     const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
     const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
 
     return `
-    <article class="prod-card rv vis" data-id="${p.id}" data-slug="${p.slug}">
+    <article class="prod-card rv vis ${isOut ? 'is-out-of-stock' : ''}" data-id="${p.id}" data-slug="${p.slug}">
       <a href="/urun/${p.slug}" class="prod-media" data-slug="${p.slug}">
         ${p.image ? `<img src="${imgSrc(p.image)}" alt="${p.name}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
+        ${isOut ? `<div class="card-out-badge"><span>${t('pd.stock.out')}</span></div>` : ''}
         <div class="card-sheen"></div>
       </a>
       <div class="prod-info">
         <a href="/urun/${p.slug}" class="prod-name" title="${esc(p.name)}">${esc(displayName)}</a>
         <div class="prod-price-row">
           ${priceHtml}
+          ${isOut ? `
+          <span class="card-out-status-pill">${t('pd.stock.out')}</span>
+          ` : `
           <button type="button" class="editorial-add-btn action-btn" data-add="${p.id}" title="${t('quickadd')}" aria-label="${t('quickadd')}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
           </button>
+          `}
         </div>
       </div>
     </article>`;
@@ -1900,6 +1906,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     }
 
     const profile = getProductProfile(p);
+    const inStock = p.stock > 0;
 
     root.innerHTML = `
     <div class="page-head" style="padding-bottom:6px">
@@ -1911,8 +1918,9 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     </div>
     <div class="pd-layout">
       <div class="pd-gallery" id="pd-gallery-wrap">
-        <div class="pd-media" id="pd-media-stage" role="button" tabindex="0" aria-label="Görseli büyüt (Tam Ekran)">
+        <div class="pd-media ${!inStock ? 'is-out-of-stock' : ''}" id="pd-media-stage" role="button" tabindex="0" aria-label="Görseli büyüt (Tam Ekran)">
           <img id="pd-main-image" src="${imgSrc(p.image)}" alt="${esc(p.name)}">
+          ${!inStock ? `<div class="card-out-badge"><span>${t('pd.stock.out')}</span></div>` : ''}
         </div>
         ${hasMultipleImages ? `
           <div class="pd-thumbs" role="tablist" aria-label="Ürün Görselleri">
@@ -1965,6 +1973,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
           `).join('')}
         </div>
 
+        ${inStock ? `
         <div class="pd-actions-row">
           <div class="pd-qty-stepper">
             <button id="q-minus" type="button" aria-label="Azalt">−</button>
@@ -1980,8 +1989,39 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
 
         <div class="pd-stock-badge">
           <span class="pd-stock-dot ${p.stock < 5 ? 'is-low' : ''}"></span>
-          <span>${p.stock > 0 ? (p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : (LANG === 'en' ? 'In Stock — Same Day Dispatch before 14:00 (1-3 Days)' : 'Stokta Mevcut — 14:00 Öncesi Aynı Gün Kargo (1-3 İş Günü)')) : t('pd.stock.out')}</span>
+          <span>${p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : (LANG === 'en' ? 'In Stock — Same Day Dispatch before 14:00 (1-3 Days)' : 'Stokta Mevcut — 14:00 Öncesi Aynı Gün Kargo (1-3 İş Günü)')}</span>
         </div>
+        ` : `
+        <div class="pd-actions-row is-out">
+          <button class="pd-btn-soldout" type="button" disabled aria-disabled="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+            </svg>
+            <span>${LANG === 'en' ? 'OUT OF STOCK' : 'STOKTA TÜKENDİ'}</span>
+          </button>
+        </div>
+
+        <div class="pd-notify-box">
+          <div class="pd-notify-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span>${LANG === 'en' ? 'Notify me when back in stock' : 'Ürün tekrar stoğa girdiğinde bana bildir'}</span>
+          </div>
+          <form class="pd-notify-form" id="pd-notify-form" data-pid="${p.id}">
+            <input type="email" id="pd-notify-email" class="pd-notify-input" placeholder="${LANG === 'en' ? 'Your email address' : 'E-posta adresiniz'}" required />
+            <button type="submit" class="pd-notify-btn" id="pd-notify-submit">${LANG === 'en' ? 'Notify Me' : 'Haber Ver'}</button>
+          </form>
+          <div class="pd-notify-msg" id="pd-notify-msg" style="display:none"></div>
+        </div>
+
+        <div class="pd-stock-badge is-out">
+          <span class="pd-stock-pill-out">${t('pd.stock.out')}</span>
+          <span class="pd-stock-detail-note">${LANG === 'en' ? 'This product is currently out of stock. You can leave your email above to be notified as soon as it arrives.' : 'Bu ürünün stokları tükenmiştir. Yeniden temin edildiğinde haberdar olmak için yukarıdan bildirim bırakabilirsiniz.'}</span>
+        </div>
+        `}
 
         <div class="pd-trust-grid">
           <div class="pd-trust-item">
@@ -2241,10 +2281,15 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
 
     let qty = 1;
     const qv = $('#q-val');
-    $('#q-minus').addEventListener('click', () => { qty = Math.max(1, qty - 1); qv.value = qty; });
-    $('#q-plus').addEventListener('click', () => { qty = Math.min(p.stock || 1, qty + 1); qv.value = qty; });
-    $('#pd-add').addEventListener('click', (e) => addToCart(p.id, qty, 'standart', e.currentTarget));
-    $('#pd-buy').addEventListener('click', async (e) => {
+    const qMinus = $('#q-minus');
+    const qPlus = $('#q-plus');
+    const pdAdd = $('#pd-add');
+    const pdBuy = $('#pd-buy');
+
+    if (qMinus) qMinus.addEventListener('click', () => { qty = Math.max(1, qty - 1); if (qv) qv.value = qty; });
+    if (qPlus) qPlus.addEventListener('click', () => { qty = Math.min(p.stock || 1, qty + 1); if (qv) qv.value = qty; });
+    if (pdAdd) pdAdd.addEventListener('click', (e) => addToCart(p.id, qty, 'standart', e.currentTarget));
+    if (pdBuy) pdBuy.addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       if (btn.disabled) return;
       btn.disabled = true;
@@ -2267,6 +2312,39 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
         toast(err.message || 'Hata oluştu', '⚠️');
       }
     });
+
+    const notifyForm = $('#pd-notify-form');
+    if (notifyForm) {
+      notifyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = $('#pd-notify-email');
+        const submitBtn = $('#pd-notify-submit');
+        const msgEl = $('#pd-notify-msg');
+        const email = (input?.value || '').trim();
+        if (!email) return;
+        submitBtn.disabled = true;
+        try {
+          const res = await api('/api/stock-notify', {
+            method: 'POST',
+            body: { productId: p.id, email }
+          });
+          if (res && res.ok) {
+            msgEl.textContent = res.message || (LANG === 'en' ? 'We will notify you when back in stock.' : 'Talebiniz başarıyla alındı. Ürün stoğa girdiğinde bilgilendirileceksiniz.');
+            msgEl.className = 'pd-notify-msg';
+            msgEl.style.display = 'block';
+            input.value = '';
+          } else {
+            throw new Error(res?.error || 'İşlem gerçekleştirilemedi');
+          }
+        } catch (err) {
+          msgEl.textContent = err.message || 'Bir hata oluştu';
+          msgEl.className = 'pd-notify-msg is-error';
+          msgEl.style.display = 'block';
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    }
 
     function showTab(name) {
       $$('.pd-tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));

@@ -10656,6 +10656,324 @@ html.dark .cookie-switch input:checked + .cookie-slider:before {
   }
 }
 
+/* ================= 2026 OUT OF STOCK ARCHITECTURE (LÜKS MONOKROM) ================= */
+
+/* --- 1. Product Cards (Catalog, Homepage, Categories) --- */
+.prod-card.is-out-of-stock .prod-media img {
+  opacity: 0.38 !important;
+  filter: grayscale(1) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.04)) !important;
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease !important;
+}
+.prod-card.is-out-of-stock:hover .prod-media img {
+  opacity: 0.50 !important;
+  filter: grayscale(0.8) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08)) !important;
+  transform: scale(1.03) translateZ(0) !important;
+}
+html.dark .prod-card.is-out-of-stock .prod-media img {
+  opacity: 0.35 !important;
+  filter: grayscale(1) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)) !important;
+}
+html.dark .prod-card.is-out-of-stock:hover .prod-media img {
+  opacity: 0.48 !important;
+  filter: grayscale(0.75) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5)) !important;
+}
+
+.card-out-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  background: rgba(24, 24, 27, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FFFFFF !important;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+}
+html.dark .card-out-badge {
+  background: rgba(0, 0, 0, 0.88);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.65);
+}
+
+.prod-card.is-out-of-stock .price {
+  opacity: 0.45 !important;
+}
+
+.card-out-status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #71717A;
+  background: rgba(113, 113, 122, 0.12);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(113, 113, 122, 0.2);
+  line-height: 1;
+}
+html.dark .card-out-status-pill {
+  color: #A1A1AA;
+  background: rgba(161, 161, 170, 0.12);
+  border-color: rgba(161, 161, 170, 0.2);
+}
+
+/* --- 2. Product Detail Page Gallery & Stock Pill --- */
+.pd-media.is-out-of-stock img {
+  opacity: 0.45 !important;
+  filter: grayscale(1) !important;
+}
+.pd-media.is-out-of-stock .card-out-badge {
+  font-size: 13px;
+  padding: 8px 22px;
+  letter-spacing: 0.16em;
+}
+
+.pd-stock-badge.is-out {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(24, 24, 27, 0.035);
+  border: 1px solid rgba(24, 24, 27, 0.08);
+}
+html.dark .pd-stock-badge.is-out {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.pd-stock-pill-out {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.09);
+  padding: 4px 11px;
+  border-radius: 9999px;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  line-height: 1;
+}
+html.dark .pd-stock-pill-out {
+  color: #F87171;
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+.pd-stock-detail-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* --- 3. Product Detail Actions Row & Sold Out Button --- */
+.pd-btn-soldout {
+  width: 100%;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(24, 24, 27, 0.06);
+  border: 1px solid rgba(24, 24, 27, 0.12);
+  color: var(--muted);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: not-allowed;
+  user-select: none;
+}
+html.dark .pd-btn-soldout {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #A1A1AA;
+}
+
+/* --- 4. Restock Notification Box --- */
+.pd-notify-box {
+  margin-top: 14px;
+  margin-bottom: 22px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+.pd-notify-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.pd-notify-header svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.pd-notify-form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.pd-notify-input {
+  flex: 1;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  padding: 0 14px;
+  font-size: 13.5px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.pd-notify-input:focus {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px rgba(24, 24, 27, 0.08);
+}
+html.dark .pd-notify-input:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+}
+.pd-notify-btn {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+.pd-notify-btn:hover {
+  opacity: 0.9;
+}
+.pd-notify-btn:active {
+  transform: scale(0.98);
+}
+.pd-notify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pd-notify-msg {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #10B981;
+}
+.pd-notify-msg.is-error {
+  color: #EF4444;
+}
+
+/* --- 5. Spatial Card Modal (Zoom View) --- */
+.spatial-visual-hero.is-out-of-stock #spatial-main-image {
+  opacity: 0.42 !important;
+  filter: grayscale(1) !important;
+}
+.spatial-stock-whisper.is-out {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.spatial-stock-badge-out {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.10);
+  padding: 3px 9px;
+  border-radius: 9999px;
+  border: 1px solid rgba(220, 38, 38, 0.24);
+  line-height: 1;
+}
+html.dark .spatial-stock-badge-out {
+  color: #F87171;
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.32);
+}
+.spatial-out-whisper-text {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.spatial-dynamic-pill.is-out {
+  width: 100%;
+}
+.spatial-pill-cta.is-out {
+  width: 100% !important;
+  background: rgba(24, 24, 27, 0.08) !important;
+  color: var(--muted) !important;
+  border: 1px solid rgba(24, 24, 27, 0.12) !important;
+  cursor: not-allowed !important;
+  justify-content: center !important;
+}
+html.dark .spatial-pill-cta.is-out {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #A1A1AA !important;
+}
+
+/* --- 6. Quick Search Dropdown --- */
+.qs-item-stock.out {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(220, 38, 38, 0.10);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  line-height: 1.2;
+}
+html.dark .qs-item-stock.out {
+  background: rgba(239, 68, 68, 0.16);
+  color: #F87171;
+  border-color: rgba(239, 68, 68, 0.32);
+}
+
+@media (max-width: 640px) {
+  .pd-notify-form {
+    flex-direction: column;
+  }
+  .pd-notify-btn {
+    width: 100%;
+  }
+}
+
 
 
 

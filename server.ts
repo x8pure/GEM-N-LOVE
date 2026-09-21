@@ -1760,27 +1760,33 @@ function cleanEditorialTitle(name: string): string {
 }
 
 const productCardSSR = (p: any, tr: any) => {
+  const isOut = !p.stock || p.stock <= 0;
   const displayName = cleanEditorialTitle(p.name);
   const rawNum = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price);
   const priceHtml = `<span class="price"><span class="val">${rawNum}</span> <span class="cur">₺</span></span>`;
   const imgUrl = (p.image && VERCEL_BLOB_MIGRATION_MAP[p.image]) ? VERCEL_BLOB_MIGRATION_MAP[p.image] : (p.image || '');
 
   return `
-<article class="prod-card rv vis" data-id="${p.id}" data-slug="${esc(p.slug)}">
+<article class="prod-card rv vis ${isOut ? 'is-out-of-stock' : ''}" data-id="${p.id}" data-slug="${esc(p.slug)}">
   <a href="/urun/${esc(p.slug)}" class="prod-media" data-slug="${esc(p.slug)}">
     ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" width="320" height="320" loading="lazy" decoding="async">` : `<div style="width:100%;height:100%;background:transparent"></div>`}
+    ${isOut ? `<div class="card-out-badge"><span>${tr('pd.stock.out') || 'Tükendi'}</span></div>` : ''}
     <div class="card-sheen"></div>
   </a>
   <div class="prod-info">
     <a href="/urun/${esc(p.slug)}" class="prod-name" title="${esc(p.name)}">${esc(displayName)}</a>
     <div class="prod-price-row">
       ${priceHtml}
+      ${isOut ? `
+      <span class="card-out-status-pill">${tr('pd.stock.out') || 'Tükendi'}</span>
+      ` : `
       <button type="button" class="editorial-add-btn action-btn" data-add="${p.id}" title="${tr('quickadd')}" aria-label="${tr('quickadd')}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
       </button>
+      `}
     </div>
   </div>
 </article>`;
@@ -3527,6 +3533,28 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       await saveAsync();
       return json(res, 200, { ok: true });
     }
+  }
+
+  if (pathname === '/api/stock-notify' && method === 'POST') {
+    const b = await readBody(req);
+    const email = String(b.email || '').trim().toLowerCase();
+    const productId = String(b.productId || '').trim();
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      return sendError(res, 400, 'Lütfen geçerli bir e-posta adresi giriniz.');
+    }
+    if (!productId) return sendError(res, 400, 'Ürün bilgisi bulunamadı.');
+    if (!Array.isArray((db as any).stockNotifies)) (db as any).stockNotifies = [];
+    const exists = (db as any).stockNotifies.some((x: any) => x.email === email && x.productId === productId);
+    if (!exists) {
+      (db as any).stockNotifies.push({
+        id: uid('sn'),
+        email,
+        productId,
+        createdAt: new Date().toISOString()
+      });
+      await saveAsync();
+    }
+    return json(res, 200, { ok: true, message: 'Talebiniz başarıyla alındı. Ürün stoğa girdiğinde e-posta ile bilgilendirileceksiniz.' });
   }
 
   /* --- cart --- */
