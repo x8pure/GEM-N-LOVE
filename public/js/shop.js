@@ -1119,11 +1119,34 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       if (!catWrap) return;
       const isHepsi = state.cat === 'hepsi' || !state.cat;
 
+      let activeChipText = '';
       $$('[data-cat]', catWrap).forEach((b) => {
         const bCat = b.dataset.cat;
         const isActive = (bCat === 'hepsi') ? isHepsi : (!isHepsi && matchCat(bCat, state.cat));
         b.classList.toggle('on', isActive);
+        if (isActive && bCat !== 'hepsi') {
+          activeChipText = b.textContent.trim();
+        }
       });
+
+      // Update shop heading, document title, and breadcrumbs dynamically
+      const titleEl = $('#shop-page-title');
+      const crumbsEl = $('.page-head .crumbs');
+      if (titleEl) {
+        if (isHepsi) {
+          titleEl.textContent = t('shop.title') || 'Mağaza';
+          if (crumbsEl) {
+            crumbsEl.innerHTML = `<a href="/">${t('shop.crumb.home') || 'Anasayfa'}</a> / <a href="/magaza">${t('shop.title') || 'Mağaza'}</a>`;
+          }
+          document.title = (t('shop.title') || 'Mağaza') + ' — LOVE SHOP';
+        } else if (activeChipText) {
+          titleEl.textContent = activeChipText;
+          if (crumbsEl) {
+            crumbsEl.innerHTML = `<a href="/">${t('shop.crumb.home') || 'Anasayfa'}</a> / <a href="/magaza">${t('shop.title') || 'Mağaza'}</a> / ${activeChipText}`;
+          }
+          document.title = activeChipText + ' — LOVE SHOP';
+        }
+      }
     }
 
     function updateUrl() {

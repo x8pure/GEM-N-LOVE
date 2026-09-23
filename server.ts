@@ -30,7 +30,8 @@ import {
   loadProductsFromCloud,
   saveCategoryToCloud,
   deleteCategoryFromCloud,
-  loadCategoriesFromCloud
+  loadCategoriesFromCloud,
+  uploadToFirebaseStorage
 } from './lib/firebase.js';
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
@@ -149,10 +150,8 @@ function ensureBlobUrls(targetDb: any): boolean {
   return changed;
 }
 
-// Ensure in-memory db starts with pure blob URLs
-if (ensureBlobUrls(db)) {
-  saveLocal();
-}
+// Ensure in-memory db starts with pure URLs
+// (Firebase Storage URLs are authoritative and permanent)
 
 const DEFAULT_ADMIN_EMAILS = [
   'x8pure@gmail.com',
@@ -3143,9 +3142,7 @@ async function saveUpload(dataUrl: string): Promise<string> {
     return trimmed;
   }
 
-  const blobToken = getCleanBlobToken();
-
-  // If already an /uploads/ path, return mapped Vercel Blob URL or auto-migrate
+  // If already an /uploads/ path, return mapped Vercel Blob URL or try to migrate to Firebase Storage
   if (trimmed.startsWith('/uploads/')) {
     if (VERCEL_BLOB_MIGRATION_MAP[trimmed]) {
       return VERCEL_BLOB_MIGRATION_MAP[trimmed];
@@ -3169,20 +3166,16 @@ async function saveUpload(dataUrl: string): Promise<string> {
         }
       } catch {}
     }
-    if (buf && buf.length > 0 && blobToken) {
+    if (buf && buf.length > 0) {
+      // Migrate to Firebase Storage directly
       try {
-        const blob = await put(`uploads/${fileName}`, buf, {
-          access: 'public',
-          addRandomSuffix: true,
-          contentType: mimeType,
-          token: blobToken
-        });
-        if (blob && blob.url) {
-          console.log(`[Vercel Blob] Auto-migrated ${trimmed} -> ${blob.url}`);
-          return blob.url;
+        const fbUrl = await uploadToFirebaseStorage(fileName, buf, mimeType);
+        if (fbUrl) {
+          console.log(`[Firebase Storage] Uploaded existing upload ${trimmed} -> ${fbUrl}`);
+          return fbUrl;
         }
       } catch (err) {
-        console.error('[Vercel Blob] Auto-migration error:', err);
+        console.error('[Firebase Storage] Auto-migration error:', err);
       }
     }
     return trimmed;
@@ -3200,7 +3193,7 @@ async function saveUpload(dataUrl: string): Promise<string> {
       'jpeg': 'jpg', 'jpg': 'jpg', 'pjpeg': 'jpg',
       'webp': 'webp', 'avif': 'avif', 'gif': 'gif'
     };
-    const ext = extMap[rawType] || 'jpg';
+    const ext = extMap[rawType] || 'webp';
     const mimeType = rawType === 'svg' || rawType === 'svg+xml' ? 'image/svg+xml' : (rawType === 'jpg' ? 'image/jpeg' : `image/${rawType}`);
 
     try {
@@ -3209,22 +3202,19 @@ async function saveUpload(dataUrl: string): Promise<string> {
       if (buf.length > 0) {
         const name = uid('img') + '.' + ext;
 
-        // 1. Primary: Upload directly to Vercel Blob Storage CDN
-        if (blobToken) {
-          try {
-            const blob = await put(`uploads/${name}`, buf, {
-              access: 'public',
-              addRandomSuffix: true,
-              contentType: mimeType,
-              token: blobToken
-            });
-            if (blob && blob.url) {
-              console.log(`[Vercel Blob] Uploaded successfully: ${blob.url}`);
-              return blob.url;
-            }
-          } catch (blobErr) {
-            console.error('[Vercel Blob] Upload failed, falling back:', blobErr);
+        // 1. Primary & Permanent: Upload directly to Firebase Cloud Storage
+        try {
+          const storageUrl = await uploadToFirebaseStorage(name, buf, mimeType);
+          if (storageUrl) {
+            console.log(`[Firebase Storage] Uploaded successfully: ${storageUrl}`);
+            // Also write to local cache so current process has immediate instant read
+            const uploadDir = path.join(PUB, 'uploads');
+            try { fs.mkdirSync(uploadDir, { recursive: true }); } catch {}
+            try { fs.writeFileSync(path.join(uploadDir, name), buf); } catch {}
+            return storageUrl;
           }
+        } catch (storageErr) {
+          console.error('[Firebase Storage] Primary upload failed, falling back:', storageErr);
         }
 
         // 2. Fallback for local dev and Cloud container environment
