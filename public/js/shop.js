@@ -40,7 +40,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       'added': 'Sepete eklendi',
       'badge.new': 'Yeni', 'badge.hot': 'Çok Satan', 'badge.sale': 'İndirim', 'quickadd': 'Sepete Ekle',
       'nl.bad': 'Geçerli bir e-posta girin', 'nl.ok': 'Aramıza hoş geldin! %10 indirim kodun mailinde.',
-      'shop.all': 'Tümü', 'shop.count': '{n} ürün', 'shop.empty': 'Aradığın kriterlere uyan ürün bulunamadı.<br>Filtreleri değiştirmeyi dene.',
+      'shop.title': 'Mağaza', 'shop.crumb.home': 'Anasayfa', 'shop.all': 'Tümü', 'shop.count': '{n} ürün', 'shop.empty': 'Aradığın kriterlere uyan ürün bulunamadı.<br>Filtreleri değiştirmeyi dene.',
       'pd.crumb.home': 'Anasayfa', 'pd.crumb.shop': 'Mağaza', 'pd.reviews': 'değerlendirme',
       'pd.notfound': 'Ürün bulunamadı.', 'pd.notfound.btn': 'Mağazaya Dön',
       'pd.add': 'Sepete Ekle', 'pd.buy': 'Hemen Al',
@@ -99,7 +99,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       'added': 'Added to cart',
       'badge.new': 'New', 'badge.hot': 'Best Seller', 'badge.sale': 'Sale', 'quickadd': 'Add to Cart',
       'nl.bad': 'Please enter a valid e-mail', 'nl.ok': 'Welcome to the club! Your 10% discount code is in your inbox.',
-      'shop.all': 'All', 'shop.count': '{n} products', 'shop.empty': 'No products match your criteria.<br>Try changing the filters.',
+      'shop.title': 'Shop', 'shop.crumb.home': 'Home', 'shop.all': 'All', 'shop.count': '{n} products', 'shop.empty': 'No products match your criteria.<br>Try changing the filters.',
       'pd.crumb.home': 'Home', 'pd.crumb.shop': 'Shop', 'pd.reviews': 'reviews',
       'pd.notfound': 'Product not found.', 'pd.notfound.btn': 'Back to Shop',
       'pd.add': 'Add to Cart', 'pd.buy': 'Buy Now',
@@ -1134,15 +1134,15 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       const crumbsEl = $('.page-head .crumbs');
       if (titleEl) {
         if (isHepsi) {
-          titleEl.textContent = t('shop.title') || 'Mağaza';
+          titleEl.textContent = 'Mağaza';
           if (crumbsEl) {
-            crumbsEl.innerHTML = `<a href="/">${t('shop.crumb.home') || 'Anasayfa'}</a> / <a href="/magaza">${t('shop.title') || 'Mağaza'}</a>`;
+            crumbsEl.innerHTML = `<a href="/">Anasayfa</a> / <a href="/magaza">Mağaza</a>`;
           }
-          document.title = (t('shop.title') || 'Mağaza') + ' — LOVE SHOP';
+          document.title = 'Mağaza — LOVE SHOP';
         } else if (activeChipText) {
           titleEl.textContent = activeChipText;
           if (crumbsEl) {
-            crumbsEl.innerHTML = `<a href="/">${t('shop.crumb.home') || 'Anasayfa'}</a> / <a href="/magaza">${t('shop.title') || 'Mağaza'}</a> / ${activeChipText}`;
+            crumbsEl.innerHTML = `<a href="/">Anasayfa</a> / <a href="/magaza">Mağaza</a> / ${activeChipText}`;
           }
           document.title = activeChipText + ' — LOVE SHOP';
         }
