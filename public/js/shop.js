@@ -2010,9 +2010,25 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
           <button class="pd-btn-buy" id="pd-buy">${t('pd.buy')}</button>
         </div>
 
-        <div class="pd-stock-badge">
-          <span class="pd-stock-dot ${p.stock < 5 ? 'is-low' : ''}"></span>
-          <span>${p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : (LANG === 'en' ? 'In Stock — Same Day Dispatch before 14:00 (1-3 Days)' : 'Stokta Mevcut — 14:00 Öncesi Aynı Gün Kargo (1-3 İş Günü)')}</span>
+        <div class="pd-delivery-card">
+          <div class="pd-delivery-primary">
+            <span class="pd-delivery-dot ${p.stock < 5 ? 'is-low' : ''}"></span>
+            <span>${p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : (LANG === 'en' ? 'In Stock — <strong>Eskişehir: ~2 Hours Courier</strong>' : 'Stokta Mevcut — <strong>Eskişehir İçi: ~2 Saatte Özel Kurye</strong>')}</span>
+          </div>
+          <div class="pd-delivery-details">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ${LANG === 'en' ? 'Direct courier delivery by district' : 'Semtinize göre doğrudan kapıda teslimat'}
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              ${LANG === 'en' ? 'Turkey: Same-Day Dispatch' : 'Türkiye Geneli: Aynı Gün Kargo'}
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              ${LANG === 'en' ? '100% Discreet Packaging' : '%100 İsimsiz Gizli Paket'}
+            </span>
+          </div>
         </div>
         ` : `
         <div class="pd-actions-row is-out">
@@ -2062,8 +2078,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
             </div>
             <div class="pd-trust-text">
-              <strong>Hızlı & Ücretsiz Kargo</strong>
-              <p>2.000 TL üzeri siparişlerde aynı gün kargo (1-3 iş günü teslimat)</p>
+              <strong>${LANG === 'en' ? 'Eskişehir ~2h / Turkey Express' : 'Eskişehir ~2 Saatte / TR Kargo'}</strong>
+              <p>${LANG === 'en' ? 'Eskişehir direct courier in ~2h · 2.000 TL+ free same-day shipping nationwide' : 'Eskişehir içi ~2 saatte özel kurye · TR geneli 2.000 TL üzeri ücretsiz aynı gün kargo'}</p>
             </div>
           </div>
 
@@ -2540,6 +2556,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     refreshRevealObservers();
     if (pathname === '/' || pathname === '') {
       initHome();
+      initGeoAdaptiveDelivery();
     } else if (pathname === '/magaza' || pathname.startsWith('/magaza')) {
       initShop();
     } else if (pathname.startsWith('/urun/')) {
@@ -2794,8 +2811,75 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     });
   }
 
+  /* =====================================================================
+     GEO-ADAPTIVE HERO DELIVERY METRIC (Anti-Slop: Zero prompt, silent, cached)
+     - Eskişehir: "~2 Saat / ESKİŞEHİR İÇİ KURYE"
+     - İstanbul & Other Cities: "Aynı Gün / HIZLI & GİZLİ KARGO"
+     ===================================================================== */
+  let cachedGeoCity = null;
+
+  async function initGeoAdaptiveDelivery() {
+    const valEl = document.getElementById('hero-stat-delivery-val');
+    const lblEl = document.getElementById('hero-stat-delivery-lbl');
+    if (!valEl || !lblEl) return;
+
+    // Check localStorage cache to avoid repeated API calls
+    try {
+      const stored = sessionStorage.getItem('love_geo_city');
+      if (stored) {
+        applyGeoCity(stored, valEl, lblEl);
+        return;
+      }
+    } catch (e) {}
+
+    // First try internal server Geo endpoint
+    try {
+      const res = await fetch('/api/geo', { headers: { 'Accept': 'application/json' } });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.city) {
+          cachedGeoCity = data.city.toLowerCase();
+          try { sessionStorage.setItem('love_geo_city', cachedGeoCity); } catch (e) {}
+          applyGeoCity(cachedGeoCity, valEl, lblEl);
+          return;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback: fast, free client-side IP-API without permissions
+    try {
+      const res = await fetch('https://ipapi.co/json/', { mode: 'cors' });
+      if (res.ok) {
+        const data = await res.json();
+        const city = (data.city || data.region || '').toLowerCase();
+        if (city) {
+          cachedGeoCity = city;
+          try { sessionStorage.setItem('love_geo_city', city); } catch (e) {}
+          applyGeoCity(city, valEl, lblEl);
+          return;
+        }
+      }
+    } catch (e) {
+      // If offline or blocked, defaults safely to Eskişehir or nationwide based on Turkish culture
+    }
+  }
+
+  function applyGeoCity(city, valEl, lblEl) {
+    if (!valEl || !lblEl) return;
+    const isEskisehir = city.includes('eskisehir') || city.includes('eskişehir') || city.includes('odunpazari') || city.includes('tepebasi');
+
+    if (isEskisehir) {
+      valEl.textContent = LANG === 'en' ? '~2 Hours' : '~2 Saat';
+      lblEl.textContent = LANG === 'en' ? 'Eskişehir Express Courier' : 'Eskişehir İçi Kurye';
+    } else {
+      // İstanbul, Ankara, İzmir, etc.
+      valEl.textContent = LANG === 'en' ? 'Same Day' : 'Aynı Gün';
+      lblEl.textContent = LANG === 'en' ? 'Fast & Discreet Shipping' : 'Hızlı & Gizli Kargo';
+    }
+  }
+
   /* boot */
-  const globalInit = [initAutoCropNormalizer, initSpatialAnimations, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers];
+  const globalInit = [initAutoCropNormalizer, initSpatialAnimations, initSpaLinks, initQuickSearch, initMobileBottomNav, refreshRevealObservers, initGeoAdaptiveDelivery];
 
   function runBoot() {
     globalInit.forEach((f) => { try { f(); } catch (e) { console.error(e); } });

@@ -658,6 +658,7 @@ const STR: Record<string, Record<string, string>> = {
     'age.no': 'Çıkış Yap',
     'age.small': 'Gizliliğin bizim için önemli — yaş bilgisi yalnızca bu tarayıcıda saklanır.',
     'nav.home': 'Anasayfa', 'nav.shop': 'Mağaza', 'nav.about': 'Hakkımızda', 'nav.contact': 'İletişim', 'nav.account': 'Hesabım',
+    'nav.delivery': 'Eskişehir 2h Kurye',
     'nav.admin': 'Admin Panel', 'nav.cart': 'Sepet', 'nav.menu': 'Menü', 'nav.login': 'Giriş', 'nav.search': 'Ürün Ara', 'nav.search_short': 'Ara',
     'qs.ph': 'Ürün, kategori veya özellik ara...', 'qs.popular': 'Popüler Aramalar', 'qs.empty': 'Aramanızla eşleşen ürün bulunamadı.', 'qs.close': 'Kapat',
     'foot.desc': ' Erotik & Seks Shop — Eskişehir ve tüm Türkiye geneline %100 gizli paketleme, güvenli ödeme ve orijinal ürün güvencesiyle hizmet veren seçkin yetişkin mağazası.',
@@ -671,6 +672,7 @@ const STR: Record<string, Record<string, string>> = {
     'hero.p': 'Kişisel zevklerinize adanmış, <strong>yargısız</strong> ve özgür bir alan. Vücut dostu materyallerle üretilmiş premium tasarımlar; <strong>mutlak gizlilik</strong> prensibi, özenli paketleme ve anonim teslimat güvencesiyle kapınıza geliyor.',
     'hero.cta.shop': 'Mağazayı Keşfet →', 'hero.cta.why': 'Neden Biz?',
     'hero.stat1': 'Özenle seçili ürün', 'hero.stat2': '%100', 'hero.stat2.label': 'Gizli paketleme', 'hero.stat3': '4.8', 'hero.stat3.label': 'Ortalama puan',
+    'hero.stat4': '~2 Saat', 'hero.stat4.label': 'Eskişehir İçi Kurye',
     'mq.1': 'GİZLİ PAKETLEME', 'mq.2': 'KAPIDA ÖDEME', 'mq.3': 'VÜCUT DOSTU', 'mq.4': 'AYNI GÜN KARGO', 'mq.5': '18+ YETKİN YAŞAM', 'mq.6': 'ANONİM ALIŞVERİŞ',
     'sec.cats.eb': 'Kategoriler', 'sec.cats.h2': 'Kendi <em class="em-rose">ritmini</em> bul',
     'sec.cats.p': 'Merak ettiğin her şey, saygılı bir dille ve özenle seçilmiş {n}-i aşkın ürünle.',
@@ -682,10 +684,10 @@ const STR: Record<string, Record<string, string>> = {
     'banner.p': 'Dış pakette logo yok, ürün adı yok, mağaza ibaresi yok. Kart ekstrenizde nötr kurumsal unvan yer alır. Kargo görevlisi bile içeriği bilmez.',
     'banner.btn': 'Gizlilik Standartlarımız',
     'sec.new.eb': 'Yeni Gelenler', 'sec.new.h2': 'Taze <em class="em-rose">taze</em>', 'sec.new.link': 'Yenilikler →',
-    'f1.t': '%100 Gizli Paketleme', 'f1.p': 'Düz kutu, logosuz, içerik bilgisi dışarıdan anlaşılmaz.',
-    'f2.t': 'Anonim Ödeme', 'f2.p': 'SSL şifreli altyapı; kart ekstrenizde mağaza adı yer almaz.',
-    'f3.t': 'Vücut Dostu', 'f3.p': 'Tüm ürünler CE belgeli, hipoalerjenik premium malzeme.',
-    'f4.t': 'Yargısız Destek', 'f4.p': 'Uzman ekip 7/24, sorularınız isim/isim olmadan yanıtlanır.',
+    'f1.t': '%100 Gizli Paketleme', 'f1.p': 'Düz kutu, logosuz, içerik bilgisi dışarıdan asla anlaşılmaz.',
+    'f2.t': 'Eskişehir 2 Saatte Teslimat', 'f2.p': 'Eskişehir içi özel kurye ile ~2 saatte kapınızda; Türkiye geneli aynı gün kargo.',
+    'f3.t': 'Anonim Güvenli Ödeme', 'f3.p': '256-bit SSL koruması; ekstrede nötr kurumsal unvan yer alır.',
+    'f4.t': 'Vücut Dostu & Orijinal', 'f4.p': 'CE belgeli, medikal standartlara uygun %100 orijinal ve faturalı ürünler.',
     'sec.rev.eb': 'Misafirlerimiz', 'sec.rev.h2': 'Kapı kapalı, <em class="em-rose">memnuniyet</em> açık', 'sec.rev.empty': 'İlk yorum sizden gelsin.',
     'nl.eb': 'Kulüp Love', 'nl.h2': 'İlk siparişe %10 <em class="em-rose">indirim</em>',
     'nl.p': 'Bültene katıl; yeniliklerden, gizli indirimlerden ilk sen haberdar ol. Spam yok, söz.',
@@ -757,6 +759,7 @@ const STR: Record<string, Record<string, string>> = {
     'age.no': 'Exit',
     'age.small': 'Your privacy matters — age verification is stored only in this browser.',
     'nav.home': 'Home', 'nav.shop': 'Shop', 'nav.about': 'About', 'nav.contact': 'Contact', 'nav.account': 'My Account',
+    'nav.delivery': 'Eskişehir 2h Courier',
     'nav.admin': 'Admin Panel', 'nav.cart': 'Cart', 'nav.menu': 'Menu', 'nav.login': 'Sign in', 'nav.search': 'Search Products', 'nav.search_short': 'Search',
     'qs.ph': 'Search products, categories or features...', 'qs.popular': 'Popular Searches', 'qs.empty': 'No products matched your search.', 'qs.close': 'Close',
     'foot.desc': ' — know your body, discover your pleasure. A respect & privacy-first online store with a 2026 design language.',
@@ -770,6 +773,7 @@ const STR: Record<string, Record<string, string>> = {
     'hero.p': 'Body-safe, award-winning designs; delivered to your door with total privacy, judgement-free and fast. The finest way to shop, with 2026\'s best web experience.',
     'hero.cta.shop': 'Explore the Shop →', 'hero.cta.why': 'Why Us?',
     'hero.stat1': 'Curated products', 'hero.stat2': '100%', 'hero.stat2.label': 'Discreet packaging', 'hero.stat3': '4.8', 'hero.stat3.label': 'Average rating',
+    'hero.stat4': '~2 Hours', 'hero.stat4.label': 'Eskişehir Express Courier',
     'mq.1': 'DISCREET PACKAGING', 'mq.2': 'PAY AT DOOR', 'mq.3': 'BODY SAFE', 'mq.4': 'SAME-DAY SHIPPING', 'mq.5': '18+ ADULT WELLNESS', 'mq.6': 'ANONYMOUS SHOPPING',
     'sec.cats.eb': 'Categories', 'sec.cats.h2': 'Find your own <em class="em-rose">rhythm</em>',
     'sec.cats.p': 'Everything you\'re curious about, spoken in a respectful voice, with over {n} carefully curated products.',
@@ -782,9 +786,9 @@ const STR: Record<string, Record<string, string>> = {
     'banner.btn': 'Our Privacy Standards',
     'sec.new.eb': 'New Arrivals', 'sec.new.h2': 'Fresh <em class="em-rose">in</em>', 'sec.new.link': 'What\'s New →',
     'f1.t': '100% Discreet Packaging', 'f1.p': 'Plain box, no logo, contents never guessable from outside.',
-    'f2.t': 'Anonymous Payment', 'f2.p': 'SSL-encrypted infrastructure; the store name never appears on your statement.',
-    'f3.t': 'Body Safe', 'f3.p': 'Every product is CE-certified, hypoallergenic premium material.',
-    'f4.t': 'Judgement-free Support', 'f4.p': 'Expert team 24/7 — questions answered with no names asked.',
+    'f2.t': 'Eskişehir 2h Express Courier', 'f2.p': 'Direct private courier in ~2 hours in Eskişehir; same-day dispatch across Turkey.',
+    'f3.t': 'Anonymous & Secure Payment', 'f3.p': '256-bit SSL protection; neutral corporate descriptor on statements.',
+    'f4.t': 'Body-Safe & Certified', 'f4.p': 'Every product is CE-certified, hypoallergenic premium original material.',
     'sec.rev.eb': 'Our Guests', 'sec.rev.h2': 'Door closed, <em class="em-rose">satisfaction</em> open', 'sec.rev.empty': 'Be the first to review.',
     'nl.eb': 'Club Love', 'nl.h2': '10% off your <em class="em-rose">first order</em>',
     'nl.p': 'Join the list; hear about novelties and secret sales first. No spam, promise.',
@@ -1637,9 +1641,15 @@ ${C.isBot ? '' : `
       </a>
     </div>
 
-    <div class="mm-badge-row">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>${C.lang === 'tr' ? 'Tamamen Gizli Paketleme & Express Teslimat' : '100% Discreet Packaging & Express Delivery'}</span>
+    <div class="mm-badge-row" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <strong style="color: var(--rose); font-weight: 600;">${C.lang === 'tr' ? 'Eskişehir İçi: ~2 Saatte Özel Kurye' : 'Eskişehir: ~2h Express Courier'}</strong>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; opacity: 0.85;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>${C.lang === 'tr' ? '%100 Gizli Paketleme & Aynı Gün Kargo' : '100% Discreet Packaging & Same-Day Dispatch'}</span>
+      </div>
     </div>
   </div>
 </aside>
@@ -1841,7 +1851,15 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
       <a href="/magaza" class="btn btn-primary">${tr('hero.cta.shop')}</a>
       <a href="/hakkimizda" class="btn btn-ghost">${tr('hero.cta.why')}</a>
     </div>
-    <div class="hero-stats"><div><strong>${C.num(db.products.length)}+</strong><span>${tr('hero.stat1')}</span></div><div><strong>${tr('hero.stat2')}</strong><span>${tr('hero.stat2.label')}</span></div><div><strong>${tr('hero.stat3')}</strong><span>${tr('hero.stat3.label')}</span></div></div>
+    <div class="hero-stats">
+      <div><strong>${C.num(db.products.length)}+</strong><span>${tr('hero.stat1')}</span></div>
+      <div><strong>${tr('hero.stat2')}</strong><span>${tr('hero.stat2.label')}</span></div>
+      <div><strong>${tr('hero.stat3')}</strong><span>${tr('hero.stat3.label')}</span></div>
+      <div class="hero-stat-highlight" id="hero-stat-delivery" data-tr-esk="${tr('hero.stat4')}" data-tr-esk-lbl="${tr('hero.stat4.label')}">
+        <strong id="hero-stat-delivery-val">${tr('hero.stat4')}</strong>
+        <span id="hero-stat-delivery-lbl">${tr('hero.stat4.label')}</span>
+      </div>
+    </div>
   </div>
   <div class="hero-visual">
     <div class="cf-stage" id="cf-stage" aria-label="Featured product showcase">
@@ -2854,6 +2872,13 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
   <h2 id="iade">${tr('about.ret.h')}</h2>
   <p>${tr('about.ret.p')}</p>
   <p>${tr('about.ret.list')}</p>
+  <h2 id="teslimat">${C.lang === 'tr' ? 'Eskişehir İçi ~2 Saatte Özel Kurye & Kargo Standartları' : 'Eskişehir 2h Express Courier & Delivery Standards'}</h2>
+  <p>${C.lang === 'tr' 
+    ? 'Eskişehir merkezli 14 yıllık köklü yapımız sayesinde, internetten sipariş verip günlerce kargo bekleme devrine son veriyoruz. Şehir içindeki siparişleriniz doğrudan İsmet İnönü Caddesi\'ndeki fiziksel depomuzdan hazırlanarak yola çıkar:'
+    : 'Thanks to our 14-year established presence in Eskişehir, you never have to wait days for standard delivery. Local orders dispatch directly from our central depot on İsmet İnönü Street:'}</p>
+  <p>${C.lang === 'tr'
+    ? '• <b>Eskişehir İçi Özel Kurye (~2 Saat):</b> Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve çevre semtlere mesafeye bağlı olarak ortalama 2 saatte doğrudan adrese gizli teslimat.<br>• <b>Kuryede Sıfır Etiket & Tam Mahremiyet:</b> Kurye teslimatı tamamen sivil kıyafetli personel ile logosuz, nötr siyah/kraft ambalajda gerçekleştirilir. Paketin dışından içeriğe dair en ufak bir emare anlaşılmaz.<br>• <b>Mağazadan Randevulu / Doğrudan Teslim Al:</b> Dilerseniz siparişinizi web sitemizden oluşturup, İsmet İnönü Tramvay Durağı karşısındaki Ilgaz İş Hanı kat mağazamızdan kimliğinizi veya sipariş numaranızı belirterek saniyeler içinde teslim alabilirsiniz.<br>• <b>Tüm Türkiye\'ye Aynı Gün Kargo:</b> Eskişehir dışındaki 80 ile saat 16:30\'a kadar verilen tüm siparişler aynı gün nötr kutulu ve kurumsal irsaliyeli olarak kargoya verilir.'
+    : '• <b>Eskişehir Express Local Courier (~2 Hours):</b> Fast delivery across Tepebaşı, Odunpazarı, Batıkent and surrounding districts in approximately 2 hours.<br>• <b>Complete Discretion:</b> Unbranded plain parcels, plain-clothed couriers, absolute discretion.<br>• <b>In-Store Pickup:</b> You can also order online and collect discreetly in minutes from our central store facing İsmet İnönü Tram Stop.<br>• <b>Same-Day Nationwide Shipping:</b> Orders across Turkey placed by 16:30 dispatch the same day in neutral security boxes.'}</p>
   <h2>${tr('about.val.h')}</h2>
   <div class="value-grid">
     <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>${tr('about.v1.t')}</h3><p>${tr('about.v1.p')}</p></div>
@@ -2916,10 +2941,11 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
 <div class="rich">
   <h2 style="font-family:var(--font-display);font-size:clamp(30px,4vw,52px);line-height:1.1;margin-top:0">${tr('contact.h1')}</h2>
   <p>${tr('contact.p')}</p>
-  <div class="contact-cards" style="display:grid;gap:26px;margin-top:30px">
+  <div class="contact-cards" style="margin-top:30px">
     <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg></div><div><h3>${tr('contact.wa.t')}</h3><p><a href="${esc(st.whatsapp)}" target="_blank" rel="noopener" style="color:var(--rose);font-weight:600">+90 543 633 13 25</a><br><span class="muted" style="font-size:12px">${tr('contact.wa.s')}</span></p></div></div>
     <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M10 12h4"/></svg></div><div><h3>${tr('contact.store.t')}</h3><p><strong>${esc(st.address)}</strong></p></div></div>
     <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><h3>${tr('contact.phone.t')}</h3><p>${esc(st.supportPhone)}<br><span class="muted" style="font-size:12px">${tr('contact.phone.s')}</span></p></div></div>
+    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h3>${C.lang === 'tr' ? 'Eskişehir İçi Özel Kurye' : 'Eskişehir 2h Express Courier'}</h3><p><strong>${C.lang === 'tr' ? 'Semtinize göre ~2 saatte gizli teslimat' : 'Discreet direct delivery in ~2 hours'}</strong><br><span class="muted" style="font-size:12px">${C.lang === 'tr' ? 'Sivil kurye, logosuz nötr paket, tam gizlilik' : 'Plain package, unbranded, complete privacy'}</span></p></div></div>
   </div>
 
   <div class="check-step" style="margin-top:34px;background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-md);padding:24px">
@@ -3666,6 +3692,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     await saveOrderSeqToCloud(nextSeq);
     await saveAsync(); persistSessions();
 
+    const isEskisehir = !pickup && city.toLowerCase().includes('eskişehir') || city.toLowerCase().includes('eskisehir');
     const lines = [
       'Merhaba Love Shop! 🖤',
       'Web sitenizden yeni bir sipariş vermek istiyorum. Detaylar aşağıdadır:',
@@ -3677,7 +3704,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
     lines.push('');
     lines.push('--------------------------');
-    lines.push(`📦 TESLİMAT: ${pickup ? 'Mağazadan Teslim' : `Adrese Kargo (${fmt(shipping)})`}`);
+    lines.push(`📦 TESLİMAT: ${pickup ? 'Mağazadan Teslim' : (isEskisehir ? `Eskişehir İçi Özel Kurye (~2 Saat) (${fmt(shipping)})` : `Adrese Kargo (${fmt(shipping)})`)}`);
     if (order.discount && order.coupon) lines.push(`🎁 İNDİRİM: -${fmt(order.discount)} (Kupon: ${order.coupon})`);
     else if (order.discount) lines.push(`🎁 İNDİRİM: -${fmt(order.discount)}`);
     lines.push(`💳 TOPLAM TUTAR: ${fmt(total)}`);
@@ -3686,7 +3713,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     lines.push(`İsim: ${name}`);
     if (!pickup) lines.push(`Adres: ${address}, ${city}`);
     lines.push(`Tel: ${phone}`);
-    if (order.discreet) lines.push('Not: Gizli paketleme talep edildi. 🔒');
+    if (order.discreet) lines.push('Not: %100 Gizli & İsimsiz Paketleme');
+    if (isEskisehir) lines.push('⚡ Teslimat Tercihi: Eskişehir İçi 2 Saatte Hızlı Teslimat');
     if (order.note) lines.push(`Sipariş Notu: ${order.note}`);
     lines.push('');
     lines.push('Siparişi onaylamak için IBAN veya ödeme linki alabilir miyim? Teşekkürler! ✨');
@@ -3752,6 +3780,25 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     db.contact.push({ id: uid('m'), name: String(b.name || 'Anonim').trim(), email, message, createdAt: new Date().toISOString(), read: false });
     await saveAsync();
     return json(res, 200, { ok: true });
+  }
+
+  /* --- Geo-IP location check (Eskişehir vs Other Cities) --- */
+  if (pathname === '/api/geo' && method === 'GET') {
+    // Check Cloudflare / GCP / Proxy headers
+    const cfCity = (req.headers['cf-ipcity'] || '').toString().toLowerCase();
+    const cfRegion = (req.headers['cf-region'] || '').toString().toLowerCase();
+    const cfCountry = (req.headers['cf-ipcountry'] || '').toString().toUpperCase();
+
+    // Check if directly flagged as Eskisehir from CDN headers
+    const isEskisehir = cfCity.includes('eskisehir') || cfCity.includes('eskişehir') || cfRegion.includes('26') || cfRegion.includes('eskisehir');
+
+    return json(res, 200, {
+      ok: true,
+      city: cfCity || null,
+      region: cfRegion || null,
+      country: cfCountry || 'TR',
+      isEskisehir: isEskisehir
+    });
   }
 
   // Universal, strict, safety-first extraction of product highlights from actual description text (NO HALLUCINATIONS)

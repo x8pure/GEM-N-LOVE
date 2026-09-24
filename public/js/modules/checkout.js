@@ -59,8 +59,12 @@ export async function initCheckout() {
         <div id="addr-block" style="margin-top:16px">
           <div class="field"><label>${window.LS.t('ck.address')}</label><textarea id="ck-address" placeholder="${window.LS.t('ck.address.ph')}">${addr && !addr.full.startsWith('MAĞAZA') ? addr.full : ''}</textarea></div>
           <div class="grid-2">
-            <div class="field"><label>${window.LS.t('ck.city')}</label><input id="ck-city" value="${addr && addr.city ? addr.city : ''}" placeholder="${window.LS.t('ck.city').replace(' *', '')}"></div>
-            <div class="field"><label>${window.LS.t('ck.zip')}</label><input id="ck-zip" value="${addr && addr.zip ? addr.zip : ''}" placeholder="26000"></div>
+            <div class="field"><label>${window.LS.t('ck.city')}</label><input id="ck-city" value="${addr && addr.city ? addr.city : 'Eskişehir'}" placeholder="${window.LS.t('ck.city').replace(' *', '')}"></div>
+            <div class="field"><label>${window.LS.t('ck.zip')}</label><input id="ck-zip" value="${addr && addr.zip ? addr.zip : '26100'}" placeholder="26000"></div>
+          </div>
+          <div id="ck-delivery-notice" style="margin-top:10px;padding:10px 14px;border-radius:var(--r-sm,8px);background:rgba(255,255,255,0.03);border:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--text);display:flex;align-items:center;gap:10px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="ck-delivery-notice-text">Eskişehir İçi Adres: <strong>Ortalama 2 saatte</strong> isimsiz ve gizli özel kurye ile teslim edilir.</span>
           </div>
         </div>
       </div>
@@ -81,8 +85,24 @@ export async function initCheckout() {
     $('#addr-block').style.display = m === 'whatsapp' ? '' : 'none';
     $('#pay-ship').textContent = m === 'shop' ? window.LS.t('ck.ship.pickup') : (c.shipping ? window.LS.fmt(c.shipping) : window.LS.t('ck.free'));
     $('#ck-submit').innerHTML = m === 'shop' ? window.LS.t('ck.submit.shop') : window.LS.t('ck.submit.wa');
+    updateCityNotice();
   }
+
+  function updateCityNotice() {
+    const cityInput = $('#ck-city');
+    const noticeEl = $('#ck-delivery-notice');
+    const noticeText = $('#ck-delivery-notice-text');
+    if (!cityInput || !noticeEl || !noticeText) return;
+    const val = cityInput.value.trim().toLowerCase();
+    if (val.includes('eskişehir') || val.includes('eskisehir') || !val) {
+      noticeText.innerHTML = 'Eskişehir İçi Adres: <strong>Ortalama 2 saatte</strong> isimsiz ve gizli özel kurye ile kapınızda.';
+    } else {
+      noticeText.innerHTML = 'Türkiye Geneli: <strong>16:30\'a kadar aynı gün</strong> çift mühürlü nötr kutuda kargoda.';
+    }
+  }
+
   $$('input[name=pay]').forEach((r) => r.addEventListener('change', refreshPay));
+  $('#ck-city')?.addEventListener('input', updateCityNotice);
   refreshPay();
   
   $('#ck-submit').addEventListener('click', async () => {
