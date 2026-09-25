@@ -1336,7 +1336,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       "url": "https://loveeroticshop.com/sehir/eskisehir",
       "logo": "https://loveeroticshop.com/test.png",
       "image": "https://loveeroticshop.com/test.png",
-      "description": "Eskişehir Tepebaşı & Odunpazarı içi 2-3 saatte özel gizli kurye ve fiziksel mağazadan elden teslim. %100 gizli çift katlı mühürlü paketleme, orijinal faturalı ve beden dostu medikal teknolojiler.",
+      "description": "Eskişehir Tepebaşı & Odunpazarı içi 30-120 dakikada özel jet gizli kurye ve fiziksel mağazadan elden teslim. Kadınlar, erkekler ve çiftler için sokaktan görünmeyen vitrinsiz 1. kat daire konseptiyle %100 yargısız, güvenli ve konforlu danışmanlık ortamı. %100 gizli çift katlı mühürlü paketleme, orijinal faturalı ve beden dostu medikal teknolojiler.",
       "priceRange": "₺₺",
       "telephone": st.supportPhone || "+90 543 633 13 25",
       "currenciesAccepted": "TRY",
@@ -1933,8 +1933,12 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
 </section>`;
   const homeFaqs = [
     {
-      q: "Eskişehir içi kurye teslimatı ne kadar sürede ulaşır?",
-      a: "Tepebaşı, Odunpazarı ve tüm Eskişehir merkez mahallelerine siparişleriniz özel gizli kuryemiz ile 2 ila 3 saat içerisinde doğrudan adresinize teslim edilir."
+      q: "Eskişehir'de kadınlar ve çiftler için en güvenli ve yargısız erotik shop neresidir?",
+      a: "Love Erotik Shop, İsmet İnönü-1 Tramvay Durağı karşısındaki Ilgaz İş Hanı Kat:1 D:2 adresinde vitrinsiz daire konseptiyle hizmet vermektedir. Sokaktan veya caddeden görünmeyen konumuyla kadınların, gençlerin ve çiftlerin hiçbir tedirginlik yaşamadan, %100 mahremiyet ve saygılı danışmanlıkla alışveriş yapabileceği güvenli bir ortam sunar."
+    },
+    {
+      q: "Eskişehir içi motor kurye teslimatı ne kadar sürede ulaşır?",
+      a: "Tepebaşı, Odunpazarı ve tüm Eskişehir merkez mahallelerine siparişleriniz özel gizli kuryemiz ile ortalama 30 ila 120 dakika (yaklaşık 1 saat) içerisinde doğrudan adresinize teslim edilir."
     },
     {
       q: "Paketlemede sipariş içeriği veya firma adı belli olur mu?",
@@ -1942,19 +1946,19 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
     },
     {
       q: "Banka ve kredi kartı ekstresinde ne yazar?",
-      a: "Ödeme dökümünde cinsel sağlık veya yetişkin mağazası çağrışımı yapan hiçbir ibare yer almaz, standart nötr ticari unvan görünür."
+      a: "Ödeme dökümünde cinsel sağlık veya yetişkin mağazası çağrışımı yapan hiçbir ibare yer almaz, standart nötr kurumsal unvan görünür."
     },
     {
-      q: "Mağazadan elden teslim alabilir miyim?",
-      a: "Evet. İsmet İnönü-1 Caddesi Ilgaz İş Hanı Kat:1 Daire:2 adresindeki mağazamızı ziyaret ederek ürünleri inceleyip elden teslim alabilirsiniz."
+      q: "Mağazadan randevusuz elden teslim alabilir miyim?",
+      a: "Evet. İsmet İnönü-1 Caddesi Ilgaz İş Hanı Kat:1 Daire:2 adresindeki mağazamızı haftanın her günü 10:00 - 02:00 saatleri arasında randevusuz ziyaret ederek ürünleri inceleyip elden teslim alabilirsiniz."
     }
   ];
 
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'LOVE — Sexual Wellness & Intimacy' : 'LOVE — Modern Sexual Wellness & Cinsel Sağlık | %100 Gizli Teslimat', html, {
     description: C.lang === 'en'
-      ? 'LOVE: 100% discreet packaging, anonymous payment, certified body-safe adult wellness store with express delivery across Turkey.'
-      : 'LOVE: Modern Sexual Wellness & Cinsel Sağlık Platformu. Beden dostu medikal teknolojiler, masaj aletleri ve organik formüller. %100 çift mühürlü gizli paketleme, aynı gün kargo ve Eskişehir 15 yıllık köklü mağaza güvencesi.',
+      ? 'LOVE: 100% discreet packaging, anonymous payment, certified body-safe adult wellness store. Safe & non-judgmental 1st floor store for women and couples, 30-120 min courier delivery in Eskişehir.'
+      : 'LOVE: Modern Sexual Wellness & Cinsel Sağlık Platformu. Kadınlar ve çiftler için sokaktan görünmeyen vitrinsiz 1. kat mağazada %100 yargısız ortam. Eskişehir içi 30-120 dakikada ekspres jet kurye ve tüm Türkiye\'ye gizli kargo.',
     faq: homeFaqs,
     preloadImages: heroFirstImg ? [heroFirstImg] : []
   }, C));
@@ -2888,7 +2892,7 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
 
   <div class="about-stat-bar">
     <div class="about-stat-item">
-      <div class="about-stat-num">14 <span class="about-stat-unit">${isEn ? 'Years' : 'Yıl'}</span></div>
+      <div class="about-stat-num">15 <span class="about-stat-unit">${isEn ? 'Years' : 'Yıl'}</span></div>
       <div class="about-stat-label">${isEn ? 'Physical Store Presence' : 'Fiziksel Mağaza Güveni'}</div>
       <div class="about-stat-desc">${isEn ? 'Continuously operating at the same central address on İsmet İnönü Street since 2012.' : '2012\'den bu yana Eskişehir merkezde aynı adreste kesintisiz perakende tecrübesi.'}</div>
     </div>
@@ -2899,13 +2903,13 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
     </div>
     <div class="about-stat-item">
       <div class="about-stat-num">%100</div>
-      <div class="about-stat-label">${isEn ? 'Neutral Outer Box' : 'Nötr & İsimsiz Paket'}</div>
-      <div class="about-stat-desc">${isEn ? 'Plain boxes without logos, store names, or intimate product hints outside.' : 'Dış kolide logo, mağaza veya ürün detayı yer almaz; içerik dışarıdan anlaşılamaz.'}</div>
+      <div class="about-stat-label">${isEn ? 'Safe & Neutral Space' : 'Yargısız & Nötr Ortam'}</div>
+      <div class="about-stat-desc">${isEn ? 'Unbranded packaging and a street-invisible 1st floor apartment store tailored for women and couples.' : 'Kadınlar ve çiftler için sokaktan görünmeyen 1. kat vitrinsiz dairede %100 yargısız ortam ve nötr kargo.'}</div>
     </div>
     <div class="about-stat-item">
-      <div class="about-stat-num">~2 <span class="about-stat-unit">${isEn ? 'Hours' : 'Saat'}</span></div>
-      <div class="about-stat-label">${isEn ? 'Eskişehir Express Courier' : 'Eskişehir İçi Özel Kurye'}</div>
-      <div class="about-stat-desc">${isEn ? 'Direct dispatch from our central store with civilian couriers in ~2 hours.' : 'Sivil personel ile doğrudan merkez depomuzdan ortalama 2 saatte gizli elden teslim.'}</div>
+      <div class="about-stat-num">30-120 <span class="about-stat-unit">${isEn ? 'Min' : 'Dk'}</span></div>
+      <div class="about-stat-label">${isEn ? 'Eskişehir Express Courier' : 'Eskişehir Ekspres Kurye'}</div>
+      <div class="about-stat-desc">${isEn ? 'Direct dispatch from our central store with civilian couriers in 30 to 120 minutes.' : 'Sivil personel ile doğrudan merkez depomuzdan 30-120 dakikada jet gizli teslim.'}</div>
     </div>
   </div>
 
@@ -2960,13 +2964,13 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
   <section id="teslimat" class="about-editorial-section">
     <div class="about-editorial-left">
       <span class="about-editorial-tag">03 / ${isEn ? 'DISPATCH' : 'TESLİMAT'}</span>
-      <h2 class="about-editorial-title">${isEn ? 'Eskişehir 2h Express & Shipping' : 'Eskişehir ~2 Saat Kurye & Lojistik'}</h2>
-      <p class="about-editorial-lead">${isEn ? 'Local orders dispatch directly from our central store on İsmet İnönü Street with civilian staff:' : 'Eskişehir merkezli 14 yıllık köklü yapımızla internetten günlerce kargo bekleme devrine son veriyoruz. Şehir içi siparişler doğrudan merkez mağazamızdan çıkar:'}</p>
+      <h2 class="about-editorial-title">${isEn ? 'Eskişehir 30-120m Express & Shipping' : 'Eskişehir 30-120 Dk Kurye & Lojistik'}</h2>
+      <p class="about-editorial-lead">${isEn ? 'Local orders dispatch directly from our central store on İsmet İnönü Street with civilian staff:' : 'Eskişehir merkezli 15 yıllık köklü yapımızla günlerce kargo bekleme devrine son veriyoruz. Şehir içi siparişler doğrudan merkez mağazamızdan çıkar:'}</p>
     </div>
     <div class="about-editorial-right">
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Eskişehir Express Courier (~2 Hours)' : 'Eskişehir İçi Özel Kurye (~2 Saat)'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Direct, discreet delivery in approx. 2 hours across Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik and central districts.' : 'Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve çevre semtlere ortalama 2 saatte doğrudan adrese gizli elden teslimat.'}</p>
+        <h3 class="about-editorial-item-title">${isEn ? 'Eskişehir Jet Express Courier (30-120 Min)' : 'Eskişehir İçi Ekspres Kurye (30-120 Dk)'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Direct, discreet delivery in 30 to 120 minutes across Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik and central districts.' : 'Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve tüm merkez mahallelere ortalama 30 ila 120 dakika içinde doğrudan adrese gizli elden teslimat.'}</p>
       </div>
       <div class="about-editorial-item">
         <h3 class="about-editorial-item-title">${isEn ? 'Civilian Couriers & Absolute Discretion' : 'Kuryede Sıfır Etiket & Tam Sivil Teslimat'}</h3>
@@ -3022,7 +3026,7 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'About Us' : 'Hakkımızda — Eskişehir Love Seks & Erotik Shop', html, {
-    description: C.lang === 'en' ? 'Love Shop: 14 years at the same address in Eskişehir, delivering over 5,000 orders with 100% discretion and body-safe certified products.' : 'Love Shop: 2012\'den bu yana 14 yıldır Eskişehir\'deki aynı fiziksel adresinde, 5.000\'i aşkın müşterisine %100 gizlilik ve güvenle hizmet veren köklü mağaza.'
+    description: C.lang === 'en' ? 'Love Shop: 15 years at the same address in Eskişehir. Safe, discreet 1st floor apartment store for women and couples. 30-120 min express courier.' : 'Love Shop: 2012\'den bu yana 15 yıldır Eskişehir\'deki aynı fiziksel adresinde. Kadınlar ve çiftler için %100 yargısız vitrinsiz daire ortamı ve 30-120 dakikada ekspres gizli kurye.'
   }, C));
 }
 
@@ -3111,7 +3115,7 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'Contact' : 'İletişim & Mağaza Adresi — Love Seks Shop Eskişehir', html, {
-    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. İsmet İnönü Tramvay Durağı Karşısı, Ilgaz İş Hanı Kat:1 D:2 (Yves Rocher & Watsons Yanı). 7/24 gizli WhatsApp hattı.',
+    description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. Kadınlar ve çiftler için %100 yargısız vitrinsiz daire ortamı. İsmet İnönü Tramvay Durağı Karşısı, Ilgaz İş Hanı Kat:1 D:2 (Yves Rocher & Watsons Yanı). 30-120 dk jet kurye & gizli WhatsApp hattı.',
     includeStoreSchema: true
   }, C));
 }
