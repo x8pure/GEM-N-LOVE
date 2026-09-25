@@ -1997,24 +1997,29 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
     prods = prods.filter((p: any) => p.isNew);
   }
 
-  // Sort with identical algorithm to /api/products
-  switch (sortParam) {
-    case 'yeni':
-    case 'new':
-      prods.sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-      break;
-    case 'fiyat-artan':
-      prods.sort((a: any, b: any) => a.price - b.price);
-      break;
-    case 'fiyat-azalan':
-      prods.sort((a: any, b: any) => b.price - a.price);
-      break;
-    case 'puan':
-      prods.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
-      break;
-    default:
-      prods.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
-  }
+  // Primary Hierarchy: In-stock products ALWAYS appear first (Yaklaşım A), out-of-stock products sink to the bottom
+  // Secondary: Sort within their respective stock groups
+  const sortFn = (a: any, b: any) => {
+    const aStock = (a.stock && a.stock > 0) ? 1 : 0;
+    const bStock = (b.stock && b.stock > 0) ? 1 : 0;
+    if (aStock !== bStock) return bStock - aStock; // In-stock (1) comes before out-of-stock (0)
+
+    switch (sortParam) {
+      case 'yeni':
+      case 'new':
+        return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+      case 'fiyat-artan':
+        return (a.price || 0) - (b.price || 0);
+      case 'fiyat-azalan':
+        return (b.price || 0) - (a.price || 0);
+      case 'puan':
+        return (b.rating || 0) - (a.rating || 0);
+      default:
+        return ((b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0)) || ((b.rating || 0) - (a.rating || 0));
+    }
+  };
+
+  prods.sort(sortFn);
 
   // Find active category for title and breadcrumbs
   const activeCat = !isHepsi ? cats.find((c: any) => matchesCategory(c.slug, catParam)) : null;
@@ -2860,42 +2865,157 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
   const st = db.settings;
   const C = pageCtx(req);
   const tr = C.t;
+  const isEn = C.lang === 'en';
+
   const html = `
 <div class="rich rich-about">
-  <h1 style="font-family:'Outfit',sans-serif !important;font-size:clamp(32px,4.5vw,56px);font-weight:700;line-height:1.15;letter-spacing:-0.6px;margin-bottom:28px;">${tr('about.h1')}</h1>
-  <p style="font-size:17px;line-height:1.65;color:var(--text);margin-bottom:16px;">${tr('about.p1')}</p>
-  <p style="font-size:16px;line-height:1.65;margin-bottom:16px;">${tr('about.p2')}</p>
-  <p style="font-size:16px;line-height:1.65;margin-bottom:34px;">${tr('about.p3')}</p>
-  <h2 id="gizlilik">${tr('about.priv.h')}</h2>
-  <p>${tr('about.priv.p')}</p>
-  <p>${tr('about.priv.list')}</p>
-  <h2 id="iade">${tr('about.ret.h')}</h2>
-  <p>${tr('about.ret.p')}</p>
-  <p>${tr('about.ret.list')}</p>
-  <h2 id="teslimat">${C.lang === 'tr' ? 'Eskişehir İçi ~2 Saatte Özel Kurye & Kargo Standartları' : 'Eskişehir 2h Express Courier & Delivery Standards'}</h2>
-  <p>${C.lang === 'tr' 
-    ? 'Eskişehir merkezli 14 yıllık köklü yapımız sayesinde, internetten sipariş verip günlerce kargo bekleme devrine son veriyoruz. Şehir içindeki siparişleriniz doğrudan İsmet İnönü Caddesi\'ndeki fiziksel depomuzdan hazırlanarak yola çıkar:'
-    : 'Thanks to our 14-year established presence in Eskişehir, you never have to wait days for standard delivery. Local orders dispatch directly from our central depot on İsmet İnönü Street:'}</p>
-  <p>${C.lang === 'tr'
-    ? '• <b>Eskişehir İçi Özel Kurye (~2 Saat):</b> Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve çevre semtlere mesafeye bağlı olarak ortalama 2 saatte doğrudan adrese gizli teslimat.<br>• <b>Kuryede Sıfır Etiket & Tam Mahremiyet:</b> Kurye teslimatı tamamen sivil kıyafetli personel ile logosuz, nötr siyah/kraft ambalajda gerçekleştirilir. Paketin dışından içeriğe dair en ufak bir emare anlaşılmaz.<br>• <b>Mağazadan Randevulu / Doğrudan Teslim Al:</b> Dilerseniz siparişinizi web sitemizden oluşturup, İsmet İnönü Tramvay Durağı karşısındaki Ilgaz İş Hanı kat mağazamızdan kimliğinizi veya sipariş numaranızı belirterek saniyeler içinde teslim alabilirsiniz.<br>• <b>Tüm Türkiye\'ye Aynı Gün Kargo:</b> Eskişehir dışındaki 80 ile saat 16:30\'a kadar verilen tüm siparişler aynı gün nötr kutulu ve kurumsal irsaliyeli olarak kargoya verilir.'
-    : '• <b>Eskişehir Express Local Courier (~2 Hours):</b> Fast delivery across Tepebaşı, Odunpazarı, Batıkent and surrounding districts in approximately 2 hours.<br>• <b>Complete Discretion:</b> Unbranded plain parcels, plain-clothed couriers, absolute discretion.<br>• <b>In-Store Pickup:</b> You can also order online and collect discreetly in minutes from our central store facing İsmet İnönü Tram Stop.<br>• <b>Same-Day Nationwide Shipping:</b> Orders across Turkey placed by 16:30 dispatch the same day in neutral security boxes.'}</p>
-  <h2>${tr('about.val.h')}</h2>
-  <div class="value-grid">
-    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>${tr('about.v1.t')}</h3><p>${tr('about.v1.p')}</p></div>
-    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></div><h3>${tr('about.v2.t')}</h3><p>${tr('about.v2.p')}</p></div>
-    <div class="feature"><div class="fi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><circle cx="15" cy="15" r="7"/></svg></div><h3>${tr('about.v3.t')}</h3><p>${tr('about.v3.p')}</p></div>
+  <div class="about-hero">
+    <div class="about-hero-left">
+      <h1 class="about-h1">${tr('about.h1')}</h1>
+      <div class="about-hero-anchor">
+        <div class="about-hero-anchor-line"></div>
+        <div class="about-hero-anchor-meta">
+          <span class="about-hero-est">EST. 2012 — ESKİŞEHİR, TR</span>
+          <span class="about-hero-loc">İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı), Ilgaz İş Hanı Kat:1 Daire:2, Tepebaşı/Eskişehir</span>
+        </div>
+      </div>
+    </div>
+    <div class="about-hero-right">
+      <p class="about-lead">${tr('about.p1')}</p>
+      <p class="about-sublead">${tr('about.p2')} ${tr('about.p3')}</p>
+    </div>
   </div>
-  <div class="banner rv" style="margin-top:40px;text-align:center;position:relative;z-index:1;isolation:isolate;">
-    <h2 style="margin:0 auto;position:relative;z-index:2;">${tr('about.cta.h')}</h2>
-    <p style="margin:14px auto 28px;position:relative;z-index:2;">${esc(st.supportEmail)} · ${esc(st.supportPhone)}</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:10;">
+
+  <div class="about-stat-bar">
+    <div class="about-stat-item">
+      <div class="about-stat-num">14 <span class="about-stat-unit">${isEn ? 'Years' : 'Yıl'}</span></div>
+      <div class="about-stat-label">${isEn ? 'Physical Store Presence' : 'Fiziksel Mağaza Güveni'}</div>
+      <div class="about-stat-desc">${isEn ? 'Continuously operating at the same central address on İsmet İnönü Street since 2012.' : '2012\'den bu yana Eskişehir merkezde aynı adreste kesintisiz perakende tecrübesi.'}</div>
+    </div>
+    <div class="about-stat-item">
+      <div class="about-stat-num">5.000+</div>
+      <div class="about-stat-label">${isEn ? 'Discreet Deliveries' : 'Kusursuz Gizli Teslimat'}</div>
+      <div class="about-stat-desc">${isEn ? 'Over 5,000 clients served with uncompromising packaging and confidentiality standards.' : 'Paketleme ve mahremiyet standartlarımızdan tek bir ödün vermeden ulaşılan sipariş.'}</div>
+    </div>
+    <div class="about-stat-item">
+      <div class="about-stat-num">%100</div>
+      <div class="about-stat-label">${isEn ? 'Neutral Outer Box' : 'Nötr & İsimsiz Paket'}</div>
+      <div class="about-stat-desc">${isEn ? 'Plain boxes without logos, store names, or intimate product hints outside.' : 'Dış kolide logo, mağaza veya ürün detayı yer almaz; içerik dışarıdan anlaşılamaz.'}</div>
+    </div>
+    <div class="about-stat-item">
+      <div class="about-stat-num">~2 <span class="about-stat-unit">${isEn ? 'Hours' : 'Saat'}</span></div>
+      <div class="about-stat-label">${isEn ? 'Eskişehir Express Courier' : 'Eskişehir İçi Özel Kurye'}</div>
+      <div class="about-stat-desc">${isEn ? 'Direct dispatch from our central store with civilian couriers in ~2 hours.' : 'Sivil personel ile doğrudan merkez depomuzdan ortalama 2 saatte gizli elden teslim.'}</div>
+    </div>
+  </div>
+
+  <section id="gizlilik" class="about-editorial-section">
+    <div class="about-editorial-left">
+      <span class="about-editorial-tag">01 / ${isEn ? 'CONFIDENTIALITY' : 'MAHREMİYET'}</span>
+      <h2 class="about-editorial-title">${tr('about.priv.h')}</h2>
+      <p class="about-editorial-lead">${tr('about.priv.p')}</p>
+    </div>
+    <div class="about-editorial-right">
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Anonymous & Neutral Packaging' : 'İsimsiz & Nötr Dış Kutu'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Reinforced plain shipping box. No logo, store title, or product description is displayed on the outside.' : 'Düz korumalı kraft veya siyah nötr koli. Dışında logo, ürün adı, mağaza ibaresi veya yetişkin içeriğe dair hiçbir işaret yer almaz.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Discreet Shipping Waybill' : 'Gizli Kargo İrsaliyesi'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Waybills and parcel barcodes never specify product descriptions. Sender details use a neutral corporate trade title as required by law.' : 'Kargo etiketinde ve barkodunda ürün içeriği kesinlikle belirtilmez; gönderici bilgisi yasal zorunluluklar gereği nötr ticari unvanla düzenlenir.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Financial Privacy' : 'Finansal Mahremiyet'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Bank and card statements display a neutral gateway billing title. No store name or adult product references appear.' : 'Kredi kartı veya hesap ekstrenizde mağaza adı veya yetişkin ürün ibaresi görünmez; ödeme altyapısının güvenli kurumsal tahsilat kaydı yer alır.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'End-to-End Data Security' : 'Uçtan Uca Veri Güvenliği'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Protected with 256-bit SSL encryption. Data is used exclusively for order fulfillment and never shared with advertising networks or third parties.' : 'Bilgileriniz 256-bit SSL şifreleme ile korunur. Yalnızca siparişinizin teslimi için kullanılır; asla reklam ağları veya 3. şahıslarla paylaşılmaz.'}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="iade" class="about-editorial-section">
+    <div class="about-editorial-left">
+      <span class="about-editorial-tag">02 / ${isEn ? 'GUARANTEE' : 'GÜVENCE'}</span>
+      <h2 class="about-editorial-title">${tr('about.ret.h')}</h2>
+      <p class="about-editorial-lead">${tr('about.ret.p')}</p>
+    </div>
+    <div class="about-editorial-right">
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Dead on Arrival / Transit Damage' : 'Kutudan Arızalı / Hasarlı Çıkma'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'If an item arrives damaged or non-functional from transit, it is promptly replaced with a brand-new unit at no extra charge.' : 'Siparişiniz kargodan hasarlı veya çalışmaz durumda çıkarsa, teslimat anında koşulsuz birebir sıfırıyla derhal değiştirilir.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Fulfillment Accuracy Guarantee' : 'Eksik veya Hatalı Ürün Telafisi'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Any missing or mismatched product is resolved immediately and dispatched freely without charging shipping fees.' : 'Eksik veya hatalı gönderilen tüm ürünler derhal tarafımızca hiçbir ek ücret talep edilmeksizin yenisiyle tamamlanır.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Factory Sealed & Tamper-Evident' : 'Orijinal & Güvenlik Bantlı Ürünler'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Cosmetics and accessories with unbreached security tamper seals and original packaging can be returned within 14 days.' : 'Güvenlik şeridi açılmamış ve ambalajı bozulmamış kozmetik veya aksesuarlarda 14 gün içinde yasal iade ve değişim hakkı mevcuttur.'}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="teslimat" class="about-editorial-section">
+    <div class="about-editorial-left">
+      <span class="about-editorial-tag">03 / ${isEn ? 'DISPATCH' : 'TESLİMAT'}</span>
+      <h2 class="about-editorial-title">${isEn ? 'Eskişehir 2h Express & Shipping' : 'Eskişehir ~2 Saat Kurye & Lojistik'}</h2>
+      <p class="about-editorial-lead">${isEn ? 'Local orders dispatch directly from our central store on İsmet İnönü Street with civilian staff:' : 'Eskişehir merkezli 14 yıllık köklü yapımızla internetten günlerce kargo bekleme devrine son veriyoruz. Şehir içi siparişler doğrudan merkez mağazamızdan çıkar:'}</p>
+    </div>
+    <div class="about-editorial-right">
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Eskişehir Express Courier (~2 Hours)' : 'Eskişehir İçi Özel Kurye (~2 Saat)'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Direct, discreet delivery in approx. 2 hours across Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik and central districts.' : 'Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve çevre semtlere ortalama 2 saatte doğrudan adrese gizli elden teslimat.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Civilian Couriers & Absolute Discretion' : 'Kuryede Sıfır Etiket & Tam Sivil Teslimat'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Carried out exclusively by plain-clothed staff in unbranded, neutral packaging. Absolutely nothing discloses package contents.' : 'Kurye teslimatı tamamen sivil kıyafetli personel ile logosuz, nötr ambalajda gerçekleştirilir. Paketin dışından içeriğe dair en ufak bir emare anlaşılmaz.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'In-Store Pickup Without Waiting' : 'Mağazadan Doğrudan / Randevusuz Teslim Al'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Place an online order and collect in person from our store opposite İsmet İnönü Tram Station (Ilgaz İş Hanı) in minutes.' : 'Dilerseniz siparişinizi web sitemizden oluşturup, İsmet İnönü Tramvay Durağı karşısındaki Ilgaz İş Hanı kat mağazamızdan saniyeler içinde teslim alabilirsiniz.'}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${isEn ? 'Same-Day Nationwide Shipping (81 Cities)' : 'Tüm Türkiye\'ye Aynı Gün Kargo'}</h3>
+        <p class="about-editorial-item-desc">${isEn ? 'Orders placed across Turkey by 16:30 dispatch on the same business day in sealed neutral boxes with discrete waybills.' : 'Eskişehir dışındaki 80 ile saat 16:30\'a kadar verilen tüm siparişler aynı gün nötr kutulu ve kurumsal irsaliyeli olarak kargoya verilir.'}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-editorial-section">
+    <div class="about-editorial-left">
+      <span class="about-editorial-tag">04 / ${isEn ? 'ETHOS' : 'DEĞERLERİMİZ'}</span>
+      <h2 class="about-editorial-title">${tr('about.val.h')}</h2>
+      <p class="about-editorial-lead">${isEn ? 'Our uncompromised ethical and retail pillars built over 14 years.' : '14 yıldır taviz vermediğimiz perakende ve etik standartlarımız.'}</p>
+    </div>
+    <div class="about-editorial-right">
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${tr('about.v1.t')}</h3>
+        <p class="about-editorial-item-desc">${tr('about.v1.p')}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${tr('about.v2.t')}</h3>
+        <p class="about-editorial-item-desc">${tr('about.v2.p')}</p>
+      </div>
+      <div class="about-editorial-item">
+        <h3 class="about-editorial-item-title">${tr('about.v3.t')}</h3>
+        <p class="about-editorial-item-desc">${tr('about.v3.p')}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="about-consultation">
+    <h2 class="about-consultation-title">${tr('about.cta.h')}</h2>
+    <p class="about-consultation-sub">${isEn ? 'Reach out discreetly via WhatsApp or direct phone. Our team assists with genuine care and absolute privacy.' : 'Ürünler, gizlilik standartları veya teslimat süreci hakkında aklınıza takılan her şeyi çekinmeden sorabilirsiniz.'}</p>
+    <div class="about-consultation-actions">
       <a href="${esc(st.whatsapp || 'https://wa.me/905436331325')}" target="_blank" rel="noopener noreferrer" data-external="true" class="btn btn-wa" style="cursor:pointer;position:relative;z-index:10;font-weight:600;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0 1"/></svg>
-        ${C.lang === 'en' ? 'Chat on WhatsApp' : 'WhatsApp\'tan Yaz'}
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0 1"/></svg>
+        ${isEn ? 'Chat on WhatsApp' : 'WhatsApp\'tan Danış'}
       </a>
-      <a href="tel:${st.supportPhone ? st.supportPhone.replace(/[^0-9+]/g, '') : '+905436331325'}" data-external="true" class="btn btn-primary" style="cursor:pointer;position:relative;z-index:10;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        ${C.lang === 'en' ? 'Call Now' : 'Hemen Ara'}
+      <a href="tel:${st.supportPhone ? st.supportPhone.replace(/[^0-9+]/g, '') : '+905436331325'}" data-external="true" class="btn btn-ghost" style="cursor:pointer;position:relative;z-index:10;font-weight:500;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        ${esc(st.supportPhone || '+90 543 633 13 25')}
       </a>
     </div>
   </div>
@@ -3498,18 +3618,33 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (filter === 'new') list = list.filter((p: any) => p.isNew);
     if (q.get('featured') === '1') list = list.filter((p: any) => p.featured);
     if (q.get('wheel') === '1') return json(res, 200, { ok: true, total: 0, products: wheelProducts() });
-    switch (q.get('sort')) {
-      case 'yeni': case 'new': list.sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))); break;
-      case 'fiyat-artan': list.sort((a: any, b: any) => a.price - b.price); break;
-      case 'fiyat-azalan': list.sort((a: any, b: any) => b.price - a.price); break;
-      case 'puan': list.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0)); break;
-      default: {
-        const queryTerm = kw ? kw.toLowerCase().trim() : '';
-        if (!kw || !['yeni', 'new', 'yeni gelenler', 'yeni gelen'].includes(queryTerm)) {
-          list.sort((a: any, b: any) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
-        }
+    const sortParam = q.get('sort');
+    const queryTerm = kw ? kw.toLowerCase().trim() : '';
+
+    list.sort((a: any, b: any) => {
+      // Primary Hierarchy: In-stock products always first
+      const aStock = (a.stock && a.stock > 0) ? 1 : 0;
+      const bStock = (b.stock && b.stock > 0) ? 1 : 0;
+      if (aStock !== bStock) return bStock - aStock;
+
+      // Secondary: within stock group, apply requested sort
+      switch (sortParam) {
+        case 'yeni':
+        case 'new':
+          return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+        case 'fiyat-artan':
+          return (a.price || 0) - (b.price || 0);
+        case 'fiyat-azalan':
+          return (b.price || 0) - (a.price || 0);
+        case 'puan':
+          return (b.rating || 0) - (a.rating || 0);
+        default:
+          if (!kw || !['yeni', 'new', 'yeni gelenler', 'yeni gelen'].includes(queryTerm)) {
+            return ((b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0)) || ((b.rating || 0) - (a.rating || 0));
+          }
+          return 0;
       }
-    }
+    });
     const total = list.length;
     const offset = parseInt(q.get('offset') || '0', 10) || 0;
     const limit = Math.min(parseInt(q.get('limit') || '50', 10) || 50, 100);
