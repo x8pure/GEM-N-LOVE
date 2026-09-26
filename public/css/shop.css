@@ -271,13 +271,13 @@ html.dark em.em-rose,
   justify-content: center;
 }
 .age-content .age-brand .dot {
-  color: #E63946;
+  color: #D51A2A;
   font-weight: 800;
   display: inline-block;
   margin-left: 2px;
   animation: beat 2.4s ease-in-out infinite;
   transform-origin: center bottom;
-  text-shadow: 0 0 16px rgba(230, 57, 70, 0.4);
+  text-shadow: 0 0 16px rgba(213, 26, 42, 0.4);
 }
 .age-title {
   font-family: var(--font-display);
@@ -612,7 +612,7 @@ nav.top.scrolled .brand {
   font-size: 23px; 
   letter-spacing: -1.1px; 
 }
-.brand .dot { color: #E63946; font-weight: 800; display: inline-block; margin-left: 1px; width: auto; height: auto; background: none; border-radius: 0; box-shadow: none; animation: beat 2.4s ease-in-out infinite; transform-origin: center bottom; }
+.brand .dot { color: #D51A2A; font-weight: 800; display: inline-block; margin-left: 1px; width: auto; height: auto; background: none; border-radius: 0; box-shadow: none; animation: beat 2.4s ease-in-out infinite; transform-origin: center bottom; }
 @keyframes beat { 0%,100% { transform: scale(1); } 10% { transform: scale(1.16); } 20% { transform: scale(1); } 30% { transform: scale(1.1); } 40%,100% { transform: scale(1); } }
 .nav-links { display: flex; align-items: center; gap: 32px; font-size: 12px; font-weight: 400; letter-spacing: 1.8px; text-transform: uppercase; }
 .nav-links a { 
@@ -11350,8 +11350,48 @@ html.dark .qs-item-stock.out {
    2026 LUXURY LOCAL COURIER & DISCREET DELIVERY SIGNATURES
    (Anti-Slop: Pure typography, geometric icons, contrast perfection)
    ===================================================================== */
+.hero-stats .hero-stat-highlight strong,
 .hero-stat-highlight strong {
-  color: var(--rose, #E63946) !important;
+  color: #25D366 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.hero-stats .hero-stat-highlight strong::before,
+.hero-stat-highlight strong::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #25D366;
+  box-shadow: 0 0 0 2.5px rgba(37, 211, 102, 0.35);
+  flex-shrink: 0;
+  transform: translateY(1.5px);
+  animation: liveDotPulse 1.8s ease-in-out infinite;
+}
+@keyframes liveDotPulse {
+  0%, 100% {
+    transform: translateY(1.5px) scale(0.94);
+    box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.38);
+    opacity: 0.88;
+  }
+  50% {
+    transform: translateY(1.5px) scale(1.14);
+    box-shadow: 0 0 0 7px rgba(37, 211, 102, 0.14);
+    opacity: 1;
+  }
+}
+html.dark .hero-stats .hero-stat-highlight strong,
+html.dark .hero-stat-highlight strong,
+[data-theme="dark"] .hero-stat-highlight strong {
+  color: #25D366 !important;
+}
+html.dark .hero-stats .hero-stat-highlight strong::before,
+html.dark .hero-stat-highlight strong::before,
+[data-theme="dark"] .hero-stat-highlight strong::before {
+  background-color: #25D366;
+  box-shadow: 0 0 0 3.5px rgba(37, 211, 102, 0.28);
 }
 
 /* Product Detail Delivery Highlight */

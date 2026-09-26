@@ -2869,7 +2869,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
     const isEskisehir = city.includes('eskisehir') || city.includes('eskişehir') || city.includes('odunpazari') || city.includes('tepebasi');
 
     if (isEskisehir) {
-      valEl.textContent = LANG === 'en' ? '~2 Hours' : '~2 Saat';
+      valEl.textContent = LANG === 'en' ? '2 Hours' : '2 Saat';
       lblEl.textContent = LANG === 'en' ? 'Eskişehir Express Courier' : 'Eskişehir İçi Kurye';
     } else {
       // İstanbul, Ankara, İzmir, etc.
