@@ -2475,5 +2475,113 @@ img { max-width: 100%; display: block; }
   font-variant-numeric: tabular-nums;
 }
 
+/* POS Month Navigator & Daily Z-Report Accordion */
+.pos-month-nav {
+  display: inline-flex;
+  align-items: center;
+  background: var(--card-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.pos-month-step {
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.pos-month-step:hover {
+  color: var(--text);
+  background: var(--card-hover);
+}
+
+.pos-month-select {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+  font-family: var(--font-display);
+}
+
+.pos-month-select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.pos-stat-grid .stat-card.is-interactive {
+  cursor: pointer;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.pos-stat-grid .stat-card.is-interactive:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.pos-stat-grid .stat-card.active-period {
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+
+.pos-day-group-row {
+  cursor: pointer;
+  background: var(--card-2);
+  user-select: none;
+  transition: background .15s ease;
+}
+
+.pos-day-group-row:hover {
+  background: var(--card-hover) !important;
+}
+
+.pos-day-group-row td {
+  padding: 15px 20px !important;
+  border-bottom: 1px solid var(--line);
+}
+
+.pos-day-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  transition: transform .2s ease, color .2s ease, border-color .2s ease;
+  flex-shrink: 0;
+}
+
+.pos-day-group-row.expanded .pos-day-chevron {
+  transform: rotate(90deg);
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.pos-day-detail-row {
+  background: var(--bg-subtle);
+}
+
+.pos-day-detail-row td {
+  padding: 13px 20px 13px 34px !important;
+  font-size: 13px;
+  border-bottom: 1px dashed var(--line);
+}
+
+
 
 

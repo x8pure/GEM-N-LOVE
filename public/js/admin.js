@@ -2411,20 +2411,35 @@
     let sales = [];
     let products = [];
     let selectedProducts = [];
-    let activeFilter = 'today';
+    let activeFilter = 'today'; // 'today' | 'month' | 'custom_date' | 'all'
     let currentPaymentMethod = 'nakit';
+    let expandedDays = new Set();
 
     const now = new Date();
     const todayStr = now.toISOString().slice(0, 10);
     const currentMonthStr = todayStr.slice(0, 7);
     const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-    const currentMonthName = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
+    function formatMonthLabel(ym) {
+      if (!ym || ym.length < 7) return '';
+      const [y, m] = ym.split('-').map(Number);
+      return `${monthNames[(m || 1) - 1]} ${y}`;
+    }
+
+    function formatFullDayLabel(ymd) {
+      if (!ymd) return '';
+      const [y, m, d] = ymd.split('-').map(Number);
+      const dt = new Date(y, (m || 1) - 1, d || 1);
+      return dt.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+    }
+
+    let selectedMonth = currentMonthStr;
     let selectedDate = todayStr;
 
     mount('pos', `
-      <!-- TOP KPI STATS (5-COLUMN BALANCED REGISTER ARCHITECTURE) -->
+      <!-- TOP KPI STATS (5-COLUMN SYNCHRONIZED REGISTER ARCHITECTURE) -->
       <div class="pos-stat-grid">
-        <div class="stat-card" id="pos-card-today">
+        <div class="stat-card is-interactive active-period" id="pos-card-today" title="Bugünkü kasa hareketlerini göster">
           <div class="sc-top">
             <span class="sc-lbl">Bugünkü Ciro</span>
             <div class="sc-icon">
@@ -2435,48 +2450,48 @@
           <div class="sc-sub"><span id="pos-kpi-count">0</span> işlem (Bugün)</div>
         </div>
 
-        <div class="stat-card" id="pos-card-month">
+        <div class="stat-card is-interactive" id="pos-card-month" title="Seçili ayın raporunu ve gün sonu özetlerini göster">
           <div class="sc-top">
-            <span class="sc-lbl">Bu Ayki Toplam Ciro</span>
+            <span class="sc-lbl" id="pos-kpi-month-lbl">Aylık Toplam Ciro</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
             </div>
           </div>
           <div class="sc-val" id="pos-kpi-month-total">₺0,00</div>
-          <div class="sc-sub"><span id="pos-kpi-month-name">${currentMonthName}</span> • <span id="pos-kpi-month-count">0</span> işlem</div>
+          <div class="sc-sub"><span id="pos-kpi-month-name">${formatMonthLabel(selectedMonth)}</span> • <span id="pos-kpi-month-count">0</span> işlem</div>
         </div>
 
         <div class="stat-card">
           <div class="sc-top">
-            <span class="sc-lbl">Nakit Kasa (Bugün)</span>
+            <span class="sc-lbl" id="pos-kpi-cash-lbl">Nakit Kasa (Bugün)</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
             </div>
           </div>
           <div class="sc-val" id="pos-kpi-cash">₺0,00</div>
-          <div class="sc-sub">Çekmecedeki fiziki nakit</div>
+          <div class="sc-sub" id="pos-kpi-cash-sub">Çekmecedeki fiziki nakit</div>
         </div>
 
         <div class="stat-card">
           <div class="sc-top">
-            <span class="sc-lbl">Kredi / Banka Kartı (Bugün)</span>
+            <span class="sc-lbl" id="pos-kpi-pos-lbl">Kredi / Banka Kartı (Bugün)</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
             </div>
           </div>
           <div class="sc-val" id="pos-kpi-pos">₺0,00</div>
-          <div class="sc-sub">Terminal kart çekimleri</div>
+          <div class="sc-sub" id="pos-kpi-pos-sub">Terminal kart çekimleri</div>
         </div>
 
         <div class="stat-card">
           <div class="sc-top">
-            <span class="sc-lbl">Havale / FAST (Bugün)</span>
+            <span class="sc-lbl" id="pos-kpi-havale-lbl">Havale / FAST (Bugün)</span>
             <div class="sc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </div>
           </div>
           <div class="sc-val" id="pos-kpi-havale">₺0,00</div>
-          <div class="sc-sub">Banka transferleri</div>
+          <div class="sc-sub" id="pos-kpi-havale-sub">Banka transferleri</div>
         </div>
       </div>
 
@@ -2549,7 +2564,7 @@
 
         <!-- RIGHT: LEDGER & TRANSACTION HISTORY TABLE -->
         <div class="pos-card">
-          <div class="pos-card-head">
+          <div class="pos-card-head" style="flex-wrap:wrap;gap:14px">
             <div>
               <h2 id="pos-list-title">Günlük Kasa Defteri</h2>
               <p id="pos-list-sub">Bugün mağazada gerçekleşen elden satışlar</p>
@@ -2557,11 +2572,28 @@
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <div class="pos-filter-group" id="pos-filter-tabs">
                 <button type="button" class="pos-filter-btn active" data-filter="today">Bugün</button>
-                <button type="button" class="pos-filter-btn" data-filter="month">Bu Ay</button>
+                <button type="button" class="pos-filter-btn" data-filter="month">Aylık Rapor</button>
                 <button type="button" class="pos-filter-btn" data-filter="all">Tüm Geçmiş</button>
               </div>
-              <input type="date" id="pos-date-picker" value="${todayStr}" style="padding:6px 10px;font-size:12.5px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card-2);color:var(--text)">
-              <button class="btn btn-ghost btn-sm" id="pos-export-csv" title="Satışları CSV formatında indir">
+
+              <!-- Smart Month Navigator (< Eylül 2026 >) -->
+              <div class="pos-month-nav" id="pos-month-nav" title="Ay Seçimi">
+                <button type="button" class="pos-month-step" id="pos-month-prev" title="Önceki Ay">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <select id="pos-month-select" class="pos-month-select"></select>
+                <button type="button" class="pos-month-step" id="pos-month-next" title="Sonraki Ay">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+
+              <input type="date" id="pos-date-picker" value="${todayStr}" title="Belirli bir güne git" style="padding:5px 10px;font-size:12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card-2);color:var(--text)">
+
+              <button type="button" class="btn btn-ghost btn-sm" id="pos-toggle-all-days" style="display:none" title="Tüm günlerin detaylarını aç/kapat">
+                Tüm Günleri Aç
+              </button>
+
+              <button class="btn btn-ghost btn-sm" id="pos-export-csv" title="Seçili dönemin satışlarını CSV olarak indir">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                 Dışa Aktar
               </button>
@@ -2570,7 +2602,7 @@
 
           <div class="pos-table-wrap">
             <table class="pos-tbl">
-              <thead>
+              <thead id="pos-thead">
                 <tr>
                   <th style="width:120px">Saat</th>
                   <th>Satış / Ürünler</th>
@@ -2588,7 +2620,7 @@
           <!-- Bottom Ledger Summary Bar -->
           <div class="pos-summary-bar">
             <div class="pos-summary-item">
-              <span class="pos-summary-label">Seçili Dönem</span>
+              <span class="pos-summary-label">Seçili Dönem Özeti</span>
               <span class="pos-summary-val" id="pos-summary-desc" style="font-size:13.5px">0 İşlem</span>
             </div>
             <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
@@ -2622,6 +2654,42 @@
     } catch (e) {
       toast('Kasa verileri yüklenemedi: ' + e.message, true);
     }
+
+    // Build available months list (last 12 months + any month present in sales)
+    function getAvailableMonths() {
+      const set = new Set();
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        set.add(ym);
+      }
+      sales.forEach((s) => {
+        const ym = (s.createdAt || '').slice(0, 7);
+        if (ym && ym.length === 7) set.add(ym);
+      });
+      return Array.from(set).sort().reverse();
+    }
+
+    // If current month has 0 sales yet (e.g., 1st of October) and previous month has sales, default selectedMonth to the latest month with sales so the Monthly KPI card immediately shows useful info!
+    const currentMonthHasSales = sales.some((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr);
+    if (!currentMonthHasSales && sales.length > 0) {
+      const latestSaleMonth = (sales[0].createdAt || '').slice(0, 7);
+      if (latestSaleMonth && latestSaleMonth.length === 7) {
+        selectedMonth = latestSaleMonth;
+      }
+    }
+
+    function populateMonthSelect() {
+      const months = getAvailableMonths();
+      const sel = $('#pos-month-select');
+      if (!sel) return;
+      sel.innerHTML = months.map((ym) => {
+        const count = sales.filter((s) => (s.createdAt || '').slice(0, 7) === ym).length;
+        return `<option value="${ym}" ${ym === selectedMonth ? 'selected' : ''}>${formatMonthLabel(ym)}${count ? ` (${count})` : ''}</option>`;
+      }).join('');
+    }
+
+    populateMonthSelect();
 
     // Segmented method switcher
     $$('#pos-method-group .pos-segment-btn').forEach((btn) => {
@@ -2714,13 +2782,11 @@
         </div>
       `).join('');
 
-      // Auto update total amount field
       const calcTotal = selectedProducts.reduce((sum, it) => sum + (it.price * it.qty), 0);
       if (calcTotal > 0) {
         $('#pos-sale-amount').value = calcTotal.toFixed(2);
       }
 
-      // Auto populate title if empty
       if (!$('#pos-sale-title').value.trim()) {
         $('#pos-sale-title').value = selectedProducts.map((it) => `${it.qty > 1 ? it.qty + 'x ' : ''}${it.name}`).join(', ');
       }
@@ -2761,11 +2827,11 @@
         if (res.ok && res.sale) {
           sales.unshift(res.sale);
           toast('Satış başarıyla kasaya işlendi');
-          // Reset form
           $('#pos-sale-amount').value = '';
           $('#pos-sale-title').value = '';
           selectedProducts = [];
           renderSelectedItems();
+          populateMonthSelect();
           draw();
         }
       } catch (e) {
@@ -2776,110 +2842,248 @@
       }
     });
 
+    function getFilteredSales() {
+      if (activeFilter === 'today') {
+        return sales.filter((s) => (s.createdAt || '').slice(0, 10) === todayStr);
+      }
+      if (activeFilter === 'month') {
+        return sales.filter((s) => (s.createdAt || '').slice(0, 7) === selectedMonth);
+      }
+      if (activeFilter === 'custom_date') {
+        return sales.filter((s) => (s.createdAt || '').slice(0, 10) === selectedDate);
+      }
+      return sales;
+    }
+
+    function renderSingleSaleRow(s, isNested = false) {
+      const d = new Date(s.createdAt);
+      const timeStr = d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+      const methodLabel = s.paymentMethod === 'pos' ? 'Kredi Kartı' : (s.paymentMethod === 'havale' ? 'Havale / EFT' : 'Nakit');
+
+      return `
+        <tr class="${isNested ? 'pos-day-detail-row' : ''}" data-day-child="${(s.createdAt || '').slice(0, 10)}">
+          <td>
+            <div style="font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">${timeStr}</div>
+            ${!isNested ? `<div class="muted" style="font-size:11px">${dateStr}</div>` : ''}
+          </td>
+          <td>
+            <div style="font-weight:600;color:var(--text);font-size:13.5px">${esc(s.title || 'Mağaza Satışı')}</div>
+            ${s.items && s.items.length && (!s.title || s.title === 'Mağaza Elden Satış' || s.title === 'Mağaza Satışı') ? `<div class="muted" style="font-size:12px;margin-top:2px">${s.items.map((it) => `${it.qty > 1 ? it.qty + '× ' : ''}${esc(it.title)}`).join(', ')}</div>` : ''}
+          </td>
+          <td>
+            <span class="pos-method-chip">${methodLabel}</span>
+          </td>
+          <td>
+            <div style="font-weight:700;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums">${fmt(s.total)}</div>
+          </td>
+          <td style="text-align:right">
+            <button class="btn btn-ghost btn-sm pos-del-btn" data-id="${s.id}" title="Satış kaydını sil" style="color:var(--muted);padding:4px 8px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
     // Draw table & recalculate KPIs
     function draw() {
-      // 1. Calculate today's KPIs
       const todaySales = sales.filter((s) => (s.createdAt || '').slice(0, 10) === todayStr);
       const todayTotal = todaySales.reduce((sum, s) => sum + (s.total || 0), 0);
-      const todayCash = todaySales.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
-      const todayPos = todaySales.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
-      const todayHavale = todaySales.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
 
-      // 2. Calculate current month's KPIs
-      const monthSales = sales.filter((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr);
+      const monthSales = sales.filter((s) => (s.createdAt || '').slice(0, 7) === selectedMonth);
       const monthTotal = monthSales.reduce((sum, s) => sum + (s.total || 0), 0);
-      const monthCount = monthSales.length;
+      const monthLabel = formatMonthLabel(selectedMonth);
 
+      const filtered = getFilteredSales();
+      const periodCash = filtered.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
+      const periodPos = filtered.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
+      const periodHavale = filtered.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
+      const periodGrand = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
+
+      const periodShortTag = activeFilter === 'today' ? 'Bugün'
+        : (activeFilter === 'month' ? monthLabel
+        : (activeFilter === 'custom_date' ? selectedDate : 'Tüm Dönem'));
+
+      // Update Top KPI Cards
       $('#pos-kpi-total').textContent = fmt(todayTotal);
       $('#pos-kpi-count').textContent = todaySales.length;
-      $('#pos-kpi-month-total').textContent = fmt(monthTotal);
-      $('#pos-kpi-month-count').textContent = monthCount;
-      $('#pos-kpi-cash').textContent = fmt(todayCash);
-      $('#pos-kpi-pos').textContent = fmt(todayPos);
-      $('#pos-kpi-havale').textContent = fmt(todayHavale);
 
-      // 3. Filter list based on selected view
-      let filtered = [];
+      $('#pos-kpi-month-lbl').textContent = selectedMonth === currentMonthStr ? 'Bu Ayki Toplam Ciro' : `${monthLabel} Cirosu`;
+      $('#pos-kpi-month-total').textContent = fmt(monthTotal);
+      $('#pos-kpi-month-name').textContent = monthLabel;
+      $('#pos-kpi-month-count').textContent = monthSales.length;
+
+      $('#pos-kpi-cash-lbl').textContent = `Nakit Kasa (${periodShortTag})`;
+      $('#pos-kpi-pos-lbl').textContent = `Kredi / Banka Kartı (${periodShortTag})`;
+      $('#pos-kpi-havale-lbl').textContent = `Havale / FAST (${periodShortTag})`;
+
+      $('#pos-kpi-cash').textContent = fmt(periodCash);
+      $('#pos-kpi-pos').textContent = fmt(periodPos);
+      $('#pos-kpi-havale').textContent = fmt(periodHavale);
+
+      $('#pos-card-today').classList.toggle('active-period', activeFilter === 'today');
+      $('#pos-card-month').classList.toggle('active-period', activeFilter === 'month');
+
+      // Update Table Headers & Titles based on single-day vs grouped-day mode
+      const isGroupedMode = activeFilter === 'month' || activeFilter === 'all';
+      const toggleAllBtn = $('#pos-toggle-all-days');
+      const thead = $('#pos-thead');
+
       if (activeFilter === 'today') {
-        filtered = sales.filter((s) => (s.createdAt || '').slice(0, 10) === todayStr);
         $('#pos-list-title').textContent = 'Günlük Kasa Defteri';
-        $('#pos-list-sub').textContent = `Bugün mağazada gerçekleşen elden satışlar (${filtered.length} kayıt)`;
+        $('#pos-list-sub').textContent = `Bugün mağazada gerçekleşen elden satışlar (${filtered.length} işlem)`;
       } else if (activeFilter === 'month') {
-        filtered = sales.filter((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr);
-        $('#pos-list-title').textContent = `${currentMonthName} Kasa Defteri`;
-        $('#pos-list-sub').textContent = `${currentMonthName} ayı boyunca mağazada gerçekleşen elden satışlar (${filtered.length} kayıt)`;
+        $('#pos-list-title').textContent = `${monthLabel} Kasa Raporu (Gün Sonu Özeti)`;
+        $('#pos-list-sub').textContent = `${monthLabel} dönemindeki günlük cirolar — detayları görmek için gün satırına tıklayın`;
       } else if (activeFilter === 'custom_date') {
-        filtered = sales.filter((s) => (s.createdAt || '').slice(0, 10) === selectedDate);
-        $('#pos-list-title').textContent = `${selectedDate} Tarihli Kasa Defteri`;
-        $('#pos-list-sub').textContent = `${selectedDate} tarihinde gerçekleşen satışlar (${filtered.length} kayıt)`;
+        $('#pos-list-title').textContent = `${formatFullDayLabel(selectedDate)}`;
+        $('#pos-list-sub').textContent = `Seçili tarihte gerçekleşen satışlar (${filtered.length} işlem)`;
       } else {
-        filtered = sales;
-        $('#pos-list-title').textContent = 'Tüm Geçmiş Kasa Hareketleri';
-        $('#pos-list-sub').textContent = `Fiziksel mağaza tüm zamanlar satış kaydı (${filtered.length} kayıt)`;
+        $('#pos-list-title').textContent = 'Tüm Geçmiş Kasa Defteri (Gün Sonu Özeti)';
+        $('#pos-list-sub').textContent = `Tüm zamanların gün gün kasa toplamları (${filtered.length} işlem)`;
       }
 
-      // 4. Render table rows
-      const tbody = $('#pos-tbody');
-      if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty" style="padding:36px;text-align:center">Bu dönem için henüz elden satış kaydı bulunmuyor.</td></tr>`;
+      if (isGroupedMode) {
+        thead.innerHTML = `
+          <tr>
+            <th style="width:240px">Tarih / Gün</th>
+            <th>İşlem & Ödeme Dağılımı</th>
+            <th style="width:160px">İşlem Adedi</th>
+            <th style="width:150px">Gün Sonu Toplamı</th>
+            <th style="text-align:right;width:50px"></th>
+          </tr>
+        `;
       } else {
-        tbody.innerHTML = filtered.map((s) => {
-          const d = new Date(s.createdAt);
-          const timeStr = d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-          const dateStr = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
-          const methodLabel = s.paymentMethod === 'pos' ? 'Kredi Kartı' : (s.paymentMethod === 'havale' ? 'Havale / EFT' : 'Nakit');
+        thead.innerHTML = `
+          <tr>
+            <th style="width:120px">Saat</th>
+            <th>Satış / Ürünler</th>
+            <th style="width:180px">Ödeme</th>
+            <th style="width:140px">Tutar</th>
+            <th style="text-align:right;width:50px"></th>
+          </tr>
+        `;
+      }
 
-          return `
-            <tr>
+      const tbody = $('#pos-tbody');
+
+      if (!filtered.length) {
+        if (toggleAllBtn) toggleAllBtn.style.display = 'none';
+        tbody.innerHTML = `<tr><td colspan="5" class="empty" style="padding:36px;text-align:center">Bu dönem (${esc(periodShortTag)}) için kayıtlı kasa işlemi bulunmuyor.</td></tr>`;
+      } else if (!isGroupedMode) {
+        if (toggleAllBtn) toggleAllBtn.style.display = 'none';
+        tbody.innerHTML = filtered.map((s) => renderSingleSaleRow(s, false)).join('');
+      } else {
+        // Group by YYYY-MM-DD (Daily Z-Report Accordion)
+        const groupsMap = new Map();
+        filtered.forEach((s) => {
+          const dayKey = (s.createdAt || '').slice(0, 10) || 'Belirsiz';
+          if (!groupsMap.has(dayKey)) groupsMap.set(dayKey, []);
+          groupsMap.get(dayKey).push(s);
+        });
+
+        const dayKeys = Array.from(groupsMap.keys()).sort().reverse();
+
+        if (toggleAllBtn) {
+          toggleAllBtn.style.display = dayKeys.length > 0 ? 'inline-flex' : 'none';
+          const allOpen = dayKeys.every((k) => expandedDays.has(k));
+          toggleAllBtn.textContent = allOpen ? 'Tüm Günleri Kapat' : 'Tüm Günleri Aç';
+          toggleAllBtn.onclick = () => {
+            if (allOpen) {
+              expandedDays.clear();
+            } else {
+              dayKeys.forEach((k) => expandedDays.add(k));
+            }
+            draw();
+          };
+        }
+
+        let html = '';
+        dayKeys.forEach((dayKey) => {
+          const daySales = groupsMap.get(dayKey) || [];
+          const dTotal = daySales.reduce((sum, s) => sum + (s.total || 0), 0);
+          const dNakit = daySales.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
+          const dPos = daySales.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
+          const dHavale = daySales.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
+          const isExp = expandedDays.has(dayKey);
+
+          const parts = [];
+          if (dNakit > 0) parts.push(`Nakit: <b>${fmt(dNakit)}</b>`);
+          if (dPos > 0) parts.push(`Kart/POS: <b>${fmt(dPos)}</b>`);
+          if (dHavale > 0) parts.push(`Havale: <b>${fmt(dHavale)}</b>`);
+
+          html += `
+            <tr class="pos-day-group-row ${isExp ? 'expanded' : ''}" data-day-toggle="${dayKey}">
               <td>
-                <div style="font-weight:600;color:var(--text);font-variant-numeric:tabular-nums">${timeStr}</div>
-                <div class="muted" style="font-size:11px">${dateStr}</div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="pos-day-chevron">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </span>
+                  <div>
+                    <div style="font-weight:700;color:var(--text);font-size:13.5px">${formatFullDayLabel(dayKey)}</div>
+                    <div class="muted" style="font-size:11px;font-variant-numeric:tabular-nums">${dayKey}</div>
+                  </div>
+                </div>
               </td>
               <td>
-                <div style="font-weight:600;color:var(--text);font-size:13.5px">${esc(s.title || 'Mağaza Satışı')}</div>
-                ${s.items && s.items.length && (!s.title || s.title === 'Mağaza Elden Satış' || s.title === 'Mağaza Satışı') ? `<div class="muted" style="font-size:12px;margin-top:2px">${s.items.map((it) => `${it.qty > 1 ? it.qty + '× ' : ''}${esc(it.title)}`).join(', ')}</div>` : ''}
+                <div style="font-size:12.5px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap">
+                  ${parts.join(' <span style="opacity:0.35">•</span> ') || '—'}
+                </div>
               </td>
               <td>
-                <span class="pos-method-chip">${methodLabel}</span>
+                <span class="pos-method-chip">${daySales.length} İşlem</span>
               </td>
               <td>
-                <div style="font-weight:700;font-size:14px;color:var(--text);font-variant-numeric:tabular-nums">${fmt(s.total)}</div>
+                <div style="font-weight:800;font-size:15px;color:var(--text);font-variant-numeric:tabular-nums">${fmt(dTotal)}</div>
               </td>
-              <td style="text-align:right">
-                <button class="btn btn-ghost btn-sm pos-del-btn" data-id="${s.id}" title="Satış kaydını sil" style="color:var(--muted);padding:4px 8px">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                </button>
+              <td style="text-align:right;color:var(--muted);font-size:11.5px;font-weight:600">
+                ${isExp ? 'Gizle' : 'Detay'}
               </td>
             </tr>
           `;
-        }).join('');
+
+          if (isExp) {
+            html += daySales.map((s) => renderSingleSaleRow(s, true)).join('');
+          }
+        });
+
+        tbody.innerHTML = html;
+
+        // Bind day group expand/collapse
+        $$('[data-day-toggle]', tbody).forEach((row) => {
+          row.addEventListener('click', () => {
+            const dk = row.dataset.dayToggle;
+            if (expandedDays.has(dk)) expandedDays.delete(dk);
+            else expandedDays.add(dk);
+            draw();
+          });
+        });
       }
 
-      // 5. Calculate day summary box
-      const sumNakit = filtered.filter((s) => s.paymentMethod === 'nakit').reduce((sum, s) => sum + (s.total || 0), 0);
-      const sumPos = filtered.filter((s) => s.paymentMethod === 'pos').reduce((sum, s) => sum + (s.total || 0), 0);
-      const sumHavale = filtered.filter((s) => s.paymentMethod === 'havale').reduce((sum, s) => sum + (s.total || 0), 0);
-      const sumGrand = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
+      // 5. Update Bottom Ledger Summary Bar
+      const activeDaysCount = new Set(filtered.map((s) => (s.createdAt || '').slice(0, 10))).size;
+      const periodDesc = activeFilter === 'today' ? `Bugün (${filtered.length} İşlem)`
+        : (activeFilter === 'month' ? `${monthLabel} (${activeDaysCount} Aktif Gün • ${filtered.length} İşlem)`
+        : (activeFilter === 'custom_date' ? `${selectedDate} (${filtered.length} İşlem)` : `Tüm Dönem (${activeDaysCount} Aktif Gün • ${filtered.length} İşlem)`));
 
-      const periodDesc = activeFilter === 'today' ? 'Bugünkü Satışlar'
-        : (activeFilter === 'month' ? `${currentMonthName} Satışları`
-        : (activeFilter === 'custom_date' ? `${selectedDate} Satışları` : 'Tüm Dönem Satışları'));
-
-      $('#pos-summary-desc').textContent = `${periodDesc} (${filtered.length} İşlem)`;
-      $('#pos-sum-nakit').textContent = fmt(sumNakit);
-      $('#pos-sum-pos').textContent = fmt(sumPos);
-      $('#pos-sum-havale').textContent = fmt(sumHavale);
-      $('#pos-sum-grand').textContent = fmt(sumGrand);
+      $('#pos-summary-desc').textContent = periodDesc;
+      $('#pos-sum-nakit').textContent = fmt(periodCash);
+      $('#pos-sum-pos').textContent = fmt(periodPos);
+      $('#pos-sum-havale').textContent = fmt(periodHavale);
+      $('#pos-sum-grand').textContent = fmt(periodGrand);
 
       // Bind delete events
       $$('.pos-del-btn', tbody).forEach((btn) => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
           const id = btn.dataset.id;
           if (!confirm('Bu mağaza satış kaydını silmek istediğinize emin misiniz?')) return;
           try {
             await api('/api/admin/pos/' + encodeURIComponent(id), { method: 'DELETE' });
             sales = sales.filter((s) => s.id !== id);
             toast('Satış kaydı silindi');
+            populateMonthSelect();
             draw();
           } catch (e) {
             toast(e.message, true);
@@ -2888,34 +3092,80 @@
       });
     }
 
-    // Filter tabs switcher (Bugün, Bu Ay, Tüm Geçmiş)
+    function setFilterMode(mode) {
+      activeFilter = mode;
+      $$('#pos-filter-tabs .pos-filter-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.filter === mode);
+      });
+      if (mode === 'today') {
+        selectedDate = todayStr;
+        $('#pos-date-picker').value = todayStr;
+      }
+      draw();
+    }
+
+    // Top KPI Card click shortcuts
+    $('#pos-card-today').addEventListener('click', () => setFilterMode('today'));
+    $('#pos-card-month').addEventListener('click', () => setFilterMode('month'));
+
+    // Filter tabs switcher (Bugün, Aylık Rapor, Tüm Geçmiş)
     $$('#pos-filter-tabs .pos-filter-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        $$('#pos-filter-tabs .pos-filter-btn').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeFilter = btn.dataset.filter;
-        if (activeFilter === 'today') {
-          selectedDate = todayStr;
-          $('#pos-date-picker').value = todayStr;
-        }
-        draw();
+        setFilterMode(btn.dataset.filter);
       });
+    });
+
+    // Month Selector Dropdown & Prev/Next Buttons
+    $('#pos-month-select').addEventListener('change', (e) => {
+      selectedMonth = e.target.value;
+      expandedDays.clear();
+      setFilterMode('month');
+    });
+
+    $('#pos-month-prev').addEventListener('click', () => {
+      const months = getAvailableMonths(); // sorted newest to oldest
+      const idx = months.indexOf(selectedMonth);
+      if (idx >= 0 && idx < months.length - 1) {
+        selectedMonth = months[idx + 1];
+      } else {
+        const [y, m] = selectedMonth.split('-').map(Number);
+        const prevDate = new Date(y, m - 2, 1);
+        selectedMonth = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+      }
+      populateMonthSelect();
+      expandedDays.clear();
+      setFilterMode('month');
+    });
+
+    $('#pos-month-next').addEventListener('click', () => {
+      const months = getAvailableMonths();
+      const idx = months.indexOf(selectedMonth);
+      if (idx > 0) {
+        selectedMonth = months[idx - 1];
+        populateMonthSelect();
+        expandedDays.clear();
+        setFilterMode('month');
+      }
     });
 
     // Date picker filter
     $('#pos-date-picker').addEventListener('change', (e) => {
+      if (!e.target.value) return;
       selectedDate = e.target.value;
       activeFilter = 'custom_date';
       $$('#pos-filter-tabs .pos-filter-btn').forEach((b) => b.classList.remove('active'));
       draw();
     });
 
-    // Export CSV
+    // Export CSV (exports the active filtered period)
     $('#pos-export-csv').addEventListener('click', () => {
-      const exportList = activeFilter === 'all' ? sales : (sales.filter((s) => (s.createdAt || '').slice(0, 7) === currentMonthStr).length ? sales : sales);
+      const exportList = getFilteredSales();
+      if (!exportList.length) {
+        return toast('Seçili dönemde dışa aktarılacak işlem bulunmuyor.', true);
+      }
       const rows = [
         ['Islem No', 'Tarih', 'Saat', 'Satis Basligi / Not', 'Odeme Yontemi', 'Tutar (TL)', 'Kasiyer'],
-        ...sales.map((s) => {
+        ...exportList.map((s) => {
           const d = new Date(s.createdAt);
           return [
             s.id,
@@ -2928,7 +3178,8 @@
           ];
         })
       ];
-      exportCSV(`loveshop-kasa-${new Date().toISOString().slice(0,10)}.csv`, rows);
+      const suffix = activeFilter === 'month' ? selectedMonth : (activeFilter === 'custom_date' ? selectedDate : todayStr);
+      exportCSV(`loveshop-kasa-${suffix}.csv`, rows);
     });
 
     draw();
