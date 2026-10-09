@@ -945,7 +945,11 @@
         <option value="delivered">Teslim Edildi</option>
         <option value="cancelled">İptal</option>
       </select>
-      <button class="btn btn-ghost" id="ord-export" style="margin-left:auto">📥 Siparişleri CSV İndir</button>
+      <button class="btn btn-ghost" id="ord-refresh" title="Siparişleri Canlı Yenile" style="margin-left:auto">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Yenile
+      </button>
+      <button class="btn btn-ghost" id="ord-export">📥 Siparişleri CSV İndir</button>
       <button class="btn btn-ghost" id="ord-clear-all" style="color:var(--rose,#ff3366);border-color:rgba(255,51,102,0.3)">🗑️ Tümünü Temizle</button>
     </div>
     <div class="panel"><div class="panel-body flush">
@@ -1013,6 +1017,23 @@
           draw();
         } catch (e) { toast(e.message, true); }
       }));
+    }
+
+    const refBtn = $('#ord-refresh');
+    if (refBtn) {
+      refBtn.addEventListener('click', async () => {
+        try {
+          refBtn.disabled = true;
+          const r = await api('/api/admin/orders');
+          all = r.orders || [];
+          draw();
+          toast('Sipariş listesi güncellendi');
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          refBtn.disabled = false;
+        }
+      });
     }
 
     $('#ord-export').addEventListener('click', () => {

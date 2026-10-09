@@ -1487,8 +1487,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" media="print" onload="this.media='all'" />
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap" /></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap">
 <link rel="preload" href="/css/shop.css?v=${appVersion}" as="style">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <!-- <link rel="icon" type="image/x-icon" href="/favicon.ico"> removed -->
@@ -1514,16 +1513,10 @@ ${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID
 ${opts.noChrome ? body : `
 ${C.isBot ? '' : `
 <div id="age-gate">
-  <video class="age-bg-video" autoplay loop muted playsinline preload="auto">
-    <source src="/uploads/age-gate-bg.mp4" type="video/mp4">
-    <source src="/videos/age-gate-bg.mp4" type="video/mp4">
-    <source src="/age-gate-bg.mp4" type="video/mp4">
-    <source src="/uploads/video.mp4" type="video/mp4">
-  </video>
   <div class="age-video-overlay"></div>
   <div class="age-content">
-    <h2 class="brand age-brand">LOVE<span class="dot">.</span></h2>
-    <div class="age-title" style="font-size:32px;font-weight:700;margin-bottom:12px">${tr('age.title')}</div>
+    <h2 class="age-brand">LOVE<span class="dot">.</span></h2>
+    <div class="age-title">${tr('age.title')}</div>
     <p class="age-legal">${tr('age.legal')}</p>
     <div class="age-actions">
       <button id="age-yes" class="btn btn-primary">${tr('age.yes')}</button>
@@ -4088,6 +4081,16 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!adm) return sendError(res, 401, E('err.needAdmin'));
 
     if (pathname === '/api/admin/stats' && method === 'GET') {
+      try {
+        const cloudOrders = await loadOrdersFromCloud();
+        if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+          const orderMap = new Map();
+          (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        }
+      } catch (e) {}
+
       const revenueOrders = db.orders.filter((o: any) => o.status !== 'cancelled');
       const now = new Date();
       
@@ -4176,6 +4179,17 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     }
 
     if (pathname === '/api/admin/orders' && method === 'GET') {
+      try {
+        const cloudOrders = await loadOrdersFromCloud();
+        if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+          const orderMap = new Map();
+          (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        }
+      } catch (e) {
+        console.error('[Admin Orders] Firestore sync error:', e);
+      }
       const orders = [...db.orders].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt));
       return json(res, 200, { ok: true, orders });
     }
