@@ -4,8 +4,12 @@ Allow: /magaza
 Allow: /urun/
 Allow: /rehber
 Allow: /rehber/
+Allow: /kargo-ve-teslimat
+Allow: /sehir/eskisehir
 Allow: /hakkimizda
 Allow: /iletisim
+Allow: /gizlilik-politikasi
+Allow: /kullanim-kosullari
 Allow: /css/
 Allow: /js/
 Allow: /assets/

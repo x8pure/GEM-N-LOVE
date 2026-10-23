@@ -874,7 +874,12 @@ function pageCtx(req: http.IncomingMessage, res?: http.ServerResponse) {
   const cartCount = (sess && Array.isArray(sess.cart)) ? sess.cart.reduce((a: number, i: any) => a + (parseInt(i.qty, 10) || 1), 0) : 0;
   const ua = (req.headers['user-agent'] || '').toLowerCase();
   const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(ua);
-  return { lang, theme, t: makeT(lang), num: (n: number) => n.toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'), cartCount, isBot };
+  let reqPath = '/';
+  try {
+    const u = new URL(req.url || '/', 'http://localhost');
+    reqPath = u.pathname.replace(/\/+$/, '') || '/';
+  } catch {}
+  return { lang, theme, path: reqPath, t: makeT(lang), num: (n: number) => n.toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'), cartCount, isBot };
 }
 
 const ERR: Record<string, Record<string, string>> = {
@@ -1294,7 +1299,10 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
     ? 'LOVE: Modern Sexual Wellness & Intimacy store. 100% discreet packaging, anonymous payment, certified body-safe products with express delivery across Turkey.'
     : 'LOVE: Modern Sexual Wellness & Cinsel Sağlık Platformu. Beden dostu medikal teknolojiler, masaj aletleri ve organik formüller. %100 çift mühürlü gizli paketleme, tüm Türkiye\'ye aynı gün kargo ve Eskişehir 15 yıllık köklü mağaza güvencesi.');
   const canonicalUrl = opts.canonical || (`https://loveeroticshop.com${C.path || '/'}`);
-  const ogImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveeroticshop.com/test.png');
+  const rawOgImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveeroticshop.com/test.png');
+  const ogImage = (rawOgImage && !String(rawOgImage).startsWith('http://') && !String(rawOgImage).startsWith('https://'))
+    ? `https://loveeroticshop.com${String(rawOgImage).startsWith('/') ? '' : '/'}${rawOgImage}`
+    : String(rawOgImage);
 
   // 2026 Enhanced Structured Data (JSON-LD) for Search Intent & Brand Authority
   const schemaGraph: any[] = [
@@ -1377,12 +1385,18 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 
   if (opts.product) {
     const prod = opts.product;
+    const rawProdDesc = String(prod.description || prod.longDescription || prod.desc || prod.name || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const prodImgUrl = prod.image
+      ? (String(prod.image).startsWith('http://') || String(prod.image).startsWith('https://')
+          ? String(prod.image)
+          : `https://loveeroticshop.com${String(prod.image).startsWith('/') ? '' : '/'}${prod.image}`)
+      : '';
     schemaGraph.push({
       "@type": "Product",
       "@id": `https://loveeroticshop.com/urun/${prod.slug || prod.id}#product`,
       "name": prod.name,
-      "description": prod.desc || prod.name,
-      "image": prod.image ? [prod.image] : [],
+      "description": rawProdDesc || prod.name,
+      "image": prodImgUrl ? [prodImgUrl] : [],
       "sku": prod.id,
       "brand": {
         "@type": "Brand",
@@ -1480,13 +1494,18 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(title)} | LOVE Sexual Wellness</title>
 <meta name="description" content="${esc(desc)}">
+${opts.noindex ? '<meta name="robots" content="noindex, nofollow">' : '<meta name="robots" content="index, follow, max-image-preview:large">'}
 <meta name="google-site-verification" content="googled2d4255e0f685daf">
 <meta property="og:site_name" content="LOVE — Sexual Wellness & Intimacy">
 <meta property="og:title" content="${esc(title)} | LOVE Sexual Wellness">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(ogImage)}">
 <meta property="og:url" content="${esc(canonicalUrl)}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${opts.product ? 'product' : 'website'}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)} | LOVE Sexual Wellness">
+<meta name="twitter:description" content="${esc(desc)}">
+<meta name="twitter:image" content="${esc(ogImage)}">
 <link rel="canonical" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2109,13 +2128,32 @@ function pageShop(req: http.IncomingMessage, res: http.ServerResponse) {
   const titleStr = activeCatName
     ? `${activeCatName} — ${C.lang === 'en' ? 'Shop' : 'Seks Shop & Erotik Shop'}`
     : (C.lang === 'en' ? 'Shop' : 'Tüm Ürünler — Seks Shop & Erotik Shop');
+  const shopCanonical = activeCat
+    ? `https://loveeroticshop.com/magaza?kat=${encodeURIComponent(activeCat.slug)}`
+    : 'https://loveeroticshop.com/magaza';
+  const shopDesc = activeCatName
+    ? `${activeCatName} modelleri ve fiyatları. Eskişehir Love Seks Shop & Erotik Shop güvencesiyle %100 gizli paketleme, orijinal medikal ürünler ve aynı gün kargo.`
+    : 'Eskişehir Love Seks Shop & Erotik Shop online kataloğu. Kadın, erkek, çiftler için vücut dostu ürünler, kayganlaştırıcılar, iç giyim ve aksesuarlar.';
+  const shopBreadcrumbs = activeCat
+    ? [
+        { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+        { name: 'Mağaza', url: 'https://loveeroticshop.com/magaza' },
+        { name: activeCatName, url: shopCanonical }
+      ]
+    : [
+        { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+        { name: 'Mağaza', url: 'https://loveeroticshop.com/magaza' }
+      ];
   res.end(layout(titleStr, html, {
-    description: 'Eskişehir Love Seks Shop & Erotik Shop online kataloğu. Kadın, erkek, çiftler için vücut dostu ürünler, kayganlaştırıcılar, iç giyim ve aksesuarlar.'
+    description: shopDesc,
+    canonical: shopCanonical,
+    breadcrumbs: shopBreadcrumbs
   }, C));
 }
 
 function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: string) {
   const C = pageCtx(req);
+  const tr = C.t;
   const rawKey = decodeURIComponent(slug || '').trim().toLowerCase();
   const cleanKey = rawKey.replace(/^\/urun\//, '').replace(/\/+$/, '');
   const p = db.products.find((x: any) => {
@@ -2123,11 +2161,46 @@ function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: 
     const i = String(x.id || '').toLowerCase();
     return s === cleanKey || i === cleanKey || s === rawKey || i === rawKey;
   });
-  const pageTitle = p ? p.name : (C.lang === 'en' ? 'Product' : 'Ürün');
-  const desc = p ? (p.desc || p.name) : undefined;
-  const ogImage = p ? p.image : undefined;
-  const canonical = p ? `https://loveeroticshop.com/urun/${p.slug}` : undefined;
-  const html = `<div id="product-root"><div class="spinner"></div></div>`;
+  if (!p) {
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+    const notFoundHtml = `<div id="product-root"><div class="empty-state" style="padding:80px 20px;text-align:center"><h1 style="font-family:var(--font-display);font-size:28px;margin-bottom:12px">${C.lang === 'en' ? 'Product Not Found' : 'Ürün Bulunamadı'}</h1><p style="color:var(--muted);margin-bottom:24px">${C.lang === 'en' ? 'The product you are looking for may have been moved or removed.' : 'Aradığınız ürün kaldırılmış veya adresi değişmiş olabilir.'}</p><a class="btn btn-primary" href="/magaza">${C.lang === 'en' ? 'Back to Shop' : 'Mağazaya Dön'}</a></div></div>`;
+    return res.end(layout(C.lang === 'en' ? 'Product Not Found' : 'Ürün Bulunamadı', notFoundHtml, { noindex: true }, C));
+  }
+  const pageTitle = p.name;
+  const rawDesc = String(p.description || p.longDescription || p.desc || p.name || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const desc = rawDesc ? rawDesc.slice(0, 300) : p.name;
+  const ogImage = p.image;
+  const canonical = `https://loveeroticshop.com/urun/${p.slug || p.id}`;
+  const inStock = (p.stock ?? 1) > 0;
+  const catLabel = C.lang === 'en' ? catNameEN(p.category, p.categoryName) : (p.categoryName || p.category || 'Koleksiyon');
+  const priceFormatted = new Intl.NumberFormat(C.lang === 'en' ? 'en-US' : 'tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price || 0);
+  const longDescText = String(p.longDescription || p.description || '').trim();
+
+  const html = `<div id="product-root">
+    <div class="page-head" style="padding-bottom:6px">
+      <div class="crumbs">
+        <a href="/">${tr('shop.crumb.home')}</a> / 
+        <a href="/magaza">${tr('shop.title')}</a> / 
+        <a href="/magaza?kat=${encodeURIComponent(p.category || '')}">${esc(catLabel)}</a>
+      </div>
+    </div>
+    <div class="pd-layout">
+      <div class="pd-gallery" id="pd-gallery-wrap">
+        <div class="pd-media ${!inStock ? 'is-out-of-stock' : ''}" id="pd-media-stage">
+          ${p.image ? `<img id="pd-main-image" src="${esc(imgSrcSSR(p.image))}" alt="${esc(p.name)}">` : ''}
+        </div>
+      </div>
+      <div class="pd-info">
+        <a href="/magaza?kat=${encodeURIComponent(p.category || '')}" class="pd-category-tag">${esc(catLabel)}</a>
+        <h1 class="pd-title">${esc(String(p.name || '').replace(/\s+/g, ' ').trim())}</h1>
+        <div class="pd-price-row">
+          <span class="pd-price-current">${esc(priceFormatted)}</span>
+        </div>
+        ${p.description ? `<p class="pd-lead-desc">${esc(p.description)}</p>` : ''}
+      </div>
+    </div>
+    ${longDescText ? `<div class="pd-tabs-section"><div class="pd-tab-content" id="tab-panel"><div class="pd-editorial-copy"><p>${esc(longDescText)}</p></div></div></div>` : ''}
+  </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(pageTitle, html, { product: p, description: desc, ogImage, canonical }, C));
 }
@@ -2158,21 +2231,21 @@ function pageReviewForm(req: http.IncomingMessage, res: http.ServerResponse, slu
   <p class="auth-alt">${tr('rv.note')} <a href="/urun/${esc(p.slug)}">${tr('rv.back')}</a></p>
 </div></div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(C.lang === 'en' ? 'Write a Review' : 'Yorum Yaz', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'Write a Review' : 'Yorum Yaz', html, { noindex: true }, C));
 }
 
 function pageCart(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(tr('cart.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('cart.crumb')}</div><h1>${tr('cart.title')}</h1></div><div class="cart-layout" id="cart-root"><div class="spinner"></div></div>`, {}, C));
+  res.end(layout(tr('cart.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('cart.crumb')}</div><h1>${tr('cart.title')}</h1></div><div class="cart-layout" id="cart-root"><div class="spinner"></div></div>`, { noindex: true }, C));
 }
 
 function pageCheckout(req: http.IncomingMessage, res: http.ServerResponse) {
   const C = pageCtx(req);
   const tr = C.t;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(tr('checkout.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/sepet">${tr('cart.crumb')}</a> / ${tr('checkout.crumb')}</div><h1>${tr('checkout.title')}</h1></div><div id="checkout-root"><div class="spinner"></div></div>`, {}, C));
+  res.end(layout(tr('checkout.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/sepet">${tr('cart.crumb')}</a> / ${tr('checkout.crumb')}</div><h1>${tr('checkout.title')}</h1></div><div id="checkout-root"><div class="spinner"></div></div>`, { noindex: true }, C));
 }
 
 function buildOrderWhatsAppText(order: any, lang = 'tr'): string {
@@ -2281,7 +2354,7 @@ function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: str
 </script>
 `;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(layout(en ? 'Order Received' : 'Sipariş Alındı', html, {}, C));
+  res.end(layout(en ? 'Order Received' : 'Sipariş Alındı', html, { noindex: true }, C));
 }
 
 function pageLogin(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -2317,7 +2390,7 @@ function pageLogin(req: http.IncomingMessage, res: http.ServerResponse) {
     'Pragma': 'no-cache',
     'Expires': '0'
   });
-  res.end(layout(C.lang === 'en' ? 'Sign In' : 'Giriş Yap', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'Sign In' : 'Giriş Yap', html, { noindex: true }, C));
 }
 
 function pageRegister(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -2358,7 +2431,7 @@ function pageRegister(req: http.IncomingMessage, res: http.ServerResponse) {
     'Pragma': 'no-cache',
     'Expires': '0'
   });
-  res.end(layout(C.lang === 'en' ? 'Register' : 'Kayıt Ol', html, {}, C));
+  res.end(layout(C.lang === 'en' ? 'Register' : 'Kayıt Ol', html, { noindex: true }, C));
 }
 
 function pageAccount(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -2370,7 +2443,7 @@ function pageAccount(req: http.IncomingMessage, res: http.ServerResponse) {
     'Pragma': 'no-cache',
     'Expires': '0'
   });
-  res.end(layout(tr('account.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('nav.account')}</div><h1>${tr('account.title')}</h1></div><div class="acc-layout" id="account-root"><div class="spinner"></div></div>`, {}, C));
+  res.end(layout(tr('account.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / ${tr('nav.account')}</div><h1>${tr('account.title')}</h1></div><div class="acc-layout" id="account-root"><div class="spinner"></div></div>`, { noindex: true }, C));
 }
 
 function pageProfile(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -2382,7 +2455,7 @@ function pageProfile(req: http.IncomingMessage, res: http.ServerResponse) {
     'Pragma': 'no-cache',
     'Expires': '0'
   });
-  res.end(layout(tr('profile.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/hesap">${tr('account.title')}</a> / ${tr('profile.title')}</div><h1>${tr('profile.title')}</h1></div><div class="acc-layout" id="profile-root"><div class="spinner"></div></div>`, {}, C));
+  res.end(layout(tr('profile.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/hesap">${tr('account.title')}</a> / ${tr('profile.title')}</div><h1>${tr('profile.title')}</h1></div><div class="acc-layout" id="profile-root"><div class="spinner"></div></div>`, { noindex: true }, C));
 }
 
 
@@ -2431,6 +2504,7 @@ function pageGuides(req: http.IncomingMessage, res: http.ServerResponse) {
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout('Rehber & Cinsel Sağlık — Uzman Bilgi ve Gizli Teslimat', html, {
     description: "Eskişehir cinsel sağlık ve yetişkin ürünleri rehberi. Geciktirici kullanımı, kayganlaştırıcı seçimi, gizli paketleme ve hijyen standartları.",
+    canonical: 'https://loveeroticshop.com/rehber',
     breadcrumbs: [
       { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
       { name: 'Rehber & Cinsel Sağlık', url: 'https://loveeroticshop.com/rehber' }
@@ -3086,7 +3160,12 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
 </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'About Us' : 'Hakkımızda — Eskişehir Love Seks & Erotik Shop', html, {
-    description: C.lang === 'en' ? 'Love Shop: 15 years at the same address in Eskişehir. Safe, discreet 1st floor apartment store for women and couples. 30-120 min express courier.' : 'Love Shop: 2012\'den bu yana 15 yıldır Eskişehir\'deki aynı fiziksel adresinde. Kadınlar ve çiftler için %100 yargısız vitrinsiz daire ortamı ve 30-120 dakikada ekspres gizli kurye.'
+    description: C.lang === 'en' ? 'Love Shop: 15 years at the same address in Eskişehir. Safe, discreet 1st floor apartment store for women and couples. 30-120 min express courier.' : 'Love Shop: 2012\'den bu yana 15 yıldır Eskişehir\'deki aynı fiziksel adresinde. Kadınlar ve çiftler için %100 yargısız vitrinsiz daire ortamı ve 30-120 dakikada ekspres gizli kurye.',
+    canonical: 'https://loveeroticshop.com/hakkimizda',
+    breadcrumbs: [
+      { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+      { name: 'Hakkımızda', url: 'https://loveeroticshop.com/hakkimizda' }
+    ]
   }, C));
 }
 
@@ -3100,7 +3179,8 @@ function pagePrivacy(req: http.IncomingMessage, res: http.ServerResponse) {
   res.end(layout(title, html, {
     description: C.lang === 'en'
       ? 'Official Privacy Policy and Personal Data Protection (KVKK Law No. 6698) clarification statement for loveeroticshop.com. Review data retention, data subject statutory rights, and our 100% neutral packaging commitment.'
-      : 'loveeroticshop.com 6698 Sayılı KVKK ve tüketici mevzuatına uygun resmi Gizlilik Politikası ve Aydınlatma Metni. Kişisel verilerin korunması, çerez tercihleri ve %100 gizli paketleme güvencemiz.'
+      : 'loveeroticshop.com 6698 Sayılı KVKK ve tüketici mevzuatına uygun resmi Gizlilik Politikası ve Aydınlatma Metni. Kişisel verilerin korunması, çerez tercihleri ve %100 gizli paketleme güvencemiz.',
+    canonical: 'https://loveeroticshop.com/gizlilik-politikasi'
   }, C));
 }
 
@@ -3113,7 +3193,8 @@ function pageTerms(req: http.IncomingMessage, res: http.ServerResponse) {
   res.end(layout(title, html, {
     description: C.lang === 'en'
       ? 'Statutory Distance Sales Contract and Terms of Service pursuant to Turkish Law No. 6502 and the Regulation on Distance Contracts. Essential terms on +18 age representation and hygiene return exceptions.'
-      : 'loveeroticshop.com 6502 Sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği\'ne uygun yasal Mesafeli Satış Sözleşmesi, +18 yaş beyanı ve hijyen iade istisnaları.'
+      : 'loveeroticshop.com 6502 Sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği\'ne uygun yasal Mesafeli Satış Sözleşmesi, +18 yaş beyanı ve hijyen iade istisnaları.',
+    canonical: 'https://loveeroticshop.com/kullanim-kosullari'
   }, C));
 }
 
@@ -3176,6 +3257,11 @@ function pageContact(req: http.IncomingMessage, res: http.ServerResponse) {
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(C.lang === 'en' ? 'Contact' : 'İletişim & Mağaza Adresi — Love Seks Shop Eskişehir', html, {
     description: 'Love Seks Shop & Erotik Shop Eskişehir iletişim ve mağaza adresi. Kadınlar ve çiftler için %100 yargısız vitrinsiz daire ortamı. İsmet İnönü Tramvay Durağı Karşısı, Ilgaz İş Hanı Kat:1 D:2 (Yves Rocher & Watsons Yanı). 30-120 dk jet kurye & gizli WhatsApp hattı.',
+    canonical: 'https://loveeroticshop.com/iletisim',
+    breadcrumbs: [
+      { name: 'Ana Sayfa', url: 'https://loveeroticshop.com/' },
+      { name: 'İletişim', url: 'https://loveeroticshop.com/iletisim' }
+    ],
     includeStoreSchema: true
   }, C));
 }
@@ -5073,8 +5159,22 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
     pathname = '/';
   }
 
-  // Ensure fresh database state on cold starts for API routes and dynamic pages
-  if (pathname.startsWith('/api/') || pathname.startsWith('/admin') || pathname === '/' || pathname === '/magaza') {
+  // Ensure fresh database state on cold starts for API routes, feeds, sitemap, and dynamic pages
+  if (
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/admin') ||
+    pathname === '/' ||
+    pathname === '/magaza' ||
+    pathname.startsWith('/urun/') ||
+    pathname.startsWith('/rehber') ||
+    pathname.startsWith('/sehir/') ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/google-feed.xml' ||
+    pathname === '/merchant-feed.xml' ||
+    pathname === '/local-inventory.xml' ||
+    pathname === '/local-feed.xml' ||
+    pathname === '/google-local-inventory.xml'
+  ) {
     await ensureCloudDatabaseReady();
   } else {
     ensureCloudDatabaseReady().catch(() => {});
@@ -5165,8 +5265,12 @@ Allow: /magaza
 Allow: /urun/
 Allow: /rehber
 Allow: /rehber/
+Allow: /kargo-ve-teslimat
+Allow: /sehir/eskisehir
 Allow: /hakkimizda
 Allow: /iletisim
+Allow: /gizlilik-politikasi
+Allow: /kullanim-kosullari
 Allow: /css/
 Allow: /js/
 Allow: /assets/
@@ -5223,7 +5327,7 @@ Sitemap: ${baseUrl}/sitemap.xml
             loc: `${baseUrl}/sehir/eskisehir`,
             priority: '0.85',
             changefreq: 'weekly',
-            lastmod: today
+            lastmod: '2026-03-15'
           }
         ];
 
@@ -5232,11 +5336,14 @@ Sitemap: ${baseUrl}/sitemap.xml
           if (fullImg && !fullImg.startsWith('http://') && !fullImg.startsWith('https://')) {
             fullImg = `${baseUrl}${fullImg.startsWith('/') ? '' : '/'}${fullImg}`;
           }
+          const rawDate = String(p.updatedAt || p.createdAt || '');
+          const isoDateMatch = rawDate.match(/^\d{4}-\d{2}-\d{2}/);
+          const prodLastMod = isoDateMatch ? isoDateMatch[0] : '2026-03-15';
           return {
             loc: `${baseUrl}/urun/${esc(p.slug || p.id)}`,
             priority: '0.8',
-            changefreq: 'daily',
-            lastmod: today,
+            changefreq: 'weekly',
+            lastmod: prodLastMod,
             image: fullImg,
             name: p.name
           };
