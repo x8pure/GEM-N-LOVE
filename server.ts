@@ -187,13 +187,6 @@ export async function syncWithCloud(force = false): Promise<void> {
             if (!p || !p.id) return;
             if (!prodMap.has(p.id)) {
               prodMap.set(p.id, p);
-            } else {
-              const existing = prodMap.get(p.id);
-              if (existing.image && existing.image.startsWith('http') && p.image && !p.image.startsWith('http')) {
-                // keep existing cloud blob URL
-              } else if (p.image && p.image.startsWith('http')) {
-                existing.image = p.image;
-              }
             }
           });
           db.products = Array.from(prodMap.values());
@@ -205,13 +198,6 @@ export async function syncWithCloud(force = false): Promise<void> {
             if (!c || !c.id) return;
             if (!catMap.has(c.id)) {
               catMap.set(c.id, c);
-            } else {
-              const existing = catMap.get(c.id);
-              if (existing.image && existing.image.startsWith('http') && c.image && !c.image.startsWith('http')) {
-                // keep existing cloud blob URL
-              } else if (c.image && c.image.startsWith('http')) {
-                existing.image = c.image;
-              }
             }
           });
           db.categories = Array.from(catMap.values());
@@ -345,6 +331,7 @@ export async function syncWithCloud(force = false): Promise<void> {
           console.error('[Server] Dedicated categories sync error:', e);
         }
 
+        ensureBlobUrls(db);
         saveLocal();
         lastCloudSyncTime = Date.now();
         initialSyncDone = true;
@@ -383,6 +370,7 @@ export async function syncWithCloud(force = false): Promise<void> {
             db.categories = Array.from(catMap.values());
           }
         } catch {}
+        ensureBlobUrls(db);
         saveLocal();
         lastCloudSyncTime = Date.now();
         initialSyncDone = true;
@@ -3125,17 +3113,57 @@ const MIME: Record<string, string> = {
   '.webp': 'image/webp', '.woff2': 'font/woff2', '.mp4': 'video/mp4'
 };
 
+const memoryImageCache = new Map<string, { buf: Buffer; mimeType: string }>();
+const TMP_UPLOADS_DIR = '/tmp/uploads';
+
 function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathname: string) {
-  // 1. Instant 301 Permanent Redirect to Vercel Blob for all migrated uploads
-  if ((pathname.startsWith('/uploads/') || pathname.includes('/uploads/')) && VERCEL_BLOB_MIGRATION_MAP[pathname]) {
-    res.writeHead(301, {
-      'Location': VERCEL_BLOB_MIGRATION_MAP[pathname],
-      'Cache-Control': 'public, max-age=31536000, immutable'
-    });
-    return res.end();
+  let effectivePathname = pathname;
+
+  if (pathname.startsWith('/uploads/') || pathname.includes('/uploads/')) {
+    const rawFileName = path.basename(pathname);
+    const cleanFileName = rawFileName.replace(/-[A-Za-z0-9]{20,}(\.[a-zA-Z0-9]+)$/, '$1');
+
+    // 1. Check in-memory RAM cache first (0ms response for recovered/newly uploaded images)
+    const memHit = memoryImageCache.get(rawFileName) || memoryImageCache.get(cleanFileName);
+    if (memHit) {
+      res.writeHead(200, {
+        'Content-Length': memHit.buf.length,
+        'Content-Type': memHit.mimeType,
+        'Cache-Control': 'public, max-age=31536000, immutable'
+      });
+      if (req.method === 'HEAD') return res.end();
+      return res.end(memHit.buf);
+    }
+
+    // 2. Check if clean filename exists in public/uploads or /tmp/uploads
+    const pubRawPath = path.join(PUB, 'uploads', rawFileName);
+    const pubCleanPath = path.join(PUB, 'uploads', cleanFileName);
+    const tmpRawPath = path.join(TMP_UPLOADS_DIR, rawFileName);
+    const tmpCleanPath = path.join(TMP_UPLOADS_DIR, cleanFileName);
+
+    if (!fs.existsSync(pubRawPath) && fs.existsSync(pubCleanPath)) {
+      effectivePathname = '/uploads/' + cleanFileName;
+    } else if (!fs.existsSync(pubRawPath) && !fs.existsSync(pubCleanPath)) {
+      const tmpHitPath = fs.existsSync(tmpRawPath) ? tmpRawPath : (fs.existsSync(tmpCleanPath) ? tmpCleanPath : null);
+      if (tmpHitPath) {
+        try {
+          const buf = fs.readFileSync(tmpHitPath);
+          const ext = path.extname(tmpHitPath).toLowerCase();
+          const mimeType = MIME[ext] || 'image/webp';
+          memoryImageCache.set(cleanFileName, { buf, mimeType });
+          res.writeHead(200, {
+            'Content-Length': buf.length,
+            'Content-Type': mimeType,
+            'Cache-Control': 'public, max-age=31536000, immutable'
+          });
+          if (req.method === 'HEAD') return res.end();
+          return res.end(buf);
+        } catch {}
+      }
+    }
   }
 
-  const p = path.normalize(path.join(PUB, pathname));
+  const p = path.normalize(path.join(PUB, effectivePathname));
   if (!p.startsWith(PUB)) { res.writeHead(403); return res.end(); }
   const ext = path.extname(p).toLowerCase();
   const type = MIME[ext] || 'application/octet-stream';
@@ -3143,27 +3171,78 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
 
   const sendSvgFallback = async () => {
     if (pathname.startsWith('/uploads/') || pathname.includes('/uploads/')) {
-      const fileName = path.basename(pathname);
+      const rawFileName = path.basename(pathname);
+      const cleanFileName = rawFileName.replace(/-[A-Za-z0-9]{20,}(\.[a-zA-Z0-9]+)$/, '$1');
+
+      // Primary Cloud Recovery: Fetch from Cloud Firestore uploaded_images collection
       try {
-        const cloudBase64 = await getImageFromCloud(fileName);
+        const cloudBase64 = await getImageFromCloud(rawFileName);
         if (cloudBase64) {
           const m = cloudBase64.match(/^data:image\/([a-zA-Z0-9\+\-\.]+);base64,(.+)$/);
-          if (m) {
-            const buf = Buffer.from(m[2], 'base64');
-            // Write back to local cache so next requests are instant
+          const mimeType = m ? (m[1] === 'svg+xml' ? 'image/svg+xml' : `image/${m[1]}`) : (MIME[ext] || 'image/webp');
+          const rawB64 = m ? m[2] : cloudBase64;
+          const buf = Buffer.from(rawB64, 'base64');
+          if (buf.length > 0) {
+            memoryImageCache.set(rawFileName, { buf, mimeType });
+            memoryImageCache.set(cleanFileName, { buf, mimeType });
             try {
               fs.mkdirSync(path.join(PUB, 'uploads'), { recursive: true });
-              fs.writeFileSync(p, buf);
-            } catch (e) {}
+              fs.writeFileSync(path.join(PUB, 'uploads', cleanFileName), buf);
+            } catch {}
+            try {
+              fs.mkdirSync(TMP_UPLOADS_DIR, { recursive: true });
+              fs.writeFileSync(path.join(TMP_UPLOADS_DIR, cleanFileName), buf);
+            } catch {}
             res.writeHead(200, {
-              'Content-Type': `image/${m[1]}`,
-              'Cache-Control': 'public, max-age=86400'
+              'Content-Length': buf.length,
+              'Content-Type': mimeType,
+              'Cache-Control': 'public, max-age=31536000, immutable'
             });
             if (req.method === 'HEAD') return res.end();
             return res.end(buf);
           }
         }
       } catch (e) {}
+
+      // Secondary Last-Resort Recovery: Check Vercel Blob CDN only if missing on disk AND missing in Firestore
+      try {
+        const candidateUrls = [
+          VERCEL_BLOB_MIGRATION_MAP[pathname],
+          VERCEL_BLOB_MIGRATION_MAP['/uploads/' + rawFileName],
+          VERCEL_BLOB_MIGRATION_MAP['/uploads/' + cleanFileName],
+          `https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/${cleanFileName}`,
+          `https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/uploads/${rawFileName}`
+        ].filter(Boolean) as string[];
+
+        for (const cUrl of candidateUrls) {
+          try {
+            const vRes = await fetch(cUrl);
+            if (vRes.ok) {
+              const buf = Buffer.from(await vRes.arrayBuffer());
+              if (buf.length > 200) {
+                const mimeType = 'image/webp';
+                memoryImageCache.set(cleanFileName, { buf, mimeType });
+                try {
+                  fs.mkdirSync(path.join(PUB, 'uploads'), { recursive: true });
+                  fs.writeFileSync(path.join(PUB, 'uploads', cleanFileName), buf);
+                } catch {}
+                try {
+                  fs.mkdirSync(TMP_UPLOADS_DIR, { recursive: true });
+                  fs.writeFileSync(path.join(TMP_UPLOADS_DIR, cleanFileName), buf);
+                } catch {}
+                saveImageToCloud(cleanFileName, `data:${mimeType};base64,${buf.toString('base64')}`).catch(() => {});
+                res.writeHead(200, {
+                  'Content-Length': buf.length,
+                  'Content-Type': mimeType,
+                  'Cache-Control': 'public, max-age=31536000, immutable'
+                });
+                if (req.method === 'HEAD') return res.end();
+                return res.end(buf);
+              }
+            }
+          } catch {}
+        }
+      } catch {}
 
       // Only attempt SVG silhouette rendering if the request is specifically for an SVG file or a known vector slug
       if (ext === '.svg' || !ext) {
@@ -3189,7 +3268,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
     const reqUrl = req.url || '';
     const isVersioned = reqUrl.includes('?v=') || reqUrl.includes('&v=');
     let cacheControl = 'no-cache, must-revalidate';
-    if (ext === '.woff2' || ext === '.ttf' || pathname.startsWith('/uploads/') || ext === '.webp' || ext === '.png' || ext === '.jpg' || ext === '.svg' || ext === '.ico') {
+    if (ext === '.woff2' || ext === '.ttf' || effectivePathname.startsWith('/uploads/') || ext === '.webp' || ext === '.png' || ext === '.jpg' || ext === '.svg' || ext === '.ico') {
       cacheControl = 'public, max-age=31536000, immutable';
     } else if (isScriptOrStyle) {
       cacheControl = isVersioned ? 'public, max-age=31536000, immutable' : 'no-cache, must-revalidate';
@@ -3245,8 +3324,6 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
   });
 }
 
-
-
 function getCleanBlobToken(): string {
   const raw = process.env.BLOB_READ_WRITE_TOKEN || '';
   const match = raw.match(/vercel_blob_rw_[A-Za-z0-9_]+/);
@@ -3257,47 +3334,8 @@ function getCleanBlobToken(): string {
 async function saveUpload(dataUrl: string): Promise<string> {
   if (!dataUrl || typeof dataUrl !== 'string') return '';
   const trimmed = dataUrl.trim();
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return trimmed;
-  }
-
-  // If already an /uploads/ path, return mapped Vercel Blob URL or try to migrate to Firebase Storage
-  if (trimmed.startsWith('/uploads/')) {
-    if (VERCEL_BLOB_MIGRATION_MAP[trimmed]) {
-      return VERCEL_BLOB_MIGRATION_MAP[trimmed];
-    }
-    const fileName = path.basename(trimmed);
-    const localFile = path.join(PUB, 'uploads', fileName);
-    let buf: Buffer | null = null;
-    let mimeType = 'image/webp';
-    if (fs.existsSync(localFile)) {
-      try { buf = fs.readFileSync(localFile); } catch {}
-    }
-    if (!buf) {
-      try {
-        const cloudBase64 = await getImageFromCloud(fileName);
-        if (cloudBase64) {
-          const m = cloudBase64.match(/^data:image\/([a-zA-Z0-9\+\-\.]+);base64,(.+)$/);
-          if (m) {
-            buf = Buffer.from(m[2], 'base64');
-            mimeType = `image/${m[1]}`;
-          }
-        }
-      } catch {}
-    }
-    if (buf && buf.length > 0) {
-      // Migrate to Firebase Storage directly
-      try {
-        const fbUrl = await uploadToFirebaseStorage(fileName, buf, mimeType);
-        if (fbUrl) {
-          console.log(`[Firebase Storage] Uploaded existing upload ${trimmed} -> ${fbUrl}`);
-          return fbUrl;
-        }
-      } catch (err) {
-        console.error('[Firebase Storage] Auto-migration error:', err);
-      }
-    }
-    return trimmed;
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/uploads/')) {
+    return resolveWorkingImageUrl(trimmed);
   }
 
   const base64Index = trimmed.indexOf(';base64,');
@@ -3321,30 +3359,20 @@ async function saveUpload(dataUrl: string): Promise<string> {
       if (buf.length > 0) {
         const name = uid('img') + '.' + ext;
 
-        // 1. Primary & Permanent: Upload directly to Firebase Cloud Storage
-        try {
-          const storageUrl = await uploadToFirebaseStorage(name, buf, mimeType);
-          if (storageUrl) {
-            console.log(`[Firebase Storage] Uploaded successfully: ${storageUrl}`);
-            // Also write to local cache so current process has immediate instant read
-            const uploadDir = path.join(PUB, 'uploads');
-            try { fs.mkdirSync(uploadDir, { recursive: true }); } catch {}
-            try { fs.writeFileSync(path.join(uploadDir, name), buf); } catch {}
-            return storageUrl;
-          }
-        } catch (storageErr) {
-          console.error('[Firebase Storage] Primary upload failed, falling back:', storageErr);
-        }
+        // 1. Store in RAM cache immediately
+        memoryImageCache.set(name, { buf, mimeType });
 
-        // 2. Fallback for local dev and Cloud container environment
+        // 2. Write to local disk (/public/uploads and /tmp/uploads for serverless)
         const uploadDir = path.join(PUB, 'uploads');
         try { fs.mkdirSync(uploadDir, { recursive: true }); } catch {}
         try { fs.writeFileSync(path.join(uploadDir, name), buf); } catch {}
-        
+        try { fs.mkdirSync(TMP_UPLOADS_DIR, { recursive: true }); } catch {}
+        try { fs.writeFileSync(path.join(TMP_UPLOADS_DIR, name), buf); } catch {}
+
         const savedPath = '/uploads/' + name;
 
-        // Persist to Cloud Firestore so container rebuilds never lose the photo
-        await saveImageToCloud(name, trimmed).catch(() => {});
+        // 3. Persist to Cloud Firestore uploaded_images so container rebuilds & Vercel serverless never lose the photo
+        await saveImageToCloud(name, `data:${mimeType};base64,${cleanBase64}`);
 
         return savedPath;
       }
@@ -3353,7 +3381,7 @@ async function saveUpload(dataUrl: string): Promise<string> {
     }
   }
 
-  return trimmed.startsWith('data:') ? '' : trimmed;
+  return trimmed.startsWith('data:') ? '' : resolveWorkingImageUrl(trimmed);
 }
 
 

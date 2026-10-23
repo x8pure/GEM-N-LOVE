@@ -1,1 +1,4023 @@
-null
+{
+  "users": [
+    {
+      "id": "u5ba8df5754d3",
+      "email": "admin@loveshop.com.tr",
+      "passwordHash": "d8489a0c4b604ca225c21cb0b582072de7bd3c06290576d80111e902d3f4aaa4",
+      "name": "Mağaza Yönetimi",
+      "role": "admin",
+      "createdAt": "2026-08-26T14:02:46.012Z",
+      "addresses": []
+    },
+    {
+      "id": "u40ad1297d1db",
+      "email": "demo@loveshop.com.tr",
+      "passwordHash": "a928a75120e800047cc4bc3f3b79b4ae52cf0b67cf90af9c4e0631bf5f2feab1",
+      "name": "Demo Müşteri",
+      "role": "customer",
+      "createdAt": "2026-08-26T14:02:46.012Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "Örnek Mah. Aşk Cad. No:7 D:3",
+          "city": "İstanbul",
+          "zip": "34700",
+          "phone": "0532 000 00 00",
+          "discreet": true
+        }
+      ]
+    },
+    {
+      "id": "ue364a7762ca6",
+      "email": "x8pure@gmail.com",
+      "passwordHash": "01f465b2a27b96273fddc4ae799ea51028deb394daadfc0b5ae655856a4e2c50",
+      "name": "Ulaş",
+      "role": "admin",
+      "googleAuth": true,
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKnVsL6kmZscCWiCqAGhy0YMcZljoS0Vcw3m5bK7DATa9kOG_M=s96-c",
+      "createdAt": "2026-08-26T19:23:08.444Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 caddesi 52/2",
+          "city": "TEPEBAŞI",
+          "zip": "",
+          "phone": "05468696943",
+          "discreet": true
+        }
+      ],
+      "tokenVersion": 8
+    },
+    {
+      "id": "uad8ba2526165",
+      "email": "cemal.ulas@gmail.com",
+      "passwordHash": "c54f3257f6053c538d0fce5c1a69f15e54c90c15814903b3ac09d211f252690b",
+      "name": "cemal.ulas",
+      "role": "admin",
+      "googleAuth": true,
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIO0NJxfnvKTmEkfu8NrOFsMoWYth5JRUBnbbMAHSobJ_2_wOGrsQ=s96-c",
+      "createdAt": "2026-08-27T11:03:28.260Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 Caddesi 52/2",
+          "city": "Tepebaşı",
+          "zip": "",
+          "phone": "05468696943",
+          "discreet": true
+        }
+      ],
+      "tokenVersion": 51
+    },
+    {
+      "id": "u164dff680af2",
+      "email": "test@loveshop.com.tr",
+      "passwordHash": "f1c6396f9a017e22c859019d4740290995b247d44a6738cde141a7e53ad3dd02",
+      "name": "Test Kullanıcı",
+      "role": "customer",
+      "tokenVersion": 9,
+      "createdAt": "2026-09-02T14:58:07.407Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "İsmet İnönü 1 caddesi 52/2",
+          "city": "Tepebaşı",
+          "zip": "",
+          "phone": "05436331325",
+          "discreet": true
+        }
+      ]
+    },
+    {
+      "id": "ucd842f4ba87f",
+      "email": "mert010203@gmail.com",
+      "passwordHash": "f20dff59ad30eb6b99b55727a50b368488a2ebdfe152464ebf6ff17e3ac32ab4",
+      "name": "Mert Şahin",
+      "role": "customer",
+      "tokenVersion": 1,
+      "createdAt": "2026-09-19T17:32:48.116Z",
+      "addresses": [
+        {
+          "label": "Ev",
+          "full": "Hüseyin Gazi - Başak Mahallesi  49/9",
+          "city": "ANKARA",
+          "zip": "06260",
+          "phone": "mert010203@gmail.com",
+          "discreet": true
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "category": "ciftler",
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "longDescription": "Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör, kullanıcılarına benzersiz bir deneyim sunan iki girişli tasarımı ile ön plana çıkıyor. Hem oral hem de vajinal giriş seçenekleriyle gerçekçi bir his yaşatmak amacıyla özenle üretilmiştir. Yüksek kaliteli malzemesi ve detaylı yapısı, maksimum tatmin ve gerçekçilik sunar. Ürün Özellikleri: Çift Taraflı Kullanım: Bir tarafı oral, diğer tarafı vajinal giriş olarak tasarlanmış; iki farklı uyarıcı deneyimi sağlar. Ultra Gerçekçi Doku: Cilt dokusuna benzeyen, yumuşak ve doğal bir his uyandıran malzeme kullanılarak üretilmiştir. Detaylı Tasarım: Anatomik detaylara sadık kalınarak tasarlanmış girişler ile gerçekçi bir deneyim sunar. Kolay Temizlik: Su geçirmez yapısı sayesinde temizliği son derece kolaydır. Hijyenik kullanım için idealdir. Dayanıklı ve Esnek Malzeme: Uzun ömürlü kullanım için esnek ve dayanıklı malzemelerden üretilmiştir, formunu korur. Kompakt Tasarım: Hafif ve taşınabilir yapısı ile kolayca saklanabilir ve her yerde rahatlıkla kullanılabilir. Neden Yeni Nesil Çift Taraflı Oral Vajinal Mastürbatör? Bu çift taraflı mastürbatör, farklı zevk noktalarını keşfetmek isteyen kullanıcılar için tasarlanmıştır. Hem oral hem de vajinal seçenekleri ile çok yönlü bir deneyim sunar. Gerçekçi doku ve detaylar sayesinde her kullanımda tatmin edici ve doğal bir his yaşatır. Ürün Ağırlığı: 430 GR",
+      "reviewCount": 0,
+      "image": "/uploads/img69760f8cbaf4.webp",
+      "price": 1599,
+      "createdAt": "2026-09-08T11:17:54.987Z",
+      "name": "Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör",
+      "featured": false,
+      "rating": 0,
+      "bestSeller": false,
+      "oldPrice": 1759,
+      "description": "Yeni Nesil Çift Taraflı Oral Vajinal Gerçekçi Suni Vajina Mastürbatör, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.",
+      "gallery": [
+        "/uploads/img69760f8cbaf4.webp",
+        "/uploads/imgfe9b0a787ed6.webp",
+        "/uploads/img9c75711a42b6.webp"
+      ],
+      "slug": "yeni-nesil-cift-tarafli-oral-vajinal-gercekci-suni-vajina-masturbator",
+      "variants": [
+        "standart"
+      ],
+      "stock": 10,
+      "categoryName": "Realistik Vajinalar",
+      "isNew": true,
+      "tags": [],
+      "id": "p0a5a13225a3b"
+    },
+    {
+      "tags": [],
+      "categoryName": "Erkek Cinsel Sağlık",
+      "stock": 9,
+      "featured": true,
+      "bestSeller": true,
+      "isNew": true,
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Birliktelik Süresini Destekleyici Formül",
+        "Bölgesel Masajla Emilim",
+        "59 ml Net Hacim"
+      ],
+      "category": "erkekler",
+      "rating": 4.5,
+      "slug": "proling-erkeklere-ozel-gelistirilmis-krem",
+      "description": "Birliktelik süresini desteklemeye ve konforlu bir deneyim sunmaya yardımcı, erkeklere özel geliştirilmiş bakım kremi (59 ml).",
+      "name": "Proling Erkeklere Özel Geliştirilmiş Bakım Kremi 59 ml",
+      "createdAt": "2026-08-29T12:18:40.364Z",
+      "id": "p12df7e2816fd",
+      "gallery": [
+        "/uploads/img35375304976f.webp"
+      ],
+      "oldPrice": 789,
+      "image": "/uploads/img35375304976f.webp",
+      "price": 499,
+      "longDescription": "Yetişkin erkeklerin kullanımına özel olarak geliştirilen Proling Bakım Kremi, birliktelik süresini desteklemeye ve konforlu bir deneyim sunmaya yardımcı ferahlatıcı bir bakım sunar. Cilt tarafından kolayca emilir, yapışkan veya yağlı bir his bırakmaz.\n\nÖne Çıkan Özellikler:\n• Birliktelik süresini desteklemeye ve bölgesel konforu artırmaya yardımcı içerik\n• Ciltle uyumlu formülü sayesinde rahatlatıcı bir his sunar\n• Prezervatif ile birlikte güvenle kullanıma uygundur\n• Koku, tat veya renk bırakmayan nötr doku\n• Yalnızca haricen bölgesel uygulama içindir; kesinlikle içilmez veya yutulmaz.",
+      "reviewCount": 2,
+      "variants": [
+        "standart"
+      ]
+    },
+    {
+      "gallery": [
+        "/uploads/img882565f2d0b1.webp",
+        "/uploads/img555ed2ab3c6f.webp",
+        "/uploads/img87f41c97ab76.webp"
+      ],
+      "description": "",
+      "price": 2359,
+      "image": "/uploads/img882565f2d0b1.webp",
+      "oldPrice": 2869,
+      "longDescription": "Flovetta Wisteria, hem G-noktasını hem de klitorisi aynı anda uyarmak için tasarlanmış çok fonksiyonlu bir vibratördür. Ergonomik tasarımı, güçlü titreşim motorları ve yumuşak silikon yüzeyi sayesinde benzersiz bir haz deneyimi sunar.\n\nÇift uyarım: G-noktası ve klitorisi aynı anda uyarır.\nBoyutlar: Uzunluk 18,5 cm – Giriş kısmı 9 cm – Çap 3,5 cm.\nPillerin sayısı ve türü 2AAA\nPremium silikon: Kadifemsi, cilde dost yüzey.\nErgonomik halka tutma yeri: Rahat kullanım ve kontrol sağlar.\nGüçlü titreşim modları: Farklı hız ve ritim seçenekleriyle kişiselleştirilebilir.\nNem koruma seviyesi IPX3 – düşeyden 60 ° ‘ye kadar sapma açısına sahip su sıçramasına karşı koruma\nRenk: Mor",
+      "categoryName": "Vibratörler",
+      "createdAt": "2026-09-09T17:12:35.949Z",
+      "id": "p1c8dfda98620",
+      "name": "Flovetta WISTERIA Klitoral Uyarıcılı G Noktası Vibratörü",
+      "variants": [
+        "standart"
+      ],
+      "slug": "flovetta-wisteria-klitoral-uyaricili-g-noktasi-vibratoru",
+      "featured": false,
+      "bestSeller": false,
+      "reviewCount": 0,
+      "isNew": true,
+      "category": "vibratorler",
+      "stock": 10,
+      "highlights": [
+        "IPX3 Sıçrama Korumalı",
+        "2x AAA Pille Çalışır",
+        "%100 Orijinal & Faturalı"
+      ],
+      "rating": 0,
+      "tags": []
+    },
+    {
+      "variants": [
+        "standart"
+      ],
+      "rating": 0,
+      "tags": [],
+      "oldPrice": 459,
+      "slug": "fetis-fantezi-pembe-peluslu-metal-kelepce",
+      "categoryName": "Fetish Ürünler",
+      "price": 399,
+      "image": "/uploads/img93909a07615b.webp",
+      "gallery": [
+        "/uploads/img93909a07615b.webp"
+      ],
+      "longDescription": "LOVE. Fetiş Fantezi Pembe Peluşlu Metal Kelepçe, ilişki esnasında kontrol altında tutmayı sevenler, farklı pozisyonları keşfetmek veya BSDM gibi hakimiyet isteyenler için olarak üretilmiştir. Renkli ve yumuşak peluş kaplaması ile bileklere daha yumuşak temas eder. Boyutu ayarlanabilir ve tüm bilek kalınlıklarına uyumludur. Paket içeriğinde 2 anahtar mevcuttur. Ancak anahtarlar kaybolur korkusu yaşamanıza gerek yoktur, çünkü anahtarsız olarak özel düğmesi ile parmağınızla da açabilirsiniz.",
+      "reviewCount": 0,
+      "createdAt": "2026-08-31T10:01:32.840Z",
+      "bestSeller": true,
+      "isNew": true,
+      "name": "Fetiş Fantezi Pembe Peluşlu Metal Kelepçe",
+      "id": "p200924b29a1e",
+      "category": "fetish-urunler",
+      "stock": 10,
+      "featured": true,
+      "highlights": [
+        "Medikal Paslanmaz Çelik",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "description": "Fetiş Fantezi Pembe Peluşlu Metal Kelepçe"
+    },
+    {
+      "stock": 8,
+      "rating": 4.5,
+      "gallery": [
+        "/uploads/imga421c009a412.webp",
+        "/uploads/img6957cf18a95a.webp",
+        "/uploads/img6c91a1f71398.webp"
+      ],
+      "isNew": true,
+      "reviewCount": 2,
+      "slug": "3-in-1-realistik-vajina",
+      "featured": true,
+      "category": "ciftler",
+      "longDescription": "3 in 1 Realistik Vajina, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ve güçlü motoruyla beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• Gerçekçi Yumuşak Dokulu 3 Girişli Oral Anal Realistik Vajina Mastürbatör.\n• Gerçek bir kadın vücudundan birebir kalıpla modellenen  3’lü Mastürbatör, ağız, vajina ve anal bölgelerin detaylı anatomik yapısını bir arada sunarak maksimum haz ve gerçeklik deneyimi yaşatır. Her bölge farklı iç doku yapısına sahiptir ve her kullanımda farklı bir zevki keşfetmenizi sağlar.\n• Ürün, doğal cilt hissiyatı veren yüksek kaliteli TPE (Termoplastik Elastomer) malzemeden üretilmiştir. Esnek, yumuşak ve son derece dayanıklı yapısı sayesinde uzun süreli kullanıma uygundur. Formunu kaybetmeden tekrar tekrar kullanılabilir. Aynı zamanda gerçek ten dokusunu taklit eden yüzeyi ile dokunduğunuz anda farkı hissedersiniz.\n• İç yapıda yer alan dil, yumuşak dişler ve kıvrımlı iç kanallar, ağız seks hissini gerçekçi bir şekilde simüle ederken; dar ve lifli dokularla donatılmış vajina ve anal kanallar daha derin, yoğun bir haz sunar.\n• 💧 Su Bazlı Kayganlaştırıcıyla Uyumlu – Kullanımdan sonra 30 saniye içinde sıcaklık hissi verir\n• 📏 Boyutlar: 19 cm uzunluk x 8 cm çap",
+      "tags": [],
+      "createdAt": "2026-08-27T09:36:06.470Z",
+      "id": "p2484e3b314df",
+      "categoryName": "Realistik Vajinalar",
+      "bestSeller": false,
+      "description": "3 in 1 Realistik Vajina, vücut kıvrımlarına kusursuz uyum sağlayan ergonomik yapısı ile beklentileri aşan lüks bir deneyim sunar.",
+      "highlights": [
+        "Gerçekçi Medikal TPE",
+        "Su Bazlı Formül",
+        "%100 Orijinal & Faturalı"
+      ],
+      "oldPrice": 2199,
+      "name": "3 in 1 Realistik Vajina",
+      "price": 1899,
+      "image": "/uploads/imga421c009a412.webp",
+      "variants": [
+        "standart"
+      ]
+    },
+    {
+      "name": "XOXO Gerçekçi Mastürbatör 2 Kg",
+      "categoryName": "Realistik Vajinalar",
+      "bestSeller": false,
+      "category": "ciftler",
+      "image": "/uploads/img93c4220e8cad.webp",
+      "price": 3399,
+      "createdAt": "2026-09-11T15:25:01.199Z",
+      "gallery": [
+        "/uploads/img93c4220e8cad.webp",
+        "/uploads/img931ccf6cfbf7.webp",
+        "/uploads/img480f0e4a306c.webp",
+        "/uploads/img5a51d0f049f3.webp"
+      ],
+      "highlights": [
+        "Gerçekçi Medikal TPE",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "featured": false,
+      "description": "TPE Malzeme, Ten Rengi, 2 kg",
+      "longDescription": "TPE Malzeme, Ten Rengi, 2 kg",
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "id": "p300d0f836c39",
+      "rating": 0,
+      "stock": 10,
+      "oldPrice": 3699,
+      "isNew": true,
+      "slug": "xoxo-gercekci-masturbator-mtx3xv8o",
+      "reviewCount": 0
+    },
+    {
+      "stock": 8,
+      "bestSeller": false,
+      "isNew": true,
+      "slug": "metal-elmas-tasli-anal-plug-rose-orta-boy",
+      "category": "anal-urunler",
+      "tags": [],
+      "featured": false,
+      "highlights": [
+        "Medikal Paslanmaz Çelik",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "createdAt": "2026-09-03T15:40:23.148Z",
+      "id": "p3523b421476b",
+      "reviewCount": 0,
+      "variants": [
+        "standart"
+      ],
+      "rating": 0,
+      "oldPrice": 559,
+      "longDescription": "Metal Elmas Taşlı Anal Plug Rose Orta Boy, zarif ve şık tasarımı ile cinsel deneyimlerinizi zenginleştiriyor. Bu anal plug, dayanıklı ve yüksek kaliteli metal malzemeden üretilmiştir, böylece uzun ömürlü ve güvenli bir kullanım sunar. Parlak rose elmas taşı detayı ile dikkat çeken bu plug, estetik bir görünüm kazandırır.\n\n\nÖzellikler:\n\n\n\nUzunluk: 8 cm\n\nÇap: 3.4 cm\n\nAğırlık: 110 gr\n\nMetal Elmas Taşlı Anal Plug Rose Orta Boy, ergonomik tasarımı sayesinde rahat bir yerleştirme ve çıkarma sağlar. Metal malzeme, vücut ısısına hızla uyum sağlayarak hoş bir his yaratır. Rose elmas taşı detayı, sadece estetik bir dokunuş katmakla kalmaz, aynı zamanda partnerinizle oyunbaz ve keyifli anlar yaşamanıza olanak tanır.\n\n\nBu anal plug, hem yeni başlayanlar hem de deneyimli kullanıcılar için idealdir. Temizlemesi kolay olan bu ürün, hijyenik kullanımı garanti eder. Metal Elmas Taşlı Anal Plug Rose Orta Boy ile cinsel yaşamınıza zarafet ve keyif katın!",
+      "gallery": [
+        "/uploads/img6e343a413289.webp"
+      ],
+      "name": "Metal Elmas Taşlı Anal Plug Rose Orta Boy",
+      "image": "/uploads/img6e343a413289.webp",
+      "price": 479,
+      "description": "Metal Elmas Taşlı Anal Plug Rose Orta Boy",
+      "categoryName": "Anal Ürünler"
+    },
+    {
+      "gallery": [
+        "/uploads/img0ec6574bd639.webp",
+        "/uploads/img8971ca7a5e59.webp",
+        "/uploads/img90e7e810b8b5.webp"
+      ],
+      "highlights": [
+        "%100 Su Geçirmez",
+        "Gerçekçi Medikal TPE",
+        "1 Titreşim Modu",
+        "Su Bazlı Formül"
+      ],
+      "oldPrice": 14999,
+      "name": "Olga - Realistik Anal Vajinal 2 in 1 Realistik Kalça 5.5 Kg",
+      "variants": [
+        "standart"
+      ],
+      "rating": 5,
+      "reviewCount": 1,
+      "categoryName": "Realistik Vajinalar",
+      "bestSeller": false,
+      "stock": 10,
+      "isNew": true,
+      "image": "/uploads/img0ec6574bd639.webp",
+      "price": 12000,
+      "category": "ciftler",
+      "tags": [],
+      "createdAt": "2026-08-31T15:44:19.614Z",
+      "description": "22 CM uzunlukta, 26 CM genişlikte , 17.5 CM yükseklikte ve 5.5 KG ağırlığındadır.",
+      "id": "p3698aca0e6ce",
+      "slug": "olga-realistik-anal-vajinal-2-in-1-titresimli-suni-kalca-vajina",
+      "featured": true,
+      "longDescription": "Premium Ass Masturbator Olga - Realistik Anal Vajinal 2 in 1 Titreşimli Suni Kalça Vajina\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek kadın ölçü kalıplarından üretilen gerçeğe yakın Premium Masturbator serisi ile eşsiz ve benzersiz deneyimin tadını çıkar!\n\nBu mükemmel gerçekçi seriye bir de hızı ayarlanabilir multi-speed titreşim eklendi! İster takarak kullan, ister takmadan kullan. Hayallerindeki hazzı titreşimle süslendir!\n\nBu ürünler Erotica markası ile Sens Tarafından, ultra yumuşak TPE malzemeden yapılmıştır ve hepsi, sonsuz okşama için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Olga'ya aşık olacaksınız!\n\nVücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek TPE malzemeden yapılmıştır.\nTamamen su geçirmez yapıda olan Premium Masturbator seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur. Bu sayede kolay temizlenebilir ve saklanabilir.\n\nGerçek bir kadın hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı iç tünel tırtıklı dokuları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve dar et dokusu, penis girişi sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda iç kanaldaki hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve dar doku yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSadece su bazlı kayganlaştırıcılar ile kullanılması, kullanımdan önce ve sonra temizlenmesi tavsiye edilir.\n\n22 CM uzunlukta, 26 CM genişlikte , 17.5 CM yükseklikte ve 5.5 KG ağırlığındadır."
+    },
+    {
+      "price": 1499,
+      "image": "/uploads/img2e7af45a7529.webp",
+      "reviewCount": 0,
+      "id": "p39b79bb77f17",
+      "highlights": [
+        "%100 Su Geçirmez",
+        "Gerçekçi Medikal TPE",
+        "Su Bazlı Formül"
+      ],
+      "name": "Abby - Cep Tipi Realistik Manken Büyük Göğüslü Realistik Titreşimli Isıtmalı Vajina",
+      "rating": 0,
+      "longDescription": "Premium Masturbator Abby - Cep Tipi Realistik Manken Büyük Göğüslü Realistik Titreşimli Vajina\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek kadın ölçü kalıplarından üretilen gerçeğe yakın Premium Masturbator serisi ile eşsiz ve benzersiz deneyimin tadını çıkar!\n\nBu mükemmel gerçekçi seriye bir de hızı ayarlanabilir multi-speed titreşim eklendi! İster takarak kullan, ister takmadan kullan. Hayallerindeki hazzı titreşimle süslendir!\n\nBu ürünler Erotica markası ile Sens Tarafından, ultra yumuşak TPE malzemeden yapılmıştır ve hepsi, sonsuz okşama için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Abby'e aşık olacaksınız!\n\nVücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek TPE malzemeden yapılmıştır.\nTamamen su geçirmez yapıda olan Premium Masturbator seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur. Bu sayede kolay temizlenebilir ve saklanabilir.\n\nGerçek bir kadın hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı iç tünel tırtıklı dokuları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve dar et dokusu, penis girişi sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda iç kanaldaki hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve dar doku yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSadece su bazlı kayganlaştırıcılar ile kullanılması, kullanımdan önce ve sonra temizlenmesi tavsiye edilir.\n\nHızlı ayarlanabilir multi-speed Jumping Egg Vibratör ile birlikte gelir.",
+      "variants": [
+        "standart"
+      ],
+      "bestSeller": false,
+      "createdAt": "2026-09-03T16:27:23.929Z",
+      "oldPrice": null,
+      "description": "Hepsi kendi tutkulu kişiliklerine sahip ve gerçek kadın ölçü kalıplarından üretilen gerçeğe yakın Premium Masturbator serisi ile eşsiz ve benzersiz deneyimin tadını çıkar!  Bu mükemmel gerçekçi seriye bir de hızı ayarlanabilir multi-speed titreşim eklendi! İster takarak kullan, ister takmadan kullan. Hayallerindeki hazzı titreşimle süslendir!",
+      "featured": false,
+      "tags": [],
+      "slug": "abby-cep-tipi-realistik-manken-buyuk-goguslu-realistik-titresimli-isitmali-vajina",
+      "gallery": [
+        "/uploads/img2e7af45a7529.webp",
+        "/uploads/imgc8c0ea00792a.webp",
+        "/uploads/imged1c1ebbf8ff.webp",
+        "/uploads/img7baeb68b5cea.webp"
+      ],
+      "categoryName": "Realistik Vajinalar",
+      "isNew": true,
+      "category": "ciftler",
+      "stock": 10
+    },
+    {
+      "highlights": [
+        "Şarj Edilebilir Batarya",
+        "<45dB Fısıltı Motoru",
+        "%100 Orijinal & Faturalı"
+      ],
+      "image": "/uploads/img1530a155164f.webp",
+      "price": 959,
+      "tags": [],
+      "categoryName": "Vibratörler",
+      "slug": "rose-klitoral-emis-ve-titresim-vibratoru",
+      "oldPrice": 1159,
+      "description": "Şarjlı Silikon Gül Tasarımlı Uyarıcı - Sarı",
+      "longDescription": "Şık gül tasarımı ve kompakt yapısıyla dikkat çeken Rose Mini, emiş teknolojisi ve titreşim fonksiyonunu bir araya getirerek farklı duyusal deneyimler sunmak üzere tasarlanmıştır. Avuç içine sığan boyutu sayesinde kolay taşınabilir ve pratik kullanım sağlar.\n\nÖzel emiş başlığı, hassas bölgelerde temassız uyarım hissi oluştururken, farklı titreşim modları kişisel tercihlere uygun kullanım seçenekleri sunar. Kompakt boyutuna rağmen güçlü performans sağlayan motor sistemi sayesinde yoğun ve etkili bir kullanım deneyimi elde edilir.\n\nYumuşak silikon dış yüzey cilt dostu bir kullanım sunarken, ergonomik tasarımı sayesinde elde rahat tutulur. Modern gül formu ürüne estetik bir görünüm kazandırırken aynı zamanda kullanım kolaylığı sağlar.\n\nŞarj edilebilir bataryası sayesinde kablosuz kullanım imkanı sunan Rose Mini, günlük kullanım ve seyahatler için ideal boyutlara sahiptir. Sessiz çalışma özelliği sayesinde daha konforlu bir kullanım deneyimi sağlar.\n\nHem başlangıç seviyesindeki kullanıcılar hem de kompakt ve etkil",
+      "variants": [
+        "standart"
+      ],
+      "bestSeller": false,
+      "gallery": [
+        "/uploads/img1530a155164f.webp",
+        "/uploads/img48e4ba73dcf4.webp",
+        "/uploads/img52560ff7b45e.webp"
+      ],
+      "id": "p44e1746e399f",
+      "name": "Rose Klitoral Emiş ve Titreşim Vibratörü",
+      "featured": false,
+      "rating": 0,
+      "reviewCount": 0,
+      "category": "vibratorler",
+      "createdAt": "2026-09-11T15:16:50.756Z",
+      "isNew": true,
+      "stock": 10
+    },
+    {
+      "category": "fetish-urunler",
+      "reviewCount": 0,
+      "name": "Deri Tavşan Maske Siyah",
+      "gallery": [
+        "/uploads/imgac2ddcd00600.webp",
+        "/uploads/imgc14eacd5e2cb.webp",
+        "/uploads/img8e351987579a.webp"
+      ],
+      "categoryName": "Fetish Ürünler",
+      "image": "/uploads/imgac2ddcd00600.webp",
+      "price": 899,
+      "featured": true,
+      "createdAt": "2026-09-03T15:57:07.174Z",
+      "oldPrice": 1059,
+      "description": "Çiftlere Özel",
+      "isNew": true,
+      "tags": [],
+      "bestSeller": true,
+      "stock": 10,
+      "variants": [
+        "standart"
+      ],
+      "longDescription": "Deri Tavşan Maske – Siyah\n\n\nGizemli ve çekici tasarımıyla öne çıkan Deri Tavşan Maske – Siyah, fantezi ve role-play dünyanıza cesur bir dokunuş katmak için tasarlandı. Tavşan kulakları ve şık siyah rengiyle zarif ve çarpıcı bir görünüm sunar. Hem estetik hem de rahat bir kullanım sağlar.\n\n\nÖlçüler ve Özellikler\n\n\nUzunluk: 32 cm (kulaklar dahil)\n\nGenişlik: 19 cm (maske yüz kısmı)\n\nMalzeme:\n\nYüksek kaliteli suni deri, cilt dostu ve yumuşak dokusuyla konfor sağlar.\n\nEsnek ve dayanıklı yapısı sayesinde uzun ömürlüdür.\n\nTasarım Detayları\n\n\nTavşan Kulakları: Uzun ve dik kulak tasarımı, maske ile şık ve cesur bir görünüm kazandırır.\n\nAyarlanabilir Kayış: Maske, arkasında yer alan kayışla baş ölçünüze göre ayarlanabilir. Farklı baş yapılarına kolayca uyum sağlar.\n\nRenk: Zarif ve gizemli siyah rengi, her ortamda dikkat çekici bir hava yaratır.\n\nGöz Detayı: Göz çevresi açık tasarlanmıştır, bu sayede görüş kısıtlanmaz ve rahat bir kullanım sunar.\n\nNeden Tercih Etmelisiniz?\n\n\nEstetik ve Çekici: Siyah deri ve tavşan kulak tasarımı, şıklık ve gizemi bir araya getirir.\n\nKonforlu ve Hafif: Uzun süreli kullanımlarda bile rahatsızlık vermez, hafif yapısı kolaylık sağlar.\n\nFanteziyi Canlandırır: Cesur ve gizemli bir görünüm yaratarak partnerinizle olan anlarınızı daha heyecanlı hale getirir.\n\nDayanıklı Malzeme: Yüksek kaliteli suni deri, yıpranmaya karşı dayanıklıdır ve uzun süre kullanıma uygundur.\n\nDeri Tavşan Maske – Siyah, şık tasarımı ve gizemli duruşuyla özel anlarınızı daha tutkulu hale getirmek için mükemmel bir aksesuardır. Role-play ve fantezi dünyasına zarif bir dokunuş katmak isteyenler için idealdir.",
+      "highlights": [
+        "Yumuşak Vegan Deri",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "rating": 0,
+      "id": "p45902bf55777",
+      "slug": "deri-tavsan-maske-siyah"
+    },
+    {
+      "stock": 10,
+      "variants": [
+        "standart"
+      ],
+      "isNew": true,
+      "slug": "love-telefon-kontrollu-titresimli-anal-plug",
+      "oldPrice": 2099,
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "USB Şarj Edilebilir",
+        "10 Titreşim Modu",
+        "Mobil Uygulama Kontrollü"
+      ],
+      "description": "Telefon Kontrollü Titreşimli Anal Plug",
+      "tags": [],
+      "bestSeller": false,
+      "longDescription": "APP Kontrollü 10 Frekanslı Anal Vibratör – Uzaktan Kumandalı, Su Geçirmez, Unisex Kullanım Teknolojiyle haz deneyimini birleştiren bu özel tasarım, hem bireysel hem de çiftler için eşsiz bir seçenek sunuyor. 10 farklı titreşim modu, kablosuz mobil uygulama desteği ile her an her yerde tutkuyu doruklara taşıyabilirsiniz. Ürün Özellikleri: 10 Titreşim Modu: Hafiften yoğuna farklı hız ve ritimlerde titreşim seçenekleriyle kişisel zevkinize göre ayarlanabilir. APP & Uzaktan Kumanda Kontrolü: “Love Spouse” uygulaması üzerinden ya da kablosuz uzaktan kumanda ile kontrol edilebilir. Uygulama, özellikle uzak mesafeli ilişkilerde çiftler için etkileşimli bir deneyim sunar. Su Geçirmez Tasarım: Duşta, banyoda ya da ıslak ortamlarda güvenle kullanılabilir. Ergonomik ve Esnek Yapı: Vücuda uyumlu silikon + ABS malzeme ile maksimum konfor ve güvenli kullanım sağlar. Unisex Kullanım: Kadınlar, erkekler ve eşcinsel çiftler tarafından rahatlıkla kullanılabilir. Prostat masajı için de idealdir. Eller Serbest Deneyim: Uzun süreli kullanımda bile rahatlık sunar ve ellerinizi serbest bırakır. Gizli Paketleme: Ürün, dışarıdan içeriği anlaşılmayacak şekilde gizli paketlenerek gönderilir. APP Bağlantı Kılavuzu: Telefonunuzun Bluetooth özelliğini aktif edin. Uygulama mağazasından “Love Spouse” uygulamasını indirin veya QR kodu tarayın. Uygulamayı açın, hesap oluşturun ve giriş yapın. Cihazın güç tuşuna 3-5 saniye basılı tutarak açın. Uygulamada “+” simgesine tıklayarak cihazı ekleyin. Partnerinizin de aynı uygulamayı indirip kaydolmasını sağlayın. “İnteraktif Mod” üzerinden partnerinizi cihazınıza bağlayarak uzaktan kontrol deneyimi yaşayın. Kutu İçeriği: 1 x APP Kontrollü Anal Plug Vibratör 1 x USB Şarj Kablosu 1 x Kullanım Kılavuzu",
+      "categoryName": "Anal Ürünler",
+      "reviewCount": 2,
+      "category": "anal-urunler",
+      "subcategory": "",
+      "id": "p56895cc74a84",
+      "createdAt": "2026-08-29T11:36:01.379Z",
+      "rating": 5,
+      "featured": true,
+      "name": "LOVE. Telefon Kontrollü Titreşimli Anal plug",
+      "image": "/uploads/imgd5b3fb871546.webp",
+      "price": 1599,
+      "gallery": [
+        "/uploads/imgd5b3fb871546.webp",
+        "/uploads/imgd808403a2654.webp",
+        "/uploads/imga2b266df5429.webp",
+        "/uploads/img366a0bf13dd8.webp"
+      ]
+    },
+    {
+      "slug": "orviax-love-drops-for-women-damla",
+      "shortDesc": "Kadınlara özel doğal bitki özlü günlük canlılık ve yaşam destek damlası.",
+      "description": "Orviax Love Drops Kadınlara Özel Bitkisel Destek Damlası (30 mL), doğal bitki ve vitamin özleri içeren özel formülü ile kadınların günlük canlılık, enerji ve yaşam dengesini desteklemeye yardımcı takviye edici aromatik damladır. İçeceklere karıştırılarak pratik şekilde kullanılabilir. %100 gizli paketleme ile gönderilir.",
+      "rating": 0,
+      "category": "kadinlar",
+      "price": 499,
+      "image": "/uploads/imgcd26631af80f.webp",
+      "featured": true,
+      "tags": [],
+      "longDescription": "Orviax Love Drops For Women Damla,\n\nÖne Çıkan Özellikler:\n• 10 ML - Bitkisel ekstraktlar, vitamin desteği ve antioksidan bileşenler içeren sıvı takviyedir. Satıcı bilgilerinde su, L-askorbik asit (C vitamini), L-arjinin, meyan kökü özütü, kafein ile gıda koruyucuları (potasyum sorbat ve sodyum benzoat) bulunduğu belirtilmektedir.\n\nKullanım talimatı : 30-40 dakika önceden 8-10 damla arası asitsiz bir içecek yada dilaltı olarak kullanılması tavsiye ediliyor.",
+      "reviewCount": 0,
+      "variants": [
+        "standart"
+      ],
+      "id": "p5813616cd082",
+      "createdAt": "2026-09-09T12:41:04.342Z",
+      "highlights": [
+        "Ağızdan İçeceğe Karıştırılarak Tüketilir",
+        "Bitkisel Sıvı Destek Damlası",
+        "30 ml Net Hacim",
+        "%100 Gizli Paketleme"
+      ],
+      "categoryName": "Kadın Cinsel Sağlık",
+      "oldPrice": 559,
+      "gallery": [
+        "/uploads/imgcd26631af80f.webp"
+      ],
+      "isNew": true,
+      "stock": 10,
+      "name": "Orviax Love Drops Kadınlara Özel Bitkisel Destek Damlası 30 ml.",
+      "bestSeller": true
+    },
+    {
+      "category": "erkekler",
+      "name": "Proling Erkeklere Özel Bakım ve Masaj Spreyi 59 ml",
+      "reviewCount": 0,
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Birliktelik Süresini Destekleyici Formül",
+        "Lokal Püskürtme Uygulaması",
+        "59 ml Net Hacim"
+      ],
+      "gallery": [
+        "/uploads/img05b060a51329.webp"
+      ],
+      "createdAt": "2026-08-29T12:15:37.475Z",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "featured": true,
+      "stock": 9,
+      "bestSeller": true,
+      "isNew": true,
+      "rating": 0,
+      "oldPrice": 779,
+      "price": 699,
+      "image": "/uploads/img05b060a51329.webp",
+      "tags": [],
+      "description": "Birliktelik süresini desteklemeye yardımcı özel ferahlatıcı bitkisel formülü ile konforlu bir deneyim sunar (59 ml).",
+      "shortDesc": "Erkeklere özel canlandırıcı ve süreyi desteklemeye yardımcı ferahlatıcı bakım spreyi.",
+      "variants": [
+        "standart"
+      ],
+      "id": "p5bdb3e17409d",
+      "slug": "proling-erkeklere-ozel-gelistirilmis-sprey",
+      "longDescription": "Proling Erkeklere Özel Geliştirilmiş Sprey (59 ml), birliktelik süresini desteklemeye ve ferahlatıcı bir bakım konforu sunmaya yardımcı olur. Ciltle uyumlu hafif formülü sayesinde hedef bölgede ferahlık hissi sağlayarak konforlu ve kontrollü bir deneyimi destekler.\n\nÖne Çıkan Özellikler:\n• Birliktelik süresini desteklemeye yardımcı ferahlatıcı ve canlandırıcı etki\n• Bölgesel konforu ve deneyim kalitesini destekleyen temiz formül\n• Prezervatif ile %100 uyumludur, latekse zarar vermez\n• Koku veya leke bırakmaz, pratik sprey formuyla uzun ömürlü kullanım sağlar\n• Yalnızca harici bölgesel kullanım içindir."
+    },
+    {
+      "name": "Passion Cup Suni Vajina Mastürbatör",
+      "reviewCount": 0,
+      "stock": 9,
+      "categoryName": "Realistik Vajinalar",
+      "isNew": false,
+      "oldPrice": 1059,
+      "rating": 0,
+      "variants": [
+        "standart"
+      ],
+      "tags": [],
+      "id": "p5dc69a298a76",
+      "description": "Erkeklere özel kutulu masturbatör.",
+      "bestSeller": false,
+      "featured": true,
+      "createdAt": "2026-09-03T16:05:54.283Z",
+      "longDescription": "Passion Cup Suni Vajina Mastürbatör Ekstra yumuşak, gerçekçi et dokusunda, daha fazla uyarılması tünel içi özel olarak nodüllü tasarlanmış, emme etkisi yaratmak için tepeden delikli, 16 cm derinliğinde, suni vajina mastürbatör. Daha gerçekçi ve konforlu kullanım için kayganlaştırıcı jel ile birlikte kullanılması önerilir.",
+      "gallery": [
+        "/uploads/imgd180bab7dbac.webp",
+        "/uploads/imga0dd1ac896d6.webp",
+        "/uploads/img80e0dd19d2e3.webp"
+      ],
+      "category": "ciftler",
+      "image": "/uploads/imgd180bab7dbac.webp",
+      "price": 959,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "slug": "passion-cup-suni-vajina-masturbator"
+    },
+    {
+      "category": "vibratorler",
+      "id": "p820bfa608d33",
+      "bestSeller": true,
+      "slug": "eroteq-prawno-kumandali-ciftlere-ozel-u-tipi-vibrator",
+      "tags": [],
+      "stock": 9,
+      "isNew": true,
+      "featured": true,
+      "highlights": [
+        "IPX6 Güçlü Su Dayanımlı",
+        "Şarj Edilebilir Batarya",
+        "10 Titreşim Modu",
+        "Çift Bağımsız Motor"
+      ],
+      "rating": 0,
+      "reviewCount": 0,
+      "oldPrice": 5899,
+      "categoryName": "Vibratörler",
+      "gallery": [
+        "/uploads/imga478c4c0fe7f.webp",
+        "/uploads/imgc76a87b15b2e.webp",
+        "/uploads/img90ed088ad0ee.webp",
+        "/uploads/imgfa69d971a0b7.webp"
+      ],
+      "price": 5269,
+      "image": "/uploads/imga478c4c0fe7f.webp",
+      "variants": [
+        "standart"
+      ],
+      "longDescription": "eroTEQ Prawno, partnerli kullanıma özel olarak tasarlanmış yenilikçi yapısıyla çiftlerin birlikte deneyimleyebileceği farklı bir kullanım sunar. Ergonomik U formu sayesinde hem iç hem de dış uyarımı aynı anda destekleyen ürün, çiftlerin yakınlık anlarını daha yoğun ve etkileyici hale getirmek için geliştirilmiştir. Özel U şeklindeki tasarımın ince bölümü iç kullanım için tasarlanırken, dış bölüm hassas bölgelere temas ederek çift yönlü uyarım sağlar. Bu yapı sayesinde ürün kullanım sırasında yerini korurken, her iki partnerin de ürünü birlikte hissetmesine yardımcı olur. Prawno'nun en dikkat çekici özelliklerinden biri, cihazın her iki tarafında bulunan iki bağımsız güçlü motordur. Senkronize çalışan bu motorlar daha dengeli ve etkili titreşimler üretirken, 10 farklı titreşim modu ve 4 farklı güç seviyesi sayesinde toplam 40 farklı kullanım kombinasyonu sunar. Böylece farklı tercihlere ve ruh hallerine uygun ayarlar kolayca seçilebilir. LCD ekranlı uzaktan kumanda, tüm fonksiyonların rahatça yönetilmesini sağlar.\n\nNem koruma seviyesi\tIPX6 - Herhangi bir yönden su akışlarına veya güçlü jetlere karşı koruma",
+      "name": "eroTEQ Prawno Kumandalı Çiftlere Özel U Tipi Vibratör",
+      "createdAt": "2026-09-14T11:05:40.814Z",
+      "description": "U Tipi Vibratör – Çift Motorlu, Şarjlı Silikon, 18 cm, ç"
+    },
+    {
+      "reviewCount": 0,
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "Şarj Edilebilir Batarya",
+        "12 Titreşim Modu"
+      ],
+      "id": "pa33b2e34fe4d",
+      "gallery": [
+        "/uploads/imgedbccc0cf8aa.webp",
+        "/uploads/imga5e38a050742.webp",
+        "/uploads/img3350c0868d6d.webp",
+        "/uploads/imgde158a940325.webp"
+      ],
+      "name": "LOVE.Noctis G-Spot şarjlı Vibratör",
+      "oldPrice": 1999,
+      "stock": 10,
+      "bestSeller": false,
+      "isNew": true,
+      "rating": 0,
+      "createdAt": "2026-08-31T13:25:55.023Z",
+      "longDescription": "LOVE. Noctis G-Spot şarjlı Vibratör yumuşak dokusu ile 10 titreşim moduna sahip şarjlı modern vibratör",
+      "variants": [
+        "standart"
+      ],
+      "description": "Çiftlere özel 12 titreşim modlu, su geçirmez g-spot",
+      "featured": false,
+      "categoryName": "Vibratörler",
+      "slug": "love-noctis-g-spot-sarjli-vibrator",
+      "image": "/uploads/imgedbccc0cf8aa.webp",
+      "price": 1799,
+      "category": "vibratorler",
+      "tags": []
+    },
+    {
+      "description": "3'li Penis Halkası",
+      "price": 259,
+      "image": "/uploads/img0b5f9e122919.webp",
+      "name": "3'li Penis Halkası",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "longDescription": "3'li Penis Halkası, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.\n\nÖne Çıkan Özellikler:\n• Üçlü Penis Halkası. Siyah, mavi ve şeffaf renklere sahiptirler.",
+      "oldPrice": null,
+      "variants": [
+        "standart"
+      ],
+      "reviewCount": 0,
+      "gallery": [
+        "/uploads/img0b5f9e122919.webp",
+        "/uploads/imgbed127603d4a.webp"
+      ],
+      "tags": [],
+      "id": "pa4cab77cad28",
+      "createdAt": "2026-09-09T12:59:11.562Z",
+      "featured": true,
+      "rating": 0,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "slug": "3-li-penis-halkasi",
+      "bestSeller": false,
+      "category": "erkekler",
+      "isNew": true,
+      "stock": 9
+    },
+    {
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "100 ml Net Hacim",
+        "Su Bazlı Formül"
+      ],
+      "slug": "backyard-lube-wb-100ml-by-sens-su-bazli-anal-kayganlastirici-masaj-jeli",
+      "id": "pb477faabcaf3",
+      "category": "kadinlar",
+      "tags": [],
+      "createdAt": "2026-09-03T16:13:24.205Z",
+      "featured": false,
+      "description": "Çiftlere Özel Su Bazlı Kayganlaştırıcı",
+      "image": "/uploads/imga94ae48346cb.webp",
+      "price": 279,
+      "bestSeller": false,
+      "variants": [
+        "standart"
+      ],
+      "rating": 0,
+      "stock": 9,
+      "categoryName": "Kadın Cinsel Sağlık",
+      "isNew": true,
+      "oldPrice": 299,
+      "longDescription": "Backyard Lube Water Based 100ml by Sens Su Bazlı Anal Kayganlaştırıcı Masaj Jeli\n\n \n\nBackyard Lube Water Based, su bazlı formülüyle rahatlık ve konforu bir arada sunan, yüksek kaliteli bir anal kayganlaştırıcı masaj jelidir. 100 ml'lik pratik şişesiyle uzun süreli kullanım sağlar ve her türlü cilt tipine uygun güvenli bir alternatif sunar. İçeriğinde zararlı kimyasallar veya paraben bulunmaz, böylece cilt dostu ve hipoalerjeniktir.\n\n \n\nBu özel kayganlaştırıcı, anal bölgede kayganlık ve pürüzsüzlük sağlayarak, herhangi bir rahatsızlık hissetmeden rahat bir deneyim sunar. Su bazlı yapısı sayesinde ciltte kolayca emilir ve temizlenmesi son derece basittir. Ayrıca, vücutla uyumlu olup ciltle irtibata geçtiğinde doğal bir kayganlık hissi yaratır, böylece hem masaj hem de eğlenceli anlar için mükemmel bir yardımcıdır.\n\n \n\nBackyard Lube Water Based, partnerinizle olan özel anlarınızı daha konforlu hale getirirken, sürtünmeyi azaltarak daha derin ve keyifli bir deneyim yaşamanıza yardımcı olur. Ayrıca, bu kayganlaştırıcı, kondomlarla uyumlu olup güvenle kullanılabilir.\n\n \n\nDoğal içeriklere dayalı, su bazlı formülü ile güvenli, etkili ve rahat bir deneyim sunan Backyard Lube Water Based, her zaman yanınızda olmalı!",
+      "name": "Backyard Lube WB 100ml by Sens Su Bazlı Anal Kayganlaştırıcı Masaj Jeli",
+      "gallery": [
+        "/uploads/imga94ae48346cb.webp",
+        "/uploads/img1739a1b4fd83.webp"
+      ],
+      "reviewCount": 0
+    },
+    {
+      "createdAt": "2026-08-28T15:01:10.601Z",
+      "rating": 5,
+      "category": "realistik-dildolar",
+      "isNew": true,
+      "stock": 10,
+      "featured": false,
+      "longDescription": "Master Perfection Dildo Steve - Ultra Yumuşak Çift Katmanlı Mavi Damarlı Büyük Boy Realistik Yapay Penis 26 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
+      "description": "Çift Katmanlı Silikon Gerçekçi Yapay Penis 26 CM,",
+      "id": "pb7847614536e",
+      "name": "Steve - Ultra Yumuşak Dokulu Realistik Dildo",
+      "bestSeller": false,
+      "variants": [
+        "standart"
+      ],
+      "slug": "steve-ultra-yumusak-dokulu-realistik-dildo",
+      "categoryName": "Realistik Dildolar",
+      "image": "/uploads/imgee90f2ac5ae0.webp",
+      "price": 4999,
+      "oldPrice": 5266,
+      "gallery": [
+        "/uploads/imgee90f2ac5ae0.webp"
+      ],
+      "reviewCount": 2,
+      "tags": [],
+      "highlights": [
+        "%100 Su Geçirmez",
+        "Medikal Platinum Silikon",
+        "Güçlü Sabitleme Vantuzu",
+        "Su Bazlı Formül"
+      ]
+    },
+    {
+      "longDescription": "Master Perfection Dildo Oscar - Ultra Yumuşak Dokulu Realistik Dildo Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM\n \n\nHepsi kendi tutkulu kişiliklerine sahip ve gerçek ölçü kalıplarından üretilen gerçeğe yakın Master Perfection Dildo ultra yumuşak çift katmanlı yapay penis koleksiyonu.\nBu seri, ultra yumuşak dokuda ve son teknoloji olan Platinum Silikon malzemeden üretilmiştir.\n\nEller serbest kullanım için vantuzludur. Pürüzsüz herhangi bir yüzeye sabitlenebilir ve belden bağlamalı olarak kullanıma imkan sunar.\n\nHepsi, mükemmel giriş için gerçekçi açıklıklarla donatılmıştır. Temizlemesi kolay, mükemmel boyutta ve gerçeğinden daha iyi olan Master Perfection Dildo serisine aşık olacaksınız!\n\nBu seri Erotica markası ile Sens Tarafından, vücut için %100 güvenli olan ve en gerçekçi deneyimi sağlayan yumuşak ve esnek son teknoloji Platinum Silikon malzemeden yapılmıştır.\n\nTamamen su geçirmez yapıda olan Master Perfection Dildo seri ürünleri banyoda, jakuzide veya herhangi bir sulu mekanda kullanım için uygundur.\n\nGerçek bir penis hissi için son teknoloji doku, ince işçilik, gerçekçi görünüm ve her birine ait farklı özel yüzey detayları ile eşsiz ve benzersiz deneyim sunması için özel tasarım ve harika mühendislik ile tasarlanmıştır.\n\nSıkı ve çift katmanlı dokusu, giriş sırasında iç kanallarda hava basıncını iterek sürtünmeyi maksimum seviyeye çıkararak her girişte patlayıcı orgazm zevkini yansıtır.\n\nAynı zamanda her girişte hava basıncı ittirerek sürtünmeyi maksimum düzeyde tutan sıkı ve çift katmanlı yapısı, vücut sıcaklığı ile ısı dengeleyerek doğal bir şekilde sıcaklık verir. Bu sıcak his, gözlerinizi kapattığınızda hayallerinizdeki seks anını hissetmenize imkan sunar.\n\nSeks oyuncakları sadece su bazlı kayganlaştırıcılar ile kullanılmalı, kullanımdan önce ve sonra temizlenmelidir.",
+      "tags": [],
+      "id": "pb8933905dc29",
+      "image": "/uploads/img9e03f59652d2.webp",
+      "price": 2499,
+      "bestSeller": false,
+      "createdAt": "2026-08-28T14:43:54.851Z",
+      "featured": false,
+      "categoryName": "Realistik Dildolar",
+      "rating": 0,
+      "category": "realistik-dildolar",
+      "highlights": [
+        "%100 Su Geçirmez",
+        "Medikal Platinum Silikon",
+        "Güçlü Sabitleme Vantuzu",
+        "Su Bazlı Formül"
+      ],
+      "slug": "oscar-ultra-yumusak-dokulu-realistik-dildo",
+      "reviewCount": 0,
+      "name": "Oscar - Ultra Yumuşak Dokulu Realistik Dildo",
+      "gallery": [
+        "/uploads/img9e03f59652d2.webp",
+        "/uploads/img6aa7a25b966a.webp",
+        "/uploads/img097d12e6d469.webp"
+      ],
+      "oldPrice": 3259,
+      "stock": 6,
+      "description": "Çift Katmanlı Silikon Gerçekçi Yapay Penis 23 CM",
+      "variants": [
+        "standart"
+      ],
+      "isNew": true
+    },
+    {
+      "category": "kadinlar",
+      "slug": "cabs-glide-kayganlastirici-jel-250-ml",
+      "id": "pbcfa6505bc8d",
+      "shortDesc": "Su bazlı, ipeksi kayganlık sağlayan dermatolojik masaj ve kayganlaştırıcı jel.",
+      "isNew": true,
+      "stock": 8,
+      "tags": [],
+      "featured": true,
+      "reviewCount": 2,
+      "categoryName": "Kadın Cinsel Sağlık",
+      "oldPrice": 559,
+      "gallery": [
+        "/uploads/img7bfbe4451fed.webp",
+        "/uploads/img13ac884744f4.webp"
+      ],
+      "longDescription": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel, uzun süreli kayganlık sağlar. Klinik testlerden geçen ürün, kondom çeşitleri ile birlikte kullanmaya uyumludur. Tamamen su bazlı olan ürünün formülünde yağ yoktur. Çocukların ulaşamayacağı, serin ve kuru bir yerde saklayınız.",
+      "createdAt": "2026-08-29T12:10:40.125Z",
+      "price": 499,
+      "image": "/uploads/img7bfbe4451fed.webp",
+      "variants": [
+        "standart"
+      ],
+      "bestSeller": true,
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Dermatolojik Onaylı",
+        "250 ml Net Hacim",
+        "Su Bazlı Formül"
+      ],
+      "name": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
+      "rating": 5,
+      "description": "Dermatolojik olarak test edilen ve tüm cilt tiplerinde kullanıma uygun olduğu onaylanan Cabs Glide Kayganlaştırıcı Jel (250 ml), ipeksi ve uzun süreli kayganlık hissi sağlar. Kondom çeşitleri ile birlikte kullanıma uyumludur. Tamamen su bazlıdır, yağsız formülü ile leke bırakmaz ve ılık suyla kolayca temizlenir. %100 gizli kutuda gönderilir."
+    },
+    {
+      "tags": [],
+      "category": "anal-urunler",
+      "longDescription": "Anatomik olarak şekillendirilmiş hafif kavisli bir yapay penis, bir aile yatak odasında idealdir. Değerli erojen noktaları mükemmel bir şekilde uyarır. Erkeklerde bu P noktasıdır, kadınlarda G noktasıdır. Sonunda penisin başına bir ipucu bulunan koni şeklindeki şekil, girmek için uygundur. Yuvarlak taban, az kuvvetle pürüzsüz bir yüzeye sabitlenir ve bir stoper görevi görür.",
+      "gallery": [
+        "/uploads/imge1fa23f7d15c.webp",
+        "/uploads/img30ee6aca0718.webp",
+        "/uploads/img7ff3e5b4e4f7.webp",
+        "/uploads/imgb1bb297eead7.webp",
+        "/uploads/img98220f01498b.webp"
+      ],
+      "featured": true,
+      "stock": 10,
+      "isNew": true,
+      "description": "S Virajlı, Silikon, Siyah, 13 cm",
+      "slug": "popo-pleasure-serpens-anal-yapay-penis",
+      "price": 799,
+      "image": "/uploads/imge1fa23f7d15c.webp",
+      "variants": [
+        "standart"
+      ],
+      "name": "POPO Pleasure Serpens Anal Yapay Penis",
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "oldPrice": 8959,
+      "rating": 0,
+      "categoryName": "Anal Ürünler",
+      "createdAt": "2026-09-10T17:25:26.509Z",
+      "id": "pc3613ea47017",
+      "reviewCount": 0,
+      "subcategory": "",
+      "bestSeller": true
+    },
+    {
+      "stock": 10,
+      "isNew": true,
+      "createdAt": "2026-09-09T17:07:04.140Z",
+      "featured": true,
+      "slug": "flovetta-petunia-klitoral-uyaricili-vibrator",
+      "longDescription": "PETUNIA Klitoral Uyarıcılı Vibratör, iç bölge ve klitoral bölgeyi aynı kullanım sırasında uyarmaya yardımcı olan çift kollu tasarıma sahiptir. Yumuşak silikon yüzeyi, 10 cm çalışma uzunluğu ve 3,2 cm maksimum çapıyla kontrollü ve konforlu bir deneyim sunmayı amaçlar.\n\nÜrün gövdesindeki düğmeler sayesinde titreşim kolayca yönetilebilir. Kablo veya şarj işlemi gerektirmeyen model, 2 adet AAA pil ile çalışır. IPX3 seviyesindeki sıçrayan su koruması günlük temizliği kolaylaştırırken kompakt yapısı ürünü saklamayı ve taşımayı pratik hâle getirir.",
+      "gallery": [
+        "/uploads/imgd7c3a53ab8b9.webp",
+        "/uploads/img4400b9b46200.webp",
+        "/uploads/imga6f3c09275e0.webp",
+        "/uploads/imgb53e76546023.webp"
+      ],
+      "tags": [],
+      "reviewCount": 0,
+      "category": "vibratorler",
+      "rating": 0,
+      "bestSeller": false,
+      "variants": [
+        "standart"
+      ],
+      "name": "Flovetta PETUNIA Klitoral Uyarıcılı Vibratör",
+      "highlights": [
+        "IPX3 Sıçrama Korumalı",
+        "2x AAA Pille Çalışır",
+        "%100 Orijinal & Faturalı"
+      ],
+      "image": "/uploads/imgd7c3a53ab8b9.webp",
+      "price": 2259,
+      "categoryName": "Vibratörler",
+      "oldPrice": 2489,
+      "description": "",
+      "id": "pc673785d558d"
+    },
+    {
+      "id": "pc8f905e761bf",
+      "featured": true,
+      "createdAt": "2026-08-29T11:49:54.185Z",
+      "name": "Noctis Telefon kontrollü Pembe Vibratör",
+      "gallery": [
+        "/uploads/imga85b9cdf148c.webp",
+        "/uploads/img61568e20e7a7.webp"
+      ],
+      "reviewCount": 0,
+      "subcategory": "",
+      "price": 1599,
+      "image": "/uploads/imga85b9cdf148c.webp",
+      "category": "vibratorler",
+      "bestSeller": true,
+      "stock": 9,
+      "rating": 0,
+      "isNew": true,
+      "categoryName": "Vibratörler",
+      "slug": "noctis-telefon-kontrollu-pembe-vibrator",
+      "variants": [
+        "standart"
+      ],
+      "tags": [],
+      "description": "Akıllı Telefon Uyarıcılı Yumurta Vibratör – Zevki Yeniden Tanımlayın",
+      "oldPrice": 2259,
+      "highlights": [
+        "10 Titreşim Modu",
+        "Mobil Uygulama Kontrollü",
+        "<45dB Fısıltı Motoru",
+        "İPX4"
+      ],
+      "longDescription": "Akıllı Telefon Kontrollü Vibratör – Zevki Yeniden Tanımlayın\n\nTelefon Kontrollü Vibratör, yenilikçi teknoloji ve estetik tasarımın mükemmel bir kombinasyonudur. Bu ürün, 10 farklı titreşim moduyla, kullanıcılarına benzersiz bir zevk deneyimi sunar. Akıllı telefon uygulamasıyla kontrol edilebilir ve sessiz çalışma özelliği sayesinde gizliliği ön planda tutar.\n\nÜrün Özellikleri:\n\nBoyut ve Ağırlık: 3,5 cm X 7,6 cm X 21 cm boyutları ve 180 gr ağırlığıyla kullanımı son derece rahat ve konforludur. Taşıması kolaydır ve istenilen her yere götürülebilir.\nRenk Seçeneği: Göz alıcı rose rengiyle estetik bir görünüm sunar. Bu renk seçeneği, ürüne şıklık ve zarafet katmaktadır.\nTitreşim Modları: 10 farklı titreşim moduyla çeşitli zevk seviyelerine hitap eder. Kullanıcılar istedikleri titreşim modunu seçerek kişisel tercihlerine uygun deneyimler yaşayabilirler.\nAkıllı Telefon Uygulaması: Akıllı telefonlara indirilen kişisel uygulama ile kontrol edilebilir. Bu özellik, kullanıcıya daha fazla kontrol ve esneklik sağlar.\nKolay Temizlenebilir ve Esnek Yapı: %100 medikal materyalden üretilmiş olan ürün, kolayca temizlenebilir ve hijyenik bir kullanım sağlar. Esnek yapısıyla vücuda mükemmel uyum sağlar.\nTelefon Kontrollü Vibratör, kaliteli malzeme ve yenilikçi teknolojiyle üretilmiştir. Kullanıcıların beklentilerini karşılamak için özenle tasarlanmıştır ve her anınızı daha özel hale getirmek için ideal bir tercihtir.\n\nPembe Tilki Telefon Kontrollü Vibratör Uygulama Kurulumu ve Kullanımı\nCihaz kutusunun içinden çıkan kullanım kılavuzunda bulunan barkodu telefonunuzun kamerasıyla okutarak kuruluma başlayın. Bu işlem sizi uygulamanın indirileceği web sitesine yönlendirecektir. Web sitesine ulaştığınızda, cihazınızın işletim sistemine uygun olan APK dosyasını indirin. Hem iOS hem de Android için uygun seçenekler mevcuttur. Uygulamayı indirdikten sonra, eğer güncelleme mevcutsa, hemen güncelleme yapın ve uygulamayı başlatın.\n\nUygulama ana sayfasına geldiğinizde, sağ alt köşede bulunan ‘MY’ yazan bölüme tıklayın. Açılan ekranda, eğer mevcut bir hesabınız varsa, bilgilerinizi girin. Hesabınız yoksa, sol alt köşede bulunan ‘Register’ seçeneğine dokunun.\n\nBu adımda, sizden bir kullanıcı adı (nickname), hesap adı (account), ve şifre (password) oluşturmanız istenecektir. Kullanıcı adınız harf ve rakamlardan oluşabilir. Hesap adı için yalnızca rakamlar kullanmalısınız, ancak bu rakamlar benzer veya sıralı olmamalı; farklı kombinasyonlar oluşturmalısınız. Ayrıca hesap adınız 6 ile 14 karakter arasında olmalıdır. Şifreniz ise hem harf hem de rakamlardan oluşmalı ve yine 6 ile 14 karakter arasında olmasına özen gösterilmelidir.\n\nSonrasında, ‘Disclaimers’ bölümüne girerek, sözleşme ve koşulları kabul edin. Ardından, ‘Register’ butonuna tıklayarak hesabınızı oluşturun. Profilinizi düzenlemek için yeni açılan sayfayı kullanabilirsiniz. Uygulamada ‘Share’ kısmından oluşturulan linki partnerinize göndererek cihazı uzaktan kullanmasını sağlayabilirsiniz. Ayrıca, ‘buddy list’ kısmından diğer kullanıcılarla sosyalleşebilir ve yeni arkadaşlar edinebilirsiniz. ‘Language’ bölümünden uygulamanın dilini değiştirebilirsiniz, ancak şu an için Türkçe dil desteği bulunmamaktadır.\n\nAna sayfaya döndüğünüzde ‘my model’ kısmına girin. Uygulama, telefonunuzun Bluetooth bağlantısını açarak cihazınızı bulacaktır. Eğer cihazınız kapalıysa, güç tuşuna 2 saniye basılı tutun. Cihazınız bir kez titreyerek açılacak ve güç düğmesindeki ışık yanıp sönmeye başlayacaktır. Işık yanıp sönüyorsa, cihazınız telefon bağlantısı için hazır demektir. Telefonunuzun Bluetooth bağlantısını açın ve ‘DSJM’ cihazı için bağlantı onayı verin. Cihazınız ve telefonunuz eşleştikten sonra, kullanıma hazır hale geleceksiniz."
+    },
+    {
+      "slug": "popo-pleasure-dorado-anal-stimulatoru",
+      "oldPrice": 899,
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "price": 859,
+      "image": "/uploads/img5e1ee1a584d2.webp",
+      "reviewCount": 0,
+      "longDescription": "Bu anal oyunlar ve zevkler için bir seks oyuncağıdır. Penis başının taklidi ile kavisli şekli, önce onu anüse rahatça sokmanıza izin verir ve ikincisi, erkek P noktasını etkilemek için mükemmel bir yoldur ve bu da artan bir orgazm dalgasına neden olur. Tutamak halkası, penetrasyon derecesini kolayca ayarlamayı ve oyuncağın tamamen içeri girmeyeceğinden emin olmayı mümkün kılar.\n\nSu Geçirmez, Silikon, Siyah, 18 cm, Ø 3, 5 cm",
+      "bestSeller": false,
+      "tags": [],
+      "gallery": [
+        "/uploads/img5e1ee1a584d2.webp",
+        "/uploads/img09d4ed99087c.webp",
+        "/uploads/imge8100269ef45.webp"
+      ],
+      "id": "pce7e3e765b9c",
+      "category": "anal-urunler",
+      "createdAt": "2026-09-10T17:43:02.916Z",
+      "rating": 0,
+      "isNew": true,
+      "description": "",
+      "stock": 10,
+      "name": "POPO Pleasure Dorado Anal Stimülatörü",
+      "featured": false,
+      "categoryName": "Anal Ürünler"
+    },
+    {
+      "id": "pcf7a75f88fd7",
+      "description": "Kadın Cinsel Sağlık",
+      "bestSeller": false,
+      "slug": "profesyonel-gogus-ve-vajina-vakum-pompasi-set",
+      "tags": [],
+      "stock": 10,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "isNew": true,
+      "gallery": [
+        "/uploads/img8723ef2ef388.webp",
+        "/uploads/img957ecef06424.webp",
+        "/uploads/imgea3dce5c0396.webp"
+      ],
+      "oldPrice": 1959,
+      "createdAt": "2026-09-03T16:18:41.807Z",
+      "categoryName": "Kadın Cinsel Sağlık",
+      "featured": false,
+      "longDescription": "Pussy Pump by Sens - Classic\nDeğiştirilebilir 5 Başlıklı Tetikli Profesyonel Göğüs ve Vajina Vakum Pompası Set\n\n \n\nPussy Pump by Sens serisinin çok yönlü modellerinden Pussy Pump Classic, farklı ihtiyaçlara hitap eden başlık seçenekleriyle kişiselleştirilebilir ve kontrollü bir vakum deneyimi sunar. Hem göğüs hem de vajina bölgesi için tasarlanmış bu profesyonel set, kullanım kolaylığı ve etkili performansı bir araya getirir.\n\n \n\n5 Değiştirilebilir Başlık ile Çok Yönlü Kullanım\nSet içerisinde yer alan farklı boyut ve formdaki 5 başlık sayesinde ihtiyacına uygun seçimi yapabilir, deneyimini tamamen kişiselleştirebilirsin. Farklı bölgelerde kullanım imkanı sunarak tek üründe çok yönlü çözüm sağlar.\n\n \n\nTetik Mekanizması ile Kontrollü Vakum\nErgonomik tetik sistemi sayesinde vakum gücünü adım adım artırabilir, kendi konfor seviyene göre ayarlayabilirsin. Bu sayede güvenli ve bilinçli bir kullanım elde edersin.\n\n \n\nDolgunluk ve Hassasiyet Odaklı Deneyim\nDüzenli ve kontrollü kullanımda kan dolaşımını destekleyerek daha dolgun bir görünüm ve artan hassasiyet sunmaya yardımcı olur. Her kullanım, daha bilinçli ve kontrollü bir deneyim sağlar.\n\n \n\nProfesyonel ve Dayanıklı Tasarım\nKaliteli malzemeden üretilmiş başlıklar ve pompa sistemi uzun ömürlü kullanım sunar. Şeffaf başlık yapısı sayesinde kullanım sırasında kontrol kolaylığı sağlar.\n\n \n\nÖne Çıkan Özellikler\n- 5 adet değiştirilebilir başlık\n- Göğüs ve vajina bölgesi için çok yönlü kullanım\n- Tetikli, manuel ve kontrollü vakum sistemi\n- Ergonomik ve dayanıklı tasarım\n- Kişiselleştirilebilir deneyim\n\n \n\nPUSSY PUMP DENEYİMİNE FARKLI BİR BOYUT\nPussy Pump Classic, çok yönlü yapısı sayesinde deneyimini farklı seviyelere taşır. Her başlık, yeni bir deneyim ve yeni bir seviye sunar.\n\nBu bir ürün değil, kişiselleştirilebilir bir gelişim süreci. Seçim senin, seviye senin.",
+      "price": 1789,
+      "image": "/uploads/img8723ef2ef388.webp",
+      "reviewCount": 0,
+      "name": "Profesyonel Göğüs ve Vajina Vakum Pompası Set",
+      "category": "kadinlar",
+      "rating": 0
+    },
+    {
+      "bestSeller": true,
+      "image": "/uploads/img3585fee7cfd7.webp",
+      "price": 135000,
+      "reviewCount": 0,
+      "name": "Tina - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 170 CM",
+      "oldPrice": 144000,
+      "id": "pd2d3abea895e",
+      "highlights": [
+        "Gerçekçi Medikal TPE",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "categoryName": "Realistik Mankenler",
+      "longDescription": "Tina - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 170 CM\n \n\nTamamen gerçek boyutlarda bir manken size vahşi bir zaman göstermeye hazır!\nTina'nın büyük göğüsleri, ince bir beli, çekici dudakları, çekici vajinası ve güzel bir poposu var. Gerçek bir kadınla seks yapmak gibi.\n\nTina, hangisini seçtiğinize bağlı olarak farklı bir his için tamamen ayrı 3 tünele sahiptir. Uyarıcı bir masaj için süper esnek bir vajina, gıdıklayıcı bir ağız ve derin bir anüs!\n\nMümkün olan en gerçekçi deneyim için aynı cilt görünümünü ve hissini vermek üzere son teknoloji TPE dokudan üretilmiştir. Göğüslerini sıkın, süper yumuşak, esnek tenini tutun, gözlerinizi kapattığınızda farkı bile anlayamazsınız.\n\nSüper gerçekçi dokulu duvarlarla dolu, cinsel ilişki hissini taklit eden, içeri kayan ve sıkışmasına izin veren ve her girişte sizi memnun eden inanılmaz gerçekçi bir stimülasyon sunar!\n\nTina'ya bayılacaksınız, bu manken tüm vücudundan kalıplanmış geliştirilmiş EVO iskelet ile 170 cm boy ve 51 kiloya sahip, bu da onu serbest kullanım için yeterince dengeli hale getiriyor! Bu sayede kolayca istediğiniz pozisyona getirebilir hatta ayakta kalmasını sağlayabilirsiniz.\n\n\n \n\nEVO Skeleton (EVO İskelet):\n\nGeliştirilmiş (EVO) iskelet bebeğinizin omuzlarını silkmesini sağlayabilir. Daha gerçekçidir ve farklı pozları daha özgürce alabilir.\nOmurga daha esnektir, sola ve sağa eğilebilir, bu da dünya çapındaki bebek severlerin arzuladığı sıcak samimi zamanların yaratılmasına yardımcı olur.\nBacaklar W pozisyonuna veya kalçalara dokunmak için aşağıya doğru bükülebilir.\n\nPaket İçeriği:\nTina, makyajlı halde ve iç çamaşırı, ısıtıcı, eldivenler, tarak, temizlik kiti(vajina temizleyici, durulayıcı battaniye vb.) ürün içeriğine dahil olarak gelir.",
+      "description": "Tina - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 170 CM",
+      "featured": true,
+      "gallery": [
+        "/uploads/img3585fee7cfd7.webp",
+        "/uploads/imgdbfb4a8ad386.webp",
+        "/uploads/img3527cd8a5b5f.webp"
+      ],
+      "tags": [],
+      "category": "realistik-mankenler",
+      "createdAt": "2026-08-31T16:00:23.595Z",
+      "slug": "tina-evo-skeleton-sex-doll-i-skeletli-tam-realistik-manken-170-cm",
+      "isNew": true,
+      "stock": 10,
+      "rating": 0
+    },
+    {
+      "tags": [],
+      "bestSeller": true,
+      "longDescription": "Ornella, baharatlı incelik ve hassas duygusallık için sevilir. Tanışmanızın ilk dakikalarından itibaren masum pembe bir renkle ve hoş dokunsal duygularla dokunuşlardan baştan çıkarır. Sevecen titreşimlerinin 7 çeşidini hissedeceksiniz ve onları ruh halinize göre değiştirebileceksiniz. Yumuşak yaprakların yumuşak dokunuşları klitorisin uyarılmasından canlı hislere neden olur. Ve olağanüstü bir kafaya sahip mükemmel anatomik şekil, değerli G noktasını bulmanıza ve heyecan verici vajinal orgazm yaşamanıza yardımcı olacaktır. Ornella ile kendine olan sevginin yolunu açacak ve kesinlikle bu romantizme devam etmek isteyeceksin!\n\nG noktasının uyarılması\tEvet\nKlitorisin uyarılması\tEvet\nPembe\nÇalışma uzunluğu, cm\t10Cm",
+      "createdAt": "2026-09-11T15:38:24.328Z",
+      "oldPrice": 3059,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "slug": "eromantica-ornella-da-3-in-1-vibrator",
+      "stock": 10,
+      "description": "masaj aleti, pembe, silikon, 21,5 cm",
+      "rating": 0,
+      "variants": [
+        "standart"
+      ],
+      "isNew": true,
+      "name": "Eromantica Ornella'da 3 in 1 Vibratör",
+      "categoryName": "Vibratörler",
+      "image": "/uploads/img930516dfee2c.webp",
+      "price": 2899,
+      "id": "pdbd6d93e087c",
+      "featured": true,
+      "gallery": [
+        "/uploads/img930516dfee2c.webp",
+        "/uploads/img1f1534cac94b.webp",
+        "/uploads/img831ce85393b2.webp"
+      ],
+      "category": "vibratorler",
+      "reviewCount": 0
+    },
+    {
+      "category": "realistik-mankenler",
+      "createdAt": "2026-08-31T15:30:50.069Z",
+      "longDescription": "Shay - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 165 CM\n \n\nTamamen gerçek boyutlarda bir manken size vahşi bir zaman göstermeye hazır!\nShay'in büyük göğüsleri, ince bir beli, çekici dudakları, çekici vajinası ve güzel bir poposu var. Gerçek bir kadınla seks yapmak gibi.\n\nShay, hangisini seçtiğinize bağlı olarak farklı bir his için tamamen ayrı 3 tünele sahiptir. Uyarıcı bir masaj için süper esnek bir vajina, gıdıklayıcı bir ağız ve derin bir anüs!\n\nMümkün olan en gerçekçi deneyim için aynı cilt görünümünü ve hissini vermek üzere son teknoloji TPE dokudan üretilmiştir. Göğüslerini sıkın, süper yumuşak, esnek tenini tutun, gözlerinizi kapattığınızda farkı bile anlayamazsınız.\n\nSüper gerçekçi dokulu duvarlarla dolu, cinsel ilişki hissini taklit eden, içeri kayan ve sıkışmasına izin veren ve her girişte sizi memnun eden inanılmaz gerçekçi bir stimülasyon sunar!\n\nShay'e bayılacaksınız, bu manken tüm vücudundan kalıplanmış geliştirilmiş EVO iskelet ile 165 cm boy ve 43 kiloya sahip, bu da onu serbest kullanım için yeterince dengeli hale getiriyor! Bu sayede kolayca istediğiniz pozisyona getirebilir hatta ayakta kalmasını sağlayabilirsiniz.",
+      "bestSeller": true,
+      "image": "/uploads/img72f389902ea3.webp",
+      "price": 145000,
+      "highlights": [
+        "Gerçekçi Medikal TPE",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "name": "Shay - Realistik Manken - Evo Skeleton Sex Doll İskeletli Tam Realistik Manken 165 CM",
+      "id": "pde40a53a654a",
+      "reviewCount": 0,
+      "featured": true,
+      "rating": 0,
+      "oldPrice": 179000,
+      "categoryName": "Realistik Mankenler",
+      "gallery": [
+        "/uploads/img72f389902ea3.webp",
+        "/uploads/img34cded73b51c.webp",
+        "/uploads/img509861e553f2.webp",
+        "/uploads/img49a8f8a4487c.webp"
+      ],
+      "slug": "shay-evo-skeleton-sex-doll-i-skeletli-tam-realistik-manken-165-cm",
+      "variants": [
+        "standart"
+      ],
+      "stock": 9,
+      "isNew": true,
+      "tags": [],
+      "description": "EVO Skeleton (EVO İskelet)"
+    },
+    {
+      "price": 479,
+      "image": "/uploads/img6b161149ada3.webp",
+      "categoryName": "Erkek Cinsel Sağlık",
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "oldPrice": 559,
+      "id": "pdf2748be251d",
+      "createdAt": "2026-08-28T16:57:37.098Z",
+      "gallery": [
+        "/uploads/img6b161149ada3.webp"
+      ],
+      "slug": "stag-9000-lidokain-sprey",
+      "reviewCount": 3,
+      "name": "Stag 9000 Erkeklere Özel Bakım Spreyi 20 ml",
+      "category": "erkekler",
+      "bestSeller": true,
+      "longDescription": "Stag 9000 Erkeklere Özel Bakım Spreyi (20 ml), birliktelik süresini ve konforunu desteklemeye yardımcı olmak üzere erkeklere özel formüle edilmiştir. Pratik sprey formuyla hedef bölgeye kolayca uygulanır, hızla emilerek ferahlatıcı ve rahatlatıcı bir bakım sağlar.\n\nÖne Çıkan Özellikler:\n• Birliktelik süresini desteklemeye yardımcı ferahlatıcı erkek bakım formülasyonu\n• Ciltle tam uyumlu, yapışkanlık veya leke bırakmayan hafif yapı\n• Bölgesel konfor sağlamaya ve daha kontrollü bir birlikteliği desteklemeye yardımcı etki\n• Pratik cep boyu 20 ml ambalaj ile kolay taşıma ve uygulama\n• Yalnızca haricen kullanım içindir; doğrudan cilde uygulanır, kesinlikle içilmez veya yutulmaz.",
+      "featured": true,
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Birliktelik Süresini Destekleyici Formül",
+        "Lokal Püskürtme Uygulaması",
+        "20 ml Net Hacim"
+      ],
+      "stock": 5,
+      "description": "Birliktelik süresini ve konforunu desteklemeye yardımcı, erkeklere özel geliştirilmiş ferahlatıcı bakım spreyi (20 ml).",
+      "isNew": true,
+      "rating": 4.7
+    },
+    {
+      "isNew": false,
+      "stock": 10,
+      "category": "vibratorler",
+      "bestSeller": true,
+      "createdAt": "2026-08-27T09:58:40.588Z",
+      "id": "pe31257abd626",
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "8 Titreşim Modu",
+        "%100 Orijinal & Faturalı"
+      ],
+      "reviewCount": 4,
+      "subcategory": "",
+      "name": "Bükülebilir Başlıklı Wand Vibratör",
+      "featured": true,
+      "rating": 4.8,
+      "categoryName": "Vibratörler",
+      "oldPrice": 1159,
+      "gallery": [
+        "/uploads/img4ca0fae4e044.webp",
+        "/uploads/imgd74a65edb29d.webp",
+        "/uploads/img4a49740ce022.webp"
+      ],
+      "slug": "vibrator",
+      "variants": [
+        "standart"
+      ],
+      "longDescription": "Bükülebilir Başlıklı Wand Vibratör, kadınların cinsel zevkini artırmak için özel olarak tasarlanmıştır. Bu vibratör, 8 farklı hız ve 20 titreşim modu ile çeşitli uyarım seçenekleri sunar. Bükülebilir başlığı sayesinde G noktasını kolayca hedefler ve daha yoğun bir zevk sağlar.\n\n\nÖne Çıkan Özellikler:\n\n\n\n8 Farklı Hız: Zevkinize göre ayarlayabileceğiniz 8 farklı hız seçeneği.\n\n20 Titreşim Modu: Çeşitli titreşim modları ile farklı uyarım seçenekleri.\n\nBoyutlar: 21 cm uzunluk, 4.5 cm başlık genişliği, 5 cm başlık uzunluğu.\n\nUzun Pil Ömrü: 3 saate kadar kesintisiz kullanım süresi.\n\nHızlı Şarj: 45 dakikada tam şarj olma özelliği.\n\nSu Geçirmez: Su geçirmez yapısı sayesinde duşta veya banyoda da kullanılabilir.\n\nBu vibratör, güçlü titreşimleri ve ergonomik tasarımı ile cinsel deneyiminizi daha keyifli hale getirir. Bükülebilir Başlıklı Wand Vibratör, hem solo hem de partnerinizle birlikte kullanabileceğiniz mükemmel bir aksesuardır.",
+      "description": "",
+      "price": 959,
+      "image": "/uploads/img4ca0fae4e044.webp",
+      "tags": []
+    },
+    {
+      "longDescription": "Rose Pembe Hareketli Rabbit Vibratör – Derin ve Çok Yönlü Hazzın Anahtarı!\n\nYeni nesil zevk deneyimi sunan Rose Pembe Hareketli Rabbit Vibratör, özel olarak tasarlanmış iç ve dış uyarım kolları ile hem G noktası hem de klitoris bölgesini aynı anda hedefler. 360° dönebilen başlık yapısı ve 20 mm’lik ileri-geri itme hareketi sayesinde daha derin, daha yoğun hisler sunar.\n\n9 farklı titreşim modu, farklı hız ve ritimlerle vücudunuza tam uyum sağlar. Sessiz motor teknolojisi sayesinde gece kullanımı için de son derece uygundur (≤ 45db).\n\nErgonomik yapısı ve kıvrımlı silikon gövdesi sayesinde kolay kavranır, kontrol butonları ise sezgisel bir kullanım sunar. IPX7 su geçirmezlik seviyesiyle duşta veya banyoda kullanıma uygundur.\n\nUSB şarj edilebilir manyetik kablosu sayesinde pratik bir şekilde PC, powerbank veya adaptör ile şarj edebilirsiniz.\n\nÜrün Özellikleri:\n\n360° dönebilen başlık\n\n20 mm ileri-geri hareket\n\n9 farklı titreşim modu\n\nSu geçirmez (IPX7)\n\nUSB ile şarj edilebilir (manyetik başlık)\n\nTıbbi sınıf yumuşak silikon\n\nUzunluk: 22.7 cm, Genişlik: 4.9 cm",
+      "id": "pe6440906f9a6",
+      "tags": [],
+      "image": "/uploads/img499069f317db.webp",
+      "price": 3900,
+      "bestSeller": true,
+      "createdAt": "2026-08-29T11:57:38.638Z",
+      "categoryName": "Vibratörler",
+      "featured": true,
+      "rating": 5,
+      "category": "vibratorler",
+      "highlights": [
+        "IPX7 Su Geçirmez",
+        "%100 Medikal Silikon",
+        "Manyetik Hızlı Şarj",
+        "9 Titreşim Modu"
+      ],
+      "slug": "hareketli-rabbit-vibrator-rose-pembe",
+      "reviewCount": 1,
+      "name": "Hareketli Rabbit Vibratör Rose Pembe",
+      "gallery": [
+        "/uploads/img499069f317db.webp",
+        "/uploads/img425397d25202.webp"
+      ],
+      "oldPrice": 4600,
+      "description": "Rose Pembe Hareketli Rabbit Vibratör – Derin ve Çok Yönlü Hazzın Anahtarı!",
+      "variants": [
+        "standart"
+      ],
+      "stock": 0,
+      "isNew": true
+    },
+    {
+      "slug": "fetis-fantezi-siyah-peluslu-metal-kelepce",
+      "price": 379,
+      "image": "/uploads/img4483c658e339.webp",
+      "variants": [
+        "standart"
+      ],
+      "gallery": [
+        "/uploads/img4483c658e339.webp"
+      ],
+      "rating": 5,
+      "oldPrice": 399,
+      "tags": [],
+      "description": "Metal- Peluş Kelepçe",
+      "featured": false,
+      "categoryName": "Fetish Ürünler",
+      "createdAt": "2026-09-03T16:03:18.352Z",
+      "bestSeller": false,
+      "id": "pee0b56ada4e5",
+      "isNew": true,
+      "highlights": [
+        "Medikal Paslanmaz Çelik",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "stock": 9,
+      "longDescription": "Fetiş Fantezi Pembe Peluşlu Metal Kelepçe, ilişki esnasında kontrol altında tutmayı sevenler, farklı pozisyonları keşfetmek veya BSDM gibi hakimiyet isteyenler için olarak üretilmiştir. Renkli ve yumuşak peluş kaplaması ile bileklere daha yumuşak temas eder. Boyutu ayarlanabilir ve tüm bilek kalınlıklarına uyumludur. Paket içeriğinde 2 anahtar mevcuttur. Ancak anahtarlar kaybolur korkusu yaşamanıza gerek yoktur, çünkü anahtarsız olarak özel düğmesi ile parmağınızla da açabilirsiniz.",
+      "category": "fetish-urunler",
+      "reviewCount": 1,
+      "name": "Fetiş Fantezi Siyah Peluşlu Metal Kelepçe"
+    },
+    {
+      "bestSeller": true,
+      "id": "pf69fe89a965c",
+      "isNew": true,
+      "description": "TPE Malzeme, Ten Rengi, 5 kg",
+      "stock": 10,
+      "variants": [
+        "standart"
+      ],
+      "rating": 0,
+      "gallery": [
+        "/uploads/img149dcf740290.webp",
+        "/uploads/imge83ab2f3b6ff.webp",
+        "/uploads/img4d9b9c4a4611.webp"
+      ],
+      "name": "XOXO Gerçekçi Mastürbatör 5Kg",
+      "oldPrice": 8999,
+      "highlights": [
+        "Gerçekçi Medikal TPE",
+        "Şarj Edilebilir Batarya",
+        "Su Bazlı Formül"
+      ],
+      "featured": true,
+      "slug": "xoxo-gercekci-masturbator",
+      "createdAt": "2026-09-09T16:59:54.082Z",
+      "longDescription": "Ürün Özellikleri ve Ağırlık: 5 kg (Ağır ve sabit duruşlu gövde yapısı sayesinde elleri serbest veya sabit kullanım kolaylığı sağlar).\n\nMalzeme: TPE (Termoplastik Elastomer) - Cilt dostu, esnek, yumuşak ve gerçeğe yakın ten hissi veren kaliteli malzeme.\n\nRenk: Ten rengi.Tasarım / Girişler: Çift girişli (vajinal ve anal) yapı.\n\nEk Özellikler: Güçlü titreşim desteği ve şarj edilebilir motor mekanizması.\n\nKullanım ve Bakım Önerileri Kayganlaştırıcı:\n\nMalzemenin ömrünü uzatmak ve doğru hissi yakalamak için yalnızca su bazlı kayganlaştırıcılar kullanılmalıdır.\nSilikon veya yağ bazlı ürünler TPE malzemeye zarar verebilir.\n\nTemizlik: Her kullanım sonrasında ılık su ve nazik, antiseptik bir sabun ya da özel oyuncak temizleyici sprey ile nazikçe yıkanmalı, kurumaya bırakılmalıdır.",
+      "image": "/uploads/img149dcf740290.webp",
+      "price": 7989,
+      "subcategory": "",
+      "reviewCount": 0,
+      "categoryName": "Realistik Vajinalar",
+      "category": "ciftler",
+      "tags": []
+    },
+    {
+      "description": "Ağırlıklı metal hissi, ısı oyununa uygun",
+      "longDescription": "Rainbow Gem 3’lü Anal Plug Seti, farklı boy seçenekleriyle hem yeni başlayanlara hem de daha dolgun his sevenlere tek pakette çözüm sunar. Set içerisindeki üç farklı ölçü, aşamalı denemeyi kolaylaştırır: küçük boyla konforu yakalayabilir, orta ve büyük boyla yoğunluğu artırabilirsiniz. Alüminyum alaşım gövde “ağırlıklı” hissiyat verir; bu da hareketsiz kullanımda bile daha belirgin bir dolgunluk ve varlık hissi oluşturur. Gösterişli taş görünümlü taban detayı hem şık bir görünüm sunar hem de taban kısmını tutup kontrol etmeyi kolaylaştırır.\nMetal yapısı sayesinde “temperature play” (ısı oyunu) sevenler için uygundur: kısa süreli ılık/serin temaslarla farklı hisler deneyimleyebilirsiniz (daima kontrollü ve güvenli sıcaklık aralığında). Kullanımda bol kayganlaştırıcı önerilir. Temizlik için ılık su + oyuncak temizleyici yeterlidir; kurulayarak saklayın. Şık ve özel ambalajında sunulmaktadır.\n\nÖne Çıkan Özellikler:\n\nMalzeme: Aluminium Alloy + ABS\n\n3’lü set (kademeli kullanım)\n\nAğırlıklı metal hissi, ısı oyununa uygun\n\nÖlçüler: 7.1 cm / Ø2.7 cm – 8.2 cm / Ø3.3 cm – 9.5 cm / Ø4.0 cm\n\nToplam ürün ağırlığı: 285 g",
+      "createdAt": "2026-09-03T15:37:40.031Z",
+      "isNew": true,
+      "id": "pfad02d97d511",
+      "stock": 10,
+      "highlights": [
+        "Medikal Paslanmaz Çelik",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "category": "anal-urunler",
+      "rating": 0,
+      "featured": true,
+      "bestSeller": false,
+      "name": "Rainbow Gem 3’lü Metal Anal Plug Seti",
+      "slug": "rainbow-gem-3-lu-metal-anal-plug-seti",
+      "reviewCount": 0,
+      "variants": [
+        "standart"
+      ],
+      "oldPrice": 3259,
+      "categoryName": "Anal Ürünler",
+      "tags": [],
+      "gallery": [
+        "/uploads/img737d6c4ddf9e.webp",
+        "/uploads/img9798b7c042d4.webp",
+        "/uploads/img3689e37cc3bf.webp"
+      ],
+      "price": 2959,
+      "image": "/uploads/img737d6c4ddf9e.webp"
+    },
+    {
+      "reviewCount": 0,
+      "stock": 10,
+      "rating": 0,
+      "gallery": [
+        "/uploads/img6b775cc0c5a7.webp",
+        "/uploads/img679b0adf8518.webp",
+        "/uploads/img60348efde54f.webp"
+      ],
+      "isNew": true,
+      "slug": "erotist-lubricant-toys-250-ml",
+      "featured": true,
+      "category": "kadinlar",
+      "tags": [],
+      "id": "p558a865c414c",
+      "createdAt": "2026-09-14T12:35:52.456Z",
+      "longDescription": "Başlık:\nErotist Su Bazlı Hassas Oyuncak Kayganlaştırıcısı (250 ml)\n\nAçıklama:\nYetişkin oyuncaklarınızla mükemmel bir uyum ve maksimum konfor sağlamak için tasarlanan Erotist Toys 250 ml, su bazlı yapısıyla öne çıkıyor.\nTüm silikon ve hassas yüzeyli ürünlerinizde güvenle kullanabileceğiniz bu jel, ipeksi dokusuyla teninize ve aksesuarlarınıza hak ettiği özeni gösterir.\n\nNeden Tercih Etmelisiniz?\nTüm yetişkin oyuncak materyalleri ve prezervatifler ile tamamen uyumludur.Yapışkanlık hissi bırakmaz, uzun süreli ve pürüzsüz bir kayganlık sunar. Su bazlı içeriği sayesinde kalıntı bırakmaz, suyla saniyeler içinde temizlenir.pH dengeli yapısıyla hassas ciltler için idealdir.\n\nNot: Tüm siparişleriniz, gizlilik ilkelerimiz gereği dışarıdan içeriği belli olmayacak şekilde, tamamen gizli paketleme ile adresinize ulaştırılmaktadır.",
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Klinik Doğal Lateks",
+        "250 ml Net Hacim",
+        "Su Bazlı Formül"
+      ],
+      "description": "",
+      "oldPrice": 959,
+      "name": "Erotist Lubrıcant - Toys 250 ml",
+      "categoryName": "Kadın Cinsel Sağlık",
+      "bestSeller": true,
+      "image": "/uploads/img6b775cc0c5a7.webp",
+      "price": 899,
+      "variants": [
+        "standart"
+      ]
+    },
+    {
+      "categoryName": "Vibratörler",
+      "image": "/uploads/img7f26a5da728c.webp",
+      "price": 5689,
+      "reviewCount": 0,
+      "bestSeller": true,
+      "highlights": [
+        "USB Şarj Edilebilir",
+        "<45dB Fısıltı Motoru",
+        "%100 Orijinal & Faturalı"
+      ],
+      "variants": [
+        "standart"
+      ],
+      "name": "LELO MIA 3 Personal Vibrator Black",
+      "id": "pef6925d3d53e",
+      "gallery": [
+        "/uploads/img7f26a5da728c.webp",
+        "/uploads/img22c9f1897953.webp",
+        "/uploads/imgbb2e5c8c2c1b.webp"
+      ],
+      "oldPrice": 6950,
+      "featured": true,
+      "slug": "lelo-mia-3-personal-vibrator-black",
+      "description": "",
+      "stock": 0,
+      "isNew": true,
+      "tags": [],
+      "category": "vibratorler",
+      "rating": 0,
+      "longDescription": "MIA 3, hareket halindeyken en üst düzey zevk için tasarlanmış, gizli bir kişisel vibratördür. Neredeyse sessiz titreşimleri, nerede olursanız olun gizliliğinizi sağlarken, ultra pürüzsüz malzeme dokunulduğunda sıcak bir his vererek duyusal deneyiminizi zenginleştirir. MIA 3'ün en güçlü özelliği kompakt boyutudur, bu nedenle çantalara, cüzdanlara veya valizlere kolayca sığar, taşımayı kolaylaştırır ve zevkin her zaman elinizin altında olmasını sağlar. Sıradan bir ruj gibi göründüğü için gizlidir, bu da onu göze batmayan ve seyahat için mükemmel kılar. Üç renkte mevcut olan bu kompakt vibratör, spontane zevk için idealdir ve en küçük cüzdanlara bile sorunsuz bir şekilde sığar.\n\n8 GÜÇLÜ ZEVK AYARI MIA 3, tahrik edici bir mırıltıdan tatmin edici bir nabza kadar değişen yoğunlukta sekiz farklı titreşim deseni sunar.\n\nSEYAHAT İÇİN HAZIR VE GİZLİ Kompakt ve gizli tasarım, MIA 3'ünüzün nereye giderseniz gidin yanınızda olmasını sağlar.\n\nHASSAS HAZ İÇİN ŞEKİLLENDİRİLMİŞ UÇ Şekli, hızlı ve yoğun orgazmlar için klitorisi hedef alacak şekilde özel olarak kalıplanmıştır.\n\nUSB İLE ŞARJ EDİLEBİLİR VE TAMAMEN SU GEÇİRMEZ MIA 3'ün kompakt boyutu ve taşıma sırasında kilitlenebilme özelliği sayesinde mükemmel bir seyahat arkadaşıdır.\n\nÖzellikler\n\nMalzeme: ABS, gıda sınıfı silikon\nBoyut: 22 x 22 x 111 mm / 0,87 x 0,87 x 4,37 inç\nAğırlık: 36 g / 1,27 oz\nPil: Li-Ion 70 mAh 3,7 V\nŞarj: 5,0 V 70 mA'da 2 saate kadar\nKullanım süresi: 1,5 saate kadar\nBekleme süresi: 90 gün\nFrekans: 130 Hz\nMaks. gürültü seviyesi: < 60 dB\nArayüz: 2 düğme",
+      "createdAt": "2026-09-14T13:21:19.226Z"
+    },
+    {
+      "gallery": [
+        "/uploads/imgc64b98b12114.webp",
+        "/uploads/imgbe5547adfcb0.webp",
+        "/uploads/img15cbcd42cdd8.webp",
+        "/uploads/imgb8ee4b3e762a.webp"
+      ],
+      "description": "",
+      "oldPrice": 2959,
+      "price": 2559,
+      "image": "/uploads/imgc64b98b12114.webp",
+      "name": "Orgie Orgasm Drops Intense – Yoğun Etkili Uyarıcı Damla 30 ml",
+      "variants": [
+        "standart"
+      ],
+      "createdAt": "2026-09-14T15:46:08.632Z",
+      "category": "kadinlar",
+      "reviewCount": 0,
+      "bestSeller": false,
+      "id": "p11e411f13104",
+      "tags": [],
+      "rating": 0,
+      "categoryName": "Kadın Cinsel Sağlık",
+      "slug": "orgie-orgasm-drops-intense-yogun-etkili-uyarici-damla-30-ml",
+      "longDescription": "Orgie Orgasm Drops Intense, cinsel deneyim sırasında duyarlılığı artırmak ve orgazm yoğunluğunu yükseltmek amacıyla geliştirilmiş güçlü etkili uyarıcı damladır. Uygulandığı bölgede hafif karıncalanma ve ısınma hissi oluşturarak kan dolaşımını destekler, sinir uçlarını harekete geçirir ve temas sırasında alınan hazzın daha belirgin hissedilmesine yardımcı olur. Formülü, hassas bölgelerde kontrollü etki sağlayacak şekilde tasarlanmıştır. Damla formu sayesinde doz kontrolü kolaydır ve ihtiyaç doğrultusunda tekrar uygulanabilir. Kullanım şekli oldukça basittir: İlişki veya ön sevişme öncesinde istenen bölgeye birkaç damla uygulanır ve nazikçe masaj yapılarak yayılır. Etki kısa süre içinde hissedilmeye başlar. Orgasm Drops Intense, cinsel deneyimi sıradanlıktan çıkarıp daha güçlü, daha canlı ve daha yoğun hale getirmek isteyen yetişkin kullanıcılar için tasarlanmış premium bir uyarıcı üründür. Yalnızca harici kullanım içindir. Bu ürün yaklaşık 150 + kullanım sağlar.",
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Bölgesel Masaj & Uyarıcı Damla",
+        "30 ml Damlalıklı Şişe",
+        "Dermatolojik Onaylı"
+      ],
+      "isNew": true,
+      "featured": true,
+      "stock": 10
+    },
+    {
+      "featured": false,
+      "slug": "popo-pleasure-eridani-anal-kilif-seti",
+      "price": 1599,
+      "image": "/uploads/img67a603976506.webp",
+      "gallery": [
+        "/uploads/img67a603976506.webp",
+        "/uploads/img6da0b14fa61a.webp"
+      ],
+      "tags": [],
+      "longDescription": "Bu set, sadece anal oyunların zevklerine katılanlar için idealdir. En küçük burçla başlayabilir, yeteneklerinizi kademeli olarak genişletebilirsiniz. Koni şeklindeki şekil giriş için uygundur, geniş taban oyuncağın içeri girmesine izin vermez. Burç boyutları: 1) Toplam uzunluk 8.3 cm'dir Çalışma uzunluğu 5.5 cm Max. çapı 2.2 cm 2) Toplam uzunluk 10 cm'dir Çalışma uzunluğu 6.5 cm Max. çapı 2.5 cm 3) Toplam uzunluk 12.5 cm'dir Çalışma uzunluğu 8.5 cm Max. çapı 3.2 cm",
+      "category": "anal-urunler",
+      "description": "",
+      "id": "p523125f26f14",
+      "rating": 0,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "createdAt": "2026-09-14T15:55:28.928Z",
+      "name": "POPO Pleasure Eridani Anal Kılıf Seti",
+      "stock": 10,
+      "variants": [
+        "standart"
+      ],
+      "isNew": true,
+      "categoryName": "Anal Ürünler",
+      "bestSeller": false,
+      "reviewCount": 0,
+      "oldPrice": 1789
+    },
+    {
+      "id": "p07f2e8698972",
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "image": "/uploads/imgc9d944cf081f.webp",
+      "price": 2679,
+      "reviewCount": 0,
+      "oldPrice": 2899,
+      "bestSeller": true,
+      "gallery": [
+        "/uploads/imgc9d944cf081f.webp",
+        "/uploads/img9e07bc4135e6.webp",
+        "/uploads/img47ff3f704382.webp"
+      ],
+      "highlights": [
+        "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ",
+        "Birliktelik Süresini Destekleyici Formül",
+        "Konsantre Harici Serum",
+        "15 ml Net Hacim"
+      ],
+      "categoryName": "Erkek Cinsel Sağlık",
+      "slug": "orgie-xtra-time-delay-serum-erkekler-i-cin-geciktirici-silikon-serum-15-ml",
+      "name": "Orgie Xtra Time – Erkeklere Özel Süre Destekleyici Silikon Serum 15 ml",
+      "longDescription": "Orgie Xtra Time Serum, erkekler için özel olarak geliştirilmiş formülüyle birliktelik süresini ve kontrolü desteklemeye yardımcı olur. Özel silikon bazlı formülü, bölgesel duyarlılığı dengelemeye ve birliktelik anında kontrolü desteklemeye yardımcı nazik bir tabaka oluşturur.\n\nÖne Çıkan Özellikler:\n• Birliktelik süresini ve kontrolü desteklemeye yardımcı silikon bazlı özel formül\n• Sürtünme anında konfor sağlamaya ve duyarlılığı dengelemeye yardımcı yapı\n• Hızla emilen ve yağlılık hissi bırakmayan konsantre serum dokusu\n• Az miktarda ürün ile yüksek konfor ve ekonomik kullanım (±75 kullanım)\n• Yalnızca harici bölgesel kullanım içindir; kesinlikle içilmez veya yutulmaz.",
+      "category": "erkekler",
+      "rating": 0,
+      "description": "Birliktelik süresini ve kontrolü desteklemeye yardımcı, erkeklere özel konsantre silikon serum (15 ml).",
+      "featured": true,
+      "stock": 10,
+      "createdAt": "2026-09-16T13:19:43.794Z",
+      "isNew": true
+    },
+    {
+      "tags": [],
+      "categoryName": "Vibratörler",
+      "featured": true,
+      "stock": 9,
+      "bestSeller": true,
+      "isNew": true,
+      "highlights": [
+        "10 Titreşim Modu",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "category": "vibratorler",
+      "rating": 0,
+      "slug": "a-toys-by-mika-vibratoru-silikon-pembe-19-8-cm",
+      "description": "",
+      "name": "A-Toys by  Mika Vibratörü, Silikon, Pembe, 19,8 cm",
+      "createdAt": "2026-09-17T14:49:41.629Z",
+      "id": "p3467b60148c1",
+      "gallery": [
+        "/uploads/img7cd0b0c96ffb.webp",
+        "/uploads/imga4a8234f1ff3.webp",
+        "/uploads/imgd267384deafd.webp",
+        "/uploads/img580b51ebddd4.webp"
+      ],
+      "oldPrice": 1399,
+      "price": 1259,
+      "image": "/uploads/img7cd0b0c96ffb.webp",
+      "longDescription": "A-Toys'un Mika vibratörü, parlak orgazmlar elde etmek için modern bir cihazdır.\n\nPürüzsüz kayar yüzey, anatomik olarak rahatlamak için tasarlanmış , 10 titreşim modu, nem direnci – Bu vibratör unutulmaz bir zevk sunmak için üretilmiştir!",
+      "reviewCount": 0,
+      "variants": [
+        "standart"
+      ]
+    },
+    {
+      "tags": [],
+      "id": "p4a057fe94633",
+      "image": "/uploads/img05c9213f3af4.webp",
+      "price": 1499,
+      "gallery": [
+        "/uploads/img05c9213f3af4.webp",
+        "/uploads/img0d2d99cdf9f2.webp",
+        "/uploads/imge27f6d0f3c12.webp",
+        "/uploads/imgcffcb0f80585.webp"
+      ],
+      "oldPrice": 1699,
+      "variants": [
+        "standart"
+      ],
+      "reviewCount": 0,
+      "rating": 0,
+      "categoryName": "Vibratörler",
+      "slug": "a-toys-by-lilu-klitoral-uyarici-vibrator-silikon-pembe-20-cm",
+      "name": "A-Toys by Lilu Klitoral Uyarıcı Vibratör, Silikon, Pembe, 20 cm",
+      "category": "vibratorler",
+      "description": "",
+      "bestSeller": true,
+      "highlights": [
+        "Çift Bağımsız Motor",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "createdAt": "2026-09-17T14:52:13.626Z",
+      "longDescription": "Pembe zambakların bu iki sevecen açılmamış tomurcukları birçok gizem ve zevk vaat ediyor.\n\nHafifçe sivri uçlar, hafif bir uyarımı noktalamak ve cennetin tadını çıkarmak için bir köşe bulmaya yardımcı olacaktır. Oyuncak, yalnız veya çift olarak keyifli bir zaman geçirmek için mükemmel bir fırsat olacaktır.\n\nVibratörün pembe kısmı yenilikçi, tamamen hipoalerjenik bir malzemeden yapılmıştır. Kolayca bükülür ve herhangi bir hareketinize kolayca uyum sağlar.\n\nTitreşim masajı, en hafiften en yoğun olana kadar 10 farklı versiyonda seçilebilir. Eğlenceli modun düğmelerle değiştirilmesi kolaydır.\n\nÇift motorlu motor, titreşimi her iki prosese de yayarak çift sevişme etkisi yaratır.\n\nÇalışma uzunluğu 10 cm'dir.",
+      "stock": 9,
+      "featured": true,
+      "isNew": true
+    },
+    {
+      "rating": 0,
+      "featured": false,
+      "tags": [],
+      "id": "p4e754a1cfdda",
+      "slug": "flovetta-by-toyfa-flax-klitoral-stimulasyonlu-vibratoru",
+      "description": "",
+      "price": 2499,
+      "image": "/uploads/img57661690c1b7.webp",
+      "longDescription": "Klitoral Stimülasyonlu FLAX Vibratörü Tabanda ve klitoral proseste nervürlü kabartmalı bir vibratör, canlı hisleri sevenler için idealdir. Güçlü titreşim, her biri keyif alabileceğiniz 10 farklı modda çalışır. Klitoral süreç nazikçe uyarılacak ve doruğa ulaşılmasına yardımcı olacaktır. Vibratördeki 2 motor, kullanım sırasında hisleri güçlendirmenize izin verir. Bunlardan biri vibratörün tabanındadır - klitoral süreçte güçlü titreşime katkıda bulunur. İkincisi vibratörün kafasındadır - bu gerçekten derin orgazmlar yaşamanıza izin verir. Yüksek kaliteli kadifemsi silikondan yapılmıştır. USB ile şarj edilir.\n\n10 titreşim modu\n2 motor\nKabartmalı yüzey\nKadifemsi silikon\nŞarj süresi 1,5 saattir\nTam şarjla çalışma süresi 1 saattir",
+      "categoryName": "Vibratörler",
+      "category": "vibratorler",
+      "name": "Flovetta by Toyfa Flax Klitoral Stimülasyonlu Vibratörü",
+      "bestSeller": false,
+      "isNew": true,
+      "stock": 9,
+      "variants": [
+        "standart"
+      ],
+      "reviewCount": 0,
+      "createdAt": "2026-09-17T15:18:04.562Z",
+      "gallery": [
+        "/uploads/img57661690c1b7.webp",
+        "/uploads/img24e5e9f1e07b.webp",
+        "/uploads/img4d97de58afe0.webp",
+        "/uploads/imgbde43a3310b1.webp",
+        "/uploads/img3e89ecf65246.webp"
+      ],
+      "highlights": [
+        "USB Şarj Edilebilir",
+        "10 Titreşim Modu",
+        "%100 Orijinal & Faturalı"
+      ],
+      "oldPrice": 2799
+    },
+    {
+      "featured": true,
+      "description": "",
+      "highlights": [
+        "IPX6 Güçlü Su Dayanımlı",
+        "%100 Medikal Silikon",
+        "Manyetik Hızlı Şarj",
+        "10 Titreşim Modu"
+      ],
+      "rating": 0,
+      "tags": [],
+      "slug": "floretta-begonia-hareketli-vi-brator",
+      "id": "p61483f2e88c3",
+      "bestSeller": true,
+      "isNew": true,
+      "stock": 10,
+      "category": "vibratorler",
+      "categoryName": "Vibratörler",
+      "image": "/uploads/img51c6e719d7cf.webp",
+      "price": 2899,
+      "createdAt": "2026-09-17T15:01:03.012Z",
+      "name": "Floretta BEGONIA Hareketli Vibratör, Dilli Stimülatör, Silikon, Pembe, 18.5 cm",
+      "longDescription": "BEGONIA, güçlü bir titreşim sunan penetrasyon gövdesinin ortasındaki boşlukta, hareketli bir başlık daha sunar. Bu küçük başlık, hem penetrasyon sırasında hem de yüzeyde farklı uyarımlara kapı aralayan darbeler oluşturur. Size özel haz noktalarının keşfi için tasarlanan BEGONIA'nın şiddeti ayarlanabilir darbelerle oluşan parmaklama etkisi, haz ateşinizi yükselterek orgazmı daha şiddetli yaşamanızı garantiler.\n\n\n\nÖzellikler\n\nUzunluk: 18.5 cm\n\nÇap: 3 cm\n\nRenk: Kırmızı\n\n\nMalzeme: Yüksek kaliteli kadifemsi medikal silikon\n\nTitreşim: Evet, 10 farklı moduyla ana gövde titreşimi, 10 farklı moduyla darbe etkili parmak eklentisi\n\nProgram: 10 farklı titreşim modu\n\nÇalışma süresi: Tam şarjla 60 dakika\n\nŞarj süresi: 120 dakika\n\nŞarj şekli: USB bağlantılı manyetik şarj kablosuyla \n\nSu geçirmezlik: Evet (IPX6)\n\nAğırlık: 200 gr",
+      "reviewCount": 0,
+      "variants": [
+        "standart"
+      ],
+      "gallery": [
+        "/uploads/img51c6e719d7cf.webp",
+        "/uploads/img5a716bb89f3d.webp",
+        "/uploads/imgf66cae282e4f.webp",
+        "/uploads/img9094ecffb649.webp"
+      ],
+      "oldPrice": 3459
+    },
+    {
+      "price": 379,
+      "image": "/uploads/img0f13810957bc.webp",
+      "oldPrice": 399,
+      "name": "Metal Anal Plug -Siyah Kristalli - Küçük Boy",
+      "gallery": [
+        "/uploads/img0f13810957bc.webp"
+      ],
+      "description": "",
+      "variants": [
+        "standart"
+      ],
+      "categoryName": "Anal Ürünler",
+      "id": "p8e7f8975efc9",
+      "rating": 0,
+      "category": "anal-urunler",
+      "tags": [],
+      "reviewCount": 0,
+      "longDescription": "Yeni başlayanlar için küçük bir anal elmas. Kristal renkli turmalin, ilişkinize parlaklık ve şıklık katacaktır. Küçük boyutu nedeniyle, bu oyuncağın yatak odasının dışında veya evde taşınması rahattır. Böyle bir oyun hayatınıza heyecan katacaktır, çünkü bu süslemeyi sadece siz ve partneriniz bilecektir.",
+      "bestSeller": false,
+      "createdAt": "2026-09-17T15:28:18.722Z",
+      "highlights": [
+        "Medikal Paslanmaz Çelik",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "stock": 8,
+      "featured": false,
+      "slug": "metal-anal-plug-siyah-kristalli-kucuk-boy",
+      "isNew": true
+    },
+    {
+      "reviewCount": 0,
+      "rating": 0,
+      "featured": false,
+      "isNew": true,
+      "categoryName": "Vibratörler",
+      "stock": 10,
+      "bestSeller": true,
+      "tags": [],
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "%100 Medikal Silikon",
+        "Şarj Edilebilir Batarya",
+        "<45dB Fısıltı Motoru"
+      ],
+      "slug": "flovetta-azalia-kavisli-baslikli-vibrator-silikon-nane-pembesi-20-5-cm",
+      "createdAt": "2026-09-17T15:11:54.236Z",
+      "category": "vibratorler",
+      "description": "",
+      "name": "Flovetta AZALIA Kavisli Başlıklı Vibratör, Silikon, Nane Pembesi, 20.5 cm",
+      "variants": [
+        "standart"
+      ],
+      "image": "/uploads/imga88427766ac5.webp",
+      "price": 2699,
+      "gallery": [
+        "/uploads/imga88427766ac5.webp",
+        "/uploads/imgd205c8e4789e.webp",
+        "/uploads/img839c1727c525.webp",
+        "/uploads/imgdac473d15cd3.webp"
+      ],
+      "longDescription": "asarım ve Boyut ÖzellikleriKavisli Başlık Yapısı: Anatomik kıvrımlara tam uyum sağlayarak içsel noktasal uyarımı (G noktası) maksimum seviyeye çıkarmak için özel olarak eğimlendirilmiştir.Ölçüler: Ürünün toplam uzunluğu 20.5 cm, genişliği 6 cm ve gövde çapı 3.4 cm'dir.Renk Seçeneği: Mint yeşili detaylara sahip estetik nane pembesi (mint-pembe) kombinasyonuyla üretilmiştir.Ergonomik Gövde: Rahat tutuş sağlayan alt gövde yapısı, kullanım sırasında kaymayı engeller ve kontrolü kolaylaştırır.\n\nFonksiyon ve PerformansÇoklu Titreşim Modları: Ritmi ve yoğunluğu tamamen kişiselleştirmenize olanak tanıyan farklı titreşim fonksiyonlarına sahiptir.Güçlü Motor: Entegre edilmiş sessiz ama derin dalgalı titreşim üreten güçlü motor mekanizması barındırır.Dahili Kumanda: Modlar arası geçişler, gövde üzerinde yer alan yerleşik (entegre) kontrol paneli/butonlar üzerinden pratikçe yönetilir.\n\nMalzeme ve GüvenlikTıbbi Sınıf Silikon: Gövdenin tamamı cilde dost, gözeneksiz, pürüzsüz ve yumuşak dokulu premium silikon malzemeden üretilmiştir.Su Geçirmezlik (Waterproof): Suya dayanıklı yapısı sayesinde banyo ve duş kullanımına uygundur, aynı zamanda su altında zahmetsizce temizlenebilir.Güç Kaynağı: Çevre dostu ve pratik bir kullanım sunan şarj edilebilir entegre bataryaya (akü) sahiptir",
+      "id": "p996b9948b0fc",
+      "oldPrice": 3299
+    },
+    {
+      "category": "vibratorler",
+      "price": 2999,
+      "image": "/uploads/imgb5b1547874ab.webp",
+      "createdAt": "2026-09-17T15:21:56.572Z",
+      "tags": [],
+      "bestSeller": false,
+      "gallery": [
+        "/uploads/imgb5b1547874ab.webp",
+        "/uploads/img5b3c2434087e.webp",
+        "/uploads/imgd4f555a7cc9b.webp",
+        "/uploads/img730cb989f5cb.webp"
+      ],
+      "highlights": [
+        "Çift Bağımsız Motor",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "reviewCount": 0,
+      "featured": false,
+      "rating": 0,
+      "slug": "l-eroina-octar-cift-motorlu-rabbit-vibrator",
+      "longDescription": "L'Eroina Octar, çift bölgeli uyarımı bir araya getiren modern tasarımı ve gelişmiş teknolojileriyle dikkat çeken premium bir rabbit vibratördür. İç uyarım ve klitoral uyarım için ayrı çalışan iki güçlü motoru sayesinde kişiselleştirilebilir kullanım sunar. 24,5 cm toplam uzunluğa sahip olan Octar'ın ana gövdesi, G noktasına daha etkili temas sağlayacak şekilde özel olarak tasarlanmıştır. İç bölümde bulunan dinamik vurma mekanizması, klasik titreşimlerden farklı olarak ritmik darbeler oluşturarak daha yoğun ve odaklı bir uyarım sağlar. Bu özellik özellikle G noktası odaklı deneyim arayan kullanıcılar için geliştirilmiştir. Klitoral uyarıcı kısmı ise \"rabbit\" tasarımına sahiptir. Esnek dış yüzeyi ve güçlü motoru sayesinde hassas bölgelere uyum sağlayarak dengeli ve etkili bir dış uyarım sunar. Ana gövde ve klitoral uyarıcı birbirinden bağımsız olarak çalıştığından farklı kombinasyonlar oluşturmak mümkündür. Yumuşak dokulu, vücut dostu silikon malzeme hem konforlu kullanım hem de güvenli temas sağlar.",
+      "oldPrice": 2569,
+      "name": "L'Eroina Octar Çift Motorlu Rabbit Vibratör",
+      "categoryName": "Vibratörler",
+      "variants": [
+        "standart"
+      ],
+      "id": "pbc9c3e247a94",
+      "stock": 0,
+      "isNew": true,
+      "description": "G Noktası ve Klitoral Uyarıcı, Silikon, Mor, 24,5 cm"
+    },
+    {
+      "description": "",
+      "price": 1459,
+      "image": "/uploads/img82504226320c.webp",
+      "name": "RealStick Gerçekçi Yapay Penis - 21 Cm",
+      "categoryName": "Realistik Dildolar",
+      "longDescription": "Cephaneliğinde güçlü bir araçla alanında profesyonel. Kaslı elleri, cıvatayı sadece bol yağlanmış bir somuna vidalamasına değil, aynı zamanda herhangi bir motoru çalıştırmasına da izin verir. Onunla dolu bir arzu tankına yakıt ikmali yap ve engebeli zevk yollarında çılgın bir yolculuğa çık. Bu gerçekçi yapay penis, ateşli, seksi bir adamla ilgili fantezilerinizi gerçekleştirmenize yardımcı olacaktır. En küçük ayrıntısına kadar çalışılan rahatlama, oyun sırasında daha da uyarıcıdır ve gerçekçi olmayan hisler elde etmenizi sağlar!",
+      "oldPrice": 1699,
+      "variants": [
+        "standart"
+      ],
+      "reviewCount": 0,
+      "gallery": [
+        "/uploads/img82504226320c.webp",
+        "/uploads/imga0e4ec0c2889.webp",
+        "/uploads/img29ddf6f3cd5d.webp",
+        "/uploads/img78ce17680b4a.webp",
+        "/uploads/img9df218458020.webp",
+        "/uploads/img359aae873747.webp"
+      ],
+      "subcategory": "",
+      "tags": [],
+      "id": "p97cbb1144d89",
+      "featured": false,
+      "createdAt": "2026-09-21T14:09:20.716Z",
+      "rating": 0,
+      "highlights": [
+        "21 Cm - PVC - Gerçekçi Doku"
+      ],
+      "slug": "realstick-gercekci-yapay-penis",
+      "bestSeller": false,
+      "category": "realistik-dildolar",
+      "isNew": true,
+      "stock": 10
+    },
+    {
+      "variants": [
+        "standart"
+      ],
+      "tags": [],
+      "highlights": [
+        "%100 Su Geçirmez",
+        "Gerçekçi Medikal TPE",
+        "Güçlü Sabitleme Vantuzu",
+        "Su Bazlı Formül"
+      ],
+      "id": "p3835a0af0ab1",
+      "oldPrice": 1399,
+      "image": "/uploads/img068eca549bd8.webp",
+      "price": 1159,
+      "longDescription": "RealStick CALIBER 18 cm, insan anatomisine ve ten dokusuna en yakın deneyimi sunmak amacıyla tasarlanmış, çok işlevli ve modüler bir gerçekçi yapay penis (dildo) modelidir. Hem bireysel hem de çiftlerin kullanımına uygun olan bu ürün, malzeme kalitesi ve genişletilebilir özellikleri ile öne çıkmaktadır.\n\n1. Fiziksel ve Anatomik Ölçüler\n\nToplam Uzunluk: 18 cm (Kullanılabilir net uzunluk model ve enjeksiyon kalıbına göre küçük farklılıklar gösterebilir).\n\nGövde Tasarımı: Gerçekçi bir deneyim için belirgin damar hatları, aslına uygun testis (testisli modeller için) formu ve anatomik boğumlar içerir.\n\nÇap Seçenekleri: Kullanıcı konforu ve tecrübesine göre farklı kalınlık alternatifleri sunar:\n\nSlim (İnce): Yaklaşık Ø 3 cm - 3.5 cm (Başlangıç seviyesi için ideal)\n   Medium (Standart): Yaklaşık Ø 4 cm (En çok tercih edilen evrensel ölçü)\n   Large (Kalın): Yaklaşık Ø 5 cm (İleri düzey kullanıcılar için)\n   X-Large (Çok Kalın): Yaklaşık Ø 6 cm (Maksimum dolgunluk arayanlar için)\n\n\n## 2. Malzeme Yapısı ve Sağlık Standartları\n\nHammadde: Gözeneksiz, vücut dostu ve hipoalerjenik yüksek kaliteli medikal PVC veya TPE/Likit Silikon alaşımlarından üretilmiştir.\n\nKimyasal Güvenlik: Ftalat (phthalate) içermez. Sağlığa zararlı toksik maddeler veya plastikleştiriciler barındırmaz.\n\nDoku Hissi: Dış yüzeyi kadifemsi ve yumuşak bir ten hissi sunarken, iç yapısı bükülmelere karşı dirençli ve dik duruşu koruyan kıkırdaksı bir sertliğe sahiptir.\n\nKoku Karşıtlığı: Gözeneksiz yapısı sayesinde hapsedilmiş bakteri barındırmaz ve kullanım sonrası doğru temizlendiğinde koku yapmaz.",
+      "description": "",
+      "gallery": [
+        "/uploads/img068eca549bd8.webp",
+        "/uploads/img48bdc38ac3c5.webp",
+        "/uploads/imgb319dea5086b.webp",
+        "/uploads/img062efb70fcd8.webp"
+      ],
+      "slug": "realstick-caliber-gercekci-yapay-penis-18-cm",
+      "bestSeller": true,
+      "categoryName": "Realistik Dildolar",
+      "name": "RealStick CALIBER -  Gerçekçi Yapay Penis - 18 cm",
+      "createdAt": "2026-09-21T14:40:58.217Z",
+      "rating": 0,
+      "stock": 10,
+      "category": "realistik-dildolar",
+      "isNew": true,
+      "reviewCount": 0,
+      "subcategory": "",
+      "featured": true
+    },
+    {
+      "oldPrice": 1459,
+      "name": "Noctis 23cm Realistik Dildo",
+      "variants": [
+        "standart"
+      ],
+      "gallery": [
+        "/uploads/img8f1776df4810.webp",
+        "/uploads/img3567dca1c2a0.webp"
+      ],
+      "image": "/uploads/img8f1776df4810.webp",
+      "price": 1299,
+      "reviewCount": 0,
+      "subcategory": "",
+      "bestSeller": true,
+      "categoryName": "Realistik Dildolar",
+      "createdAt": "2026-09-22T08:39:22.207Z",
+      "category": "realistik-dildolar",
+      "isNew": true,
+      "tags": [],
+      "stock": 10,
+      "id": "p7f317296be8f",
+      "rating": 0,
+      "longDescription": "Noctis 23cm Realistik Dildo\nMedilkal silikondan üretilmiştir.\nUzunluk: 23cm \nKullanılabilir Uzunluk : 17 cm \nKalınlık: 5 cm \nAğırlık: 415 gram \nAnal ve vajinal kullanıma uygundur",
+      "slug": "noctis-23cm-realistik-dildo",
+      "featured": true,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "description": ""
+    },
+    {
+      "oldPrice": 2499,
+      "variants": [
+        "standart"
+      ],
+      "longDescription": "RealSTICK Wilt Gerçekçi Dildo, büyük boy ölçüleri, anatomik penis formu ve güçlü vantuz tabanıyla dolgun ve yoğun bir kullanım tercih edenler için tasarlanmıştır. Yaklaşık 29,5 cm toplam uzunluğu, 23,5 cm kullanılabilir gövdesi ve 5,5 cm çapı ile standart dildo modellerinden belirgin biçimde daha büyük ve hacimli bir yapıya sahiptir.\n\n\nDayanıklı ve iddialı bir yol işçisi, trafikteki yalnızlığınızı aydınlatmanıza yardımcı olacaktır. Güneşte asfalt kadar sıcak, otoyollara ve tünellere bayılıyor. En küçük düzensizlikler bile, her zaman yanında olan kırıcısına meydan okuyor. Her yolu ustalıkla zevk ve özgürlüğe giden bir yola dönüştürecektir. Bu gerçekçi yapay penis, ateşli, seksi bir adamla ilgili fantezilerinizi gerçekleştirmenize yardımcı olacaktır. En küçük ayrıntısına kadar çalışılan rahatlama, oyun sırasında daha da uyarıcıdır ve gerçekçi olmayan hisler elde etmenizi sağlar!",
+      "isNew": true,
+      "description": "",
+      "stock": 10,
+      "createdAt": "2026-09-21T15:27:21.817Z",
+      "name": "RealStick 29,5 cm Gerçekçi Yapay Penis",
+      "gallery": [
+        "/uploads/imgf15452f9e691.webp",
+        "/uploads/imgd73f28408287.webp",
+        "/uploads/img341288a5f853.webp",
+        "/uploads/imgf05693df324f.webp",
+        "/uploads/img698933fe1c32.webp"
+      ],
+      "highlights": [
+        "PVC - Et Dokusu - 29.5 cm - Gerçekçi Yapay Penis"
+      ],
+      "category": "realistik-dildolar",
+      "slug": "realstick-29-5-cm-gercekci-yapay-penis",
+      "categoryName": "Realistik Dildolar",
+      "rating": 0,
+      "price": 2159,
+      "image": "/uploads/imgf15452f9e691.webp",
+      "subcategory": "",
+      "reviewCount": 0,
+      "id": "p80f723418870",
+      "bestSeller": false,
+      "featured": false,
+      "tags": []
+    },
+    {
+      "category": "fetish-urunler",
+      "categoryName": "Fetish Ürünler",
+      "longDescription": "Özgürlüğün kısıtlanması, hakimiyet ve boyun eğme, birbirinize yapabileceğiniz her şey değildir. Göz alıcı pembe renk, sap üzerindeki kristal taşlar dikkati dağıtır ve bu kırbacı sevimli bir oyuncak haline getirir. Ancak aldanmayınız, kırbaç ısınmak ve asi bir partnerin sadece somut bir şekilde cezalandırılması için kullanışlı olacaktır. Optimum boyut, estetik ve işlevsellik, bu zarif cihazın tüm avantajları değildir. Sap, kristal taşlar ile süslenmiştir, parıltı yaratır, elinize rahatça oturur. Kırbaç parçaları pürüzsüz püskülü yumuşak pembe PU deriden yapılmıştır. Metal halka daha rahat bir tutuş sağlar. Gerilim, güç ve zarafetin birleşimi. Bu kırbaçla, itaatkar kişiyi cezalandırabilir ve patronunun kim olduğunu bir kez daha gösterebilirsiniz.\n\nMalzeme: PU deri\n\nRenk: Pembe\n\nToplam uzunluk: 64 cm\n\nÇalışma uzunluğu: 48.5 cm",
+      "name": "Anonymo Deri Kırbaç - Pembe",
+      "gallery": [
+        "/uploads/imgae745eecb568.webp",
+        "/uploads/img0f1aa573886a.webp",
+        "/uploads/img84389db8737d.webp",
+        "/uploads/imgbf7895063362.webp"
+      ],
+      "id": "pc6245360096a",
+      "featured": true,
+      "isNew": true,
+      "description": "PU Deri - Pembe  - 64 cm",
+      "stock": 9,
+      "createdAt": "2026-09-21T15:09:41.320Z",
+      "oldPrice": 959,
+      "image": "/uploads/imgae745eecb568.webp",
+      "price": 899,
+      "bestSeller": true,
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "slug": "anonymo-deri-kirbac",
+      "highlights": [
+        "Medikal Paslanmaz Çelik",
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat"
+      ],
+      "reviewCount": 0,
+      "subcategory": "",
+      "rating": 0
+    },
+    {
+      "isNew": true,
+      "stock": 10,
+      "bestSeller": false,
+      "category": "kadinlar",
+      "description": "",
+      "rating": 0,
+      "featured": true,
+      "highlights": [
+        "Su Geçirmez Gövde",
+        "<45dB Fısıltı Motoru",
+        "%100 Orijinal & Faturalı"
+      ],
+      "name": "A-Toys by TOYFA Rai Vajinal Kegel Topları",
+      "id": "p0c87de6c1f44",
+      "slug": "a-toys-by-toyfa-rai-vajinal-kegel-toplari",
+      "longDescription": "Ofset ağırlık merkezine sahip A-Toys Raı vajinal topları, toksik olmayan ve hipoalerjenik% 100 yüksek kaliteli silikondan yapılmıştır.\n\nOyuncağın kolayca takılmasını ve çıkarılmasını sağlayan bir halkası vardır. Su geçirmez ve bakımı kolaydır. Kegel egzersizlerini uygulamak için mükemmel bir yol.\n\nVajinal A-Toys topları LC kaslarını güçlendirir, vajinal kasların tonunu ve elastikiyetini arttırır ve orgazmların süresini ve yoğunluğunu arttırmaya yardımcı olur.\n\nEn sevdiğiniz yağlayıcıyı uygulayın ve topları kulanın. Tamamen sessizler ve çıkarma halkasını iç çamaşırlarına saklamak kolaydır.\n\nOyuncağı günde 20-30 dakikadan başlayarak en fazla 2 saat kullanmanız önerilir.",
+      "variants": [
+        "standart"
+      ],
+      "categoryName": "Kadın Cinsel Sağlık",
+      "oldPrice": 859,
+      "reviewCount": 0,
+      "subcategory": "",
+      "createdAt": "2026-09-23T10:08:25.470Z",
+      "tags": [],
+      "gallery": [
+        "/uploads/img28e9cd9d6b20.webp",
+        "/uploads/imge395b8d5fba4.webp",
+        "/uploads/img9236588e0823.webp",
+        "/uploads/img2aa5185004c3.webp",
+        "/uploads/img08aea6fa4c28.webp"
+      ],
+      "price": 799,
+      "image": "/uploads/img28e9cd9d6b20.webp"
+    },
+    {
+      "category": "uzatmali-prezervatifler",
+      "createdAt": "2026-09-23T10:23:21.479Z",
+      "tags": [],
+      "categoryName": "Uzatmalı Prezervatifler",
+      "highlights": [
+        "Boy Uzatıcı Etkili",
+        "TPE Malzeme",
+        "Ten Rengi",
+        "19 cm"
+      ],
+      "gallery": [
+        "/uploads/img440ea2a1e0eb.webp",
+        "/uploads/img12472224b744.webp",
+        "/uploads/img543013d25b4e.webp",
+        "/uploads/img944d8741acda.webp",
+        "/uploads/img2e39e9b3d473.webp",
+        "/uploads/img0bcf9b62c1ef.webp"
+      ],
+      "bestSeller": false,
+      "price": 959,
+      "image": "/uploads/img440ea2a1e0eb.webp",
+      "rating": 0,
+      "description": "",
+      "featured": false,
+      "slug": "xlover-by-toyfa-penis-uzatici-kilif",
+      "oldPrice": 1279,
+      "name": "XLover by TOYFA Penis Uzatıcı Kılıf",
+      "stock": 9,
+      "isNew": true,
+      "variants": [
+        "standart"
+      ],
+      "reviewCount": 0,
+      "longDescription": "Gerçekçi Softskin malzemeden yapılmış halka ile uzatılmış meme. Elastikiyetinden dolayı penise kolayca gerilir ve giyilir, uzunluğunu arttırır. Skrotum halkası memeyi mükemmel bir şekilde düzeltir ve cinsel ilişki sırasında zevki uzatır. Meme uzunluğu: 19 cm, çap 4.0 cm, duvar çapı 0.7cm. Meme çapı 1.4 cm arttırır, uzunluğu 3.5 cm arttırır",
+      "id": "p682b20e1bb60",
+      "subcategory": ""
+    },
+    {
+      "longDescription": "Kamasutra Denge Oyunu – 48 Pozisyonlu Yetişkin Eğlence Oyunu (18+) Ürün Açıklaması Eğlenceyi, dengeyi ve tutkuyu bir araya getiren Yeni Süreli Kamasutra Denge Oyunu, çiftler için özel olarak tasarlanmış yetişkin oyunudur. Oyun, üzerinde farklı pozisyonların yer aldığı 48 adet ahşap bloktan oluşur ve kum saati ile süreye karşı oynanır. Oyun sırasında sırayla blok çekilir, blok üzerinde yer alan pozisyon denenir ve blok kuleye yeniden yerleştirilir. Kuleyi deviren oyuncu kaybeder. Hem eğlenceli hem de çiftler arası yakınlığı artıran keyifli bir deneyim sunar. ???? Özellikler ???? 18+ Yetişkin Oyunu ???? 48 adet pozisyonlu ahşap blok ⏳ Kum saatli – süreli oyun ????‍❤️‍???? 2 kişilik (kadın & erkek) ???? Dayanıklı ve kaliteli ahşap malzeme ???? Bekarlığa veda, çiftler gecesi ve özel anlar için ideal ???? Kutu İçeriği 48 adet pozisyonlu ahşap blok 1 adet kum saati Kule düzenleyici karton",
+      "featured": true,
+      "image": "/uploads/img013473f7ebc6.webp",
+      "price": 1599,
+      "name": "Kamasutra Denge Oyunu 48 Pozisyonlu Yetişkin Eğlence Oyunu",
+      "rating": 0,
+      "id": "pc8969f37f93d",
+      "description": "",
+      "categoryName": "Cinsel Oyunlar",
+      "category": "cinsel-oyunlar",
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "tags": [],
+      "createdAt": "2026-09-23T13:15:12.101Z",
+      "slug": "kamasutra-denge-oyunu-48-pozisyonlu-yetiskin-eglence-oyunu",
+      "variants": [
+        "standart"
+      ],
+      "gallery": [
+        "/uploads/img013473f7ebc6.webp",
+        "/uploads/imgecb234671fc7.webp"
+      ],
+      "subcategory": "",
+      "bestSeller": true,
+      "reviewCount": 0,
+      "isNew": true,
+      "oldPrice": null,
+      "stock": 10
+    },
+    {
+      "image": "/uploads/imge5ae93818cfe.webp",
+      "price": 299,
+      "categoryName": "Cinsel Oyunlar",
+      "tags": [],
+      "variants": [
+        "standart"
+      ],
+      "oldPrice": null,
+      "id": "p4b366bf3be21",
+      "createdAt": "2026-09-23T13:22:06.990Z",
+      "gallery": [
+        "/uploads/imge5ae93818cfe.webp",
+        "/uploads/imgaedb516b28a7.webp",
+        "/uploads/imgb4d50b587f36.webp"
+      ],
+      "subcategory": "",
+      "reviewCount": 0,
+      "slug": "50-parca-erotik-gorev-kartlari-ciftler-i-cin-ozel-oyun-seti",
+      "name": "50 Parça Erotik Görev Kartları – Çiftler İçin Özel Oyun Seti",
+      "category": "cinsel-oyunlar",
+      "longDescription": "Çiftlere özel hazırlanmış 50 farklı erotik görev kartı ile ilişkinize heyecan katın. Sıradanlıktan uzaklaşıp partnerinizle birlikte daha eğlenceli, tutkulu ve unutulmaz anlar yaşamanız için tasarlanmıştır. Kartların her biri farklı bir görev, sürpriz ve deneyim sunar. Hem eğlenceli hem de romantik vakit geçirmek isteyen çiftler için mükemmel bir seçenektir. İster sevgilinizle ister eşinizle kullanabileceğiniz bu set, özel gecelerinizi renklendirecek.",
+      "bestSeller": true,
+      "featured": true,
+      "highlights": [
+        "%100 Orijinal & Faturalı",
+        "Gizli Paketleme & Express Teslimat",
+        "Hijyenik Koruma Mühürlü"
+      ],
+      "stock": 10,
+      "description": "",
+      "isNew": true,
+      "rating": 0
+    },
+    {
+      "name": "Mini Kurşun Vibratör - 9 CM",
+      "categoryName": "Vibratörler",
+      "bestSeller": true,
+      "category": "vibratorler",
+      "image": "/uploads/imgb03b58a55ee0.webp",
+      "price": 799,
+      "createdAt": "2026-10-21T12:39:02.330Z",
+      "highlights": [
+        "IPX5 Güçlü Su Dayanımlı",
+        "Şarj Edilebilir Batarya",
+        "12 Titreşim Modu",
+        "9 cm"
+      ],
+      "gallery": [
+        "/uploads/imgb03b58a55ee0.webp",
+        "/uploads/img32c7c681c1e8.webp",
+        "/uploads/imgbf6a42d90d55.webp"
+      ],
+      "featured": true,
+      "description": "9 Cm, 12 Kademe Titreşim Modu",
+      "images": [
+        "/uploads/imgb03b58a55ee0.webp",
+        "/uploads/img32c7c681c1e8.webp",
+        "/uploads/imgbf6a42d90d55.webp"
+      ],
+      "longDescription": "Kurşun Vibratör – Pembe\n\nKompakt tasarımı ve pratik kullanımıyla Kurşun Vibratör, günün her anında keyifli bir deneyim sunar. Hafif yapısı, sessiz çalışması ve çoklu hız ayarları sayesinde, kişisel tercihlerinize göre kolayca uyarlayabilirsiniz.\n\nÖne Çıkan Özellikler:\nBoyutlar ve Ağırlık:\nUzunluk: 8,7 cm\nKalınlık: 1,8 cm\nAğırlık: 23 gr\nBu kompakt ölçüler sayesinde çantanızda veya cebinizde rahatlıkla taşıyabilir, seyahatlerinizde yanınızda bulundurabilirsiniz.\nABS/Silikon Malzeme: Sağlıklı ve cilt dostu malzemeden üretilmiş olup, hijyenik ve konforlu bir kullanım sunar.\n12 Kademe Hız Ayarı: Farklı hız seçenekleri sayesinde titreşim şiddetini kişisel zevkinize göre ayarlayabilir, deneyiminizi özelleştirebilirsiniz.\nSessiz Çalışma: Düşük ses seviyesiyle mahremiyetinizi korur ve sizi rahatsız etmeden keyifli bir kullanım sağlar.\nKurşun Vibratör – Pembe, minimal boyutu, güvenilir malzemesi ve çok yönlü titreşim seçenekleriyle her zaman, her yerde elinizin altında olacak. Kendi kişisel keyif anlarınızı yaratarak, bu pratik ve zarif ürünü keşfedin!",
+      "variants": [
+        "standart"
+      ],
+      "tags": [],
+      "id": "pee064f284f2c",
+      "rating": 0,
+      "stock": 10,
+      "oldPrice": 859,
+      "isNew": true,
+      "slug": "mini-kursun-vibrator",
+      "reviewCount": 0,
+      "subcategory": ""
+    }
+  ],
+  "categories": [
+    {
+      "homeOrder": 3,
+      "slug": "realistik-mankenler",
+      "image": "/uploads/img72f389902ea3.webp",
+      "createdAt": "2026-08-27T09:43:58.140Z",
+      "featuredOnHome": true,
+      "id": "ct7842337befe2",
+      "name": "Realistik Mankenler"
+    },
+    {
+      "featuredOnHome": true,
+      "createdAt": "2026-08-27T09:44:35.092Z",
+      "name": "Realistik Vajinalar",
+      "slug": "ciftler",
+      "homeOrder": 1,
+      "image": "/uploads/imga421c009a412.webp",
+      "id": "ct_ciftler"
+    },
+    {
+      "homeOrder": 4,
+      "name": "Vibratörler",
+      "id": "ctc3fe15335b3e",
+      "image": "/uploads/img2a7c9b733a70.webp",
+      "createdAt": "2026-08-27T09:58:04.404Z",
+      "featuredOnHome": true,
+      "slug": "vibratorler"
+    },
+    {
+      "id": "ct_realistik-dildolar",
+      "name": "Realistik Dildolar",
+      "featuredOnHome": false,
+      "homeOrder": 99,
+      "image": "/uploads/img09f5ce6898cd.webp",
+      "createdAt": "2026-08-28T14:49:41.786Z",
+      "slug": "realistik-dildolar"
+    },
+    {
+      "id": "ct97947ff7350f",
+      "name": "Fantezi İç Giyim",
+      "createdAt": "2026-08-28T15:53:46.693Z",
+      "image": "/uploads/img7bfbe4451fed.webp",
+      "homeOrder": 99,
+      "slug": "fantezi-ic-giyim",
+      "featuredOnHome": false
+    },
+    {
+      "createdAt": "2026-08-28T16:22:49.472Z",
+      "name": "Erkek Cinsel Sağlık",
+      "image": "/uploads/img77c9e20d7328.webp",
+      "id": "ct3177d2d9d44e",
+      "homeOrder": 2,
+      "featuredOnHome": true,
+      "slug": "erkekler"
+    },
+    {
+      "createdAt": "2026-08-29T11:34:20.348Z",
+      "featuredOnHome": false,
+      "image": "/uploads/imgd5b3fb871546.webp",
+      "name": "Anal Ürünler",
+      "slug": "anal-urunler",
+      "id": "ct602bf4ee7ca6",
+      "homeOrder": 99
+    },
+    {
+      "name": "Kadın Cinsel Sağlık",
+      "createdAt": "2026-08-29T12:09:14.353Z",
+      "image": "/uploads/img7bfbe4451fed.webp",
+      "id": "ct4b7db25ea427",
+      "slug": "kadinlar",
+      "homeOrder": 99,
+      "featuredOnHome": false
+    },
+    {
+      "id": "ctc9c6a9a9ae12",
+      "homeOrder": 99,
+      "featuredOnHome": false,
+      "slug": "fetish-urunler",
+      "createdAt": "2026-08-31T10:00:44.715Z",
+      "image": "/uploads/imgac2ddcd00600.webp",
+      "name": "Fetish Ürünler"
+    },
+    {
+      "createdAt": "2026-09-23T10:10:48.516Z",
+      "featuredOnHome": false,
+      "id": "ct02af47c783c3",
+      "image": "/uploads/img3643ab992e21.webp",
+      "slug": "uzatmali-prezervatifler",
+      "homeOrder": 99,
+      "name": "Uzatmalı Prezervatifler"
+    },
+    {
+      "id": "ct916c0060e69f",
+      "slug": "cinsel-oyunlar",
+      "featuredOnHome": false,
+      "image": "/uploads/imgc9978e94ff31.webp",
+      "homeOrder": 99,
+      "name": "Cinsel Oyunlar",
+      "createdAt": "2026-09-23T13:13:22.339Z"
+    }
+  ],
+  "orders": [
+    {
+      "status": "delivered",
+      "userEmail": "",
+      "discreet": true,
+      "discount": 0,
+      "phone": "05457855816",
+      "subtotal": 4014,
+      "shipping": 0,
+      "createdAt": "2026-10-06T14:24:36.693Z",
+      "userId": null,
+      "payment": "WhatsApp ile Sipariş",
+      "items": [
+        {
+          "productId": "pbcfa6505bc8d",
+          "name": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
+          "price": 499,
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg7bfbe4451fed.webp?alt=media&token=7daf6cd0-2012-419c-a3f1-25f8478cd813",
+          "qty": 1
+        },
+        {
+          "qty": 1,
+          "productId": "p4a057fe94633",
+          "price": 1499,
+          "name": "A-Toys by Lilu Klitoral Uyarıcı Vibratör, Silikon, Pembe, 20 cm",
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg05c9213f3af4-uFdXrC8EuukfdBIz6s2Gc4CKTHm7nP.webp?alt=media&token=fcd6aa0e-eacb-4eca-a74a-f19fea2ace19"
+        },
+        {
+          "price": 899,
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimgae745eecb568.webp?alt=media&token=d7776cff-99fe-4c08-9e28-178d83c59f64",
+          "productId": "pc6245360096a",
+          "name": "Anonymo Deri Kırbaç - Pembe",
+          "qty": 1
+        },
+        {
+          "qty": 1,
+          "price": 379,
+          "productId": "pee0b56ada4e5",
+          "name": "Fetiş Fantezi Siyah Peluşlu Metal Kelepçe",
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg4483c658e339.webp?alt=media&token=c6505dcf-b370-4435-8e8e-d13c5c93d911"
+        },
+        {
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg6e343a413289.webp?alt=media&token=fbebf67b-bdc1-49ea-b0f8-059ce9130467",
+          "name": "Metal Elmas Taşlı Anal Plug Rose Orta Boy",
+          "price": 479,
+          "productId": "p3523b421476b",
+          "qty": 1
+        },
+        {
+          "qty": 1,
+          "price": 259,
+          "productId": "pa4cab77cad28",
+          "name": "3'li Penis Halkası",
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg0b5f9e122919.webp?alt=media&token=423917d9-55e4-47ae-a322-66a88346032a"
+        }
+      ],
+      "total": 4014,
+      "address": {
+        "city": "Eskişehir",
+        "full": "Zincirlikuyu mahallesi akkar sokak no20/4 Tepebaşı Eskişehir",
+        "zip": "26100"
+      },
+      "note": "",
+      "customerName": "Şükrü Yılmaz",
+      "coupon": null,
+      "id": "LS-1032"
+    },
+    {
+      "customerName": "Onur çiçek",
+      "phone": "05343158558",
+      "payment": "WhatsApp ile Sipariş",
+      "status": "delivered",
+      "userId": null,
+      "note": "7/24",
+      "id": "LS-1031",
+      "subtotal": 1438,
+      "shipping": 159,
+      "discount": 0,
+      "discreet": true,
+      "coupon": null,
+      "userEmail": "",
+      "total": 1597,
+      "items": [
+        {
+          "name": "Metal Elmas Taşlı Anal Plug Rose Orta Boy",
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg6e343a413289.webp?alt=media&token=fbebf67b-bdc1-49ea-b0f8-059ce9130467",
+          "productId": "p3523b421476b",
+          "qty": 1,
+          "price": 479
+        },
+        {
+          "name": "XLover by TOYFA Penis Uzatıcı Kılıf",
+          "image": "https://firebasestorage.googleapis.com/v0/b/moonlit-lock-m9v0l.firebasestorage.app/o/products%2Fimg440ea2a1e0eb.webp?alt=media&token=6cedbcc9-9d97-4719-b0fb-2f546b5b76e9",
+          "productId": "p682b20e1bb60",
+          "price": 959,
+          "qty": 1
+        }
+      ],
+      "address": {
+        "full": "Emek mahallesi çetinsoy sokak no:48/10",
+        "zip": "26100",
+        "city": "Eskişehir"
+      },
+      "createdAt": "2026-10-05T13:02:07.799Z"
+    },
+    {
+      "payment": "WhatsApp ile Sipariş",
+      "coupon": null,
+      "phone": "mert010203@gmail.com",
+      "note": "Lütfen 18:00 dan sonra arayın.",
+      "carrier": "Yurtiçi Kargo",
+      "subtotal": 2457,
+      "shipping": 0,
+      "discount": 0,
+      "discreet": true,
+      "userId": "ucd842f4ba87f",
+      "customerName": "Mert Şahin",
+      "userEmail": "mert010203@gmail.com",
+      "id": "LS-1029",
+      "trackingNumber": "225899697874",
+      "createdAt": "2026-09-19T17:34:48.707Z",
+      "address": {
+        "full": "Hüseyin Gazi - Başak Mahallesi  49/9",
+        "zip": "06260",
+        "city": "ANKARA"
+      },
+      "items": [
+        {
+          "qty": 1,
+          "name": "A-Toys by  Mika Vibratörü, Silikon, Pembe, 19,8 cm",
+          "productId": "p3467b60148c1",
+          "image": "/uploads/img7cd0b0c96ffb.webp",
+          "price": 1259
+        },
+        {
+          "price": 499,
+          "qty": 1,
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img35375304976f.webp",
+          "productId": "p12df7e2816fd",
+          "name": "Proling Erkeklere Özel Geliştirilmiş Bakım Kremi 59 ml"
+        },
+        {
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img05b060a51329.webp",
+          "price": 699,
+          "qty": 1,
+          "name": "Proling Erkeklere Özel Bakım ve Masaj Spreyi 59 ml",
+          "productId": "p5bdb3e17409d"
+        }
+      ],
+      "total": 2457,
+      "status": "delivered"
+    },
+    {
+      "coupon": null,
+      "discount": 0,
+      "discreet": true,
+      "subtotal": 2397,
+      "shipping": 0,
+      "payment": "WhatsApp ile Sipariş",
+      "total": 2397,
+      "items": [
+        {
+          "productId": "pe31257abd626",
+          "name": "Bükülebilir Başlıklı Wand Vibratör Mor",
+          "qty": 2,
+          "price": 959,
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img4ca0fae4e044.webp"
+        },
+        {
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img6b161149ada3.webp",
+          "productId": "pdf2748be251d",
+          "name": "Stag 9000 Erkeklere Özel Bakım Spreyi 20 ml",
+          "price": 479,
+          "qty": 1
+        }
+      ],
+      "userId": "uad8ba2526165",
+      "address": {
+        "city": "Tepebaşı",
+        "zip": "",
+        "full": "İsmet İnönü 1 Caddesi 52/2"
+      },
+      "phone": "05468696943",
+      "userEmail": "cemal.ulas@gmail.com",
+      "id": "LS-1028",
+      "customerName": "cemal.ulas",
+      "note": "",
+      "createdAt": "2026-09-19T08:06:15.853Z",
+      "status": "delivered"
+    },
+    {
+      "coupon": null,
+      "customerName": "Derya Deniz",
+      "shipping": 0,
+      "subtotal": 2878,
+      "discount": 0,
+      "note": "Lütfen 18:00 dan sonra arayın.",
+      "discreet": true,
+      "items": [
+        {
+          "price": 2499,
+          "qty": 1,
+          "image": "/uploads/img57661690c1b7.webp",
+          "name": "Flovetta by Toyfa Flax Klitoral Stimülasyonlu Vibratörü",
+          "productId": "p4e754a1cfdda"
+        },
+        {
+          "qty": 1,
+          "name": "Metal Anal Plug -Siyah Kristalli - Küçük Boy",
+          "image": "/uploads/img0f13810957bc.webp",
+          "price": 379,
+          "productId": "p8e7f8975efc9"
+        }
+      ],
+      "address": {
+        "city": "Eskişehir",
+        "full": "Çamlıyol sokak 20/1 Tepebaşı",
+        "zip": "26130"
+      },
+      "trackingNumber": "",
+      "total": 2878,
+      "id": "LS-1027",
+      "payment": "WhatsApp ile Sipariş",
+      "phone": "05044477741",
+      "createdAt": "2026-09-18T12:55:52.387Z",
+      "userId": null,
+      "userEmail": "",
+      "carrier": "Yurtiçi Kargo",
+      "status": "delivered"
+    },
+    {
+      "id": "LS-1026",
+      "customerName": "Senem",
+      "coupon": null,
+      "createdAt": "2026-09-14T15:27:29.702Z",
+      "address": {
+        "full": "Hoşnudiye Mahallesi Vural Sokak 24/A",
+        "zip": "26130",
+        "city": "TEPEBAŞI"
+      },
+      "phone": "05326095591",
+      "userEmail": "",
+      "payment": "WhatsApp ile Sipariş",
+      "subtotal": 2416,
+      "shipping": 0,
+      "items": [
+        {
+          "price": 499,
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img7bfbe4451fed.webp",
+          "productId": "pbcfa6505bc8d",
+          "name": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
+          "qty": 1
+        },
+        {
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img4ca0fae4e044.webp",
+          "name": "Bükülebilir Başlıklı Wand Vibratör Mor",
+          "price": 959,
+          "productId": "pe31257abd626",
+          "qty": 1
+        },
+        {
+          "name": "Stag 9000  Sprey",
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/img6b161149ada3.webp",
+          "qty": 2,
+          "productId": "pdf2748be251d",
+          "price": 479
+        }
+      ],
+      "total": 2416,
+      "note": "",
+      "discreet": true,
+      "userId": null,
+      "discount": 0,
+      "status": "delivered",
+      "carrier": "Yurtiçi Kargo",
+      "trackingNumber": ""
+    },
+    {
+      "id": "LS-1025",
+      "total": 1998,
+      "address": {
+        "full": "Atatürk Bulvarı No:12 D:4",
+        "zip": "",
+        "city": "Eskişehir"
+      },
+      "items": [
+        {
+          "price": 1899,
+          "qty": 1,
+          "productId": "p2484e3b314df",
+          "image": "https://2nmwpzma3o8ywodf.public.blob.vercel-storage.com/products/imga421c009a412.webp",
+          "name": "3 in 1 Realistik Vajina"
+        }
+      ],
+      "customerName": "Test Müşteri",
+      "note": "",
+      "coupon": null,
+      "status": "delivered",
+      "discreet": false,
+      "discount": 0,
+      "userEmail": "",
+      "subtotal": 1899,
+      "shipping": 99,
+      "userId": null,
+      "phone": "05551234567",
+      "createdAt": "2026-09-14T10:57:18.839Z",
+      "payment": "WhatsApp ile Sipariş"
+    }
+  ],
+  "coupons": [
+    {
+      "id": "c98cefbf5620e",
+      "code": "LOVE10",
+      "type": "percent",
+      "value": 10,
+      "minTotal": 0,
+      "active": false,
+      "used": 14
+    },
+    {
+      "id": "c3f8ceaee8a4a",
+      "code": "GIZLI100",
+      "type": "fixed",
+      "value": 100,
+      "minTotal": 900,
+      "active": false,
+      "used": 6
+    },
+    {
+      "id": "c18a3d2670366",
+      "code": "YENI15",
+      "type": "percent",
+      "value": 15,
+      "minTotal": 500,
+      "active": false,
+      "used": 22
+    }
+  ],
+  "reviews": [
+    {
+      "id": "r47d7041862ad",
+      "productId": "pe31257abd626",
+      "userName": "C*** D.",
+      "rating": 5,
+      "text": "Eşimle birlikte denemek için aldık. Titreşim modları cidden çok başarılı, silikon malzemesi çok kaliteli ve yumuşacık hissettiriyor. Kargo paketinde hiçbir mağaza ibaresi yoktu, kuryeye de belli olmuyor, gizlilik konusunda çok titizler.",
+      "approved": true,
+      "createdAt": "2026-08-30T18:24:10.000Z"
+    },
+    {
+      "id": "re2d99a5bcb55",
+      "productId": "p2484e3b314df",
+      "userName": "A*** K.",
+      "rating": 4,
+      "text": "Malzeme dokusu gayet gerçekçi ve esnek. Kullanımı oldukça keyifli ancak temizliği biraz zahmetli diyebilirim, kullanımdan sonra yıkayıp kurutmak ve pudralamak gerekiyor ki ilk günkü formunda kalsın. Paketleme sağlamdı.",
+      "approved": true,
+      "createdAt": "2026-09-02T14:15:30.000Z"
+    },
+    {
+      "id": "rf83b766af05c",
+      "productId": "pfad02d97d511",
+      "userName": "M*** T.",
+      "rating": 3,
+      "text": "Ürün malzemesi gerçekten kaliteli, metal olmasının verdiği ağırlık hissi güzel. Ancak anal denemeye yeni başladığım için setin en küçük boyu bile başlangıç için bana biraz zorlayıcı geldi, tam istediğim rahatlığı bulamadım maalesef. Belki tecrübe kazandıkça daha iyi olur. Kargolama süreci ise çok hızlı ve özenliydi.",
+      "approved": true,
+      "createdAt": "2026-09-05T09:40:00.000Z"
+    },
+    {
+      "id": "r616b34ae0db9",
+      "productId": "pe31257abd626",
+      "userName": "D*** S.",
+      "rating": 5,
+      "text": "Başlığın bükülebilir olması inanılmaz bir artı, açıyı istediğiniz gibi ayarlayabiliyorsunuz. Silikonun kadifemsi yumuşaklığı çok kaliteli hissettiriyor. Titreşim modları çok çeşitli, en düşük mod bile gayet tatmin edici. Motor sesi de beklediğimden çok daha sessiz, yan odadan duyulması imkansız.",
+      "approved": true,
+      "createdAt": "2026-08-28T21:10:00.000Z"
+    },
+    {
+      "id": "r2256dd209efd",
+      "productId": "pe31257abd626",
+      "userName": "Z*** K.",
+      "rating": 5,
+      "text": "Şarjı 45 dakikada hemen doluyor ve gerçekten uzun süre dayanıyor. Duşta kullanım için su geçirmezliğini de test ettik, hiçbir sorun yaşamadık. Partnerimle birlikte vazgeçilmezimiz oldu. Paketleme de son derece özenli ve gizliydi.",
+      "approved": true,
+      "createdAt": "2026-09-01T12:05:22.000Z"
+    },
+    {
+      "id": "r09d7f06669c9",
+      "productId": "pe31257abd626",
+      "userName": "E*** M.",
+      "rating": 4,
+      "text": "Gövde boyutu (yaklaşık 21 cm) elde çok ergonomik duruyor, ağır değil. Yalnızca modlar arasında geçiş yaparken 20 mod olduğu için istediğiniz ritme gelmek birkaç saniye alabiliyor ama genel güç ve motor kalitesi harika.",
+      "approved": true,
+      "createdAt": "2026-09-06T16:50:00.000Z"
+    },
+    {
+      "id": "r02148dffaefa",
+      "productId": "pbcfa6505bc8d",
+      "userName": "S*** Y.",
+      "rating": 5,
+      "text": "250 ml boyutu çok bereketli. Su bazlı olduğu için ne çarşafta ne çamaşırda leke bırakıyor, sadece ılık suyla bile anında temizleniyor. En sevdiğim yönü yapış yapış bir his bırakmaması ve kurumadan uzun süre kayganlık sağlaması oldu.",
+      "approved": true,
+      "createdAt": "2026-08-31T10:18:40.000Z"
+    },
+    {
+      "id": "rb18ca1973d54",
+      "productId": "pbcfa6505bc8d",
+      "userName": "O*** N.",
+      "rating": 5,
+      "text": "Silikon oyuncaklarla ve lateks kondomla birlikte gönül rahatlığıyla kullanıyoruz. Cildimde en ufak bir yanma veya tahriş yapmadı, pH dengesi gayet başarılı. Fiyat / performans olarak piyasadaki en iyi kayganlaştırıcılardan biri.",
+      "approved": true,
+      "createdAt": "2026-09-04T20:30:15.000Z"
+    },
+    {
+      "id": "rdc6d53ff4080",
+      "productId": "p12df7e2816fd",
+      "userName": "K*** E.",
+      "rating": 5,
+      "text": "Spreylere göre krem formunun kontrolü çok daha kolay. Nohut büyüklüğünde sürüp masajla yedirince 15 dakikada tamamen emiliyor. Kokusuz ve tatsız olması partnerinizin fark etmemesi açısından büyük avantaj. Memnun kaldım.",
+      "approved": true,
+      "createdAt": "2026-08-29T15:42:00.000Z"
+    },
+    {
+      "id": "r8133eba0ae28",
+      "productId": "p12df7e2816fd",
+      "userName": "H*** V.",
+      "rating": 4,
+      "text": "Etkisi 45-50 dakika boyunca stabil devam ediyor. Krem hemen emildiği için yapışkanlık kalmıyor. Tek dikkat edilmesi gereken şey çok fazla sürmemek; az miktar gayet yeterli oluyor. Kutu faturada da e-ticaret olarak geçti, gizlilik tam puan.",
+      "approved": true,
+      "createdAt": "2026-09-03T11:20:00.000Z"
+    },
+    {
+      "id": "r0e77369d91a0",
+      "productId": "p56895cc74a84",
+      "userName": "C*** A.",
+      "rating": 5,
+      "text": "Farklı şehirlerdeyken bile uygulama üzerinden kontrol edebilmek ilişkimize inanılmaz bir heyecan kattı. Bağlantı kopması yaşanmıyor, müzik ritmine göre titreşimi de çok eğlenceli. Taban kısmı son derece güvenli ve silikonu çok yumuşak.",
+      "approved": true,
+      "createdAt": "2026-08-27T19:00:00.000Z"
+    },
+    {
+      "id": "rf3d5db268292",
+      "productId": "p56895cc74a84",
+      "userName": "M*** L.",
+      "rating": 5,
+      "text": "Gövde geçişi çok rahat, boyut yeni başlayanlar için de deneyimliler için de çok ideal dengelenmiş. Manyetik şarjı çok pratik, temizliği de su bazlı temizleyiciyle bir dakikada yapılıyor.",
+      "approved": true,
+      "createdAt": "2026-09-05T22:15:00.000Z"
+    },
+    {
+      "id": "r438128809920",
+      "productId": "pb7847614536e",
+      "userName": "N*** B.",
+      "rating": 5,
+      "text": "Dış yüzeyinin dokusu gerçekten ten hissi veriyor, sıradan sert plastik veya kalitesiz silikonlarla uzaktan yakından alakası yok. İçindeki çekirdek tok ama dışı ipeksi yumuşaklıkta. Altındaki vantuz fayansa ve düz yüzeylere çok sağlam tutunuyor, eller serbest kullanım için harika.",
+      "approved": true,
+      "createdAt": "2026-08-29T17:35:00.000Z"
+    },
+    {
+      "id": "r42f8ce341fb7",
+      "productId": "pb7847614536e",
+      "userName": "I*** G.",
+      "rating": 5,
+      "text": "Gövde esnekliği ve ağırlığı mükemmel. Su bazlı jel ile kullanıldığında inanılmaz pürüzsüz bir kayganlık sağlıyor. Kaynar suyla veya nötr sabunla dezenfekte etmesi de çok kolay, koku tutmuyor.",
+      "approved": true,
+      "createdAt": "2026-09-04T13:40:00.000Z"
+    },
+    {
+      "id": "r76150119d2f7",
+      "productId": "p2484e3b314df",
+      "userName": "Y*** R.",
+      "rating": 5,
+      "text": "Malzeme kalitesi elinize aldığınız anda ağırlığından ve esnekliğinden anlaşılıyor. İç kanalın detayları ve daralan boğumları çok gerçekçi bir vakum oluşturuyor. Bol su bazlı jel ile kullanınca his muazzam. Kuruladıktan sonra bebek pudrası sürünce sıfır gibi kalıyor.",
+      "approved": true,
+      "createdAt": "2026-08-28T14:50:00.000Z"
+    },
+    {
+      "id": "r2685790329de",
+      "productId": "p2484e3b314df",
+      "userName": "F*** U.",
+      "rating": 4,
+      "text": "3 farklı kanalın da iç dokusu birbirinden farklı hissettiriyor. Temizliği biraz özen istiyor; duş başlığının tazyikli suyuyla yıkayıp havadar yerde kurutmak gerek. Ama verdiği zevke kesinlikle değer.",
+      "approved": true,
+      "createdAt": "2026-09-02T19:10:00.000Z"
+    },
+    {
+      "id": "rbbb42280e748",
+      "productId": "pe6440906f9a6",
+      "userName": "S*** T.",
+      "rating": 5,
+      "text": "Sadece titreşim değil, aynı zamanda içteki hareket mekanizması olması bambaşka bir seviye. Klitoris kulakçıklarının ritmi de harika ayarlanmış. Çift motorlu olmasına rağmen pili gayet iyi gidiyor. Kendinize yapabileceğiniz en iyi yatırım.",
+      "approved": true,
+      "createdAt": "2026-09-01T23:20:00.000Z"
+    },
+    {
+      "id": "r023d81736dd3",
+      "productId": "pee0b56ada4e5",
+      "userName": "B*** K.",
+      "rating": 5,
+      "text": "Peluş kısımları çok yumuşak, bileği kesinlikle sıkmıyor ve tahriş etmiyor. Metal kısımları da hafif oyuncak gibi değil, tok ve sağlam duruyor. Yanında iki adet anahtarı ve acil durum serbest bırakma mandalı var, güvenlik açısından çok rahat hissettirdi.",
+      "approved": true,
+      "createdAt": "2026-08-30T16:00:00.000Z"
+    },
+    {
+      "id": "r07c1af9a089e",
+      "productId": "p3698aca0e6ce",
+      "userName": "T*** M.",
+      "rating": 5,
+      "text": "5.5 kg ağırlığı sayesinde kullanım sırasında kesinlikle kayma veya yerinden oynama yapmıyor, çok stabil duruyor. Doku yumuşaklığı ve iç kanalların elastikiyeti gerçeğe inanılmaz yakın. Titreşim aparatı da hoş bir ekstra olmuş. Pudrasını eksik etmemek gerek.",
+      "approved": true,
+      "createdAt": "2026-09-03T18:45:00.000Z"
+    }
+  ],
+  "newsletter": [
+    {
+      "email": "ornek@mail.com",
+      "createdAt": "2026-08-26T14:02:46.012Z"
+    },
+    {
+      "email": "nl1869562170@test.com",
+      "createdAt": "2026-08-27T12:28:49.513Z"
+    },
+    {
+      "id": "n37270cb457df",
+      "email": "so.xew.o.p.u17@gmail.com",
+      "createdAt": "2026-09-21T07:31:55.574Z"
+    },
+    {
+      "id": "n93a37779ca46",
+      "email": "sox.ewo.p.u.17@gmail.com",
+      "createdAt": "2026-09-21T08:24:10.063Z"
+    },
+    {
+      "id": "ncb0a5b5fe394",
+      "email": "jame.shooqeye.xm.oor.e@gmail.com",
+      "createdAt": "2026-10-08T01:38:42.050Z"
+    },
+    {
+      "id": "n84abdd0a5897",
+      "email": "u.l.o.xu.hesu.j.ib4.5@gmail.com",
+      "createdAt": "2026-10-22T13:12:25.990Z"
+    },
+    {
+      "id": "na8f799c803e3",
+      "email": "u.l.o.x.uhe.su.j.ib45@gmail.com",
+      "createdAt": "2026-10-22T13:28:11.991Z"
+    }
+  ],
+  "contact": [
+    {
+      "id": "me9b93d35d208",
+      "name": "FpiWtRcOCZzStnIEBXy",
+      "email": "so.xew.o.p.u17@gmail.com",
+      "message": "dbJymQxskypCWkQIpUbxHlL",
+      "createdAt": "2026-09-21T07:32:19.162Z",
+      "read": false
+    },
+    {
+      "id": "m9f0b5913a824",
+      "name": "rtymuskYwyxWRTuDqc",
+      "email": "sox.ewo.p.u.17@gmail.com",
+      "message": "IRJVYmrhbmzhKAmfcMEQET",
+      "createdAt": "2026-09-21T08:24:33.124Z",
+      "read": false
+    },
+    {
+      "id": "m43228e0112f6",
+      "name": "wnWpoodrvYDlHhbY",
+      "email": "f5.viu.o4.p.g.q.ni.c.ho.la.s.rob.in.son@gmail.com",
+      "message": "iOQYBxFjqVpnpBIc",
+      "createdAt": "2026-10-09T12:41:39.772Z",
+      "read": false
+    },
+    {
+      "id": "m1b754b3d1fa7",
+      "name": "MGrwEgVARbzpGTsQHCHlnae",
+      "email": "u.l.o.x.uhe.su.j.ib45@gmail.com",
+      "message": "akLFSnZkjZTwkKASfqRq",
+      "createdAt": "2026-10-22T13:28:41.835Z",
+      "read": false
+    }
+  ],
+  "settings": {
+    "storeName": "Love.",
+    "announcement": "WHATSAPP SİPARİŞ + MAĞAZADA ÖDEME — GİZLİ PAKETLEME GARANTİSİ",
+    "freeShippingThreshold": 2000,
+    "shippingFee": 159,
+    "kdvRate": 20,
+    "supportEmail": "info@loveeroticshop.com",
+    "supportPhone": "+90 543 633 13 25",
+    "whatsapp": "https://wa.me/905436331325",
+    "address": "İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı, Watsons & Yves Rocher Yanı), Ilgaz İş Hanı Kat:1 Daire:2, 26170 Tepebaşı/Eskişehir",
+    "mapsQuery": "Love%20Sex%20Shop%20Eski%C5%9Fehir%20Erotik%20Shop",
+    "instagram": "@loveeroticshop",
+    "wheelIds": [
+      "p56895cc74a84",
+      "p45902bf55777",
+      "pde40a53a654a",
+      "p2484e3b314df",
+      "pef6925d3d53e",
+      "p11e411f13104",
+      "p558a865c414c",
+      "pce7e3e765b9c"
+    ],
+    "updatedAt": "2026-09-19T08:15:47.631Z"
+  },
+  "meta": {
+    "createdAt": "2026-08-26T14:02:46.003Z",
+    "seq": {
+      "product": 0,
+      "order": 33,
+      "pos": 0
+    },
+    "updatedAt": "2026-10-23T11:07:24.328Z",
+    "version": 1855
+  },
+  "posSales": [
+    {
+      "id": "POS-MVJPO1WW-6M8",
+      "total": 1200,
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış",
+      "createdAt": "2026-10-22T15:43:52.496Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "paymentMethod": "nakit"
+    },
+    {
+      "createdAt": "2026-10-22T15:14:16.906Z",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "paymentMethod": "nakit",
+      "id": "POS-MVJOLZUY-N0E",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "total": 500,
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "createdAt": "2026-10-22T15:14:13.520Z",
+      "total": 1300,
+      "paymentMethod": "nakit",
+      "note": "",
+      "id": "POS-MVJOLX8W-VQV",
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "id": "POS-MVI787J9-RD4",
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış",
+      "total": 1500,
+      "createdAt": "2026-10-21T14:19:54.021Z",
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "nakit",
+      "note": ""
+    },
+    {
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "id": "POS-MVGRG65E-4RV",
+      "total": 1000,
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış",
+      "createdAt": "2026-10-20T14:10:25.442Z"
+    },
+    {
+      "total": 3000,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-20T14:10:21.630Z",
+      "items": [],
+      "id": "POS-MVGRG37I-50W",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "note": ""
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "createdAt": "2026-10-18T14:01:21.312Z",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "id": "POS-MVDW8SYO-9QC",
+      "paymentMethod": "nakit",
+      "total": 200,
+      "items": []
+    },
+    {
+      "total": 700,
+      "items": [],
+      "id": "POS-MVDTITLQ-RNI",
+      "createdAt": "2026-10-18T12:45:09.854Z",
+      "paymentMethod": "nakit",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "paymentMethod": "nakit",
+      "total": 500,
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-10-18T12:45:07.209Z",
+      "note": "",
+      "id": "POS-MVDTIRK9-GKL",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "createdAt": "2026-10-16T17:41:27.099Z",
+      "note": "",
+      "paymentMethod": "nakit",
+      "id": "POS-MVB985A3-5LN",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 1700,
+      "items": [],
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MVB9826F-L29",
+      "note": "",
+      "createdAt": "2026-10-16T17:41:23.079Z",
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "total": 350,
+      "items": []
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "id": "POS-MVB97YUP-56C",
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "createdAt": "2026-10-16T17:41:18.769Z",
+      "total": 450,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": []
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "id": "POS-MVB571AN-33U",
+      "total": 250,
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-10-16T15:48:36.815Z",
+      "paymentMethod": "nakit",
+      "note": ""
+    },
+    {
+      "total": 500,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "createdAt": "2026-10-16T15:48:32.765Z",
+      "id": "POS-MVB56Y65-P22",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "paymentMethod": "nakit"
+    },
+    {
+      "items": [],
+      "total": 1300,
+      "createdAt": "2026-10-15T14:18:32.541Z",
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "id": "POS-MV9MJCNX-BCG",
+      "note": "",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "createdAt": "2026-10-15T14:18:29.456Z",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "total": 1400,
+      "paymentMethod": "nakit",
+      "id": "POS-MV9MJAA8-MNZ",
+      "note": ""
+    },
+    {
+      "id": "POS-MV8CVXS0-4YE",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mağaza Elden Satış",
+      "total": 1800,
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-14T17:00:37.440Z",
+      "note": ""
+    },
+    {
+      "items": [],
+      "total": 1300,
+      "createdAt": "2026-10-14T16:18:13.086Z",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MV8BDEJI-A3D",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "id": "POS-MV8BDB76-RAD",
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "total": 1000,
+      "items": [],
+      "note": "",
+      "createdAt": "2026-10-14T16:18:08.754Z",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "id": "POS-MV8BD9EX-72Q",
+      "total": 850,
+      "items": [],
+      "createdAt": "2026-10-14T16:18:06.441Z",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "items": [],
+      "total": 2200,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "id": "POS-MV89SKS3-XNH",
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-14T15:34:01.779Z",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "createdAt": "2026-10-14T15:33:57.843Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "items": [],
+      "total": 1500,
+      "paymentMethod": "nakit",
+      "id": "POS-MV89SHQR-1T5",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "id": "POS-MV89SFS8-WIH",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 1400,
+      "createdAt": "2026-10-14T15:33:55.304Z",
+      "items": [],
+      "paymentMethod": "nakit",
+      "note": "",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "createdAt": "2026-10-12T16:53:40.927Z",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "paymentMethod": "nakit",
+      "total": 500,
+      "id": "POS-MV5HRB27-NR1"
+    },
+    {
+      "items": [
+        {
+          "price": 3399,
+          "title": "XOXO Gerçekçi Mastürbatör 2 Kg",
+          "qty": 1,
+          "productId": "p300d0f836c39"
+        }
+      ],
+      "sellerName": "cemal.ulas",
+      "total": 3399,
+      "createdAt": "2026-10-12T16:08:17.032Z",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MV5G4XAG-8JG",
+      "paymentMethod": "nakit",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MV58BQZE-LAU",
+      "createdAt": "2026-10-12T12:29:38.522Z",
+      "note": "",
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "total": 450,
+      "items": []
+    },
+    {
+      "id": "POS-MV585GZY-TOR",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "total": 500,
+      "items": [],
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-10-12T12:24:45.646Z",
+      "note": ""
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-12T12:24:43.346Z",
+      "note": "",
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "total": 1700,
+      "id": "POS-MV585F82-S6E"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "items": [],
+      "total": 450,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "id": "POS-MV2HI5M5-OG1",
+      "createdAt": "2026-10-10T14:23:15.437Z",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "nakit",
+      "items": [],
+      "total": 400,
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-10-10T14:05:34.389Z",
+      "note": "",
+      "id": "POS-MV2GVEWL-VOH"
+    },
+    {
+      "createdAt": "2026-10-10T14:05:27.754Z",
+      "items": [],
+      "total": 300,
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MV2GV9SA-BHH"
+    },
+    {
+      "paymentMethod": "nakit",
+      "total": 450,
+      "items": [],
+      "id": "POS-MV1AS2EE-PNK",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-10-09T18:27:14.342Z",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "id": "POS-MV1ARXQL-S48",
+      "total": 3000,
+      "items": [
+        {
+          "productId": "p300d0f836c39",
+          "title": "XOXO Gerçekçi Mastürbatör 2 Kg",
+          "qty": 1,
+          "price": 3399
+        }
+      ],
+      "createdAt": "2026-10-09T18:27:08.301Z",
+      "paymentMethod": "nakit",
+      "note": "",
+      "title": "XOXO Gerçekçi Mastürbatör 2 Kg",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "items": [],
+      "id": "POS-MV18S3V3-YSA",
+      "total": 1700,
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-09T17:31:17.007Z"
+    },
+    {
+      "id": "POS-MUZGB5DM-KAU",
+      "createdAt": "2026-10-08T11:26:30.394Z",
+      "note": "",
+      "paymentMethod": "nakit",
+      "total": 1100,
+      "items": [],
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUYCCUXF-9G9",
+      "title": "Mağaza Elden Satış",
+      "total": 600,
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "createdAt": "2026-10-07T16:48:05.523Z"
+    },
+    {
+      "createdAt": "2026-10-07T16:47:54.974Z",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "id": "POS-MUYCCMSE-WUE",
+      "total": 450,
+      "paymentMethod": "nakit",
+      "note": ""
+    },
+    {
+      "id": "POS-MUY6RGFI-JQB",
+      "total": 1000,
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-10-07T14:11:28.878Z",
+      "paymentMethod": "nakit",
+      "note": "",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "createdAt": "2026-10-06T15:58:24.967Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "mini dildo",
+      "paymentMethod": "nakit",
+      "items": [],
+      "total": 400,
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "id": "POS-MUWV54G7-ZGS"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "note": "",
+      "total": 400,
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-06T15:37:49.574Z",
+      "title": "sprey",
+      "id": "POS-MUWUEN7Q-1O7"
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "nakit",
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "total": 4000,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUWSZ77A-DHO",
+      "note": "",
+      "createdAt": "2026-10-06T14:57:49.366Z"
+    },
+    {
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-06T14:57:39.825Z",
+      "total": 250,
+      "items": [],
+      "id": "POS-MUWSYZU9-TGF",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "title": "jel",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "createdAt": "2026-10-06T13:40:29.697Z",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "total": 120,
+      "note": "",
+      "title": "jel",
+      "id": "POS-MUWQ7R7L-SZW",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "nakit"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "total": 1900,
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-05T16:09:12.006Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "id": "POS-MUVG351I-QM6",
+      "title": "Uzatmalı2 +Jel+ a.plug"
+    },
+    {
+      "note": "",
+      "createdAt": "2026-10-04T15:56:33.247Z",
+      "items": [],
+      "total": 500,
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mağaza Elden Satış",
+      "id": "POS-MUU070WV-ONJ",
+      "paymentMethod": "nakit"
+    },
+    {
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-04T13:50:39.784Z",
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış",
+      "items": [],
+      "total": 650,
+      "id": "POS-MUTVP4MG-XBV",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "id": "POS-MUTUYQ6Y-MS3",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "total": 450,
+      "items": [],
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-04T13:30:08.026Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": ""
+    },
+    {
+      "paymentMethod": "nakit",
+      "id": "POS-MUTUYMKG-891",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 600,
+      "items": [],
+      "createdAt": "2026-10-04T13:30:03.328Z"
+    },
+    {
+      "paymentMethod": "nakit",
+      "createdAt": "2026-10-03T16:32:52.439Z",
+      "total": 500,
+      "id": "POS-MUSM1VPZ-2II",
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "title": "Jel",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "note": "",
+      "title": "Jel+sprey",
+      "createdAt": "2026-10-03T14:05:48.003Z",
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "id": "POS-MUSGSQQR-2J3",
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 800
+    },
+    {
+      "total": 800,
+      "id": "POS-MUR2HFDF-VUT",
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "title": "Dildo",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "createdAt": "2026-10-02T14:37:19.251Z"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUR1C8YS-LB6",
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "nakit",
+      "total": 800,
+      "note": "",
+      "items": [],
+      "createdAt": "2026-10-02T14:05:18.052Z"
+    },
+    {
+      "createdAt": "2026-10-01T10:03:39.656Z",
+      "sellerName": "cemal.ulas",
+      "id": "POS-MUPD9N9K-BTV",
+      "paymentMethod": "nakit",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 1500,
+      "items": [],
+      "note": ""
+    },
+    {
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 1200,
+      "createdAt": "2026-10-01T09:42:31.650Z",
+      "items": [],
+      "id": "POS-MUPCIGV6-XAC",
+      "note": "",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "total": 450,
+      "items": [],
+      "sellerName": "cemal.ulas",
+      "id": "POS-MUO1AD08-2YT",
+      "paymentMethod": "pos",
+      "createdAt": "2026-09-30T11:40:31.448Z",
+      "title": "Sprey",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "title": "Vajina",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "pos",
+      "note": "",
+      "items": [],
+      "total": 699,
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-30T11:27:10.091Z",
+      "id": "POS-MUO0T6OB-7HA"
+    },
+    {
+      "title": "Sprey",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUO0SV8G-GIT",
+      "note": "",
+      "createdAt": "2026-09-30T11:26:55.264Z",
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "total": 400,
+      "items": []
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "title": "Dİldo+jel+vibratör+kemer+ sprey",
+      "note": "",
+      "id": "POS-MULFGJL2-CNF",
+      "paymentMethod": "pos",
+      "createdAt": "2026-09-28T15:53:56.006Z",
+      "total": 3900,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": []
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "total": 1200,
+      "id": "POS-MULDEJXN-639",
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "title": "VAjina+jel",
+      "createdAt": "2026-09-28T14:56:23.915Z",
+      "paymentMethod": "nakit"
+    },
+    {
+      "paymentMethod": "nakit",
+      "title": "Kırbaç+Kelepçe+oyun+plug",
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-26T15:53:46.497Z",
+      "note": "",
+      "items": [],
+      "id": "POS-MUIKKMWX-5HK",
+      "total": 1500,
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "createdAt": "2026-09-26T14:50:25.062Z",
+      "id": "POS-MUIIB5PI-10N",
+      "paymentMethod": "pos",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "total": 2000,
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "items": [],
+      "createdAt": "2026-09-26T12:16:20.179Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 700,
+      "sellerName": "cemal.ulas",
+      "id": "POS-MUICT0B7-5BK",
+      "note": "",
+      "title": "Mağaza Elden Satış",
+      "paymentMethod": "havale"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "id": "POS-MUI4JGPY-LQT",
+      "title": "Vİb+jel+kemer+dildo",
+      "createdAt": "2026-09-26T08:24:57.958Z",
+      "total": 4200,
+      "items": [],
+      "note": "",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "total": 1100,
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-25T16:17:56.393Z",
+      "note": "",
+      "id": "POS-MUH5ZUZT-VY4",
+      "title": "Bağlama seti."
+    },
+    {
+      "total": 959,
+      "items": [
+        {
+          "title": "Rose Klitoral Emiş ve Titreşim Vibratörü",
+          "price": 959,
+          "productId": "p44e1746e399f",
+          "qty": 1
+        }
+      ],
+      "id": "POS-MUH5ZEI3-IBG",
+      "createdAt": "2026-09-25T16:17:35.019Z",
+      "paymentMethod": "nakit",
+      "title": "Rose Klitoral Emiş ve Titreşim Vibratörü",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "total": 1000,
+      "createdAt": "2026-09-25T11:13:05.067Z",
+      "items": [],
+      "id": "POS-MUGV3TBF-R9K",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "note": ""
+    },
+    {
+      "createdAt": "2026-09-24T15:52:32.024Z",
+      "title": "Sprey",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 600,
+      "paymentMethod": "nakit",
+      "id": "POS-MUFPNC48-HVC",
+      "note": ""
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUFPMKA7-HCU",
+      "title": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
+      "paymentMethod": "pos",
+      "total": 499,
+      "note": "",
+      "items": [
+        {
+          "productId": "pbcfa6505bc8d",
+          "price": 499,
+          "qty": 1,
+          "title": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml."
+        }
+      ],
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-24T15:51:55.951Z"
+    },
+    {
+      "items": [],
+      "note": "",
+      "total": 400,
+      "createdAt": "2026-09-24T12:24:13.495Z",
+      "paymentMethod": "nakit",
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUFI7G6V-B6E",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "id": "POS-MUFH1O5H-1TU",
+      "title": "Mağaza Elden Satış",
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-24T11:51:44.261Z",
+      "note": "",
+      "total": 700,
+      "items": [],
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "total": 200,
+      "items": [],
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUDUMCEU-L4S",
+      "note": "",
+      "title": "Mağaza Elden Satış",
+      "createdAt": "2026-09-23T08:36:11.478Z"
+    },
+    {
+      "note": "",
+      "id": "POS-MUCXNWFC-9CI",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "total": 1300,
+      "items": [
+        {
+          "title": "3 in 1 Realistik Vajina",
+          "price": 1899,
+          "qty": 1,
+          "productId": "p2484e3b314df"
+        }
+      ],
+      "title": "3 in 1 Realistik Vajina",
+      "createdAt": "2026-09-22T17:13:36.744Z"
+    },
+    {
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "createdAt": "2026-09-22T12:47:04.709Z",
+      "total": 300,
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "title": "Yumurta",
+      "id": "POS-MUCO54W5-MRM"
+    },
+    {
+      "createdAt": "2026-09-21T16:08:45.671Z",
+      "sellerName": "cemal.ulas",
+      "title": "Anal Plug",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MUBFWNDZ-BWL",
+      "items": [],
+      "total": 450,
+      "note": "",
+      "paymentMethod": "pos"
+    },
+    {
+      "paymentMethod": "nakit",
+      "title": "Orviax Love Drops Kadınlara Özel Bitkisel Destek Damlası 30 ml.",
+      "items": [
+        {
+          "price": 499,
+          "qty": 1,
+          "productId": "p5813616cd082",
+          "title": "Orviax Love Drops Kadınlara Özel Bitkisel Destek Damlası 30 ml."
+        }
+      ],
+      "total": 400,
+      "id": "POS-MUBFW7WM-I9X",
+      "createdAt": "2026-09-21T16:08:25.606Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "total": 700,
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-21T15:17:25.846Z",
+      "title": "Kelepçe 2 adet",
+      "note": "",
+      "id": "POS-MUBE2MZA-2KV"
+    },
+    {
+      "note": "",
+      "title": "Sprey",
+      "createdAt": "2026-09-21T12:28:38.657Z",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "pos",
+      "id": "POS-MUB81KSH-H8U",
+      "items": [],
+      "total": 450
+    },
+    {
+      "items": [
+        {
+          "price": 479,
+          "productId": "pdf2748be251d",
+          "title": "Stag 9000 Erkeklere Özel Bakım Spreyi 20 ml",
+          "qty": 1
+        }
+      ],
+      "total": 479,
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-21T10:32:33.929Z",
+      "id": "POS-MUB3WART-9N6",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "pos",
+      "note": "",
+      "title": "Stag 9000 Erkeklere Özel Bakım Spreyi 20 ml"
+    },
+    {
+      "items": [],
+      "total": 350,
+      "id": "POS-MUB2RRXD-WB2",
+      "createdAt": "2026-09-21T10:01:03.265Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "title": "Titreşim",
+      "paymentMethod": "nakit"
+    },
+    {
+      "title": "Sprey",
+      "paymentMethod": "nakit",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-20T15:40:16.482Z",
+      "id": "POS-MU9ZG5WI-NDR",
+      "items": [],
+      "total": 450
+    },
+    {
+      "title": "Dildo",
+      "id": "POS-MU9YTJAI-H54",
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "note": "",
+      "createdAt": "2026-09-20T15:22:40.746Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 1200,
+      "items": []
+    },
+    {
+      "createdAt": "2026-09-20T13:38:53.023Z",
+      "paymentMethod": "nakit",
+      "title": "Anahtarlık",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "items": [],
+      "total": 200,
+      "id": "POS-MU9V41Y7-QIV",
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-20T13:38:45.964Z",
+      "id": "POS-MU9V3WI4-7TV",
+      "title": "Anal Plug Tit + Anal açıcı",
+      "sellerName": "cemal.ulas",
+      "total": 1600,
+      "items": [],
+      "note": "",
+      "paymentMethod": "nakit"
+    },
+    {
+      "id": "POS-MU9RZHP9-H92",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Sprey ve Halka",
+      "total": 600,
+      "items": [],
+      "createdAt": "2026-09-20T12:11:21.309Z",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "paymentMethod": "nakit"
+    },
+    {
+      "id": "POS-MU8KWDL8-ZCT",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Mini dildo ve A.plug",
+      "total": 1050,
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "note": "",
+      "createdAt": "2026-09-19T16:05:12.524Z"
+    },
+    {
+      "createdAt": "2026-09-19T16:04:49.484Z",
+      "title": "3 in 1 Realistik Vajina",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MU8KVVT8-5GU",
+      "total": 1350,
+      "items": [
+        {
+          "title": "3 in 1 Realistik Vajina",
+          "qty": 1,
+          "price": 1899,
+          "productId": "p2484e3b314df"
+        }
+      ]
+    },
+    {
+      "items": [],
+      "total": 400,
+      "id": "POS-MU8HLW9N-3IU",
+      "createdAt": "2026-09-19T14:33:04.667Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "title": "sprey",
+      "paymentMethod": "nakit"
+    },
+    {
+      "note": "",
+      "title": "Dildo+jel+a.plug",
+      "createdAt": "2026-09-19T14:32:57.767Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MU8HLQXZ-MP8",
+      "paymentMethod": "nakit",
+      "items": [],
+      "total": 3000,
+      "sellerName": "cemal.ulas"
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "title": "Sprey",
+      "note": "",
+      "createdAt": "2026-09-18T16:04:15.398Z",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "id": "POS-MU75FAUE-0VJ",
+      "paymentMethod": "nakit",
+      "total": 400,
+      "items": []
+    },
+    {
+      "items": [],
+      "total": 4000,
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-18T14:18:59.483Z",
+      "id": "POS-MU71NXGB-J25",
+      "paymentMethod": "havale",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "title": "FOX M60 Masturbatör"
+    },
+    {
+      "note": "",
+      "title": "A.plug+Jel",
+      "createdAt": "2026-09-17T14:42:05.182Z",
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "nakit",
+      "id": "POS-MU5N1RZY-M6U",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [],
+      "total": 500
+    },
+    {
+      "sellerName": "cemal.ulas",
+      "total": 499,
+      "items": [],
+      "paymentMethod": "pos",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-16T16:55:36.515Z",
+      "id": "POS-MU4CDMWZ-59J",
+      "title": "Sprey",
+      "note": ""
+    },
+    {
+      "createdAt": "2026-09-16T16:45:04.700Z",
+      "items": [],
+      "total": 500,
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "paymentMethod": "nakit",
+      "id": "POS-MU4C03EK-LUD",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "title": "Kayganlaştırıcı+ Kırbaç"
+    },
+    {
+      "items": [],
+      "total": 1200,
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-16T16:44:49.895Z",
+      "id": "POS-MU4BZRZB-QQR",
+      "paymentMethod": "nakit",
+      "note": "",
+      "title": "Jel Dildo",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "paymentMethod": "nakit",
+      "createdAt": "2026-09-16T16:18:11.569Z",
+      "id": "POS-MU4B1IPD-W1W",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "items": [],
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "total": 38000,
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "title": "NOSTİC DİLDO",
+      "note": "",
+      "id": "POS-MU2VGOBC-2H0",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "paymentMethod": "havale",
+      "sellerName": "cemal.ulas",
+      "total": 1500,
+      "items": [],
+      "createdAt": "2026-09-15T16:14:18.648Z"
+    },
+    {
+      "title": "Mağaza Elden Satış",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-15T15:54:25.153Z",
+      "id": "POS-MU2UR3EP-EQC",
+      "note": "",
+      "paymentMethod": "nakit",
+      "sellerName": "cemal.ulas",
+      "total": 400,
+      "items": []
+    },
+    {
+      "items": [],
+      "total": 450,
+      "sellerName": "cemal.ulas",
+      "createdAt": "2026-09-15T13:32:58.869Z",
+      "id": "POS-MU2PP7CL-57P",
+      "paymentMethod": "nakit",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "total": 1250,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "sellerName": "cemal.ulas",
+      "note": "",
+      "createdAt": "2026-09-14T11:07:19.559Z",
+      "id": "POS-MU1521DZ-8AO",
+      "paymentMethod": "nakit",
+      "items": [],
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "note": "",
+      "title": "Stag 9000  Sprey",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-13T14:19:44.387Z",
+      "paymentMethod": "pos",
+      "sellerName": "cemal.ulas",
+      "items": [
+        {
+          "price": 479,
+          "title": "Stag 9000  Sprey",
+          "qty": 1,
+          "productId": "pdf2748be251d"
+        }
+      ],
+      "total": 479,
+      "id": "POS-MTZWHMRN-OWD"
+    },
+    {
+      "createdAt": "2026-09-13T12:21:31.209Z",
+      "items": [],
+      "total": 200,
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "note": "",
+      "id": "POS-MTZS9LMX-I57",
+      "sellerName": "cemal.ulas",
+      "paymentMethod": "havale",
+      "title": "Mağaza Elden Satış"
+    },
+    {
+      "total": 1000,
+      "id": "POS-MTZS9IK0-4KK",
+      "items": [],
+      "paymentMethod": "havale",
+      "createdAt": "2026-09-13T12:21:27.216Z",
+      "sellerName": "cemal.ulas",
+      "title": "Mağaza Elden Satış",
+      "note": "",
+      "sellerEmail": "cemal.ulas@gmail.com"
+    },
+    {
+      "title": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "createdAt": "2026-09-13T12:21:19.704Z",
+      "id": "POS-MTZS9CRC-E5O",
+      "paymentMethod": "havale",
+      "note": "",
+      "sellerName": "cemal.ulas",
+      "total": 499,
+      "items": [
+        {
+          "productId": "pbcfa6505bc8d",
+          "title": "Cabs Glide Su Bazlı Kayganlaştırıcı Jel 250 ml.",
+          "qty": 1,
+          "price": 499
+        }
+      ]
+    },
+    {
+      "createdAt": "2026-09-13T12:21:11.894Z",
+      "title": "Stag 9000  Sprey",
+      "sellerName": "cemal.ulas",
+      "sellerEmail": "cemal.ulas@gmail.com",
+      "items": [
+        {
+          "price": 479,
+          "title": "Stag 9000  Sprey",
+          "productId": "pdf2748be251d",
+          "qty": 1
+        }
+      ],
+      "paymentMethod": "havale",
+      "total": 479,
+      "id": "POS-MTZS96QE-3QH",
+      "note": ""
+    },
+    {
+      "paymentMethod": "nakit",
+      "id": "POS-VERIFY-123",
+      "title": "Nakit Test Satışı",
+      "sellerName": "Yetkili",
+      "total": 350.5,
+      "createdAt": "2026-09-13T10:59:38.245Z",
+      "items": [
+        {
+          "productId": "p1",
+          "qty": 1,
+          "title": "Ürün 1",
+          "price": 350.5
+        }
+      ]
+    }
+  ]
+}
