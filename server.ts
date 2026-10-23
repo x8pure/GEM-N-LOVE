@@ -684,20 +684,20 @@ const STR: Record<string, Record<string, string>> = {
     'account.title': 'Hesabım', 'profile.title': 'Profilim',
     'about.eb': 'Hikayemiz',
     'about.h1': 'Utancı geride bıraktık. <br class="about-br"><em class="em-rose">Keyfi</em> öne aldık.',
-    'about.p1': 'Love Shop, 2012 yılından bu yana 14 yıldır Eskişehir İsmet İnönü Caddesi’ndeki aynı fiziksel mağazasında kesintisiz hizmet veriyor. Yeri ve muhatabı belirsiz internet satıcılarının aksine; her gün kapısı açık, fiziki varlığı ve kurumsal sorumluluğu somut olan gerçek bir işletmeyiz.',
-    'about.p2': 'Bugüne dek 5.000\'i aşkın müşterimize paketleme standartlarımızdan tek bir ödün vermeden, %100 gizlilik ve mahremiyet esasıyla ulaştık. Bizim için bedenini tanımak, keyfini keşfetmek ve cinsel sağlığına özen göstermek bir tabu veya lüks değil; en doğal insani hak.',
-    'about.p3': '14 yıllık perakende tecrübemizi, CE sertifikalı vücut dostu ürün seçkimizi ve koşulsuz gizlilik ilkemizi; modern, saygın ve gururla gezilebilir bir alışveriş deneyimiyle buluşturuyoruz.',
+    'about.p1': 'Love, 2012 yılından bu yana Eskişehir İsmet İnönü Caddesi’ndeki aynı fiziksel adresinde kesintisiz hizmet veren bağımsız bir cinsel sağlık ve yaşam mağazasıdır. Yeri ve muhatabı belirsiz sanal satıcıların aksine; kapısı her gün açık, kurumsal sorumluluğu ve uzmanlığı somut bir işletmeyiz.',
+    'about.p2': 'Bizim için bedeni tanımak, hazzı keşfetmek ve cinsel sağlığa özen göstermek gizlenmesi gereken bir tabu değil; saygıyı hak eden doğal bir yaşam kültürüdür.',
+    'about.p3': 'Sokaktan görünmeyen birinci kat mağaza mimarimizden Türkiye geneli sevkiyatlarımıza kadar her adımı; CE sertifikalı vücut dostu seçki, mutlak mahremiyet ve yargısız danışmanlık üzerine inşa ettik.',
     'about.priv.h': 'Tam Gizlilik Taahhüdü',
-    'about.priv.p': 'Alışverişinizin ilk adımından teslimat anına kadar tüm süreç mahremiyet standartlarımızla korunur:',
+    'about.priv.p': 'Alışverişinizin ilk adımından teslimat anına kadar tüm süreç sıfır iz bırakan mahremiyet protokolümüzle korunur.',
     'about.priv.list': '• <b>İsimsiz & Nötr Paketleme:</b> Düz korumalı kutu. Üzerinde logo, ürün adı veya mağaza ibaresi yer almaz.<br>• <b>Gizli Kargo İrsaliyesi:</b> Kargo etiketinde ürün içeriği belirtilmez; gönderici bilgisi yasal zorunluluklar gereği nötr ticari unvanla düzenlenir.<br>• <b>Finansal Gizlilik:</b> Kredi kartı ekstrenizde mağaza adı veya yetişkin ürün detayı görünmez; ödeme altyapısının güvenli kurumsal tahsilat kaydı yer alır.<br>• <b>Veri Güvenliği:</b> Bilgileriniz 256-bit SSL şifreleme ile korunur. Yalnızca siparişinizin teslimi için kullanılır; asla reklam ağları veya üçüncü taraflarla paylaşılmaz.',
     'about.ret.h': 'İade & Değişim Güvencesi',
-    'about.ret.p': 'T.C. Tüketici Mevzuatı ve kişisel hijyen regülasyonları uyarınca, ambalajı/güvenlik bandı açılmış ve kullanılmış ürünlerde hijyen sebebiyle cayma hakkı bulunmamaktadır. Ancak:',
+    'about.ret.p': 'T.C. Tüketici Mevzuatı ve kişisel hijyen regülasyonları uyarınca, güvenlik bandı açılmış ürünlerde hijyen sebebiyle cayma hakkı bulunmamaktadır. Buna karşın tüm siparişleriniz tam telafi güvencemiz altındadır.',
     'about.ret.list': '• <b>Kutudan Arızalı / Hasarlı Çıkma Güvencesi:</b> Siparişiniz kargodan hasarlı veya çalışmaz durumda çıkarsa, teslimat anında koşulsuz birebir sıfırıyla değiştirilir.<br>• <b>Yanlış Ürün Telafisi:</b> Eksik veya hatalı gönderilen tüm ürünler derhal ücretsiz olarak yenisiyle tamamlanır.<br>• <b>Orijinal ve Güvenlik Bantlı Ürünler:</b> Güvenlik şeridi açılmamış ve ambalajı bozulmamış kozmetik veya aksesuarlarda 14 gün içinde iade imkanı mevcuttur.',
     'about.val.h': 'Değerlerimiz',
     'about.v1.t': 'Saygı', 'about.v1.p': 'Yargılayan tek bir satır bile yok. Her zevk, her beden, her merak buraya ait.',
     'about.v2.t': 'Güvenlik', 'about.v2.p': 'CE belgesiz, fitalatlı, malzemesi belirsiz hiçbir ürün raflarımıza giremez.',
     'about.v3.t': 'Kapsayıcılık', 'about.v3.p': 'Ürün dilimiz ve görsellerimiz tüm cinsiyetlere ve tüm ilişkilere açık.',
-    'about.cta.h': 'Sorun mu var? Yargısız dinliyoruz.', 'about.cta.btn': 'İletişime Geç',
+    'about.cta.h': 'Sorunuz mu var? Yargısız dinliyoruz.', 'about.cta.btn': 'İletişime Geç',
     'contact.eb': 'Bize Yaz', 'contact.h1': 'Merhaba demenin yargısız yolu',
     'contact.p': 'Sorularınız anonim kalabilir; adınızı yazmak zorunda değilsiniz. WhatsApp\'tan 7/24, mağazamızdan birebir destek.',
     'contact.wa.t': 'WhatsApp Sipariş', 'contact.wa.s': 'Gizlilik esaslı, yargısız iletişim',
@@ -785,20 +785,20 @@ const STR: Record<string, Record<string, string>> = {
     'account.title': 'My Account', 'profile.title': 'My Profile',
     'about.eb': 'Our Story',
     'about.h1': 'We left the shame behind. <br class="about-br">We put <em class="em-rose">pleasure</em> first.',
-    'about.p1': 'Since 2012, Love Shop has been welcoming visitors and shipping orders continuously from the exact same physical store on İsmet İnönü Street in Eskişehir for 14 years. Unlike faceless online sellers with no verifiable address, we are a tangible establishment with an open door and real accountability.',
-    'about.p2': 'To date, we have delivered over 5,000 orders with 100% discretion and zero compromise on our packaging standards. We believe exploring pleasure, understanding one\'s body, and prioritizing sexual wellness is not a taboo, but a fundamental right.',
-    'about.p3': 'We combine our 14 years of hands-on retail expertise and certified body-safe catalog with a respectful, modern, and stigma-free shopping experience.',
+    'about.p1': 'Since 2012, Love has operated continuously from the exact same physical address on İsmet İnönü Street in Eskişehir. Unlike anonymous online vendors with no verifiable presence, we are an established store with an open door and tangible accountability.',
+    'about.p2': 'We believe understanding one\'s body, exploring pleasure, and prioritizing sexual wellness is never a taboo—it is a natural aspect of modern wellbeing deserving of respect.',
+    'about.p3': 'From our street-invisible first-floor retail space to our nationwide dispatch, every detail is built around CE-certified body-safe curation, absolute discretion, and judgement-free guidance.',
     'about.priv.h': 'Complete Discretion Commitment',
-    'about.priv.p': 'From the moment you browse to final delivery, your experience is shielded by our privacy protocol:',
+    'about.priv.p': 'From the moment you browse to final delivery, your experience is protected by our zero-trace privacy protocol.',
     'about.priv.list': '• <b>Anonymous & Plain Packaging:</b> Plain protected box. No logo, no store name, no product hint.<br>• <b>Discreet Shipping Waybill:</b> Product names never appear on courier labels; sender info uses a compliant neutral commercial entity.<br>• <b>Billing Privacy:</b> Your bank statement displays a neutral payment gateway descriptor without any product references.<br>• <b>Data Protection:</b> 256-bit SSL encrypted. Used solely for order fulfillment; never shared with ad networks or third parties.',
     'about.ret.h': 'Returns & Replacement Policy',
-    'about.ret.p': 'Under consumer protection laws and sanitary hygiene standards, opened or used intimate personal items cannot be returned. However:',
+    'about.ret.p': 'Under consumer protection laws and sanitary hygiene regulations, opened intimate personal items cannot be returned. Every order, however, is backed by our direct replacement guarantee.',
     'about.ret.list': '• <b>Dead on Arrival / Transit Damage:</b> If an item arrives non-functioning or damaged from transit, it is promptly replaced with a brand-new unit.<br>• <b>Fulfillment Accuracy:</b> Any incorrect or missing item is immediately and freely corrected.<br>• <b>Factory Sealed Products:</b> Unopened items with intact security tamper seals can be returned within 14 days.',
     'about.val.h': 'Our Values',
     'about.v1.t': 'Respect', 'about.v1.p': 'Every taste and body belongs here.',
     'about.v2.t': 'Safety', 'about.v2.p': 'CE-certified body-safe materials only.',
     'about.v3.t': 'Inclusivity', 'about.v3.p': 'Open to all identities and preferences.',
-    'about.cta.h': 'Having questions? We listen without judgement.', 'about.cta.btn': 'Get in Touch',
+    'about.cta.h': 'Have a question? We listen without judgement.', 'about.cta.btn': 'Get in Touch',
     'contact.eb': 'Write to Us', 'contact.h1': 'The judgement-free way to say hello',
     'contact.p': 'Your questions can stay anonymous. 24/7 via WhatsApp, or in person at our store.',
     'contact.wa.t': 'WhatsApp Orders', 'contact.wa.s': 'Privacy-first, judgement-free contact',
@@ -2837,7 +2837,7 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
         <div class="about-hero-anchor-line"></div>
         <div class="about-hero-anchor-meta">
           <span class="about-hero-est">EST. 2012 — ESKİŞEHİR, TR</span>
-          <span class="about-hero-loc">İsmet İnönü-1 Cd. No:52/2 (İsmet İnönü Tramvay Durağı Karşısı), Ilgaz İş Hanı Kat:1 Daire:2, Tepebaşı/Eskişehir</span>
+          <span class="about-hero-loc">İsmet İnönü-1 Cd. No:52/2 · Ilgaz İş Hanı Kat:1 Daire:2, Tepebaşı</span>
         </div>
       </div>
     </div>
@@ -2847,121 +2847,154 @@ function pageAbout(req: http.IncomingMessage, res: http.ServerResponse) {
     </div>
   </div>
 
-  <div class="about-stat-bar">
-    <div class="about-stat-item">
-      <div class="about-stat-num">15 <span class="about-stat-unit">${isEn ? 'Years' : 'Yıl'}</span></div>
-      <div class="about-stat-label">${isEn ? 'Physical Store Presence' : 'Fiziksel Mağaza Güveni'}</div>
-      <div class="about-stat-desc">${isEn ? 'Continuously operating at the same central address on İsmet İnönü Street since 2012.' : '2012\'den bu yana Eskişehir merkezde aynı adreste kesintisiz perakende tecrübesi.'}</div>
+  <div class="about-pillars-bar">
+    <div class="about-pillar-item">
+      <div class="about-pillar-meta">${isEn ? 'PHYSICAL PRESENCE · SINCE 2012' : 'FİZİKSEL MAĞAZA · 2012\'DEN BERİ'}</div>
+      <h2 class="about-pillar-title">${isEn ? 'Street-Invisible 1st Floor Store' : 'Vitrinsiz 1. Kat Mağaza Mimarisi'}</h2>
+      <p class="about-pillar-desc">${isEn ? 'Located opposite İsmet İnönü Tram Station in a private first-floor apartment setting—offering women and couples a calm, unhurried, and judgement-free environment.' : 'İsmet İnönü Tramvay Durağı karşısında, sokaktan görünmeyen birinci kat daire konseptiyle kadınlar ve çiftler için sakin, güvenli ve yargısız deneyim alanı.'}</p>
     </div>
-    <div class="about-stat-item">
-      <div class="about-stat-num">5.000+</div>
-      <div class="about-stat-label">${isEn ? 'Discreet Deliveries' : 'Kusursuz Gizli Teslimat'}</div>
-      <div class="about-stat-desc">${isEn ? 'Over 5,000 clients served with uncompromising packaging and confidentiality standards.' : 'Paketleme ve mahremiyet standartlarımızdan tek bir ödün vermeden ulaşılan sipariş.'}</div>
+    <div class="about-pillar-item">
+      <div class="about-pillar-meta">${isEn ? 'ZERO-TRACE PROTOCOL' : 'SIFIR İZ PROTOKOLÜ'}</div>
+      <h2 class="about-pillar-title">${isEn ? 'Unbranded Parcel & Neutral Billing' : 'İsimsiz Paket & Nötr Ekstre'}</h2>
+      <p class="about-pillar-desc">${isEn ? 'Every parcel leaves our facility in double-sealed plain packaging with a neutral commercial sender title. Nothing on the box or bank statement reveals the contents.' : 'Tüm gönderiler çift mühürlü, logosuz kutularda ve nötr ticari unvanla hazırlanır. Dış pakette veya banka ekstresinde içeriğe dair hiçbir ibare yer almaz.'}</p>
     </div>
-    <div class="about-stat-item">
-      <div class="about-stat-num">%100</div>
-      <div class="about-stat-label">${isEn ? 'Safe & Neutral Space' : 'Yargısız & Nötr Ortam'}</div>
-      <div class="about-stat-desc">${isEn ? 'Unbranded packaging and a street-invisible 1st floor apartment store tailored for women and couples.' : 'Kadınlar ve çiftler için sokaktan görünmeyen 1. kat vitrinsiz dairede %100 yargısız ortam ve nötr kargo.'}</div>
-    </div>
-    <div class="about-stat-item">
-      <div class="about-stat-num">30-120 <span class="about-stat-unit">${isEn ? 'Min' : 'Dk'}</span></div>
-      <div class="about-stat-label">${isEn ? 'Eskişehir Express Courier' : 'Eskişehir Ekspres Kurye'}</div>
-      <div class="about-stat-desc">${isEn ? 'Direct dispatch from our central store with civilian couriers in 30 to 120 minutes.' : 'Sivil personel ile doğrudan merkez depomuzdan 30-120 dakikada jet gizli teslim.'}</div>
+    <div class="about-pillar-item">
+      <div class="about-pillar-meta">${isEn ? 'EXPRESS DISPATCH' : 'EKSPRES LOJİSTİK'}</div>
+      <h2 class="about-pillar-title">${isEn ? '30–120 Min Courier & Same-Day Cargo' : '30–120 Dk Özel Kurye & Aynı Gün Kargo'}</h2>
+      <p class="about-pillar-desc">${isEn ? 'Civilian courier delivery across central Eskişehir within 30 to 120 minutes, alongside same-day sealed dispatch to all 81 provinces across Turkey.' : 'Eskişehir içi sivil personel ile 30 ila 120 dakikada doğrudan adrese teslimat; Türkiye’nin 81 iline aynı gün kapalı ve gizli sevkiyat.'}</p>
     </div>
   </div>
 
   <section id="gizlilik" class="about-editorial-section">
     <div class="about-editorial-left">
-      <span class="about-editorial-tag">01 / ${isEn ? 'CONFIDENTIALITY' : 'MAHREMİYET'}</span>
       <h2 class="about-editorial-title">${tr('about.priv.h')}</h2>
       <p class="about-editorial-lead">${tr('about.priv.p')}</p>
     </div>
     <div class="about-editorial-right">
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Anonymous & Neutral Packaging' : 'İsimsiz & Nötr Dış Kutu'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Reinforced plain shipping box. No logo, store title, or product description is displayed on the outside.' : 'Düz korumalı kraft veya siyah nötr koli. Dışında logo, ürün adı, mağaza ibaresi veya yetişkin içeriğe dair hiçbir işaret yer almaz.'}</p>
+        <span class="about-editorial-index">01</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Anonymous & Neutral Packaging' : 'İsimsiz & Nötr Dış Kutu'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Reinforced plain shipping box. No logo, store title, or product description is displayed on the outside.' : 'Düz korumalı kraft veya siyah nötr koli. Dışında logo, ürün adı, mağaza ibaresi veya yetişkin içeriğe dair hiçbir işaret yer almaz.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Discreet Shipping Waybill' : 'Gizli Kargo İrsaliyesi'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Waybills and parcel barcodes never specify product descriptions. Sender details use a neutral corporate trade title as required by law.' : 'Kargo etiketinde ve barkodunda ürün içeriği kesinlikle belirtilmez; gönderici bilgisi yasal zorunluluklar gereği nötr ticari unvanla düzenlenir.'}</p>
+        <span class="about-editorial-index">02</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Discreet Shipping Waybill' : 'Gizli Kargo İrsaliyesi'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Waybills and parcel barcodes never specify product descriptions. Sender details use a neutral corporate trade title as required by law.' : 'Kargo etiketinde ve barkodunda ürün içeriği kesinlikle belirtilmez; gönderici bilgisi yasal zorunluluklar gereği nötr ticari unvanla düzenlenir.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Financial Privacy' : 'Finansal Mahremiyet'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Bank and card statements display a neutral gateway billing title. No store name or adult product references appear.' : 'Kredi kartı veya hesap ekstrenizde mağaza adı veya yetişkin ürün ibaresi görünmez; ödeme altyapısının güvenli kurumsal tahsilat kaydı yer alır.'}</p>
+        <span class="about-editorial-index">03</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Financial Privacy' : 'Finansal Mahremiyet'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Bank and card statements display a neutral gateway billing title. No store name or adult product references appear.' : 'Kredi kartı veya hesap ekstrenizde mağaza adı veya yetişkin ürün ibaresi görünmez; ödeme altyapısının güvenli kurumsal tahsilat kaydı yer alır.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'End-to-End Data Security' : 'Uçtan Uca Veri Güvenliği'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Protected with 256-bit SSL encryption. Data is used exclusively for order fulfillment and never shared with advertising networks or third parties.' : 'Bilgileriniz 256-bit SSL şifreleme ile korunur. Yalnızca siparişinizin teslimi için kullanılır; asla reklam ağları veya 3. şahıslarla paylaşılmaz.'}</p>
+        <span class="about-editorial-index">04</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'End-to-End Data Security' : 'Uçtan Uca Veri Güvenliği'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Protected with 256-bit SSL encryption. Data is used exclusively for order fulfillment and never shared with advertising networks or third parties.' : 'Bilgileriniz 256-bit SSL şifreleme ile korunur. Yalnızca siparişinizin teslimi için kullanılır; asla reklam ağları veya üçüncü şahıslarla paylaşılmaz.'}</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="iade" class="about-editorial-section">
     <div class="about-editorial-left">
-      <span class="about-editorial-tag">02 / ${isEn ? 'GUARANTEE' : 'GÜVENCE'}</span>
       <h2 class="about-editorial-title">${tr('about.ret.h')}</h2>
       <p class="about-editorial-lead">${tr('about.ret.p')}</p>
     </div>
     <div class="about-editorial-right">
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Dead on Arrival / Transit Damage' : 'Kutudan Arızalı / Hasarlı Çıkma'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'If an item arrives damaged or non-functional from transit, it is promptly replaced with a brand-new unit at no extra charge.' : 'Siparişiniz kargodan hasarlı veya çalışmaz durumda çıkarsa, teslimat anında koşulsuz birebir sıfırıyla derhal değiştirilir.'}</p>
+        <span class="about-editorial-index">01</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Dead on Arrival / Transit Damage' : 'Kutudan Arızalı veya Hasarlı Çıkma'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'If an item arrives damaged or non-functional from transit, it is promptly replaced with a brand-new unit at no extra charge.' : 'Siparişiniz kargodan hasarlı veya çalışmaz durumda çıkarsa, teslimat anında koşulsuz olarak birebir sıfır ürünle değiştirilir.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Fulfillment Accuracy Guarantee' : 'Eksik veya Hatalı Ürün Telafisi'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Any missing or mismatched product is resolved immediately and dispatched freely without charging shipping fees.' : 'Eksik veya hatalı gönderilen tüm ürünler derhal tarafımızca hiçbir ek ücret talep edilmeksizin yenisiyle tamamlanır.'}</p>
+        <span class="about-editorial-index">02</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Fulfillment Accuracy Guarantee' : 'Eksik veya Hatalı Ürün Telafisi'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Any missing or mismatched product is resolved immediately and dispatched freely without charging shipping fees.' : 'Eksik veya hatalı gönderilen tüm ürünler hiçbir ek kargo ücreti talep edilmeksizin derhal yenisiyle tamamlanır.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Factory Sealed & Tamper-Evident' : 'Orijinal & Güvenlik Bantlı Ürünler'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Cosmetics and accessories with unbreached security tamper seals and original packaging can be returned within 14 days.' : 'Güvenlik şeridi açılmamış ve ambalajı bozulmamış kozmetik veya aksesuarlarda 14 gün içinde yasal iade ve değişim hakkı mevcuttur.'}</p>
+        <span class="about-editorial-index">03</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Factory Sealed & Tamper-Evident' : 'Orijinal & Güvenlik Bantlı Ürünler'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Cosmetics and accessories with unbreached security tamper seals and original packaging can be returned within 14 days.' : 'Güvenlik şeridi açılmamış ve ambalajı bozulmamış kozmetik veya aksesuarlarda 14 gün içinde yasal iade ve değişim hakkı mevcuttur.'}</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="teslimat" class="about-editorial-section">
     <div class="about-editorial-left">
-      <span class="about-editorial-tag">03 / ${isEn ? 'DISPATCH' : 'TESLİMAT'}</span>
-      <h2 class="about-editorial-title">${isEn ? 'Eskişehir 30-120m Express & Shipping' : 'Eskişehir 30-120 Dk Kurye & Lojistik'}</h2>
-      <p class="about-editorial-lead">${isEn ? 'Local orders dispatch directly from our central store on İsmet İnönü Street with civilian staff:' : 'Eskişehir merkezli 15 yıllık köklü yapımızla günlerce kargo bekleme devrine son veriyoruz. Şehir içi siparişler doğrudan merkez mağazamızdan çıkar:'}</p>
+      <h2 class="about-editorial-title">${isEn ? 'Eskişehir Express Courier & Logistics' : 'Eskişehir Özel Kurye & Lojistik'}</h2>
+      <p class="about-editorial-lead">${isEn ? 'Local orders dispatch directly from our central store on İsmet İnönü Street with civilian staff, eliminating multi-day courier waits.' : 'Eskişehir merkezli köklü yapımızla günlerce kargo bekleme devrine son veriyoruz. Şehir içi siparişler doğrudan merkez mağazamızdan çıkar.'}</p>
     </div>
     <div class="about-editorial-right">
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Eskişehir Jet Express Courier (30-120 Min)' : 'Eskişehir İçi Ekspres Kurye (30-120 Dk)'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Direct, discreet delivery in 30 to 120 minutes across Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik and central districts.' : 'Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve tüm merkez mahallelere ortalama 30 ila 120 dakika içinde doğrudan adrese gizli elden teslimat.'}</p>
+        <span class="about-editorial-index">01</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Eskişehir Jet Express Courier (30–120 Min)' : 'Eskişehir İçi Ekspres Kurye (30–120 Dk)'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Direct, discreet delivery in 30 to 120 minutes across Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik and central districts.' : 'Tepebaşı, Odunpazarı, Batıkent, Yenibağlar, Vişnelik ve tüm merkez mahallelere ortalama 30 ila 120 dakika içinde doğrudan adrese gizli teslimat.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Civilian Couriers & Absolute Discretion' : 'Kuryede Sıfır Etiket & Tam Sivil Teslimat'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Carried out exclusively by plain-clothed staff in unbranded, neutral packaging. Absolutely nothing discloses package contents.' : 'Kurye teslimatı tamamen sivil kıyafetli personel ile logosuz, nötr ambalajda gerçekleştirilir. Paketin dışından içeriğe dair en ufak bir emare anlaşılmaz.'}</p>
+        <span class="about-editorial-index">02</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Civilian Couriers & Absolute Discretion' : 'Sıfır Etiket & Sivil Personel'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Carried out exclusively by plain-clothed staff in unbranded, neutral packaging. Absolutely nothing discloses package contents.' : 'Kurye teslimatı tamamen sivil kıyafetli personel ile logosuz, nötr ambalajda gerçekleştirilir. Paketin dışından içeriğe dair hiçbir detay anlaşılmaz.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'In-Store Pickup Without Waiting' : 'Mağazadan Doğrudan / Randevusuz Teslim Al'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Place an online order and collect in person from our store opposite İsmet İnönü Tram Station (Ilgaz İş Hanı) in minutes.' : 'Dilerseniz siparişinizi web sitemizden oluşturup, İsmet İnönü Tramvay Durağı karşısındaki Ilgaz İş Hanı kat mağazamızdan saniyeler içinde teslim alabilirsiniz.'}</p>
+        <span class="about-editorial-index">03</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'In-Store Pickup Without Waiting' : 'Mağazadan Randevusuz Teslim Alma'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Place an online order and collect in person from our store opposite İsmet İnönü Tram Station (Ilgaz İş Hanı, 1st Floor) in minutes.' : 'Siparişinizi web sitemizden oluşturup İsmet İnönü Tramvay Durağı karşısındaki Ilgaz İş Hanı 1. kat mağazamızdan beklemeksizin teslim alabilirsiniz.'}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${isEn ? 'Same-Day Nationwide Shipping (81 Cities)' : 'Tüm Türkiye\'ye Aynı Gün Kargo'}</h3>
-        <p class="about-editorial-item-desc">${isEn ? 'Orders placed across Turkey by 16:30 dispatch on the same business day in sealed neutral boxes with discrete waybills.' : 'Eskişehir dışındaki 80 ile saat 16:30\'a kadar verilen tüm siparişler aynı gün nötr kutulu ve kurumsal irsaliyeli olarak kargoya verilir.'}</p>
+        <span class="about-editorial-index">04</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${isEn ? 'Same-Day Nationwide Shipping (81 Cities)' : 'Tüm Türkiye\'ye Aynı Gün Kargo'}</h3>
+          <p class="about-editorial-item-desc">${isEn ? 'Orders placed across Turkey by 16:30 dispatch on the same business day in sealed neutral boxes with discreet waybills.' : 'Eskişehir dışındaki tüm illere saat 16:30\'a kadar verilen siparişler aynı gün nötr kutulu ve gizli irsaliyeli olarak kargoya teslim edilir.'}</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="about-editorial-section">
     <div class="about-editorial-left">
-      <span class="about-editorial-tag">04 / ${isEn ? 'ETHOS' : 'DEĞERLERİMİZ'}</span>
       <h2 class="about-editorial-title">${tr('about.val.h')}</h2>
-      <p class="about-editorial-lead">${isEn ? 'Our uncompromised ethical and retail pillars built over 14 years.' : '14 yıldır taviz vermediğimiz perakende ve etik standartlarımız.'}</p>
+      <p class="about-editorial-lead">${isEn ? 'The ethical and retail standards we have upheld without compromise since day one.' : 'Kurulduğumuz günden bu yana taviz vermediğimiz perakende ve etik ilkelerimiz.'}</p>
     </div>
     <div class="about-editorial-right">
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${tr('about.v1.t')}</h3>
-        <p class="about-editorial-item-desc">${tr('about.v1.p')}</p>
+        <span class="about-editorial-index">01</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${tr('about.v1.t')}</h3>
+          <p class="about-editorial-item-desc">${tr('about.v1.p')}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${tr('about.v2.t')}</h3>
-        <p class="about-editorial-item-desc">${tr('about.v2.p')}</p>
+        <span class="about-editorial-index">02</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${tr('about.v2.t')}</h3>
+          <p class="about-editorial-item-desc">${tr('about.v2.p')}</p>
+        </div>
       </div>
       <div class="about-editorial-item">
-        <h3 class="about-editorial-item-title">${tr('about.v3.t')}</h3>
-        <p class="about-editorial-item-desc">${tr('about.v3.p')}</p>
+        <span class="about-editorial-index">03</span>
+        <div class="about-editorial-item-body">
+          <h3 class="about-editorial-item-title">${tr('about.v3.t')}</h3>
+          <p class="about-editorial-item-desc">${tr('about.v3.p')}</p>
+        </div>
       </div>
     </div>
   </section>
