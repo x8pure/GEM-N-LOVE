@@ -170,7 +170,7 @@
     document.body.appendChild(link);
     link.click();
     link.remove();
-    toast('CSV dosyası indirildi 📊');
+    toast('CSV dosyası indirildi');
   }
 
   const STATUS = { processing: 'Hazırlanıyor', shipped: 'Kargoda', delivered: 'Teslim Edildi', cancelled: 'İptal' };
@@ -274,7 +274,7 @@
     m.innerHTML = `
     <div class="cmd-modal">
       <div class="cmd-input-wrap">
-        <span style="font-size:18px">⚡</span>
+        <span style="display:inline-flex;align-items:center;color:var(--text)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
         <input id="cmd-input" placeholder="Bir sayfa, ürün, sipariş veya işlem ara… (örn: Ürün, Sipariş, Koyu tema)" autofocus>
         <span class="cmd-badge">ESC</span>
       </div>
@@ -285,20 +285,20 @@
     const listEl = $('#cmd-list', m);
 
     const COMMANDS = [
-      { name: '📊 Genel Bakış Paneli', action: () => { location.hash = '#/dashboard'; m.remove(); }, badge: 'Sayfa' },
-      { name: '💳 Fiziksel Mağaza / Kasa (POS)', action: () => { location.hash = '#/pos'; m.remove(); }, badge: 'Sayfa' },
-      { name: '📦 Sipariş Yönetimi', action: () => { location.hash = '#/orders'; m.remove(); }, badge: 'Sayfa' },
-      { name: '🛍️ Ürün Kataloğu', action: () => { location.hash = '#/products'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Genel Bakış Paneli', action: () => { location.hash = '#/dashboard'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Fiziksel Mağaza / Kasa (POS)', action: () => { location.hash = '#/pos'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Sipariş Yönetimi', action: () => { location.hash = '#/orders'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Ürün Kataloğu', action: () => { location.hash = '#/products'; m.remove(); }, badge: 'Sayfa' },
       { name: '＋ Yeni Ürün Ekle (Manuel)', action: () => { location.hash = '#/products'; m.remove(); setTimeout(() => $('#prod-add') && $('#prod-add').click(), 100); }, badge: 'Eylem' },
-      { name: '🗂️ Kategori Mimarisi', action: () => { location.hash = '#/categories'; m.remove(); }, badge: 'Sayfa' },
-      { name: '⭐ Yorum Onayları', action: () => { location.hash = '#/reviews'; m.remove(); }, badge: 'Sayfa' },
-      { name: '🎟️ Kuponlar & İndirimler', action: () => { location.hash = '#/coupons'; m.remove(); }, badge: 'Sayfa' },
-      { name: '👥 Müşteri & Kullanıcılar', action: () => { location.hash = '#/users'; m.remove(); }, badge: 'Sayfa' },
-      { name: '💌 Gelen Kutusu Mesajları', action: () => { location.hash = '#/messages'; m.remove(); }, badge: 'Sayfa' },
-      { name: '⚙️ Mağaza Ayarları', action: () => { location.hash = '#/settings'; m.remove(); }, badge: 'Sayfa' },
-      { name: '🌙 Koyu / Açık Tema Değiştir', action: () => { setTheme(currentTheme === 'dark' ? 'light' : 'dark'); m.remove(); }, badge: 'Görünüm' },
-      { name: '🔒 Müşteri Gizlilik Modu (Maske)', action: () => { setPrivacy(!privacyMode); m.remove(); }, badge: 'Güvenlik' },
-      { name: '🏬 Canlı Mağazayı Aç', action: () => { window.open('/', '_blank'); m.remove(); }, badge: 'Dış Bağlantı' },
+      { name: 'Kategori Mimarisi', action: () => { location.hash = '#/categories'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Yorum Onayları', action: () => { location.hash = '#/reviews'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Kuponlar & İndirimler', action: () => { location.hash = '#/coupons'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Müşteri & Kullanıcılar', action: () => { location.hash = '#/users'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Gelen Kutusu & Stok Bildirimleri', action: () => { location.hash = '#/messages'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Mağaza Ayarları', action: () => { location.hash = '#/settings'; m.remove(); }, badge: 'Sayfa' },
+      { name: 'Koyu / Açık Tema Değiştir', action: () => { setTheme(currentTheme === 'dark' ? 'light' : 'dark'); m.remove(); }, badge: 'Görünüm' },
+      { name: 'Müşteri Gizlilik Modu (Maske)', action: () => { setPrivacy(!privacyMode); m.remove(); }, badge: 'Güvenlik' },
+      { name: 'Canlı Mağazayı Aç', action: () => { window.open('/', '_blank'); m.remove(); }, badge: 'Dış Bağlantı' },
     ];
 
     function draw(q = '') {
@@ -345,12 +345,12 @@
     const isCustomer = currentUser && currentUser.role !== 'admin';
     $('#admin-root').innerHTML = `
     <div class="admin-login"><div class="al-card">
-      <div class="logo">🔐</div>
+      <div class="logo" style="display:flex;justify-content:center;color:var(--text)"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
       <h1>LOVE SHOP ADMIN</h1>
       <p class="sub">Yönetim Paneline yalnızca yetkilendirilmiş yöneticiler erişebilir</p>
       ${isCustomer ? `
         <div style="background:rgba(225,29,72,0.1);border:1px solid rgba(225,29,72,0.25);color:var(--text);padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:18px;line-height:1.5">
-          ⚠️ <b>Yetkisiz Erişim:</b> <i>${esc(currentUser.email)}</i> hesabı müşteri statüsündedir. Bu panele yalnızca yönetici yetkisi verilmiş hesaplar girebilir.
+          <b>Yetkisiz Erişim:</b> <i>${esc(currentUser.email)}</i> hesabı müşteri statüsündedir. Bu panele yalnızca yönetici yetkisi verilmiş hesaplar girebilir.
           <div style="margin-top:8px"><a href="/hesap" style="color:var(--rose);font-weight:600;text-decoration:underline">→ Müşteri Hesabım Paneline Git</a></div>
         </div>
       ` : ''}
@@ -552,9 +552,9 @@
 
         tt.style.opacity = '1';
         tt.innerHTML = `
-          <div class="tt-date">📅 ${nearest.data.label} (${nearest.data.shortLabel})</div>
+          <div class="tt-date">${nearest.data.label} (${nearest.data.shortLabel})</div>
           <div class="tt-rev">${fmt(nearest.data.value)}</div>
-          <div class="tt-ord">📦 ${nearest.data.orders || 0} Sipariş</div>
+          <div class="tt-ord">${nearest.data.orders || 0} İşlem</div>
         `;
 
         const ttX = (nearest.x / W) * rect.width;
@@ -590,7 +590,7 @@
 
   function renderDonutVisual(containerEl, categoriesDetailed) {
     if (!categoriesDetailed || !categoriesDetailed.length) {
-      containerEl.innerHTML = '<div class="empty" style="padding:40px 0"><div class="big">📭</div>Henüz kategori satış verisi oluşmadı</div>';
+      containerEl.innerHTML = '<div class="empty" style="padding:40px 0">Henüz kategori satış verisi oluşmadı</div>';
       return;
     }
 
@@ -670,40 +670,40 @@
     mount('dashboard', `
     <!-- TOP ROW: BENTO 4x KPI CARDS WITH LIVE SPARKLINES -->
     <div class="bento-grid">
-      <!-- KPI 1: REVENUE -->
+      <!-- KPI 1: REVENUE (ONLINE + POS) -->
       <div class="bento-card kpi-card bento-span-3">
         <div class="kpi-top">
-          <div class="kpi-icon-wrap" style="color:var(--rose)">💰</div>
+          <div class="kpi-icon-wrap" style="color:var(--text)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
           <span class="kpi-badge up">▲ %${d.revGrowth >= 0 ? '+' : ''}${d.revGrowth} Haftalık</span>
         </div>
         <div class="kpi-mid">
           <div>
             <div class="kpi-val">${fmt(d.revenue)}</div>
-            <div class="kpi-label">Toplam Net Ciro</div>
+            <div class="kpi-label">Toplam Net Ciro (Web + POS)</div>
           </div>
           <div class="kpi-spark-wrap">
             ${renderSparklineSvg(revHistory.slice(-14), '#FF4D6D', 105, 38)}
           </div>
         </div>
-        <div class="kpi-foot">
-          <span>Ortalama Sepet (AOV):</span>
-          <b>${fmt(aov)}</b>
+        <div class="kpi-foot" style="display:flex;justify-content:space-between;gap:8px;font-size:11.5px">
+          <span>Web: <b>${fmt(d.onlineRevenue != null ? d.onlineRevenue : d.revenue)}</b></span>
+          <span>POS (${d.posCount || 0}): <b>${fmt(d.posRevenue || 0)}</b></span>
         </div>
       </div>
 
       <!-- KPI 2: ORDERS -->
       <div class="bento-card kpi-card bento-span-3">
         <div class="kpi-top">
-          <div class="kpi-icon-wrap" style="color:#A78BFA">📦</div>
+          <div class="kpi-icon-wrap" style="color:var(--text)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
           <span class="kpi-badge neutral">▲ %${d.ordGrowth >= 0 ? '+' : ''}${d.ordGrowth} Hacim</span>
         </div>
         <div class="kpi-mid">
           <div>
             <div class="kpi-val">${d.orders}</div>
-            <div class="kpi-label">Toplam Sipariş</div>
+            <div class="kpi-label">Online Sipariş</div>
           </div>
           <div class="kpi-spark-wrap">
-            ${renderSparklineSvg(ordHistory.slice(-14), '#A78BFA', 105, 38)}
+            ${renderSparklineSvg(ordHistory.slice(-14), '#A1A1AA', 105, 38)}
           </div>
         </div>
         <div class="kpi-foot">
@@ -715,7 +715,7 @@
       <!-- KPI 3: CUSTOMERS -->
       <div class="bento-card kpi-card bento-span-3">
         <div class="kpi-top">
-          <div class="kpi-icon-wrap" style="color:#38BDF8">👥</div>
+          <div class="kpi-icon-wrap" style="color:var(--text)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <span class="kpi-badge up">● Aktif Portföy</span>
         </div>
         <div class="kpi-mid">
@@ -724,19 +724,19 @@
             <div class="kpi-label">Kayıtlı Müşteri</div>
           </div>
           <div class="kpi-spark-wrap">
-            ${renderSparklineSvg([1, 2, 2, 3, 4, 5, d.customers], '#38BDF8', 105, 38)}
+            ${renderSparklineSvg([1, 2, 2, 3, 4, 5, d.customers], '#71717A', 105, 38)}
           </div>
         </div>
-        <div class="kpi-foot">
-          <span>Bülten Aboneleri:</span>
-          <b>${d.newsletter} üye</b>
+        <div class="kpi-foot" style="display:flex;justify-content:space-between;gap:8px;font-size:11.5px">
+          <span>Bülten: <b>${d.newsletter || 0}</b></span>
+          <span>Stok Talebi: <b>${d.stockNotifies || 0}</b></span>
         </div>
       </div>
 
       <!-- KPI 4: INVENTORY & HEALTH -->
       <div class="bento-card kpi-card bento-span-3">
         <div class="kpi-top">
-          <div class="kpi-icon-wrap" style="color:#34D399">🛍️</div>
+          <div class="kpi-icon-wrap" style="color:var(--text)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
           <span class="kpi-badge ${d.lowStock.length ? 'warn' : 'up'}">${d.lowStock.length ? d.lowStock.length + ' Azalan' : '✓ Dengeli'}</span>
         </div>
         <div class="kpi-mid">
@@ -745,7 +745,7 @@
             <div class="kpi-label">Aktif Katalog Ürünü</div>
           </div>
           <div class="kpi-spark-wrap">
-            ${renderSparklineSvg([d.products, d.products, d.products, d.products], '#34D399', 105, 38)}
+            ${renderSparklineSvg([d.products, d.products, d.products, d.products], '#52525B', 105, 38)}
           </div>
         </div>
         <div class="kpi-foot">
@@ -839,7 +839,7 @@
                 <span class="feed-price">${fmt(o.total)}</span>
               </div>
             </div>`;
-          }).join('') : '<div class="empty" style="padding:40px 0"><div class="big">📭</div>Henüz sipariş kaydı bulunmuyor</div>'}
+          }).join('') : '<div class="empty" style="padding:40px 0">Henüz sipariş kaydı bulunmuyor</div>'}
         </div>
       </div>
 
@@ -892,7 +892,7 @@
               ${d.lowStock.slice(0, 3).map((p) => `
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card-2);border-radius:10px;font-size:12.5px;border:1px solid var(--line)">
                   <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">${esc(p.name)}</span>
-                  <span class="${p.stock === 0 ? 'no-stock' : 'low-stock'}" style="font-size:11.5px;font-weight:700">${p.stock === 0 ? 'TÜKENDİ ⚠️' : p.stock + ' adet'}</span>
+                  <span class="${p.stock === 0 ? 'no-stock' : 'low-stock'}" style="font-size:11.5px;font-weight:700">${p.stock === 0 ? 'TÜKENDİ' : p.stock + ' adet'}</span>
                 </div>
               `).join('')}
             </div>` : '<div style="font-size:12px;color:var(--ok);padding:10px 12px;background:var(--card-2);border-radius:10px;border:1px solid var(--line)">✓ Tüm envanter stok seviyeleri sağlıklı</div>'}
@@ -937,7 +937,7 @@
   async function viewOrders() {
     mount('orders', `
     <div class="toolbar">
-      <div class="search-box"><span class="ic">🔍</span><input id="ord-q" placeholder="Sipariş no, müşteri veya e-posta ara…"></div>
+      <div class="search-box"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><input id="ord-q" placeholder="Sipariş no, müşteri veya e-posta ara…"></div>
       <select id="ord-status">
         <option value="">Tüm Sipariş Durumları</option>
         <option value="processing">Hazırlanıyor</option>
@@ -949,8 +949,8 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         Yenile
       </button>
-      <button class="btn btn-ghost" id="ord-export">📥 Siparişleri CSV İndir</button>
-      <button class="btn btn-ghost" id="ord-clear-all" style="color:var(--rose,#ff3366);border-color:rgba(255,51,102,0.3)">🗑️ Tümünü Temizle</button>
+      <button class="btn btn-ghost" id="ord-export">Siparişleri CSV İndir</button>
+      <button class="btn btn-ghost" id="ord-clear-all" style="color:var(--rose,#ff3366);border-color:rgba(255,51,102,0.3)">Tümünü Temizle</button>
     </div>
     <div class="panel"><div class="panel-body flush">
       <div class="tbl-wrap">
@@ -977,7 +977,7 @@
         </td>
         <td>
           <div class="${privacyMode ? 'privacy-masked' : ''}"><b>${esc(o.customerName)}</b></div>
-          <div class="muted ${privacyMode ? 'privacy-masked' : ''}" style="font-size:11px">${esc(o.address ? o.address.city : '')}${o.discreet ? ' · 📦 Gizli Paket' : ''}</div>
+          <div class="muted ${privacyMode ? 'privacy-masked' : ''}" style="font-size:11px">${esc(o.address ? o.address.city : '')}${o.discreet ? ' · Gizli Paket' : ''}</div>
         </td>
         <td>${o.items.reduce((a, i) => a + i.qty, 0)} adet</td>
         <td>
@@ -989,24 +989,34 @@
         </td>
         <td><span class="pill s-${o.status}">${STATUS[o.status]}</span></td>
         <td style="white-space:nowrap">
-          <button class="btn-icon" data-view="${esc(o.id)}" title="Sipariş Detayı & Kargo / Yazdır">👁️</button>
+          <button class="btn-icon" data-view="${esc(o.id)}" title="Sipariş Detayı & Kargo / Yazdır"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           <select data-status="${esc(o.id)}" style="background:var(--card-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
             ${['processing', 'shipped', 'delivered', 'cancelled'].map((s) => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${STATUS[s]}</option>`).join('')}
           </select>
-          <button class="btn-icon" data-del="${esc(o.id)}" title="Siparişi Sil" style="color:var(--rose,#ff3366);margin-left:4px">🗑️</button>
+          <button class="btn-icon" data-del="${esc(o.id)}" title="Siparişi Sil" style="color:var(--rose,#ff3366);margin-left:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
         </td>
       </tr>`).join('') : '<tr><td colspan="8"><div class="empty">Aramaya uygun sipariş bulunamadı</div></td></tr>';
 
       $$('[data-view]').forEach((b) => b.addEventListener('click', () => openOrderModal(all.find((o) => o.id === b.dataset.view))));
-      $$('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+      $$('[data-del]').forEach((b) => b.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
         const id = b.dataset.del;
-        if (!confirm(`${id} numaralı siparişi silmek istediğinize emin misiniz?`)) return;
-        try {
-          await api('/api/admin/orders/' + encodeURIComponent(id), { method: 'DELETE' });
-          toast('Sipariş başarıyla silindi');
-          all = all.filter((x) => x.id !== id);
-          draw();
-        } catch (e) { toast(e.message, true); }
+        confirmDialog(`${id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz?`, async () => {
+          try {
+            b.disabled = true;
+            await api('/api/admin/orders/' + encodeURIComponent(id), { method: 'DELETE' });
+            toast('Sipariş başarıyla silindi');
+            all = all.filter((x) => x.id !== id);
+            if (window.__badges) {
+              window.__badges.orders = all.filter((x) => x.status === 'processing').length;
+            }
+            draw();
+          } catch (e) {
+            b.disabled = false;
+            toast(e.message, true);
+          }
+        });
       }));
       $$('[data-status]').forEach((sel) => sel.addEventListener('change', async () => {
         try {
@@ -1048,15 +1058,22 @@
 
     const clearAllBtn = $('#ord-clear-all');
     if (clearAllBtn) {
-      clearAllBtn.addEventListener('click', async () => {
+      clearAllBtn.addEventListener('click', () => {
         if (!all.length) return toast('Temizlenecek sipariş bulunmuyor.');
-        if (!confirm('DİKKAT: Listedeki tüm siparişler kalıcı olarak silinecektir. Emin misiniz?')) return;
-        try {
-          await api('/api/admin/orders/clear-all', { method: 'POST' });
-          toast('Tüm sipariş geçmişi temizlendi 🗑️');
-          all = [];
-          draw();
-        } catch (e) { toast(e.message, true); }
+        confirmDialog('Listedeki tüm siparişler kalıcı olarak silinecek ve ürün stokları iade edilecektir. Onaylıyor musunuz?', async () => {
+          try {
+            clearAllBtn.disabled = true;
+            await api('/api/admin/orders/clear-all', { method: 'POST' });
+            toast('Tüm sipariş geçmişi temizlendi');
+            all = [];
+            if (window.__badges) window.__badges.orders = 0;
+            draw();
+          } catch (e) {
+            toast(e.message, true);
+          } finally {
+            clearAllBtn.disabled = false;
+          }
+        });
       });
     }
 
@@ -1071,7 +1088,7 @@
     m.className = 'modal-back open';
     
     // Create quick WhatsApp tracking notification message
-    const waText = encodeURIComponent(`Merhaba ${o.customerName}, Love Shop'tan verdiğiniz ${o.id} numaralı siparişiniz hakkında bilgilendirme:\nDurum: ${STATUS[o.status] || o.status}\n${o.trackingNumber ? `Kargo Takip No: ${o.trackingNumber} (${o.carrier || 'Kargo'})\n` : ''}Toplam: ${fmt(o.total)}\nBizi tercih ettiğiniz için teşekkür ederiz! ❤️`);
+    const waText = encodeURIComponent(`Merhaba ${o.customerName}, Love Shop'tan verdiğiniz ${o.id} numaralı siparişiniz hakkında bilgilendirme:\nDurum: ${STATUS[o.status] || o.status}\n${o.trackingNumber ? `Kargo Takip No: ${o.trackingNumber} (${o.carrier || 'Kargo'})\n` : ''}Toplam: ${fmt(o.total)}\nBizi tercih ettiğiniz için teşekkür ederiz.`);
     const waLink = `https://wa.me/${(o.phone || '').replace(/[^0-9]/g, '')}?text=${waText}`;
 
     m.innerHTML = `<div class="modal" style="max-width:700px">
@@ -1084,8 +1101,8 @@
       </div>
       <div class="modal-body">
         <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" id="ord-print-btn">🖨️ Fiş / İrsaliye Yazdır</button>
-          ${o.phone ? `<a href="${waLink}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="color:#25D366;border-color:rgba(37,211,102,.4)">💬 WhatsApp'tan Bilgilendir</a>` : ''}
+          <button class="btn btn-ghost btn-sm" id="ord-print-btn">Fiş / İrsaliye Yazdır</button>
+          ${o.phone ? `<a href="${waLink}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="color:#25D366;border-color:rgba(37,211,102,.4)">WhatsApp'tan Bilgilendir</a>` : ''}
         </div>
 
         <dl class="dl">
@@ -1094,12 +1111,12 @@
           <dt>Teslimat Adresi</dt><dd class="${privacyMode ? 'privacy-masked' : ''}">${esc(o.address ? o.address.full + ', ' + o.address.city + ' ' + (o.address.zip || '') : '—')}</dd>
           <dt>Ödeme Yöntemi</dt><dd>${esc(o.payment)}</dd>
           <dt>Müşteri Notu</dt><dd>${esc(o.note || '—')}</dd>
-          <dt>Gizli Paketleme</dt><dd>${o.discreet ? '📦 Evet (Dışarıdan içeriği belli olmayan isimsiz kutu)' : 'Standart'}</dd>
+          <dt>Gizli Paketleme</dt><dd>${o.discreet ? 'Evet (Dışarıdan içeriği belli olmayan isimsiz kutu)' : 'Standart'}</dd>
           <dt>Uygulanan Kupon</dt><dd>${o.coupon ? esc(o.coupon) : '—'}</dd>
         </dl>
 
         <div style="background:var(--card-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:16px;margin:20px 0">
-          <h4 style="font-size:12.5px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;color:var(--text)">🚚 Kargo ve Gönderi Bilgileri</h4>
+          <h4 style="font-size:12.5px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;color:var(--text)">Kargo ve Gönderi Bilgileri</h4>
           <div class="grid-2">
             <div class="field" style="margin-bottom:0">
               <label>Kargo Firması</label>
@@ -1135,7 +1152,7 @@
         </dl>
       </div>
       <div class="modal-foot">
-        <button type="button" class="btn btn-ghost" id="om-delete-order" style="color:var(--rose,#ff3366);margin-right:auto">🗑️ Siparişi Sil</button>
+        <button type="button" class="btn btn-ghost" id="om-delete-order" style="color:var(--rose,#ff3366);margin-right:auto">Siparişi Sil</button>
         <button type="button" class="btn btn-ghost" id="om-close-btn" data-cancel="true">Kapat</button>
         <button type="button" class="btn btn-primary" id="om-save-track">Kargo Bilgisini Kaydet</button>
       </div>
@@ -1176,22 +1193,24 @@
 
     const delOrderBtn = $('#om-delete-order', m);
     if (delOrderBtn) {
-      delOrderBtn.addEventListener('click', async (e) => {
+      delOrderBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!confirm(`${o.id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz?`)) return;
-        delOrderBtn.disabled = true;
-        delOrderBtn.textContent = 'Siliniyor...';
-        try {
-          await api('/api/admin/orders/' + encodeURIComponent(o.id), { method: 'DELETE' });
-          toast('Sipariş başarıyla silindi 🗑️');
-          closeModal();
-          viewOrders();
-        } catch (err) {
-          toast(err.message || 'Sipariş silinemedi', true);
-          delOrderBtn.disabled = false;
-          delOrderBtn.textContent = '🗑️ Siparişi Sil';
-        }
+        confirmDialog(`${o.id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz?`, async () => {
+          delOrderBtn.disabled = true;
+          delOrderBtn.textContent = 'Siliniyor...';
+          try {
+            await api('/api/admin/orders/' + encodeURIComponent(o.id), { method: 'DELETE' });
+            toast('Sipariş başarıyla silindi');
+            closeModal();
+            if (currentPage === 'dashboard') viewDashboard();
+            else viewOrders();
+          } catch (err) {
+            toast(err.message || 'Sipariş silinemedi', true);
+            delOrderBtn.disabled = false;
+            delOrderBtn.textContent = 'Siparişi Sil';
+          }
+        });
       });
     }
 
@@ -1213,7 +1232,7 @@
               status: trackingNumber && o.status === 'processing' ? 'shipped' : o.status
             }
           });
-          toast('Kargo takip bilgileri kaydedildi 🚚');
+          toast('Kargo takip bilgileri kaydedildi');
           closeModal();
           viewOrders();
         } catch (err) {
@@ -1263,15 +1282,16 @@
   async function viewProducts() {
     mount('products', `
     <div class="toolbar">
-      <div class="search-box"><span class="ic">🔍</span><input id="prod-q" placeholder="Ürün adı, kategori veya slug ara…"></div>
+      <div class="search-box"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><input id="prod-q" placeholder="Ürün adı, kategori veya slug ara…"></div>
       <select id="prod-stock-filter">
         <option value="">Tüm Stok Durumları</option>
         <option value="low">Kritik Stok (≤ 5 adet)</option>
         <option value="out">Tükenenler (0 adet)</option>
       </select>
-      <button class="btn btn-ghost" id="prod-export">📥 Ürünleri CSV İndir</button>
-      <button class="btn btn-ghost" id="wheel-mgr" style="margin-left:auto">🎡 Çarkı Yönet</button>
-      <button class="btn btn-ghost" id="prod-add">＋ Manuel Ekle</button>
+      <button class="btn btn-ghost" id="prod-export">Ürünleri CSV İndir</button>
+      <button class="btn btn-ghost" id="prod-sync-hl" title="Eksik ürün özelliklerini kategoriye göre otomatik tamamla" style="margin-left:auto">Özellikleri Senkronize Et</button>
+      <button class="btn btn-ghost" id="wheel-mgr">3D Çarkı Yönet</button>
+      <button class="btn btn-primary" id="prod-add">＋ Yeni Ürün Ekle</button>
     </div>
     <div class="panel"><div class="panel-body flush">
       <div class="tbl-wrap">
@@ -1324,9 +1344,9 @@
           ${p.isNew ? '<span class="pill s-processing">Yeni</span>' : ''}
         </td>
         <td style="white-space:nowrap">
-          <button class="btn-icon ${inWheel.has(p.id) ? 'on-wheel' : ''}" data-wheel="${p.id}" title="Ana Sayfa 3D Çarkına Ekle/Çıkar">🎡</button>
-          <button class="btn-icon" data-edit="${p.id}" title="Ürünü Düzenle">✏️</button>
-          <button class="btn-icon danger" data-del="${p.id}" title="Sil">🗑️</button>
+          <button class="btn-icon ${inWheel.has(p.id) ? 'on-wheel' : ''}" data-wheel="${p.id}" title="Ana Sayfa 3D Çarkına Ekle/Çıkar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg></button>
+          <button class="btn-icon" data-edit="${p.id}" title="Ürünü Düzenle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+          <button class="btn-icon danger" data-del="${p.id}" title="Sil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
         </td>
       </tr>`).join('') : '<tr><td colspan="6"><div class="empty">Kritere uygun ürün bulunamadı</div></td></tr>';
 
@@ -1349,7 +1369,7 @@
           try {
             await api('/api/admin/products/' + p.id, { method: 'POST', body: { price: val } });
             p.price = val;
-            toast(`Fiyat güncellendi: ${fmt(val)} 💰`);
+            toast(`Fiyat güncellendi: ${fmt(val)}`);
           } catch (err) { toast(err.message, true); }
           cell.innerHTML = `<b>${fmt(p.price)}</b>${p.oldPrice ? `<div class="muted" style="font-size:11px;text-decoration:line-through">${fmt(p.oldPrice)}</div>` : ''}`;
         };
@@ -1379,7 +1399,7 @@
           try {
             await api('/api/admin/products/' + p.id, { method: 'POST', body: { stock: val } });
             p.stock = val;
-            toast(`Stok güncellendi: ${val} adet 📦`);
+            toast(`Stok güncellendi: ${val} adet`);
           } catch (err) { toast(err.message, true); }
           cell.className = `quick-edit-cell ${p.stock === 0 ? 'no-stock' : p.stock <= 5 ? 'low-stock' : ''}`;
           cell.innerHTML = `<b>${p.stock === 0 ? 'TÜKENDİ' : p.stock + ' adet'}</b>`;
@@ -1395,7 +1415,7 @@
         try {
           const r = await api('/api/admin/wheel', { method: 'POST', body: { toggle: b.dataset.wheel } });
           wheelIds = r.ids;
-          toast(r.ids.includes(b.dataset.wheel) ? 'Ürün çarka eklendi 🎡' : 'Ürün çarktan çıkarıldı');
+          toast(r.ids.includes(b.dataset.wheel) ? 'Ürün 3D çarka eklendi' : 'Ürün çarktan çıkarıldı');
           draw();
         } catch (e) { toast(e.message, true); }
       }));
@@ -1419,8 +1439,24 @@
       exportCSV(`loveshop-urunler-${new Date().toISOString().slice(0,10)}.csv`, rows);
     });
 
+    const syncHlBtn = $('#prod-sync-hl');
+    if (syncHlBtn) {
+      syncHlBtn.addEventListener('click', async () => {
+        syncHlBtn.disabled = true;
+        try {
+          const r = await api('/api/admin/sync-highlights', { method: 'POST' });
+          toast(`${r.updatedCount || 0} ürünün teknik özellikleri senkronize edildi`);
+          viewProducts();
+        } catch (e) {
+          toast(e.message, true);
+        } finally {
+          syncHlBtn.disabled = false;
+        }
+      });
+    }
+
     $('#wheel-mgr').addEventListener('click', () => openWheelModal());
-        $('#prod-add').addEventListener('click', () => openProductModal(null));
+    $('#prod-add').addEventListener('click', () => openProductModal(null));
     $('#prod-q').addEventListener('input', draw);
     $('#prod-stock-filter').addEventListener('change', draw);
     draw();
@@ -1435,7 +1471,7 @@
     m.innerHTML = `<div class="modal" style="max-width:660px">
       <div class="modal-head">
         <div>
-          <h3>🎡 3D Çark Ürünlerini Yönet</h3>
+          <h3>3D Çark Ürünlerini Yönet</h3>
           <span class="muted" style="font-size:12px">Maksimum 8 ürün sırayla ana sayfada döner</span>
         </div>
         <button type="button" class="modal-close" aria-label="Kapat">✕</button>
@@ -1503,7 +1539,7 @@
     $('#wm-save', m).addEventListener('click', async () => {
       try {
         await api('/api/admin/wheel', { method: 'POST', body: { ids: sel } });
-        toast('3D Çark listesi kaydedildi 🎡');
+        toast('3D Çark listesi kaydedildi');
         m.remove(); viewProducts();
       } catch (e) { toast(e.message, true); }
     });
@@ -1628,7 +1664,13 @@
         </div>
         
         <div class="field">
-          <label>Kısa Tanıtım / Vurgu</label>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+            <label style="margin-bottom:0">Kısa Tanıtım / Vurgu</label>
+            <button type="button" class="btn btn-ghost btn-sm" id="pm-ai-polish" style="font-size:11.5px;border-color:var(--line-strong)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              Lüks Mağaza Diline Dönüştür
+            </button>
+          </div>
           <input id="pm-desc" value="${esc(v.description)}" placeholder="Örn: Çiftlere özel 10 farklı titreşim modu">
         </div>
 
@@ -1653,7 +1695,7 @@
           </div>
           <input type="file" id="pm-file" accept="image/*" multiple style="display:none">
           <div class="img-drop" id="pm-drop">
-            <div style="font-size:18px;margin-bottom:4px">📤</div>
+            <div style="display:flex;justify-content:center;margin-bottom:6px;color:var(--muted)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></div>
             <b>Fotoğrafları seçin veya buraya sürükleyip bırakın</b>
             <div class="hint">Aynı anda birden fazla fotoğraf seçebilirsiniz (SVG, PNG, JPG, WebP - max 2MB / adet)</div>
           </div>
@@ -1661,9 +1703,9 @@
         </div>
 
         <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
-          <label class="checkbox-row"><input type="checkbox" id="pm-featured" ${v.featured ? 'checked' : ''}> ✨ Öne Çıkanlar vitrinine ekle</label>
-          <label class="checkbox-row"><input type="checkbox" id="pm-new" ${v.isNew ? 'checked' : ''}> 🆕 "YENİ" rozeti göster</label>
-          <label class="checkbox-row"><input type="checkbox" id="pm-best" ${v.bestSeller ? 'checked' : ''}> 🔥 "ÇOK SATAN" rozeti göster</label>
+          <label class="checkbox-row"><input type="checkbox" id="pm-featured" ${v.featured ? 'checked' : ''}> Öne Çıkanlar vitrinine ekle</label>
+          <label class="checkbox-row"><input type="checkbox" id="pm-new" ${v.isNew ? 'checked' : ''}> "YENİ" rozeti göster</label>
+          <label class="checkbox-row"><input type="checkbox" id="pm-best" ${v.bestSeller ? 'checked' : ''}> "ÇOK SATAN" rozeti göster</label>
         </div>
       </div>
       <div class="modal-foot">
@@ -1690,9 +1732,7 @@
     }));
     m.addEventListener('click', (e) => {
       if (e.target === m) {
-        if (confirm('Kaydedilmemiş verileriniz olabilir, pencereyi kapatmak istediğinize emin misiniz?')) {
-          closeModal();
-        }
+        closeModal();
       }
     });
 
@@ -1716,6 +1756,37 @@
     catSelect.addEventListener('change', () => {
       updateSubcatOptions(catSelect.value, '');
     });
+
+    const polishBtn = $('#pm-ai-polish', m);
+    if (polishBtn) {
+      polishBtn.addEventListener('click', async () => {
+        const nameVal = $('#pm-name', m).value.trim();
+        const catVal = $('#pm-cat', m).value;
+        const rawText = $('#pm-long', m).value.trim() || $('#pm-desc', m).value.trim() || nameVal;
+        if (!nameVal && !rawText) return toast('Önce ürün adını veya ham açıklamayı girin', true);
+        const origHtml = polishBtn.innerHTML;
+        polishBtn.disabled = true;
+        polishBtn.textContent = 'Metin hazırlanıyor...';
+        try {
+          const res = await api('/api/admin/ai-polish', {
+            method: 'POST',
+            body: { name: nameVal, category: catVal, rawText }
+          });
+          if (res.name && !nameVal) $('#pm-name', m).value = res.name;
+          if (res.description) $('#pm-desc', m).value = res.description;
+          if (Array.isArray(res.highlights) && res.highlights.length) {
+            $('#pm-highlights', m).value = res.highlights.join(', ');
+          }
+          if (res.longDescription) $('#pm-long', m).value = res.longDescription;
+          toast('Ürün metni ve özellikleri lüks mağaza diline dönüştürüldü');
+        } catch (err) {
+          toast(err.message || 'Metin dönüştürülemedi', true);
+        } finally {
+          polishBtn.disabled = false;
+          polishBtn.innerHTML = origHtml;
+        }
+      });
+    }
     
     addPhotoBtn.addEventListener('click', () => fileIn.click());
     drop.addEventListener('click', () => fileIn.click());
@@ -1739,7 +1810,7 @@
       const fileArr = Array.from(files).filter((f) => f.type.startsWith('image/'));
       if (!fileArr.length) return toast('Lütfen geçerli resim dosyaları seçin', true);
       
-      toast(`${fileArr.length} fotoğraf işleniyor... ⏳`);
+      toast(`${fileArr.length} fotoğraf işleniyor...`);
       for (const file of fileArr) {
         try {
           const optimizedDataUrl = await optimizeImage(file, 1600, 0.88);
@@ -1751,7 +1822,7 @@
           toast(`"${file.name}" işlenirken sorun oluştu`, true);
         }
       }
-      toast(`Fotoğraflar hazırlandı (${gallery.length} adet) ✨`);
+      toast(`Fotoğraflar hazırlandı (${gallery.length} adet)`);
     }
 
     function renderGallery() {
@@ -1770,13 +1841,13 @@
         <div class="photo-tile ${isCover ? 'is-cover' : ''}">
           <div class="photo-tile-img-wrap">
             <img src="${esc(img)}" alt="Fotoğraf ${idx + 1}">
-            ${isCover ? '<span class="photo-tile-cover-badge">👑 Kapak</span>' : ''}
+            ${isCover ? '<span class="photo-tile-cover-badge">Kapak</span>' : ''}
             <button type="button" class="photo-tile-del-btn" data-del-idx="${idx}" title="Bu Fotoğrafı Kaldır">✕</button>
           </div>
           <div class="photo-tile-actions" style="display:flex;flex-direction:column;gap:4px;width:100%">
             ${isCover
               ? '<span class="muted" style="font-size:10.5px;font-weight:600;text-align:center">Ana Görsel</span>'
-              : `<button type="button" class="btn btn-ghost btn-sm" data-cover-idx="${idx}" style="font-size:10.5px;padding:2px 7px">⭐ Kapak Yap</button>`
+              : `<button type="button" class="btn btn-ghost btn-sm" data-cover-idx="${idx}" style="font-size:10.5px;padding:2px 7px">Kapak Yap</button>`
             }
           </div>
         </div>`;
@@ -1802,7 +1873,7 @@
         const covIdx = parseInt(b.dataset.coverIdx, 10);
         coverImage = gallery[covIdx];
         renderGallery();
-        toast('Kapak fotoğrafı güncellendi ⭐');
+        toast('Kapak fotoğrafı güncellendi');
       }));
     }
 
@@ -1844,7 +1915,7 @@
 
       const originalBtnText = saveBtn.innerHTML;
       saveBtn.disabled = true;
-      saveBtn.innerHTML = 'Kaydediliyor... ⏳';
+      saveBtn.innerHTML = 'Kaydediliyor...';
 
       try {
         if (isEdit) await api('/api/admin/products/' + p.id, { method: 'POST', body });
@@ -1866,7 +1937,7 @@
     <div class="toolbar">
       <div>
         <div style="font-weight:700;font-size:14px">Ana Sayfa Vitrini (Bento Grid) & Kategori Yönetimi</div>
-        <div style="font-size:12.5px" class="muted">Ana sayfa vitrininde 1 adet <b>Büyük Ana Kart</b> ve 3 adet <b>Küçük Yan Kart</b> bulunur. Hangi kategorinin hangi kutuda duracağını doğrudan seçebilirsiniz.</div>
+        <div style="font-size:12.5px" class="muted">Ana sayfa vitrininde 8 adet kategori kartı yer alır. Hangi kategorinin hangi vitrin sırasına yerleşeceğini doğrudan seçebilirsiniz.</div>
       </div>
       <button class="btn btn-primary" id="cat-add" style="margin-left:auto">＋ Yeni Kategori Ekle</button>
     </div>
@@ -1875,17 +1946,21 @@
     try { list = await fetchCategories(true); } catch (e) { return toast(e.message, true); }
 
     const slotNames = {
-      1: '👑 1. Slot: BÜYÜK SOL KART (Ana Vitrin)',
-      2: '🔹 2. Slot: Sağ Üst Kart',
-      3: '🔹 3. Slot: Sağ Orta Kart',
-      4: '🔹 4. Slot: Sağ Alt Kart'
+      1: '1. Slot: Ana Vitrin (Geniş Sol)',
+      2: '2. Slot: Sağ Üst Vitrin',
+      3: '3. Slot: Sağ Orta Vitrin',
+      4: '4. Slot: Sağ Alt Vitrin',
+      5: '5. Slot: Alt Satır 1. Kutu',
+      6: '6. Slot: Alt Satır 2. Kutu',
+      7: '7. Slot: Alt Satır 3. Kutu',
+      8: '8. Slot: Alt Satır 4. Kutu'
     };
 
     $('#cat-grid').innerHTML = list.length ? list.map((c) => `
-    <div class="panel" style="margin-bottom:0;overflow:hidden;border:${c.featuredOnHome ? (c.homeOrder === 1 ? '2px solid var(--rose)' : '1.5px solid #8b5cf6') : '1px solid var(--line)'}">
+    <div class="panel" style="margin-bottom:0;overflow:hidden;border:${c.featuredOnHome ? (c.homeOrder === 1 ? '2px solid var(--rose)' : '1.5px solid var(--line-strong)') : '1px solid var(--line)'}">
       <div style="aspect-ratio:16/10;background:var(--card-2);overflow:hidden;position:relative">
         ${c.image ? `<img src="${esc(c.image)}" style="width:100%;height:100%;object-fit:cover">` : '<div class="empty">Kapak Görseli Yok</div>'}
-        ${c.featuredOnHome ? `<div style="position:absolute;top:8px;left:8px;background:${c.homeOrder === 1 ? 'var(--rose)' : '#7c3aed'};color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.35)">${slotNames[c.homeOrder] || ('Slot #' + c.homeOrder)}</div>` : ''}
+        ${c.featuredOnHome ? `<div style="position:absolute;top:8px;left:8px;background:rgba(15,15,18,0.85);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15)">${slotNames[c.homeOrder] || ('Slot #' + c.homeOrder)}</div>` : ''}
       </div>
       <div class="panel-body" style="padding:16px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -1897,20 +1972,17 @@
         <div style="background:var(--card-2);padding:8px 10px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
           <span style="font-size:12px;font-weight:600">Vitrin Konumu:</span>
           <select class="cat-slot-select" data-slot-id="${c.id}" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:600">
-            <option value="0" ${!c.featuredOnHome ? 'selected' : ''}>❌ Ana Sayfada Gösterme</option>
-            <option value="1" ${c.featuredOnHome && c.homeOrder === 1 ? 'selected' : ''}>🌟 BÜYÜK SOL KART (1. Sıra)</option>
-            <option value="2" ${c.featuredOnHome && c.homeOrder === 2 ? 'selected' : ''}>▫️ Küçük Yan Kart 1 (2. Sıra)</option>
-            <option value="3" ${c.featuredOnHome && c.homeOrder === 3 ? 'selected' : ''}>▫️ Küçük Yan Kart 2 (3. Sıra)</option>
-            <option value="4" ${c.featuredOnHome && c.homeOrder === 4 ? 'selected' : ''}>▫️ Küçük Yan Kart 3 (4. Sıra)</option>
+            <option value="0" ${!c.featuredOnHome ? 'selected' : ''}>Ana Sayfada Gösterme</option>
+            ${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `<option value="${n}" ${c.featuredOnHome && c.homeOrder === n ? 'selected' : ''}>${slotNames[n]}</option>`).join('')}
           </select>
         </div>
 
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="btn btn-ghost btn-sm" data-edit="${c.id}">✏️ Düzenle</button>
-          <button class="btn-icon danger" data-del="${c.id}" title="Sil" style="margin-left:auto">🗑️</button>
+          <button class="btn btn-ghost btn-sm" data-edit="${c.id}">Düzenle</button>
+          <button class="btn-icon danger" data-del="${c.id}" title="Sil" style="margin-left:auto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
         </div>
       </div>
-    </div>`).join('') : '<div class="panel"><div class="empty"><div class="big">🗂️</div>Henüz kategori tanımlanmadı</div></div>';
+    </div>`).join('') : '<div class="panel"><div class="empty">Henüz kategori tanımlanmadı</div></div>';
 
     $('#cat-add').addEventListener('click', () => openCategoryModal(null));
     $$('[data-edit]', $('#cat-grid')).forEach((b) => b.addEventListener('click', () => openCategoryModal(list.find((c) => c.id === b.dataset.edit))));
@@ -1924,7 +1996,7 @@
           method: 'POST',
           body: { featuredOnHome, homeOrder }
         });
-        toast(val === 1 ? 'Kategori BÜYÜK SOL KART olarak vitrine yerleştirildi! 🌟' : (val > 0 ? `Kategori Küçük Yan Kart #${val - 1} olarak ayarlandı.` : 'Kategori ana sayfa vitrininden kaldırıldı.'));
+        toast(val > 0 ? `Kategori Vitrin Slot #${val} olarak ayarlandı` : 'Kategori ana sayfa vitrininden kaldırıldı');
         invalidateCategories();
         await viewCategories();
       } catch (e) {
@@ -1959,22 +2031,19 @@
         ${isEdit ? '' : '<div class="field"><label>URL Slug (boş bırakılırsa otomatik)</label><input id="ct-slug" placeholder="örn: ciftler"><div class="hint">Filtreleme linklerinde kullanılır</div></div>'}
         <div class="field"><label>Kapak Fotoğrafı</label>
           <input type="file" id="ct-file" accept="image/*" style="display:none">
-          <div class="img-drop" id="ct-drop">📤 Fotoğraf seç veya sürükle-bırak (max 2MB)<div class="hint">Boş bırakılırsa ilk ürünün görseli kullanılır</div></div>
+          <div class="img-drop" id="ct-drop">Fotoğraf seç veya sürükle-bırak (max 2MB)<div class="hint">Boş bırakılırsa ilk ürünün görseli kullanılır</div></div>
           <div class="img-preview" id="ct-prev">${v.image ? `<img src="${esc(v.image)}">` : ''}</div>
           <input type="hidden" id="ct-image" value="${esc(v.image || '')}">
         </div>
         ${isEdit ? '<label class="checkbox-row" style="margin-top:10px"><input type="checkbox" id="ct-auto"> Bu kategorideki ilk ürünün görselini kapak yap</label>' : ''}
         
         <div class="field" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
-          <label style="font-weight:700;font-size:13.5px">✨ Ana Sayfa Vitrin Konumu (Bento Grid)</label>
+          <label style="font-weight:700;font-size:13.5px">Ana Sayfa Vitrin Konumu (Bento Grid)</label>
           <select id="ct-grid-pos" style="width:100%;margin-top:4px;padding:8px 12px;font-size:13px;font-weight:600">
-            <option value="0" ${!v.featuredOnHome ? 'selected' : ''}>❌ Ana Sayfa Vitrininde Gösterme</option>
-            <option value="1" ${v.featuredOnHome && v.homeOrder === 1 ? 'selected' : ''}>🌟 BÜYÜK SOL KART (Ana Vitrin - 1. Sıra)</option>
-            <option value="2" ${v.featuredOnHome && v.homeOrder === 2 ? 'selected' : ''}>▫️ KÜÇÜK YAN KART 1 (2. Sıra)</option>
-            <option value="3" ${v.featuredOnHome && v.homeOrder === 3 ? 'selected' : ''}>▫️ KÜÇÜK YAN KART 2 (3. Sıra)</option>
-            <option value="4" ${v.featuredOnHome && v.homeOrder === 4 ? 'selected' : ''}>▫️ KÜÇÜK YAN KART 3 (4. Sıra)</option>
+            <option value="0" ${!v.featuredOnHome ? 'selected' : ''}>Ana Sayfa Vitrininde Gösterme</option>
+            ${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `<option value="${n}" ${v.featuredOnHome && v.homeOrder === n ? 'selected' : ''}>${n}. Sıra Vitrin Kutusu</option>`).join('')}
           </select>
-          <div class="hint">Büyük Sol Kart ana vitrin kutusudur. Diğerleri sağ taraftaki 3 küçük kutudur.</div>
+          <div class="hint">Ana sayfada 8 kutulu Bento vitrininde yer alacak sırayı belirler.</div>
         </div>
       </div>
       <div class="modal-foot">
@@ -2009,7 +2078,7 @@
     async function readImg(file) {
       if (!file) return;
       try {
-        toast('Kapak görseli işleniyor... ⏳');
+        toast('Kapak görseli işleniyor...');
         const optimized = await optimizeImage(file, 1600, 0.88);
         hidden.value = optimized;
         prev.innerHTML = `<img src="${optimized}">`;
@@ -2037,7 +2106,7 @@
       };
       const origText = catSaveBtn.innerHTML;
       catSaveBtn.disabled = true;
-      catSaveBtn.innerHTML = 'Kaydediliyor... ⏳';
+      catSaveBtn.innerHTML = 'Kaydediliyor...';
       try {
         if (isEdit) await api('/api/admin/categories/' + cat.id, { method: 'POST', body });
         else await api('/api/admin/categories', { method: 'POST', body });
@@ -2065,14 +2134,14 @@
     <tr>
       <td><b>${esc(pname(r.productId))}</b></td>
       <td><span class="${privacyMode ? 'privacy-masked' : ''}">${esc(r.userName)}</span><div class="muted" style="font-size:11px">${dShort(r.createdAt)}</div></td>
-      <td style="color:var(--gold);font-size:15px">${'★'.repeat(r.rating)}</td>
+      <td style="font-weight:700;font-size:13px">${r.rating} / 5</td>
       <td style="max-width:340px;line-height:1.5">${esc(r.text)}</td>
       <td>${r.approved ? '<span class="pill s-active">Onaylı</span>' : '<span class="pill s-processing">Onay Bekliyor</span>'}</td>
       <td style="white-space:nowrap">
         ${r.approved ? '' : `<button class="btn btn-primary btn-sm" data-app="${r.id}">Yayınla</button>`}
-        <button class="btn-icon danger" data-del="${r.id}" title="Yorumu Sil">🗑️</button>
+        <button class="btn-icon danger" data-del="${r.id}" title="Yorumu Sil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
       </td>
-    </tr>`).join('') : '<tr><td colspan="6"><div class="empty"><div class="big">⭐</div>Henüz değerlendirme yok</div></td></tr>';
+    </tr>`).join('') : '<tr><td colspan="6"><div class="empty">Henüz değerlendirme yok</div></td></tr>';
 
     $$('[data-app]').forEach((b) => b.addEventListener('click', async () => {
       try { await api('/api/admin/reviews/' + b.dataset.app + '/approve', { method: 'POST' }); toast('Yorum onaylandı ve puan güncellendi'); viewReviews(); }
@@ -2124,10 +2193,10 @@
         <td>${c.maxUses > 0 ? c.maxUses : 'Sınırsız'}</td>
         <td>${c.active ? '<span class="pill s-active">Aktif</span>' : '<span class="pill s-passive">Pasif</span>'}</td>
         <td style="white-space:nowrap">
-          <button class="btn-icon" data-tog="${c.id}" title="${c.active ? 'Pasifleştir' : 'Aktifleştir'}">${c.active ? '⏸️' : '▶️'}</button>
-          <button class="btn-icon danger" data-del="${c.id}" title="Sil">🗑️</button>
+          <button class="btn btn-ghost btn-sm" data-tog="${c.id}" title="${c.active ? 'Pasifleştir' : 'Aktifleştir'}">${c.active ? 'Duraklat' : 'Aktifleştir'}</button>
+          <button class="btn-icon danger" data-del="${c.id}" title="Sil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
         </td>
-      </tr>`).join('') : '<tr><td colspan="7"><div class="empty">Henüz kupon tanımlanmadı</div></td></tr>';
+      </tr>`).join('') : '<tr><td colspan="8"><div class="empty">Henüz kupon tanımlanmadı</div></td></tr>';
 
       $$('[data-tog]').forEach((b) => b.addEventListener('click', async () => {
         const c = list.find((x) => x.id === b.dataset.tog);
@@ -2143,10 +2212,10 @@
     }
 
     $('#cp-add').addEventListener('click', async () => {
-      const body = { code: $('#cp-code').value.trim(), type: $('#cp-type').value, value: Number($('#cp-val').value), minTotal: Number($('#cp-min').value), active: $('#cp-active').checked };
+      const body = { code: $('#cp-code').value.trim(), type: $('#cp-type').value, value: Number($('#cp-val').value), minTotal: Number($('#cp-min').value), maxUses: Number($('#cp-max').value) || 0, active: $('#cp-active').checked };
       if (!body.code || body.code.length < 3) return toast('Geçerli bir kupon kodu girin (en az 3 karakter)', true);
       if (!body.value || body.value <= 0) return toast('İndirim değeri sıfırdan büyük olmalıdır', true);
-      try { await api('/api/admin/coupons', { method: 'POST', body }); toast('Kupon başarıyla eklendi 🎉'); $('#cp-code').value = ''; $('#cp-val').value = ''; load(); }
+      try { await api('/api/admin/coupons', { method: 'POST', body }); toast('Kupon başarıyla eklendi'); $('#cp-code').value = ''; $('#cp-val').value = ''; load(); }
       catch (e) { toast(e.message, true); }
     });
     load();
@@ -2161,12 +2230,12 @@
     <tr>
       <td><b class="${privacyMode ? 'privacy-masked' : ''}">${esc(u.name)}</b></td>
       <td class="${privacyMode ? 'privacy-masked' : ''}">${esc(u.email)}</td>
-      <td>${u.role === 'admin' ? '<span class="pill s-shipped">👑 Yönetici (Admin)</span>' : '<span class="pill s-passive">Müşteri</span>'}</td>
+      <td>${u.role === 'admin' ? '<span class="pill s-shipped">Yönetici (Admin)</span>' : '<span class="pill s-passive">Müşteri</span>'}</td>
       <td><b>${u.orders}</b> sipariş</td>
       <td class="muted" style="font-size:12px">${new Date(u.createdAt).toLocaleDateString('tr-TR')}</td>
       <td style="white-space:nowrap">
         ${u.role === 'admin' ? '' : `<button class="btn btn-ghost btn-sm" data-role="${u.id}">Admin Yetkisi Ver</button>
-        <button class="btn-icon danger" data-del="${u.id}" title="Kullanıcıyı Sil">🗑️</button>`}
+        <button class="btn-icon danger" data-del="${u.id}" title="Kullanıcıyı Sil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>`}
       </td>
     </tr>`).join('');
 
@@ -2182,33 +2251,159 @@
     }));
   }
 
-  /* ================= MESSAGES ================= */
+  /* ================= MESSAGES, STOCK NOTIFIES & NEWSLETTER ================= */
   async function viewMessages() {
-    mount('messages', '<div class="panel"><div class="panel-body" id="msg-body"><div class="loading">Mesajlar yükleniyor…</div></div></div>');
-    let list = [];
-    try { list = (await api('/api/admin/messages')).messages; } catch (e) { return toast(e.message, true); }
-    $('#msg-body').innerHTML = list.length ? list.map((m) => `
-    <div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:20px;margin-bottom:14px;background:var(--card-2)">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-        <b class="${privacyMode ? 'privacy-masked' : ''}">${esc(m.name)} · <span style="color:var(--rose)">${esc(m.email)}</span></b>
-        <span class="muted" style="font-size:12px">${dShort(m.createdAt)}</span></div>
-        <button class="btn btn-sm btn-ghost del-msg" data-id="${m.id || ''}" style="color:var(--danger)">Sil</button>
+    mount('messages', `
+      <div class="toolbar" style="margin-bottom:16px">
+        <div class="range-tabs" id="msg-tabs">
+          <button type="button" class="range-tab active" data-tab="messages">İletişim Mesajları (<span id="cnt-msg">0</span>)</button>
+          <button type="button" class="range-tab" data-tab="stock">Stok Bekleyenler (<span id="cnt-stk">0</span>)</button>
+          <button type="button" class="range-tab" data-tab="newsletter">Bülten Aboneleri (<span id="cnt-nws">0</span>)</button>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="nws-export-btn" style="margin-left:auto;display:none">Aboneleri CSV İndir</button>
       </div>
-      <div style="line-height:1.6;color:var(--text-2)">${esc(m.message)}</div>
-      <div style="margin-top:12px">
-        <a href="mailto:${esc(m.email)}?subject=Love%20Shop%20Yan%C4%B1t" class="btn btn-ghost btn-sm">✉️ E-posta ile Yanıtla</a>
-      </div>
-    </div>`).join('') : '<div class="empty"><div class="big">💌</div>Gelen kutusunda yeni mesaj yok</div>';
+      <div class="panel"><div class="panel-body" id="msg-body"><div class="loading">Kayıtlar yükleniyor…</div></div></div>
+    `);
 
-    $$('.del-msg').forEach((btn) => btn.addEventListener('click', async (e) => {
-      const id = e.currentTarget.getAttribute('data-id') || e.currentTarget.dataset.id;
-      if (!id || !confirm('Mesaj silinsin mi?')) return;
-      try {
-        await api('/api/admin/messages/' + id, { method: 'DELETE' });
-        toast('Mesaj silindi');
-        viewMessages();
-      } catch (err) { toast(err.message, true); }
-    }));
+    let messages = [], stockNotifies = [], newsletter = [];
+    let activeTab = 'messages';
+
+    try {
+      const res = await api('/api/admin/messages');
+      messages = res.messages || [];
+      stockNotifies = res.stockNotifies || [];
+      newsletter = res.newsletter || [];
+    } catch (e) {
+      return toast(e.message, true);
+    }
+
+    function updateCounts() {
+      const cm = $('#cnt-msg'), cs = $('#cnt-stk'), cn = $('#cnt-nws');
+      if (cm) cm.textContent = messages.length;
+      if (cs) cs.textContent = stockNotifies.length;
+      if (cn) cn.textContent = newsletter.length;
+    }
+
+    function renderTab() {
+      updateCounts();
+      const expBtn = $('#nws-export-btn');
+      if (expBtn) expBtn.style.display = activeTab === 'newsletter' && newsletter.length ? 'inline-flex' : 'none';
+
+      const body = $('#msg-body');
+      if (!body) return;
+
+      if (activeTab === 'messages') {
+        body.innerHTML = messages.length ? messages.map((m) => `
+        <div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:20px;margin-bottom:14px;background:var(--card-2)">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+            <div>
+              <b class="${privacyMode ? 'privacy-masked' : ''}">${esc(m.name)} · <span style="color:var(--rose)">${esc(m.email)}</span></b>
+              <span class="muted" style="font-size:12px;margin-left:8px">${dShort(m.createdAt)}</span>
+            </div>
+            <button class="btn btn-sm btn-ghost del-msg" data-id="${esc(m.id || '')}" style="color:var(--danger)">Sil</button>
+          </div>
+          <div style="line-height:1.6;color:var(--text-2)">${esc(m.message)}</div>
+          <div style="margin-top:12px">
+            <a href="mailto:${esc(m.email)}?subject=Love%20Shop%20Yan%C4%B1t" class="btn btn-ghost btn-sm">E-posta ile Yanıtla</a>
+          </div>
+        </div>`).join('') : '<div class="empty">Gelen kutusunda iletişim mesajı bulunmuyor</div>';
+
+        $$('.del-msg', body).forEach((btn) => btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          if (!id) return;
+          confirmDialog('Bu iletişim mesajını silmek istediğinize emin misiniz?', async () => {
+            try {
+              await api('/api/admin/messages/' + encodeURIComponent(id), { method: 'DELETE' });
+              messages = messages.filter((x) => x.id !== id);
+              toast('Mesaj silindi');
+              renderTab();
+            } catch (err) { toast(err.message, true); }
+          });
+        }));
+      } else if (activeTab === 'stock') {
+        body.innerHTML = stockNotifies.length ? `
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Müşteri E-posta</th><th>Beklenen Ürün</th><th>Güncel Stok</th><th>Talep Tarihi</th><th>İşlem</th></tr></thead>
+              <tbody>
+                ${stockNotifies.map((s) => `
+                  <tr>
+                    <td class="${privacyMode ? 'privacy-masked' : ''}"><b>${esc(s.email)}</b></td>
+                    <td>${ s.productSlug ? `<a href="/urun/${esc(s.productSlug)}" target="_blank" style="text-decoration:underline">${esc(s.productName || s.productId)}</a>` : esc(s.productName || s.productId) }</td>
+                    <td>${s.currentStock > 0 ? `<span class="pill s-active">${s.currentStock} adet stokta</span>` : '<span class="pill s-passive">Stokta Yok</span>'}</td>
+                    <td class="muted" style="font-size:12px">${dShort(s.createdAt)}</td>
+                    <td style="white-space:nowrap">
+                      <a href="mailto:${esc(s.email)}?subject=${encodeURIComponent('Beklediğiniz Ürün Stoğa Girdi — ' + (s.productName || 'Love Shop'))}" class="btn btn-ghost btn-sm">Haber Ver</a>
+                      <button class="btn-icon danger del-stk" data-id="${esc(s.id)}" title="Talebi Sil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : '<div class="empty">Henüz stok bildirim talebi bulunmuyor</div>';
+
+        $$('.del-stk', body).forEach((btn) => btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          if (!id) return;
+          try {
+            await api('/api/admin/stock-notify/' + encodeURIComponent(id), { method: 'DELETE' });
+            stockNotifies = stockNotifies.filter((x) => x.id !== id);
+            toast('Stok bildirim talebi silindi');
+            renderTab();
+          } catch (err) { toast(err.message, true); }
+        }));
+      } else {
+        body.innerHTML = newsletter.length ? `
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Abone E-posta Adresi</th><th>Kayıt Tarihi</th><th>İşlem</th></tr></thead>
+              <tbody>
+                ${newsletter.map((n) => `
+                  <tr>
+                    <td class="${privacyMode ? 'privacy-masked' : ''}"><b>${esc(n.email)}</b></td>
+                    <td class="muted" style="font-size:12px">${dShort(n.createdAt)}</td>
+                    <td>
+                      <button class="btn-icon danger del-nws" data-id="${esc(n.id || n.email)}" title="Aboneyi Sil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : '<div class="empty">Henüz bülten abonesi bulunmuyor</div>';
+
+        $$('.del-nws', body).forEach((btn) => btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          if (!id) return;
+          try {
+            await api('/api/admin/newsletter/' + encodeURIComponent(id), { method: 'DELETE' });
+            newsletter = newsletter.filter((x) => (x.id || x.email) !== id);
+            toast('Bülten abonesi silindi');
+            renderTab();
+          } catch (err) { toast(err.message, true); }
+        }));
+      }
+    }
+
+    $$('#msg-tabs .range-tab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        $$('#msg-tabs .range-tab').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeTab = btn.dataset.tab;
+        renderTab();
+      });
+    });
+
+    const expBtn = $('#nws-export-btn');
+    if (expBtn) {
+      expBtn.addEventListener('click', () => {
+        const rows = [['E-posta', 'Kayit Tarihi'], ...newsletter.map((n) => [n.email, n.createdAt])];
+        exportCSV(`loveshop-bulten-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+      });
+    }
+
+    renderTab();
   }
 
   /* ================= SETTINGS ================= */
@@ -2220,34 +2415,26 @@
     mount('settings', `
     <div class="settings-container">
       
-      <!-- Card 1: Mağaza Kimliği & Duyuru Bandı -->
+      <!-- Card 1: Mağaza Kimliği -->
       <div class="settings-card">
         <div class="settings-card-head">
-          <div class="settings-card-icon">🏬</div>
+          <div class="settings-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
           <div>
-            <div class="settings-card-title">Mağaza Kimliği & Canlı Duyuru Bandı</div>
-            <div class="settings-card-sub">Marka ünvanı, üst duyuru metni ve sosyal medya bağlantıları</div>
+            <div class="settings-card-title">Mağaza Kimliği & Kurumsal Bilgiler</div>
+            <div class="settings-card-sub">Marka ünvanı ve sosyal medya bağlantıları</div>
           </div>
         </div>
         <div class="settings-card-body">
           <div class="grid-2">
-            <div class="field">
+            <div class="field" style="margin-bottom:0">
               <label>Mağaza Ünvanı *</label>
               <input id="st-name" value="${esc(s.storeName)}" placeholder="Örn: Love. Sex Shop">
               <div class="settings-hint">Ana sayfa, üst başlıklar ve fatura belgelerinde görünür.</div>
             </div>
-            <div class="field">
+            <div class="field" style="margin-bottom:0">
               <label>Instagram Kullanıcı Adı</label>
               <input id="st-insta" value="${esc(s.instagram || '@loveshop.tr')}" placeholder="Örn: @loveshop.tr">
               <div class="settings-hint">Alt bilgi ve iletişim alanlarında sergilenir.</div>
-            </div>
-          </div>
-          <div class="field" style="margin-bottom:0">
-            <label>Üst Duyuru Bandı Metni (Canlı Önizleme)</label>
-            <input id="st-announce" value="${esc(s.announcement)}" placeholder="Örn: WHATSAPP SİPARİŞ + GİZLİ PAKETLEME GARANTİSİ">
-            <div class="announce-preview-box">
-              <span>📢 CANLI DUYURU:</span>
-              <span id="st-announce-preview">${esc(s.announcement)}</span>
             </div>
           </div>
         </div>
@@ -2256,7 +2443,7 @@
       <!-- Card 2: Kargo & Fiyatlandırma Operasyonu -->
       <div class="settings-card">
         <div class="settings-card-head">
-          <div class="settings-card-icon">🚚</div>
+          <div class="settings-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="13" x="1" y="3"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
           <div>
             <div class="settings-card-title">Kargo, Fiyatlandırma & KDV Operasyonu</div>
             <div class="settings-card-sub">Sepet limitleri, kargo ücretleri ve yasal KDV oranları</div>
@@ -2286,7 +2473,7 @@
       <!-- Card 3: Müşteri İletişim Kanalları -->
       <div class="settings-card">
         <div class="settings-card-head">
-          <div class="settings-card-icon">📞</div>
+          <div class="settings-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
           <div>
             <div class="settings-card-title">İletişim & Müşteri Destek Kanalları</div>
             <div class="settings-card-sub">E-posta, doğrudan telefon ve WhatsApp sipariş hatları</div>
@@ -2316,7 +2503,7 @@
       <!-- Card 4: Mağaza Adresi & Konum -->
       <div class="settings-card">
         <div class="settings-card-head">
-          <div class="settings-card-icon">📍</div>
+          <div class="settings-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div>
             <div class="settings-card-title">Fiziksel Mağaza Adresi & Konum Bilgisi</div>
             <div class="settings-card-sub">Müşterilerin harita ve iletişim sayfasında göreceği açık adres</div>
@@ -2341,7 +2528,7 @@
       <!-- Card 5: Admin Şifre Değiştirme -->
       <div class="settings-card">
         <div class="settings-card-head">
-          <div class="settings-card-icon">🔑</div>
+          <div class="settings-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
           <div>
             <div class="settings-card-title">Yönetici Şifresi & Hesabı Güvenliği</div>
             <div class="settings-card-sub">Giriş yaptığınız yönetici hesabınızın şifresini değiştirin</div>
@@ -2360,7 +2547,7 @@
               <div class="settings-hint">Yeni şifrenizi birebir aynı şekilde girin.</div>
             </div>
           </div>
-          <button class="btn btn-ghost" id="st-pass-btn" style="margin-top:10px;border-color:var(--line-strong)">🔒 Yönetici Şifresini Güncelle</button>
+          <button class="btn btn-ghost" id="st-pass-btn" style="margin-top:10px;border-color:var(--line-strong)">Yönetici Şifresini Güncelle</button>
         </div>
       </div>
 
@@ -2370,18 +2557,10 @@
           <div style="font-weight:700;font-size:14px;color:var(--text)">Sistem & Operasyon Yapılandırması</div>
           <div style="font-size:12px;color:var(--muted)">Değişikliklerin canlı mağazada etkinleşmesi için kaydedin</div>
         </div>
-        <button class="btn btn-primary" id="st-save" style="padding:11px 24px;font-size:14px">💾 Tüm Ayarları Güncelle ve Yayınla</button>
+        <button class="btn btn-primary" id="st-save" style="padding:11px 24px;font-size:14px">Tüm Ayarları Güncelle ve Yayınla</button>
       </div>
 
     </div>`);
-
-    const announceInput = $('#st-announce');
-    const announcePreview = $('#st-announce-preview');
-    if (announceInput && announcePreview) {
-      announceInput.addEventListener('input', () => {
-        announcePreview.textContent = announceInput.value || 'GİRİLEN DUYURU METNİ...';
-      });
-    }
 
     $('#st-pass-btn').addEventListener('click', async () => {
       const p1 = $('#st-pass').value;
@@ -2391,10 +2570,10 @@
       const btn = $('#st-pass-btn');
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'Güncelleniyor... ⏳';
+      btn.innerHTML = 'Güncelleniyor...';
       try {
         const res = await api('/api/admin/change-password', { method: 'POST', body: { password: p1 } });
-        toast(res.message || 'Yönetici şifreniz güncellendi 🔑');
+        toast(res.message || 'Yönetici şifreniz güncellendi');
         $('#st-pass').value = '';
         $('#st-pass2').value = '';
       } catch (e) {
@@ -2409,15 +2588,15 @@
       const btn = $('#st-save');
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'Kaydediliyor... ⏳';
+      btn.innerHTML = 'Kaydediliyor...';
       try {
         await api('/api/admin/settings', { method: 'POST', body: {
-          storeName: $('#st-name').value, announcement: $('#st-announce').value, instagram: $('#st-insta').value,
+          storeName: $('#st-name').value, instagram: $('#st-insta').value,
           freeShippingThreshold: Number($('#st-free').value), shippingFee: Number($('#st-ship').value), kdvRate: Number($('#st-kdv').value),
           supportEmail: $('#st-mail').value, supportPhone: $('#st-phone').value, whatsapp: $('#st-wa').value,
           address: $('#st-addr').value, mapsQuery: $('#st-maps').value
         } });
-        toast('Sistem ayarları başarıyla güncellendi ✅');
+        toast('Sistem ayarları başarıyla güncellendi');
       } catch (e) {
         toast(e.message, true);
       } finally {
@@ -2758,7 +2937,7 @@
         <div class="pos-prod-pick-item" data-id="${p.id}" data-name="${esc(p.name)}" data-price="${p.price}">
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:13px;font-weight:600;color:var(--text)">${esc(p.name)}</span>
-            <span class="muted" style="font-size:11.5px">(${esc(p.categoryName || 'Genel')})</span>
+            <span class="muted" style="font-size:11.5px">(${esc(p.categoryName || 'Genel')} · ${p.stock != null ? p.stock + ' stok' : ''})</span>
           </div>
           <b style="font-size:13px;color:var(--text)">${fmt(p.price)}</b>
         </div>
@@ -3096,19 +3275,20 @@
 
       // Bind delete events
       $$('.pos-del-btn', tbody).forEach((btn) => {
-        btn.addEventListener('click', async (ev) => {
+        btn.addEventListener('click', (ev) => {
           ev.stopPropagation();
           const id = btn.dataset.id;
-          if (!confirm('Bu mağaza satış kaydını silmek istediğinize emin misiniz?')) return;
-          try {
-            await api('/api/admin/pos/' + encodeURIComponent(id), { method: 'DELETE' });
-            sales = sales.filter((s) => s.id !== id);
-            toast('Satış kaydı silindi');
-            populateMonthSelect();
-            draw();
-          } catch (e) {
-            toast(e.message, true);
-          }
+          confirmDialog('Bu mağaza satış kaydını silmek istediğinize emin misiniz?', async () => {
+            try {
+              await api('/api/admin/pos/' + encodeURIComponent(id), { method: 'DELETE' });
+              sales = sales.filter((s) => s.id !== id);
+              toast('Satış kaydı silindi');
+              populateMonthSelect();
+              draw();
+            } catch (e) {
+              toast(e.message, true);
+            }
+          });
         });
       });
     }
@@ -3263,7 +3443,7 @@
       
       if (lastPendingOrders !== null && st.pendingOrders > lastPendingOrders) {
         playOrderChime();
-        toast('🛒 CANLI SİPARİŞ ALINDI! Lütfen siparişler sayfasını kontrol edin.', false);
+        toast('CANLI SİPARİŞ ALINDI! Lütfen siparişler sayfasını kontrol edin.', false);
       }
       lastPendingOrders = st.pendingOrders;
 

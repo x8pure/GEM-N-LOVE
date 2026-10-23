@@ -31,7 +31,9 @@ import {
   saveCategoryToCloud,
   deleteCategoryFromCloud,
   loadCategoriesFromCloud,
-  uploadToFirebaseStorage
+  uploadToFirebaseStorage,
+  loadDeletedRecordsFromCloud,
+  recordDeletedInCloud
 } from './lib/firebase.js';
 import { put } from '@vercel/blob';
 import { OAuth2Client } from 'google-auth-library';
@@ -206,10 +208,23 @@ export async function syncWithCloud(force = false): Promise<void> {
         if (ensureBlobUrls(db)) {
           changed = true;
         }
-        if (inMemOrders.length > 0) {
+        const cloudDeleted = await loadDeletedRecordsFromCloud().catch(() => ({ orderIds: [], posIds: [] }));
+        if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+        const deletedOrderSet = new Set<string>([
+          ...(Array.isArray(db.meta.deletedOrderIds) ? db.meta.deletedOrderIds : []),
+          ...(Array.isArray(cloudDeleted.orderIds) ? cloudDeleted.orderIds : [])
+        ]);
+        const deletedPosSet = new Set<string>([
+          ...(Array.isArray(db.meta.deletedPosIds) ? db.meta.deletedPosIds : []),
+          ...(Array.isArray(cloudDeleted.posIds) ? cloudDeleted.posIds : [])
+        ]);
+        db.meta.deletedOrderIds = Array.from(deletedOrderSet).slice(-1000);
+        db.meta.deletedPosIds = Array.from(deletedPosSet).slice(-1000);
+
+        if (inMemOrders.length > 0 || Array.isArray(db.orders)) {
           const orderMap = new Map();
-          (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
-          inMemOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+          (db.orders || []).forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
+          inMemOrders.forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
           db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
         }
         if (Array.isArray(db.categories)) {
@@ -255,11 +270,11 @@ export async function syncWithCloud(force = false): Promise<void> {
         // Sync dedicated Firestore POS sales (READ ONLY - never write during sync)
         try {
           const cloudPosSales = await loadPosSalesFromCloud();
-          if (Array.isArray(cloudPosSales) && cloudPosSales.length > 0) {
+          if (Array.isArray(cloudPosSales)) {
             const posMap = new Map();
-            cloudPosSales.forEach((s: any) => s && s.id && posMap.set(s.id, s));
+            cloudPosSales.forEach((s: any) => s && s.id && !deletedPosSet.has(s.id) && posMap.set(s.id, s));
             (db.posSales || []).forEach((s: any) => {
-              if (s && s.id && !posMap.has(s.id)) {
+              if (s && s.id && !deletedPosSet.has(s.id) && !posMap.has(s.id)) {
                 posMap.set(s.id, s);
               }
             });
@@ -269,15 +284,15 @@ export async function syncWithCloud(force = false): Promise<void> {
           console.error('[Server] Dedicated POS sales sync error:', e);
         }
 
-        // Sync atomic Firestore Orders (Never overwrite newer orders across instances)
+        // Sync atomic Firestore Orders (Never overwrite newer orders across instances, excluding deleted orders)
         try {
           const cloudOrders = await loadOrdersFromCloud();
-          if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+          if (Array.isArray(cloudOrders)) {
             const orderMap = new Map();
-            // Start with local/cloudState orders
-            (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
-            // Overlay dedicated orders (always authoritative)
-            cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+            // Start with local/cloudState orders excluding deleted ones
+            (db.orders || []).forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
+            // Overlay dedicated orders excluding deleted ones
+            cloudOrders.forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
             db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
           }
         } catch (e) {
@@ -344,15 +359,28 @@ export async function syncWithCloud(force = false): Promise<void> {
             if (!db.settings) db.settings = {};
             db.settings.wheelIds = cloudWheel;
           }
+          const cloudDeleted = await loadDeletedRecordsFromCloud().catch(() => ({ orderIds: [], posIds: [] }));
+          if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+          const deletedOrderSet = new Set<string>([
+            ...(Array.isArray(db.meta.deletedOrderIds) ? db.meta.deletedOrderIds : []),
+            ...(Array.isArray(cloudDeleted.orderIds) ? cloudDeleted.orderIds : [])
+          ]);
+          const deletedPosSet = new Set<string>([
+            ...(Array.isArray(db.meta.deletedPosIds) ? db.meta.deletedPosIds : []),
+            ...(Array.isArray(cloudDeleted.posIds) ? cloudDeleted.posIds : [])
+          ]);
+          db.meta.deletedOrderIds = Array.from(deletedOrderSet).slice(-1000);
+          db.meta.deletedPosIds = Array.from(deletedPosSet).slice(-1000);
+
           const cloudPos = await loadPosSalesFromCloud();
-          if (Array.isArray(cloudPos) && cloudPos.length > 0) {
-            db.posSales = cloudPos;
+          if (Array.isArray(cloudPos)) {
+            db.posSales = cloudPos.filter((s: any) => s && s.id && !deletedPosSet.has(s.id));
           }
           const cloudOrders = await loadOrdersFromCloud();
-          if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+          if (Array.isArray(cloudOrders)) {
             const orderMap = new Map();
-            (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
-            cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
+            (db.orders || []).forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
+            cloudOrders.forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
             db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
           }
           const cloudProducts = await loadProductsFromCloud();
@@ -433,8 +461,19 @@ syncWithCloud(true).then(() => {
 
 let sessions: Record<string, any> = {};
 try { sessions = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')); } catch { sessions = {}; }
+let lastSessionPrune = 0;
 function persistSessions() {
   try {
+    const nowMs = Date.now();
+    if (nowMs - lastSessionPrune > 10 * 60 * 1000) {
+      lastSessionPrune = nowMs;
+      const ttl = 7 * 24 * 60 * 60 * 1000;
+      for (const [k, s] of Object.entries(sessions)) {
+        if (!s || (!s.userId && (!Array.isArray(s.cart) || s.cart.length === 0) && (nowMs - (s.createdAt || 0) > ttl))) {
+          delete sessions[k];
+        }
+      }
+    }
     fs.mkdirSync(DATA, { recursive: true });
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions));
   } catch (e) {}
@@ -631,7 +670,7 @@ const STR: Record<string, Record<string, string>> = {
     'foot.contact': 'İletişim',
     'foot.rights': ' — 18+ içerik. Tüm hakları saklıdır.',
     'foot.pay.wa': 'WhatsApp Sipariş', 'foot.pay.shop': 'Mağazada Ödeme', 'foot.pay.discreet': 'Gizli Paketleme',
-    'hero.eyebrow': '✦ 18+ · Gizli Paketleme · Anonim Ödeme',
+    'hero.eyebrow': '18+ · Gizli Paketleme · Anonim Ödeme',
     'hero.h1': 'Tutkunuz için<br><em class="em-rose">zarif &amp; gizli</em> bir dünya.',
     'hero.p': 'Kişisel zevklerinize adanmış, <strong>yargısız</strong> ve özgür bir alan. Vücut dostu materyallerle üretilmiş premium tasarımlar; <strong>mutlak gizlilik</strong> prensibi, özenli paketleme ve anonim teslimat güvencesiyle kapınıza geliyor.',
     'hero.cta.shop': 'Mağazayı Keşfet →', 'hero.cta.why': 'Neden Biz?',
@@ -1780,8 +1819,14 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
       homeOrder: typeof c.homeOrder === 'number' ? c.homeOrder : 99
     };
   });
+  const adminFeaturedCats = allCats
+    .filter((c) => c.featuredOnHome)
+    .sort((a, b) => (a.homeOrder || 99) - (b.homeOrder || 99));
   const exactSlugs = ['vibratorler', 'realistik-dildolar', 'anal-urunler', 'erkek-ve-kadinlar', 'fetish-urunler', 'fantezi-ic-giyim', 'realistik-mankenler', 'ciftler', 'erkekler', 'kadinlar'];
-  const topCats = exactSlugs.map(slug => allCats.find(c => c.slug === slug)).filter(Boolean);
+  const fallbackTopCats = exactSlugs
+    .map((slug) => allCats.find((c) => c.slug === slug && !adminFeaturedCats.some((f) => f.slug === c.slug)))
+    .filter(Boolean);
+  const topCats = [...adminFeaturedCats, ...fallbackTopCats];
   const homeRemaining = allCats.filter((c) => !topCats.some((h) => h.slug === c.slug)).sort((a, b) => b.count - a.count);
   const top = [...topCats, ...homeRemaining].slice(0, 8);
   const rest = allCats.filter((c) => !top.some((t) => t.slug === c.slug));
@@ -1875,7 +1920,7 @@ function pageHome(req: http.IncomingMessage, res: http.ServerResponse) {
   <div class="review-grid">${reviews.map((r: any) => {
     const p = db.products.find((x: any) => x.id === r.productId);
     return `<div class="review-card rv"><div class="stars">${stars(r.rating)}</div><p>"${esc(r.text)}"</p><small>— ${esc(r.userName)} · ${esc(p ? p.name : 'Product')}</small></div>`;
-  }).join('') || `<div class="empty-state"><div class="big">💬</div><p>${tr('sec.rev.empty')}</p></div>`}
+  }).join('') || `<div class="empty-state"><div class="big"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div><p>${tr('sec.rev.empty')}</p></div>`}
   </div>
 </section>
 <section class="block">
@@ -2130,6 +2175,69 @@ function pageCheckout(req: http.IncomingMessage, res: http.ServerResponse) {
   res.end(layout(tr('checkout.title'), `<div class="page-head"><div class="crumbs"><a href="/">${tr('shop.crumb.home')}</a> / <a href="/sepet">${tr('cart.crumb')}</a> / ${tr('checkout.crumb')}</div><h1>${tr('checkout.title')}</h1></div><div id="checkout-root"><div class="spinner"></div></div>`, {}, C));
 }
 
+function buildOrderWhatsAppText(order: any, lang = 'tr'): string {
+  if (!order) return '';
+  const en = lang === 'en';
+  const pickup = !!(order.address && String(order.address.full).startsWith('MAĞAZADAN'));
+  const cityStr = order.address?.city || '';
+  const isEskisehir = !pickup && (cityStr.toLowerCase().includes('eskişehir') || cityStr.toLowerCase().includes('eskisehir'));
+  const lines: string[] = [];
+
+  if (en) {
+    lines.push(
+      '*LOVE — NEW ORDER REQUEST*',
+      `Order No: #${order.id}`,
+      '────────────────────────'
+    );
+    for (const i of (order.items || [])) {
+      lines.push(`• ${i.qty}x ${i.name} — ${fmt(i.price * i.qty)}`);
+    }
+    lines.push('────────────────────────');
+    lines.push(`Delivery: ${pickup ? 'In-Store Pickup' : (isEskisehir ? `Eskişehir Express Courier (${fmt(order.shipping || 0)})` : `Standard Discreet Shipping (${fmt(order.shipping || 0)})`)}`);
+    if (order.discount) {
+      lines.push(`Discount: -${fmt(order.discount)}${order.coupon ? ` (${order.coupon})` : ''}`);
+    }
+    lines.push(`*TOTAL: ${fmt(order.total)}*`);
+    lines.push('');
+    lines.push('*CUSTOMER DETAILS*');
+    lines.push(`Name: ${order.customerName}`);
+    lines.push(`Phone: ${order.phone}`);
+    if (order.address && !pickup) {
+      lines.push(`Address: ${order.address.full}, ${order.address.city} ${order.address.zip || ''}`.trim());
+    }
+    if (order.discreet) lines.push('Packaging: 100% Unbranded Discreet Box');
+    if (order.note) lines.push(`Note: ${order.note}`);
+    lines.push(`Payment Method: ${order.payment || 'WhatsApp / Bank Transfer'}`);
+  } else {
+    lines.push(
+      '*LOVE — YENİ SİPARİŞ TALEBİ*',
+      `Sipariş No: #${order.id}`,
+      '────────────────────────'
+    );
+    for (const i of (order.items || [])) {
+      lines.push(`• ${i.qty}x ${i.name} — ${fmt(i.price * i.qty)}`);
+    }
+    lines.push('────────────────────────');
+    lines.push(`Teslimat: ${pickup ? 'Mağazadan Teslim' : (isEskisehir ? `Eskişehir İçi Özel Kurye (~2 Saat) (${fmt(order.shipping || 0)})` : `Gizli Kargo (${fmt(order.shipping || 0)})`)}`);
+    if (order.discount) {
+      lines.push(`İndirim: -${fmt(order.discount)}${order.coupon ? ` (Kupon: ${order.coupon})` : ''}`);
+    }
+    lines.push(`*GENEL TOPLAM: ${fmt(order.total)}*`);
+    lines.push('');
+    lines.push('*MÜŞTERİ BİLGİLERİ*');
+    lines.push(`Ad Soyad: ${order.customerName}`);
+    lines.push(`Telefon: ${order.phone}`);
+    if (order.address && !pickup) {
+      lines.push(`Adres: ${order.address.full}, ${order.address.city} ${order.address.zip || ''}`.trim());
+    }
+    if (order.discreet) lines.push('Paketleme: %100 İsimsiz & Gizli Paket');
+    if (order.note) lines.push(`Sipariş Notu: ${order.note}`);
+    lines.push(`Ödeme Tercihi: ${order.payment || 'WhatsApp / Havale-EFT'}`);
+    lines.push('', 'Siparişi onaylamak için ödeme bilgilerini iletebilir misiniz? Teşekkürler.');
+  }
+  return lines.join('\n');
+}
+
 function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: string) {
   const st = db.settings;
   const C = pageCtx(req);
@@ -2137,49 +2245,8 @@ function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: str
   const en = C.lang === 'en';
   const order = db.orders.find((o: any) => o.id === id);
   const pickup = !!(order && order.address && String(order.address.full).startsWith('MAĞAZADAN'));
-  
-  let lines = [];
-  if (order) {
-    if (en) {
-      lines = [
-        '✨ *Hello Love, I have a new order!*', '',
-        `📦 *ORDER SUMMARY* (Order No: #${order.id})`,
-        '━━━━━━━━━━━━━━━━━━'
-      ];
-      for (const i of order.items) lines.push(`🔹 ${i.name} (x${i.qty}) - ${fmt(i.price * i.qty)}`);
-      lines.push('━━━━━━━━━━━━━━━━━━');
-      if (order.shipping) lines.push(`🚚 Shipping: ${fmt(order.shipping)}`);
-      if (order.discount) lines.push(`🎁 Discount: -${fmt(order.discount)}`);
-      lines.push(`💰 *TOTAL: ${fmt(order.total)}*`);
-      lines.push('', '👤 *CUSTOMER INFO*');
-      lines.push(`*Name:* ${order.customerName}`);
-      lines.push(`*Phone:* ${order.phone}`);
-      if (order.address && !pickup) lines.push(`*Address:* ${order.address.full} ${order.address.city}`);
-      if (order.note) lines.push(`*Note:* ${order.note}`);
-      lines.push('', `💳 *Payment Method:* ${order.payment || 'Bank Transfer'}`);
-      lines.push('', '_Looking forward to your reply, thanks! 🌸_');
-    } else {
-      lines = [
-        '✨ *Merhaba Love, yeni bir sipariş vermek istiyorum!*', '',
-        `📦 *SİPARİŞ ÖZETİ* (Sipariş No: #${order.id})`,
-        '━━━━━━━━━━━━━━━━━━'
-      ];
-      for (const i of order.items) lines.push(`🔹 ${i.name} (x${i.qty}) - ${fmt(i.price * i.qty)}`);
-      lines.push('━━━━━━━━━━━━━━━━━━');
-      if (order.shipping) lines.push(`🚚 Kargo: ${fmt(order.shipping)}`);
-      if (order.discount) lines.push(`🎁 İndirim: -${fmt(order.discount)}`);
-      lines.push(`💰 *GENEL TOPLAM: ${fmt(order.total)}*`);
-      lines.push('', '👤 *MÜŞTERİ BİLGİLERİ*');
-      lines.push(`*İsim:* ${order.customerName}`);
-      lines.push(`*Telefon:* ${order.phone}`);
-      if (order.address && !pickup) lines.push(`*Adres:* ${order.address.full} ${order.address.city} ${order.address.zip}`);
-      if (order.note) lines.push(`*Not:* ${order.note}`);
-      lines.push('', `💳 *Ödeme Tercihi:* ${order.payment || 'Havale/EFT'}`);
-      lines.push('', '_Siparişimle ilgili dönüşünüzü bekliyorum, iyi çalışmalar! 🌸_');
-    }
-  }
-
-  const waLink = (st.whatsapp || 'https://wa.me/905436331325') + '?text=' + encodeURIComponent(lines.join('\n'));
+  const waMessage = order ? buildOrderWhatsAppText(order, C.lang) : '';
+  const waLink = (st.whatsapp || 'https://wa.me/905436331325') + '?text=' + encodeURIComponent(waMessage);
   const html = `
 <div class="success-wrap" id="thanks-wrap"><div class="success-card">
   <div class="success-icon" id="thanks-icon">
@@ -2189,7 +2256,10 @@ function pageThanks(req: http.IncomingMessage, res: http.ServerResponse, id: str
   <p id="thanks-total">${order ? tr('thanks.total') + ' ' + fmt(order.total) : ''}</p>
   <p id="thanks-p">${pickup ? tr('thanks.p.pickup') : tr('thanks.p.ship')}</p>
   <div class="order-no" id="thanks-order">${esc(id)}</div>
-  <a href="${esc(waLink)}" target="_blank" rel="noopener" class="btn btn-primary" id="thanks-wa-btn" style="margin-top:20px">💬 ${pickup ? tr('thanks.wa.pickup') : tr('thanks.wa.ship')}</a>
+  <a href="${esc(waLink)}" target="_blank" rel="noopener" class="btn btn-primary" id="thanks-wa-btn" style="margin-top:20px;display:inline-flex;align-items:center;gap:8px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+    <span>${pickup ? tr('thanks.wa.pickup') : tr('thanks.wa.ship')}</span>
+  </a>
   <p style="font-size:12.5px;color:var(--muted);margin-top:8px" id="thanks-acc-info">${tr('thanks.account')}</p>
   <div style="margin-top:26px;display:flex;gap:12px;justify-content:center"><a href="/magaza" class="btn btn-ghost">${tr('thanks.continue')}</a></div>
 </div></div>
@@ -3124,7 +3194,7 @@ function pageAdmin(req: http.IncomingMessage, res: http.ServerResponse) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — LOVE SHOP 2026</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+<link rel="icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
@@ -3861,34 +3931,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     await saveOrderSeqToCloud(nextSeq);
     await saveAsync(); persistSessions();
 
-    const isEskisehir = !pickup && city.toLowerCase().includes('eskişehir') || city.toLowerCase().includes('eskisehir');
-    const lines = [
-      'Merhaba Love Shop! 🖤',
-      'Web sitenizden yeni bir sipariş vermek istiyorum. Detaylar aşağıdadır:',
-      '',
-      '🛍️ SİPARİŞ ÖZETİ:'
-    ];
-    for (const i of order.items) {
-      lines.push(`${i.qty}x ${i.name} - ${fmt(i.price * i.qty)}`);
-    }
-    lines.push('');
-    lines.push('--------------------------');
-    lines.push(`📦 TESLİMAT: ${pickup ? 'Mağazadan Teslim' : (isEskisehir ? `Eskişehir İçi Özel Kurye (~2 Saat) (${fmt(shipping)})` : `Adrese Kargo (${fmt(shipping)})`)}`);
-    if (order.discount && order.coupon) lines.push(`🎁 İNDİRİM: -${fmt(order.discount)} (Kupon: ${order.coupon})`);
-    else if (order.discount) lines.push(`🎁 İNDİRİM: -${fmt(order.discount)}`);
-    lines.push(`💳 TOPLAM TUTAR: ${fmt(total)}`);
-    lines.push('');
-    lines.push('👤 BİLGİLERİM:');
-    lines.push(`İsim: ${name}`);
-    if (!pickup) lines.push(`Adres: ${address}, ${city}`);
-    lines.push(`Tel: ${phone}`);
-    if (order.discreet) lines.push('Not: %100 Gizli & İsimsiz Paketleme');
-    if (isEskisehir) lines.push('⚡ Teslimat Tercihi: Eskişehir İçi 2 Saatte Hızlı Teslimat');
-    if (order.note) lines.push(`Sipariş Notu: ${order.note}`);
-    lines.push('');
-    lines.push('Siparişi onaylamak için IBAN veya ödeme linki alabilir miyim? Teşekkürler! ✨');
-
-    const waMessage = lines.join('\n');
+    const waMessage = buildOrderWhatsAppText(order, apiLang);
     return json(res, 200, { ok: true, orderId, total, pickup, waMessage, waLink: (st.whatsapp || 'https://wa.me/905436331325') + '?text=' + encodeURIComponent(waMessage) });
   }
 
@@ -4119,31 +4162,48 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
     if (pathname === '/api/admin/stats' && method === 'GET') {
       try {
-        const cloudOrders = await loadOrdersFromCloud();
+        const [cloudOrders, cloudPos] = await Promise.all([
+          loadOrdersFromCloud().catch(() => []),
+          loadPosSalesFromCloud().catch(() => [])
+        ]);
         if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
           const orderMap = new Map();
           (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
           cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
           db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
         }
+        if (Array.isArray(cloudPos) && cloudPos.length > 0) {
+          const posMap = new Map();
+          cloudPos.forEach((s: any) => s && s.id && posMap.set(s.id, s));
+          (db.posSales || []).forEach((s: any) => {
+            if (s && s.id && !posMap.has(s.id)) posMap.set(s.id, s);
+          });
+          db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        }
       } catch (e) {}
 
       const revenueOrders = db.orders.filter((o: any) => o.status !== 'cancelled');
+      const posSalesList = Array.isArray(db.posSales) ? db.posSales : [];
       const now = new Date();
       
-      // Calculate 30-day historical data
+      // Calculate 30-day historical data (Online + POS combined)
       const days30 = [];
       for (let i = 29; i >= 0; i--) {
         const d = new Date(); d.setDate(now.getDate() - i);
         const key = d.toISOString().slice(0, 10);
         const dayOrders = revenueOrders.filter((o: any) => (o.createdAt || '').slice(0, 10) === key);
-        const total = dayOrders.reduce((a: number, o: any) => a + (o.total || 0), 0);
+        const dayPos = posSalesList.filter((s: any) => (s.createdAt || '').slice(0, 10) === key);
+        const onlineDayTotal = dayOrders.reduce((a: number, o: any) => a + (o.total || 0), 0);
+        const posDayTotal = dayPos.reduce((a: number, s: any) => a + (s.total || 0), 0);
+        const total = onlineDayTotal + posDayTotal;
         days30.push({
           date: key,
           label: d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }),
           shortLabel: d.toLocaleDateString('tr-TR', { weekday: 'short' }),
           value: Math.round(total * 100) / 100,
-          orders: dayOrders.length
+          onlineValue: Math.round(onlineDayTotal * 100) / 100,
+          posValue: Math.round(posDayTotal * 100) / 100,
+          orders: dayOrders.length + dayPos.length
         });
       }
       
@@ -4163,23 +4223,32 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
         ? Math.round(((last7Orders - prev7Orders) / prev7Orders) * 100) 
         : (last7Orders > 0 ? 100 : 0);
 
-      // Category distribution
+      // Category distribution (Online + POS catalog items)
       const catDist: Record<string, number> = {};
       const catRevenue: Record<string, number> = {};
       for (const p of db.products) {
         for (const o of revenueOrders) {
-          for (const i of o.items) {
+          for (const i of (o.items || [])) {
             if (i.productId === p.id) {
               const cat = p.categoryName || 'Diğer';
-              catDist[cat] = (catDist[cat] || 0) + i.qty;
-              catRevenue[cat] = (catRevenue[cat] || 0) + (i.price * i.qty);
+              catDist[cat] = (catDist[cat] || 0) + (i.qty || 1);
+              catRevenue[cat] = (catRevenue[cat] || 0) + ((i.price || 0) * (i.qty || 1));
+            }
+          }
+        }
+        for (const s of posSalesList) {
+          for (const i of (s.items || [])) {
+            if (i.productId === p.id) {
+              const cat = p.categoryName || 'Diğer';
+              catDist[cat] = (catDist[cat] || 0) + (i.qty || 1);
+              catRevenue[cat] = (catRevenue[cat] || 0) + ((i.price || 0) * (i.qty || 1));
             }
           }
         }
       }
 
       const totalItemsSold = Object.values(catDist).reduce((a, b) => a + b, 0) || 1;
-      const palette = ['#FF4D6D', '#A78BFA', '#38BDF8', '#34D399', '#FBBF24', '#F472B6'];
+      const palette = ['#FFFFFF', '#A1A1AA', '#71717A', '#52525B', '#D4D4D8', '#3F3F46'];
       const categoriesDetailed = Object.entries(catDist)
         .sort((a, b) => b[1] - a[1])
         .map(([name, qty], idx) => ({
@@ -4190,17 +4259,24 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
           color: palette[idx % palette.length]
         }));
 
-      const totalRevenue = Math.round(revenueOrders.reduce((a: number, o: any) => a + o.total, 0) * 100) / 100;
-      const aov = db.orders.length > 0 ? Math.round((totalRevenue / db.orders.length) * 100) / 100 : 0;
+      const onlineRevenue = Math.round(revenueOrders.reduce((a: number, o: any) => a + (o.total || 0), 0) * 100) / 100;
+      const posRevenue = Math.round(posSalesList.reduce((a: number, s: any) => a + (s.total || 0), 0) * 100) / 100;
+      const totalRevenue = Math.round((onlineRevenue + posRevenue) * 100) / 100;
+      const totalTxCount = revenueOrders.length + posSalesList.length;
+      const aov = totalTxCount > 0 ? Math.round((totalRevenue / totalTxCount) * 100) / 100 : 0;
 
       return json(res, 200, {
         ok: true,
         stats: {
           revenue: totalRevenue,
+          onlineRevenue,
+          posRevenue,
+          posCount: posSalesList.length,
           orders: db.orders.length,
           customers: db.users.filter((u: any) => u.role === 'customer').length,
           products: db.products.length,
           newsletter: db.newsletter.length,
+          stockNotifies: ((db as any).stockNotifies || []).length,
           pendingOrders: db.orders.filter((o: any) => o.status === 'processing').length,
           pendingReviews: db.reviews.filter((r: any) => !r.approved).length,
           lowStock: db.products.filter((p: any) => p.stock <= 5),
@@ -4217,17 +4293,27 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
     if (pathname === '/api/admin/orders' && method === 'GET') {
       try {
-        const cloudOrders = await loadOrdersFromCloud();
-        if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
-          const orderMap = new Map();
-          (db.orders || []).forEach((o: any) => o && o.id && orderMap.set(o.id, o));
-          cloudOrders.forEach((o: any) => o && o.id && orderMap.set(o.id, o));
-          db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        const [cloudOrders, cloudDeleted] = await Promise.all([
+          loadOrdersFromCloud(),
+          loadDeletedRecordsFromCloud().catch(() => ({ orderIds: [], posIds: [] }))
+        ]);
+        if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+        const deletedOrderSet = new Set<string>([
+          ...(Array.isArray(db.meta.deletedOrderIds) ? db.meta.deletedOrderIds : []),
+          ...(Array.isArray(cloudDeleted.orderIds) ? cloudDeleted.orderIds : [])
+        ]);
+        db.meta.deletedOrderIds = Array.from(deletedOrderSet).slice(-1000);
+
+        const orderMap = new Map();
+        (db.orders || []).forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
+        if (Array.isArray(cloudOrders)) {
+          cloudOrders.forEach((o: any) => o && o.id && !deletedOrderSet.has(o.id) && orderMap.set(o.id, o));
         }
+        db.orders = Array.from(orderMap.values()).sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
       } catch (e) {
         console.error('[Admin Orders] Firestore sync error:', e);
       }
-      const orders = [...db.orders].sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt));
+      const orders = [...db.orders].sort((a: any, b: any) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
       return json(res, 200, { ok: true, orders });
     }
     const oUp = pathname.match(/^\/api\/admin\/orders\/([^/]+)$/);
@@ -4265,20 +4351,59 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       return json(res, 200, { ok: true, order: o });
     }
     if (pathname === '/api/admin/orders/clear-all' && method === 'POST') {
-      const deletedCount = db.orders.length;
-      const idsToDelete = (db.orders || []).map((o: any) => o.id);
-      db.orders = [];
-      for (const oid of idsToDelete) {
-        await deleteOrderFromCloud(oid);
+      const cloudOrders = await loadOrdersFromCloud().catch(() => []);
+      const allOrdersMap = new Map();
+      (db.orders || []).forEach((o: any) => o && o.id && allOrdersMap.set(o.id, o));
+      (cloudOrders || []).forEach((o: any) => o && o.id && allOrdersMap.set(o.id, o));
+      const allOrdersToClear = Array.from(allOrdersMap.values());
+      const idsToDelete = allOrdersToClear.map((o: any) => String(o.id));
+
+      // Restore stock for non-cancelled orders when clearing
+      for (const ord of allOrdersToClear) {
+        if (ord && ord.status !== 'cancelled' && Array.isArray(ord.items)) {
+          for (const item of ord.items) {
+            const p = db.products.find((x: any) => x.id === item.productId);
+            if (p) {
+              p.stock = (Number(p.stock) || 0) + (Number(item.qty) || 1);
+              saveProductToCloud(p).catch(() => {});
+            }
+          }
+        }
       }
+
+      if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+      const delSet = new Set<string>([...(db.meta.deletedOrderIds || []), ...idsToDelete]);
+      db.meta.deletedOrderIds = Array.from(delSet).slice(-1000);
+      db.orders = [];
+
+      await Promise.all([
+        recordDeletedInCloud(idsToDelete, []),
+        ...idsToDelete.map((oid) => deleteOrderFromCloud(oid))
+      ]);
       await saveAsync();
-      return json(res, 200, { ok: true, message: 'Tüm siparişler başarıyla temizlendi.', deletedCount });
+      return json(res, 200, { ok: true, message: 'Tüm siparişler başarıyla temizlendi.', deletedCount: idsToDelete.length });
     }
     if (oUp && method === 'DELETE') {
       const id = decodeURIComponent(oUp[1]);
+      if (id === 'clear-all') return sendError(res, 400, E('err.badReq'));
       const idx = db.orders.findIndex((x: any) => x.id === id);
-      if (idx === -1) return sendError(res, 404, E('err.noOrder'));
-      db.orders.splice(idx, 1);
+      const removedOrder = idx !== -1 ? db.orders[idx] : null;
+      if (removedOrder && removedOrder.status !== 'cancelled' && Array.isArray(removedOrder.items)) {
+        for (const item of removedOrder.items) {
+          const p = db.products.find((x: any) => x.id === item.productId);
+          if (p) {
+            p.stock = (Number(p.stock) || 0) + (Number(item.qty) || 1);
+            saveProductToCloud(p).catch(() => {});
+          }
+        }
+      }
+      if (idx !== -1) {
+        db.orders.splice(idx, 1);
+      }
+      if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+      const delSet = new Set<string>([...(db.meta.deletedOrderIds || []), id]);
+      db.meta.deletedOrderIds = Array.from(delSet).slice(-1000);
+
       await deleteOrderFromCloud(id);
       await saveAsync();
       return json(res, 200, { ok: true });
@@ -4758,7 +4883,23 @@ ${rawText || name}`;
       return json(res, 200, { ok: true, message: 'Yönetici şifreniz başarıyla güncellendi.' });
     }
 
-    if (pathname === '/api/admin/messages' && method === 'GET') return json(res, 200, { ok: true, messages: [...db.contact].reverse() });
+    if (pathname === '/api/admin/messages' && method === 'GET') {
+      const stockNotifies = [...((db as any).stockNotifies || [])].reverse().map((sn: any) => {
+        const prod = db.products.find((p: any) => p.id === sn.productId || p.slug === sn.productId);
+        return {
+          ...sn,
+          productName: prod ? prod.name : sn.productId,
+          productSlug: prod ? prod.slug : '',
+          productStock: prod ? prod.stock : 0
+        };
+      });
+      return json(res, 200, {
+        ok: true,
+        messages: [...(db.contact || [])].reverse(),
+        newsletter: [...(db.newsletter || [])].reverse(),
+        stockNotifies
+      });
+    }
     const msgMatch = pathname.match(/^\/api\/admin\/messages\/([^/]+)$/);
     if (msgMatch && method === 'DELETE') {
       const idx = db.contact.findIndex((x: any) => x.id === decodeURIComponent(msgMatch[1]));
@@ -4771,27 +4912,56 @@ ${rawText || name}`;
       if (idx !== -1) { db.newsletter.splice(idx, 1); await saveAsync(); }
       return json(res, 200, { ok: true });
     }
+    const snMatch = pathname.match(/^\/api\/admin\/stock-notify\/([^/]+)$/);
+    if (snMatch && method === 'DELETE') {
+      if (!Array.isArray((db as any).stockNotifies)) (db as any).stockNotifies = [];
+      const idx = (db as any).stockNotifies.findIndex((x: any) => x.id === decodeURIComponent(snMatch[1]));
+      if (idx !== -1) { (db as any).stockNotifies.splice(idx, 1); await saveAsync(); }
+      return json(res, 200, { ok: true });
+    }
 
     /* ================= POS / FİZİKSEL MAĞAZA KASA API ================= */
     if (pathname === '/api/admin/pos' && method === 'GET') {
       try {
-        const cloudSales = await loadPosSalesFromCloud();
-        if (Array.isArray(cloudSales) && cloudSales.length > 0) {
-          const posMap = new Map();
-          cloudSales.forEach((s: any) => s && s.id && posMap.set(s.id, s));
-          (db.posSales || []).forEach((s: any) => {
-            if (s && s.id && !posMap.has(s.id)) {
-              posMap.set(s.id, s);
-            }
-          });
-          db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        const [cloudSales, cloudDeleted] = await Promise.all([
+          loadPosSalesFromCloud(),
+          loadDeletedRecordsFromCloud().catch(() => ({ orderIds: [], posIds: [] }))
+        ]);
+        if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+        const deletedPosSet = new Set<string>([
+          ...(Array.isArray(db.meta.deletedPosIds) ? db.meta.deletedPosIds : []),
+          ...(Array.isArray(cloudDeleted.posIds) ? cloudDeleted.posIds : [])
+        ]);
+        db.meta.deletedPosIds = Array.from(deletedPosSet).slice(-1000);
+
+        const posMap = new Map();
+        if (Array.isArray(cloudSales)) {
+          cloudSales.forEach((s: any) => s && s.id && !deletedPosSet.has(s.id) && posMap.set(s.id, s));
         }
+        (db.posSales || []).forEach((s: any) => {
+          if (s && s.id && !deletedPosSet.has(s.id) && !posMap.has(s.id)) {
+            posMap.set(s.id, s);
+          }
+        });
+        db.posSales = Array.from(posMap.values()).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
       } catch (err) {
         console.error('[POS GET] Error loading from cloud:', err);
       }
       if (!Array.isArray(db.posSales)) db.posSales = [];
       const sales = [...db.posSales].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      return json(res, 200, { ok: true, sales, products: db.products.map((p: any) => ({ id: p.id, name: p.name, price: p.price, originalPrice: p.originalPrice, categoryName: p.categoryName, image: p.image })) });
+      return json(res, 200, {
+        ok: true,
+        sales,
+        products: db.products.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          stock: p.stock,
+          originalPrice: p.originalPrice,
+          categoryName: p.categoryName,
+          image: p.image
+        }))
+      });
     }
 
     if (pathname === '/api/admin/pos' && method === 'POST') {
@@ -4812,6 +4982,17 @@ ${rawText || name}`;
       }
       if (total <= 0) {
         return sendError(res, 400, 'Satış tutarı 0 veya daha düşük olamaz.');
+      }
+
+      // Deduct product inventory when catalog products are sold at POS
+      for (const it of items) {
+        if (it.productId) {
+          const prod = db.products.find((p: any) => p.id === it.productId);
+          if (prod) {
+            prod.stock = Math.max(0, (Number(prod.stock) || 0) - (Number(it.qty) || 1));
+            saveProductToCloud(prod).catch(() => {});
+          }
+        }
       }
 
       const newSale = {
@@ -4837,8 +5018,25 @@ ${rawText || name}`;
       if (!Array.isArray(db.posSales)) db.posSales = [];
       const saleId = decodeURIComponent(posDelMatch[1]);
       const idx = db.posSales.findIndex((s: any) => s.id === saleId);
-      if (idx === -1) return sendError(res, 404, 'Satış kaydı bulunamadı.');
-      db.posSales.splice(idx, 1);
+      const removedSale = idx !== -1 ? db.posSales[idx] : null;
+      if (removedSale && Array.isArray(removedSale.items)) {
+        for (const it of removedSale.items) {
+          if (it.productId) {
+            const prod = db.products.find((p: any) => p.id === it.productId);
+            if (prod) {
+              prod.stock = (Number(prod.stock) || 0) + (Number(it.qty) || 1);
+              saveProductToCloud(prod).catch(() => {});
+            }
+          }
+        }
+      }
+      if (idx !== -1) {
+        db.posSales.splice(idx, 1);
+      }
+      if (!db.meta) db.meta = { createdAt: new Date().toISOString(), seq: { product: 0, order: 0, pos: 0 } };
+      const delPosSet = new Set<string>([...(db.meta.deletedPosIds || []), saleId]);
+      db.meta.deletedPosIds = Array.from(delPosSet).slice(-1000);
+
       await deletePosSaleFromCloud(saleId);
       await saveAsync();
       return json(res, 200, { ok: true });
@@ -5008,7 +5206,7 @@ Sitemap: ${baseUrl}/sitemap.xml
         ];
 
         const catUrls = allCategories().map((c: any) => ({
-          loc: `${baseUrl}/magaza?kategori=${encodeURIComponent(c.slug)}`,
+          loc: `${baseUrl}/magaza?kat=${encodeURIComponent(c.slug)}`,
           priority: '0.85',
           changefreq: 'weekly'
         }));

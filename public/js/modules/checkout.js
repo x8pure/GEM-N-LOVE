@@ -120,15 +120,14 @@ export async function initCheckout() {
       body.city = $('#ck-city').value.trim();
       body.zip = $('#ck-zip').value.trim();
     }
-    if (!body.name || !body.phone) return toast(window.LS.t('ck.required'), '⚠️');
-    if (method === 'whatsapp' && (!body.address || !body.city)) return toast(window.LS.t('ck.addrreq'), '⚠️');
+    if (!body.name || !body.phone) return toast(window.LS.t('ck.required'));
+    if (method === 'whatsapp' && (!body.address || !body.city)) return toast(window.LS.t('ck.addrreq'));
     const legalCheckbox = $('#ck-legal-consent');
     if (legalCheckbox && !legalCheckbox.checked) {
       return toast(
         window.LS.lang === 'en'
           ? 'Please verify that you are at least 18 years old and accept the Distance Sales Contract.'
-          : 'Lütfen 18 yaşından büyük olduğunuzu ve Mesafeli Satış Sözleşmesi\'ni onaylayınız.',
-        '⚠️'
+          : 'Lütfen 18 yaşından büyük olduğunuzu ve Mesafeli Satış Sözleşmesi\'ni onaylayınız.'
       );
     }
     body.ageAffirmed = true;
@@ -138,9 +137,9 @@ export async function initCheckout() {
       const r = await api('/api/checkout', { method: 'POST', body });
       setLocalCart(null);
       updateCartBadge(0);
-      toast(r.pickup ? window.LS.t('ck.ok.pickup') : window.LS.t('ck.ok.ship'), '💖');
+      toast(r.pickup ? window.LS.t('ck.ok.pickup') : window.LS.t('ck.ok.ship'));
       setTimeout(() => { location.href = '/tesekkurler/' + r.orderId; }, r.pickup ? 900 : 1200);
-    } catch (e) { btn.disabled = false; refreshPay(); toast(e.message, '⚠️'); }
+    } catch (e) { btn.disabled = false; refreshPay(); toast(e.message); }
   });
 }
 

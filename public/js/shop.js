@@ -44,8 +44,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       'pd.crumb.home': 'Anasayfa', 'pd.crumb.shop': 'Mağaza', 'pd.reviews': 'değerlendirme',
       'pd.notfound': 'Ürün bulunamadı.', 'pd.notfound.btn': 'Mağazaya Dön',
       'pd.add': 'Sepete Ekle', 'pd.buy': 'Hemen Al',
-      'pd.stock.in': 'Stokta, 14:00 öncesi aynı gün kargoda (1-3 iş günü)', 'pd.stock.low': 'Son {n} adet — elini çabuk tut!', 'pd.stock.out': 'Tükendi',
-      'pd.trust1': 'Gizli paketleme — dışarıdan içerik anlaşılmaz', 'pd.trust2': '2.000 TL üzeri ücretsiz kargo',
+      'pd.stock.in': 'Stokta, 16:30 öncesi aynı gün kargoda (1-3 iş günü)', 'pd.stock.low': 'Son {n} adet — elini çabuk tut!', 'pd.stock.out': 'Tükendi',
+      'pd.trust1': 'Gizli paketleme — dışarıdan içerik anlaşılmaz', 'pd.trust2': '1.500 TL üzeri ücretsiz kargo',
       'pd.trust3': 'Güvenli ve anonim ödeme', 'pd.trust4': 'Hijyen nedeniyle iade yok, hasarlı üründe yenisi gönderilir',
       'pd.tab.detail': 'Detaylar', 'pd.tab.reviews': 'Yorumlar', 'pd.similar': 'Benzer Ürünler', 'pd.all': 'Tümü →',
       'pd.noreviews': 'Bu ürün için henüz onaylanmış yorum yok. İlk yorumu sen yaz!', 'pd.reviewsfail': 'Yorumlar yüklenemedi.', 'pd.write': 'Yorum Yaz',
@@ -103,8 +103,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       'pd.crumb.home': 'Home', 'pd.crumb.shop': 'Shop', 'pd.reviews': 'reviews',
       'pd.notfound': 'Product not found.', 'pd.notfound.btn': 'Back to Shop',
       'pd.add': 'Add to Cart', 'pd.buy': 'Buy Now',
-      'pd.stock.in': 'In stock, same day dispatch before 14:00 (1-3 days)', 'pd.stock.low': 'Only {n} left — hurry!', 'pd.stock.out': 'Out of stock',
-      'pd.trust1': 'Discreet packaging — contents never visible from outside', 'pd.trust2': 'Free shipping over 2,000 TL',
+      'pd.stock.in': 'In stock, same day dispatch before 16:30 (1-3 days)', 'pd.stock.low': 'Only {n} left — hurry!', 'pd.stock.out': 'Out of stock',
+      'pd.trust1': 'Discreet packaging — contents never visible from outside', 'pd.trust2': 'Free shipping over 1,500 TL',
       'pd.trust3': 'Secure & anonymous payment', 'pd.trust4': 'No returns for hygiene; damaged items are replaced',
       'pd.tab.detail': 'Details', 'pd.tab.reviews': 'Reviews', 'pd.similar': 'Similar Products', 'pd.all': 'All →',
       'pd.noreviews': 'No approved reviews for this product yet. Be the first to write one!', 'pd.reviewsfail': 'Reviews could not be loaded.', 'pd.write': 'Write a Review',
@@ -150,7 +150,7 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       'pf.title.address': 'Delivery & Shipping Address', 'pf.sub.address': 'Manage your primary shipping address for discrete parcel delivery.',
       'pf.title.pass': 'Password & Security', 'pf.sub.pass': 'Keep your account secure with a strong and unique password.',
       'pf.ok': 'Profile updated', 'pf.addrok': 'Address saved', 'pf.passok': 'Password updated',
-      'contact.ok': 'Your message is received, we will reply within 24 hours 💌',
+      'contact.ok': 'Your message is received, we will reply within 24 hours.',
       'cf.hint': 'Drag · Touch', 'cf.prev': 'Previous product', 'cf.next': 'Next product'
     }
   };

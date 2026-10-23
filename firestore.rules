@@ -1,8 +1,69 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Default deny for all unknown collections
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
+    }
+
+    // Server-side state snapshot & chunks
+    match /store_data/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.data is map
+                            && (docId == 'app_state' || docId.matches('^app_state_part_[0-9]+$'));
+      allow delete: if docId == 'app_state' || docId.matches('^app_state_part_[0-9]+$');
+    }
+
+    // Persistent uploaded product & category images (base64 & chunks)
+    match /uploaded_images/{imageId} {
+      allow read: if true;
+      allow create, update: if request.resource.data is map
+                            && request.resource.data.fileName is string
+                            && request.resource.data.fileName.size() > 0
+                            && request.resource.data.fileName.size() <= 260;
+      allow delete: if true;
+    }
+
+    // Store settings, 3D wheel, order sequence counter, and deleted tombstones
+    match /app_settings/{settingId} {
+      allow read: if settingId in ['general', 'wheel', 'order_seq', 'deleted_records'];
+      allow create, update: if settingId in ['general', 'wheel', 'order_seq', 'deleted_records']
+                            && request.resource.data is map;
+      allow delete: if settingId in ['general', 'wheel', 'order_seq', 'deleted_records'];
+    }
+
+    // Atomic catalog products
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if request.resource.data is map
+                            && request.resource.data.id is string
+                            && request.resource.data.name is string;
+      allow delete: if true;
+    }
+
+    // Atomic catalog categories
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update: if request.resource.data is map
+                            && request.resource.data.id is string
+                            && request.resource.data.slug is string;
+      allow delete: if true;
+    }
+
+    // Atomic customer orders
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create, update: if request.resource.data is map
+                            && request.resource.data.id is string;
+      allow delete: if true;
+    }
+
+    // Atomic physical POS sales
+    match /pos_sales/{saleId} {
+      allow read: if true;
+      allow create, update: if request.resource.data is map
+                            && request.resource.data.id is string;
+      allow delete: if true;
     }
   }
 }
