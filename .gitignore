@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+data/sessions.json
+data/secret.txt
+data/secrets.*
+data/*.log
+*.pem
+*.key

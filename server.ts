@@ -632,7 +632,12 @@ function requireAdmin(req: http.IncomingMessage, res: http.ServerResponse) {
 function sendError(res: http.ServerResponse, code: number, msg: string) { return json(res, code, { ok: false, error: msg }); }
 const esc = (s: any) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
 const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: n % 1 ? 2 : 0 }).format(n);
-const stars = (r: number) => '★'.repeat(Math.round(r || 0)) + '☆'.repeat(5 - Math.round(r || 0));
+const starFilledSvg = '<svg class="star-svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:inline-block;vertical-align:middle;color:var(--gold, #D4AF37);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+const starEmptySvg = '<svg class="star-svg star-empty" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;opacity:0.35;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+const stars = (r: number) => {
+  const rounded = Math.max(0, Math.min(5, Math.round(r || 0)));
+  return starFilledSvg.repeat(rounded) + starEmptySvg.repeat(5 - rounded);
+};
 
 const catAuthLimiter = new Map<string, { count: number; reset: number }>();
 function rateLimited(req: http.IncomingMessage, key: string, max: number, windowMs: number) {
@@ -1134,6 +1139,15 @@ function allCategories() {
   for (const c of cats) {
     c.subcategories = SUBCATEGORIES_MAP[c.slug] || [];
   }
+  cats.sort((a: any, b: any) => {
+    const aFeat = a.featuredOnHome ? 1 : 0;
+    const bFeat = b.featuredOnHome ? 1 : 0;
+    if (aFeat !== bFeat) return bFeat - aFeat;
+    if (a.featuredOnHome && b.featuredOnHome) {
+      return (a.homeOrder || 99) - (b.homeOrder || 99);
+    }
+    return String(a.name || '').localeCompare(String(b.name || ''), 'tr');
+  });
   return cats;
 }
 
@@ -2187,7 +2201,7 @@ function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: 
     <div class="pd-layout">
       <div class="pd-gallery" id="pd-gallery-wrap">
         <div class="pd-media ${!inStock ? 'is-out-of-stock' : ''}" id="pd-media-stage">
-          ${p.image ? `<img id="pd-main-image" src="${esc(imgSrcSSR(p.image))}" alt="${esc(p.name)}">` : ''}
+          ${p.image ? `<img id="pd-main-image" src="${esc(resolveWorkingImageUrl(p.image))}" alt="${esc(p.name)}">` : ''}
         </div>
       </div>
       <div class="pd-info">
@@ -3548,7 +3562,26 @@ async function saveUpload(dataUrl: string): Promise<string> {
       if (buf.length > 0) {
         const name = uid('img') + '.' + ext;
 
-        // 1. Store in RAM cache immediately
+        // 1. Upload to Firebase Storage CDN (Primary Google Cloud Storage for Blaze plan)
+        try {
+          const fbUrl = await uploadToFirebaseStorage(name, buf, mimeType);
+          if (fbUrl) {
+            console.log('[saveUpload] Uploaded to Firebase Storage CDN:', fbUrl);
+            return fbUrl;
+          }
+        } catch (fbErr) {
+          console.error('[saveUpload] Firebase Storage upload error:', fbErr);
+        }
+
+        // 2. Try Vercel Blob if configured
+        if (process.env.BLOB_READ_WRITE_TOKEN) {
+          try {
+            const blob = await put(`uploads/${name}`, buf, { access: 'public', contentType: mimeType });
+            if (blob && blob.url) return blob.url;
+          } catch (blobErr) {}
+        }
+
+        // 3. Store in RAM cache immediately
         memoryImageCache.set(name, { buf, mimeType });
 
         // 2. Write to local disk (/public/uploads and /tmp/uploads for serverless)
@@ -5167,6 +5200,11 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
     pathname === '/magaza' ||
     pathname.startsWith('/urun/') ||
     pathname.startsWith('/rehber') ||
+    pathname.startsWith('/api/admin/') ||
+    pathname.startsWith('/api/products') ||
+    pathname.startsWith('/api/categories') ||
+    pathname === '/magaza' ||
+    pathname.startsWith('/urun/') ||
     pathname.startsWith('/sehir/') ||
     pathname === '/sitemap.xml' ||
     pathname === '/google-feed.xml' ||
