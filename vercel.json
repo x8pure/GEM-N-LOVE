@@ -2,7 +2,7 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/((?!css/|js/|uploads/|favicon\\.svg|robots\\.txt|googled2d4255e0f685daf\\.html).*)",
+      "source": "/((?!css/|js/|uploads/|logo\\.png|favicon\\.svg|robots\\.txt|googled2d4255e0f685daf\\.html).*)",
       "destination": "/api/index?__vpath=$1"
     }
   ],

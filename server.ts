@@ -1313,7 +1313,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
     ? 'LOVE: Modern Sexual Wellness & Intimacy store. 100% discreet packaging, anonymous payment, certified body-safe products with express delivery across Turkey.'
     : 'LOVE: Modern Sexual Wellness & Cinsel Sağlık Platformu. Beden dostu medikal teknolojiler, masaj aletleri ve organik formüller. %100 çift mühürlü gizli paketleme, tüm Türkiye\'ye aynı gün kargo ve Eskişehir 15 yıllık köklü mağaza güvencesi.');
   const canonicalUrl = opts.canonical || (`https://loveeroticshop.com${C.path || '/'}`);
-  const rawOgImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveeroticshop.com/test.png');
+  const rawOgImage = opts.ogImage || (opts.product?.image ? opts.product.image : 'https://loveeroticshop.com/logo.png');
   const ogImage = (rawOgImage && !String(rawOgImage).startsWith('http://') && !String(rawOgImage).startsWith('https://'))
     ? `https://loveeroticshop.com${String(rawOgImage).startsWith('/') ? '' : '/'}${rawOgImage}`
     : String(rawOgImage);
@@ -1338,7 +1338,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       "@id": "https://loveeroticshop.com/#organization",
       "name": "LOVE — Sexual Wellness",
       "url": "https://loveeroticshop.com/",
-      "logo": "https://loveeroticshop.com/test.png",
+      "logo": "https://loveeroticshop.com/logo.png",
       "description": "Türkiye genelinde %100 çift mühürlü gizli paketleme ile hizmet veren modern sexual wellness ve intimate body care platformu.",
       "contactPoint": {
         "@type": "ContactPoint",
@@ -1359,8 +1359,8 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
       "legalName": "Love Erotik Shop Eskişehir",
       "alternateName": ["Eskişehir Sex Shop", "Eskişehir Erotik Shop", "Love Shop Eskişehir"],
       "url": "https://loveeroticshop.com/sehir/eskisehir",
-      "logo": "https://loveeroticshop.com/test.png",
-      "image": "https://loveeroticshop.com/test.png",
+      "logo": "https://loveeroticshop.com/logo.png",
+      "image": "https://loveeroticshop.com/logo.png",
       "description": "Eskişehir Tepebaşı & Odunpazarı içi 30-120 dakikada özel jet gizli kurye ve fiziksel mağazadan elden teslim. Kadınlar, erkekler ve çiftler için sokaktan görünmeyen vitrinsiz 1. kat daire konseptiyle %100 yargısız, güvenli ve konforlu danışmanlık ortamı. %100 gizli çift katlı mühürlü paketleme, orijinal faturalı ve beden dostu medikal teknolojiler.",
       "priceRange": "₺₺",
       "telephone": st.supportPhone || "+90 543 633 13 25",
@@ -1476,7 +1476,7 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
         "name": "Love Erotik & Seks Shop Eskişehir",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://loveeroticshop.com/test.png"
+          "url": "https://loveeroticshop.com/logo.png"
         }
       },
       "datePublished": art.date,
