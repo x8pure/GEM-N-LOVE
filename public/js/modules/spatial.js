@@ -921,16 +921,9 @@ export async function openSpatialCardZoom(productIdOrSlug, originCard) {
 
     $('#spatial-stage-close', stage)?.addEventListener('click', closeSpatialCardZoom);
 
-    // Clicking 'Tüm Detaylar' navigates to product page
+    // Clicking 'Tüm Detaylar' navigates to product page (keep ?urun= in current history entry so Back button reopens modal)
     $('.spatial-all-features-link', stage)?.addEventListener('click', function(e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      
-      // Clean up the URL before navigating, so clicking 'Back' doesn't reopen modal
-      const cleanUrl = new URL(window.location.href);
-      cleanUrl.searchParams.delete('modal');
-      cleanUrl.searchParams.delete('id');
-      cleanUrl.searchParams.delete('urun'); // just in case
-      window.history.replaceState({}, '', cleanUrl.toString());
 
       const btn = this;
       btn.classList.add('is-loading');
@@ -1035,32 +1028,32 @@ export function initSpatialAnimations() {
     if (e.target === $('#spatial-canvas-overlay')) closeSpatialCardZoom();
   });
   
-  window.addEventListener('popstate', () => {
+  const syncModalWithUrl = () => {
     const params = new URLSearchParams(window.location.search);
     const urun = params.get('urun');
     if (urun) {
-      openSpatialCardZoom(urun, null);
-    } else {
+      let originCard = null;
+      try {
+        originCard = $(`.prod-card[data-slug="${CSS.escape(urun)}"], .prod-card[data-id="${CSS.escape(urun)}"]`);
+      } catch (e) {}
+      openSpatialCardZoom(urun, originCard || null);
+    } else if ($('#spatial-canvas-overlay')?.classList.contains('open')) {
       closeSpatialCardZoom(true);
     }
-  });
+  };
 
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted && $('#spatial-canvas-overlay')?.classList.contains('open')) {
-      closeSpatialCardZoom(true);
+    if (e.persisted) {
+      syncModalWithUrl();
     }
   });
 
   document.addEventListener('spa:navigated', () => {
-    if ($('#spatial-canvas-overlay')?.classList.contains('open')) {
-      closeSpatialCardZoom(true);
-    }
+    syncModalWithUrl();
   });
 
   setTimeout(() => {
-    const params = new URLSearchParams(window.location.search);
-    const urun = params.get('urun');
-    if (urun) openSpatialCardZoom(urun, null);
+    syncModalWithUrl();
   }, 150);
 
   const stageEl = $('#spatial-card-stage');
@@ -1072,12 +1065,12 @@ export function initSpatialAnimations() {
 
   // Global event delegation for cards and modal actions
   document.addEventListener('click', (e) => {
-    // 1. Close modal if clicking a navigation link inside spatial modal (e.g. category)
+    // 1. Close modal if clicking a navigation link inside spatial modal (e.g. 'Tüm Detaylar' or category)
     const modalLink = e.target.closest('#spatial-card-stage a');
     if (modalLink) {
       const href = modalLink.getAttribute('href') || '';
       if (!href.startsWith('#')) {
-        closeSpatialCardZoom();
+        closeSpatialCardZoom(true);
       }
       return;
     }

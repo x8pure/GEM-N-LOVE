@@ -5411,10 +5411,19 @@ html:not(.dark) .pd-trust-icon {
   line-height: 1.7;
   color: var(--text);
 }
+.pd-editorial-copy {
+  white-space: pre-line;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text);
+  max-width: 85ch;
+  margin-top: 8px;
+}
 .pd-desc-paragraphs p {
   margin-bottom: 14px;
   color: var(--muted);
   max-width: 80ch;
+  white-space: pre-line;
 }
 .pd-specs-table-wrap {
   margin: 28px 0;

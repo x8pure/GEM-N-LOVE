@@ -2189,8 +2189,10 @@ function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: 
   const catLabel = C.lang === 'en' ? catNameEN(p.category, p.categoryName) : (p.categoryName || p.category || 'Koleksiyon');
   const priceFormatted = new Intl.NumberFormat(C.lang === 'en' ? 'en-US' : 'tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: p.price % 1 ? 2 : 0 }).format(p.price || 0);
   const longDescText = String(p.longDescription || p.description || '').trim();
+  const initialProductJson = JSON.stringify(p).replace(/</g, '\\u003c');
 
   const html = `<div id="product-root">
+    <script type="application/json" id="pd-initial-data">${initialProductJson}</script>
     <div class="page-head" style="padding-bottom:6px">
       <div class="crumbs">
         <a href="/">${tr('shop.crumb.home')}</a> / 
@@ -2213,7 +2215,7 @@ function pageProduct(req: http.IncomingMessage, res: http.ServerResponse, slug: 
         ${p.description ? `<p class="pd-lead-desc">${esc(p.description)}</p>` : ''}
       </div>
     </div>
-    ${longDescText ? `<div class="pd-tabs-section"><div class="pd-tab-content" id="tab-panel"><div class="pd-editorial-copy"><p>${esc(longDescText)}</p></div></div></div>` : ''}
+    ${longDescText ? `<div class="pd-tabs-section"><div class="pd-tabs-nav" id="tabs"><button class="pd-tab-btn active" data-tab="detay">${tr('pd.tab.desc')}</button><button class="pd-tab-btn" data-tab="kargo">${tr('pd.tab.ship')}</button><button class="pd-tab-btn" data-tab="yorum">${tr('pd.tab.rev')}</button></div><div class="pd-tab-content" id="tab-panel"><div class="pd-desc-paragraphs"><p>${esc(longDescText)}</p></div></div></div>` : ''}
   </div>`;
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
   res.end(layout(pageTitle, html, { product: p, description: desc, ogImage, canonical }, C));
@@ -4250,27 +4252,223 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     return highlights.slice(0, 4);
   }
 
-  function fallbackPolishProduct(name: string, category: string, rawText: string) {
-    const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-    const cleanTitle = name || (lines[0] ? lines[0].slice(0, 65) : 'Özel Seri Ürün');
-    const highlights = extractProductHighlights({ name: cleanTitle, category, description: rawText, longDescription: rawText });
+  function cleanProductTitle(rawTitle: string): string {
+    let t = String(rawTitle || '').trim();
+    t = t.replace(/\b(?:kod|st|art|ref|sku|model)[:\-\s]*[a-z0-9\-]+\b/gi, '').trim();
+    t = t.replace(/^(?:yeni|süper|fırsat|indirim|orijinal)\s*[-:]*\s*/i, '').trim();
+    t = t.replace(/\s{2,}/g, ' ');
+    if (t.length > 5 && t === t.toUpperCase()) {
+      t = t.toLocaleLowerCase('tr-TR').replace(/(?:^|\s)\S/g, a => a.toLocaleUpperCase('tr-TR'));
+    }
+    return t || 'Özel Koleksiyon Ürünü';
+  }
 
-    let lead = `${cleanTitle}, özel tasarımı ve premium kalitesiyle beklentileri aşan lüks bir deneyim sunar.`;
-    if (category.toLowerCase().includes('sprey') || category.toLowerCase().includes('sağlık')) {
-       lead = `${cleanTitle}, özel formülü sayesinde beklentileri karşılayan ve güven veren etkili bir deneyim sunar.`;
+  function detectProductClassification(fullText: string, category: string): {
+    isTopical: boolean;
+    isOral: boolean;
+    isToy: boolean;
+    isLingerie: boolean;
+    typeLabel: string;
+  } {
+    const lower = fullText.toLocaleLowerCase('tr-TR');
+    const cat = category.toLocaleLowerCase('tr-TR');
+
+    const isExplicitOral = (
+      lower.includes('içecek') || lower.includes('içeceğe') || lower.includes('suya damlat') ||
+      lower.includes('meyve suyuna') || lower.includes('oral damla') || lower.includes('şase') ||
+      lower.includes('kapsül') || lower.includes('tablet') || lower.includes('efervesan') ||
+      lower.includes('macun') || lower.includes('ağızdan') || lower.includes('sıvı takviye')
+    ) && !lower.includes('harici kullanım') && !lower.includes('masaj damlası') && !lower.includes('bölgeye damlat');
+
+    const isLingerie = (
+      cat.includes('fantezi') || cat.includes('giyim') || cat.includes('kostum') ||
+      lower.includes('sütyen') || lower.includes('külot') || lower.includes('tanga') ||
+      lower.includes('babydoll') || lower.includes('jartiyer') || lower.includes('bodysuit') ||
+      lower.includes('gecelik') || lower.includes('korse') || lower.includes('çorap') ||
+      lower.includes('dantel') || lower.includes('tül')
+    ) && !lower.includes('vibratör') && !lower.includes('dildo') && !lower.includes('sprey');
+
+    const isLiquidOrCosmetic = (
+      lower.includes('sprey') || lower.includes('geciktirici') || lower.includes('delay') ||
+      lower.includes('damla') || lower.includes('drop') || lower.includes('krem') ||
+      lower.includes('jel') || lower.includes('serum') || lower.includes('masaj yağı') ||
+      lower.includes('kayganlaştırıcı') || lower.includes('lube') || lower.includes('yağ') ||
+      lower.includes('losyon') || lower.includes('orgazm')
+    );
+
+    const isAccessory = !isLiquidOrCosmetic && (
+      lower.includes('kelepçe') || lower.includes('kelepce') || lower.includes('tasma') ||
+      lower.includes('kırbaç') || lower.includes('kirbac') || lower.includes('maske') ||
+      lower.includes('göz bağı') || lower.includes('fetiş') || lower.includes('fetish')
+    );
+
+    const isToy = !isLiquidOrCosmetic && !isAccessory && (
+      cat.includes('oyuncak') || cat.includes('vibrator') ||
+      lower.includes('vibratör') || lower.includes('wand') || lower.includes('dildo') ||
+      lower.includes('mastürbatör') || lower.includes('masturbat') || lower.includes('plug') ||
+      lower.includes('anal') || lower.includes('pompa') || lower.includes('yapay penis')
+    );
+
+    const isTopical = !isExplicitOral && (isLiquidOrCosmetic || cat.includes('saglik'));
+
+    let typeLabel = 'Genel E-Ticaret';
+    if (isTopical) typeLabel = 'Harici Cilt & Bölgesel Bakım';
+    else if (isExplicitOral) typeLabel = 'Ağızdan Alınan Gıda Takviyesi';
+    else if (isToy) typeLabel = 'Yetişkin Masaj & Cihaz';
+    else if (isLingerie) typeLabel = 'İç Giyim & Fantezi Kostüm';
+
+    if (isAccessory) typeLabel = 'Fetiş & BDSM Aksesuarı';
+    return {
+      isTopical,
+      isOral: isExplicitOral,
+      isToy,
+      isAccessory,
+      isLingerie,
+      typeLabel
+    };
+  }
+
+  function enforceSafetyAndGuardrails(
+    data: { name: string; description: string; highlights: string[]; longDescription: string },
+    rawText: string,
+    category: string
+  ) {
+    const fullSource = `${data.name} ${data.description} ${data.longDescription} ${rawText}`;
+    const classification = detectProductClassification(fullSource, category);
+    let highlights = Array.isArray(data.highlights) ? [...data.highlights] : [];
+    let longDesc = String(data.longDescription || '').trim();
+    let shortDesc = String(data.description || '').trim();
+
+    // Clean any unwanted AI emojis or markdown hash headers
+    longDesc = longDesc.replace(/[💡🔒🌟★✨✦]/g, '').replace(/###+s*/g, '');
+
+    // Replace hyperbolic "Hayati Güvenlik Uyarısı" with civilized, polite phrasing
+    longDesc = longDesc.replace(/\*?\s*Hayati Güvenlik Uyarısı:\s*/gi, 'Önemli Not: ');
+
+    if (classification.isTopical) {
+      // 1. HARD SCRUB OF ANY ORAL INGESTION INSTRUCTIONS
+      const oralRegex = /(?:suya|içeceğe|meyve suyuna|çay|kahveye|bardağa)\s+(?:\d+[-–\s]*\d*\s*)?(?:damla|ölçek)?\s*(?:damlatılarak|damlatıp|katılarak)?\s*(?:içilir|içilmelidir|içiniz|tüketiniz|tüketilir|yutulur|yutunuz)|(?:günde\s*\d+\s*kez\s*)?(?:ağızdan|oral yolla|aç karnına|tok karnına)\s*(?:alınır|tüketilir|içilir|yutulur)/gi;
+      
+      longDesc = longDesc.replace(oralRegex, 'Temiz hedef bölgeye masaj yaparak haricen uygulanır');
+      shortDesc = shortDesc.replace(oralRegex, 'Harici masaj uygulaması ile kullanılır');
+      longDesc = longDesc.replace(/\b(?:içilerek|içilmesi|yutulması|yutularak|yutunuz|içiniz)\b/gi, 'haricen uygulanarak');
+      
+      highlights = highlights.filter(h => !h.toLowerCase().includes('içeceğe') && !h.toLowerCase().includes('ağızdan'));
+      const safetyBadge = 'YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ';
+      if (!highlights.includes(safetyBadge)) {
+        highlights.unshift(safetyBadge);
+      }
+
+      if (!longDesc.toLowerCase().includes('uygulama') && !longDesc.toLowerCase().includes('kullanım')) {
+        longDesc += `\n\nUYGULAMA VE DENEYİM RİTÜELİ:\nTemiz ve kuru cilde / hedef bölgeye nazik masaj hareketleriyle haricen uygulayınız.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya gıdalara karıştırılmaz.`;
+      }
+
+      if (!longDesc.toLowerCase().includes('gizlilik') && !longDesc.toLowerCase().includes('gizli paket')) {
+        longDesc += `\n\nGİZLİLİK VE TESLİMAT STANDARDI:\nTüm siparişleriniz mahremiyet ilkelerimiz doğrultusunda, içeriği dışarıdan kesinlikle anlaşılmayacak özel korumalı gizli paketlerde tarafınıza teslim edilir.`;
+      }
+    } else {
+      highlights = highlights.filter(h => !h.toLowerCase().includes('içilmez') && !h.toLowerCase().includes('içeceğe'));
+
+      // If the generated text doesn't have delivery standard, append minimal note (NO emojis, NO hashes)
+      if (!longDesc.toLowerCase().includes('gizlilik') && !longDesc.toLowerCase().includes('gizli paket')) {
+        longDesc += `\n\nGİZLİLİK VE TESLİMAT STANDARDI:\nTüm siparişleriniz mahremiyet ilkelerimiz doğrultusunda, içeriği dışarıdan kesinlikle anlaşılmayacak özel korumalı gizli paketlerde tarafınıza teslim edilir.`;
+      }
     }
 
-    const bulletItems = lines.filter(l => l.length > 5 && !l.toLowerCase().includes('bu ürün')).slice(0, 6);
-    const bulletText = bulletItems.length 
-      ? `\n\nÖne Çıkan Özellikler:\n` + bulletItems.map(b => `• ${b.replace(/^[-•*:\d.]+\s*/, '')}`).join('\n')
+    return {
+      name: data.name,
+      description: shortDesc,
+      highlights: highlights.slice(0, 4),
+      longDescription: longDesc,
+      safetyCheck: {
+        type: classification.typeLabel,
+        verified: true,
+        isTopical: classification.isTopical
+      }
+    };
+  }
+
+  function fallbackPolishProduct(name: string, category: string, rawText: string) {
+    const rawClean = (rawText || name || '').trim();
+    const cleanTitle = cleanProductTitle(name || rawClean.split('\n')[0] || 'Özel Ürün');
+    const classification = detectProductClassification(`${cleanTitle} ${rawClean}`, category);
+    const highlights = extractProductHighlights({ name: cleanTitle, category, description: rawClean, longDescription: rawClean });
+
+    let leadDesc = '';
+    let introPara = '';
+    let ritualText = '';
+
+    if (classification.isAccessory) {
+      leadDesc = `${cleanTitle}, zarif tasarımı ve güvenli kilit mekanizmasıyla fantezi dünyanıza sofistike bir dokunuş katar.`;
+      introPara = `${cleanTitle}, teninize temas eden yumuşak dokusu ve dayanıklı metal konstrüksiyonu ile konfor ve heyecanı mükemmel bir dengede sunar. Ayarlanabilir kademeli yapısı sayesinde bilek ölçünüze kolayca uyum sağlar.`;
+      ritualText = `Kelepçeyi bileğe rahatça oturacak kademede kilitleyiniz; kullanım sırasında aşırı sıkmamaya özen gösteriniz.\nÖnemli Not: Temizliğini nemli bir bezle silerek gerçekleştiriniz; doğrudan suya daldırmaktan kaçınınız.`;
+    } else if (classification.isTopical) {
+      const isDelay = rawClean.toLowerCase().includes('geciktir') || rawClean.toLowerCase().includes('delay') || rawClean.toLowerCase().includes('stag');
+      const isArousal = rawClean.toLowerCase().includes('uyarıcı') || rawClean.toLowerCase().includes('orgazm') || rawClean.toLowerCase().includes('istek');
+      
+      if (isDelay) {
+        leadDesc = `${cleanTitle}, erkeklere özel geliştirilmiş formülüyle birliktelik süresini ve konforunu desteklemeye yardımcı olur.`;
+        introPara = `${cleanTitle}, birliktelik deneyiminizi daha dengeli, kontrollü ve uzun soluklu yaşamanız için özenle formüle edilmiştir. Cilt tarafından hızla emilen hafif yapısı sayesinde yapışkanlık hissi bırakmaz; pratik kullanımıyla anında konfor sunar.`;
+        ritualText = `Birliktelikten 10-15 dakika önce hedef bölgeye 2-3 fıs püskürterek hafifçe masajla yediriniz.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya yutulmaz.`;
+      } else if (isArousal) {
+        leadDesc = `${cleanTitle}, bölgesel duyarlılığı ve uyarımı desteklemek üzere özel olarak formüle edilmiş konsantre masaj damlasıdır.`;
+        introPara = `${cleanTitle}, kadınlara özel zengin içeriğiyle hassas bölgelerdeki duyarlılığı ve doğal uyarılma hissini artırmaya yardımcı olur. Masaj eşliğinde uygulandığında hızlı emilim gösterir ve yoğun bir ten konforu sağlar.`;
+        ritualText = `Temiz cilde ihtiyaç duyulan miktarda (3-5 damla) nazik masaj hareketleriyle uygulayınız.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya içeceklere karıştırılmaz.`;
+      } else {
+        leadDesc = `${cleanTitle}, özel geliştirilmiş formülüyle teninizde pürüzsüz, ipeksi ve ferahlatıcı bir bakım deneyimi sunar.`;
+        introPara = `${cleanTitle}, hassas cilt dengesi gözetilerek formüle edilmiş premium bakım ürünüdür. Cilde kolayca uygulanır, gerginlik hissini azaltır ve uzun süreli rahatlık sağlar.`;
+        ritualText = `Temiz cilde hafif masajla uygulayınız.\nÖnemli Not: Haricen kullanılır; gözle temasından kaçınınız.`;
+      }
+    } else if (classification.isToy) {
+      leadDesc = `${cleanTitle}, ergonomik yapısı ve gelişmiş motor teknolojisiyle benzersiz bir kişisel masaj ve uyarım deneyimi sunar.`;
+      introPara = `${cleanTitle}, vücut anatomisine kusursuz uyum sağlayan pürüzsüz medikal silikon dokusu ve çok yönlü fonksiyonlarıyla beklentilerinizi karşılamak üzere tasarlanmıştır. Sessiz çalışma prensibi ve konforlu tutuşuyla lüks bir standart vadeder.`;
+      ritualText = `Kullanım öncesinde ve sonrasında ılık su ve antibakteriyel sabun ile nazikçe temizleyiniz.\nÖnemli Not: Yüzey dokusunun ömrünü korumak için yalnızca su bazlı kayganlaştırıcılar ile kullanılması önerilir.`;
+    } else if (classification.isLingerie) {
+      leadDesc = `${cleanTitle}, zarif dokusu ve modern kesimiyle vücut hatlarınızı kusursuz şekilde vurgular.`;
+      introPara = `${cleanTitle}, teninizle uyum sağlayan yumuşak kumaş kalitesi ve incelikle işlenmiş detaylarıyla hem özel anlarda hem de kendinizi iyi hissetmek istediğiniz her an şıklık vadeder.`;
+      ritualText = `Hassas dantel ve tül dokunun formunu koruması için 30°C'de elde veya çamaşır torbasında hassas yıkama önerilir.`;
+    } else {
+      leadDesc = `${cleanTitle}, özel tasarımı ve yüksek kalite standartlarıyla beklentilerinizi karşılayan lüks bir deneyim sunar.`;
+      introPara = `${cleanTitle}, markamızın özenle seçilmiş koleksiyonunda yer alan, kalite ve müşteri memnuniyeti odaklı premium bir üründür.`;
+      ritualText = `Kullanım talimatlarına uygun olarak güvenle kullanabilirsiniz.`;
+    }
+
+    // Extract genuine bullet highlights
+    const rawLines = rawClean.split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 5 && !l.startsWith('http') && !l.toLowerCase().includes('toptan') && !l.toLowerCase().includes('fiyat'));
+    
+    let bullets: string[] = [];
+    for (const line of rawLines) {
+      const cleanLine = line.replace(/^[-•*:\d.]+\s*/, '').trim();
+      if (cleanLine.length > 8 && cleanLine.length < 120 && !bullets.includes(cleanLine)) {
+        bullets.push(cleanLine);
+      }
+      if (bullets.length >= 3) break;
+    }
+
+    if (bullets.length === 0) {
+      bullets = highlights.slice(0, 3);
+    }
+
+    const bulletSection = bullets.length > 0
+      ? `\n\nÖNE ÇIKAN AYRINTILAR:\n` + bullets.map(b => `• ${b}`).join('\n')
       : '';
 
-    return {
+    const ritualSection = ritualText
+      ? `\n\nUYGULAMA VE DENEYİM RİTÜELİ:\n${ritualText}`
+      : '';
+
+    const privacySection = `\n\nGİZLİLİK VE TESLİMAT STANDARDI:\nTüm siparişleriniz mahremiyet ilkelerimiz doğrultusunda, içeriği dışarıdan kesinlikle anlaşılmayacak özel korumalı gizli paketlerde tarafınıza teslim edilir.`;
+
+    const fullLongDesc = `${introPara}${bulletSection}${ritualSection}${privacySection}`;
+
+    return enforceSafetyAndGuardrails({
       name: cleanTitle,
-      description: lead,
+      description: leadDesc,
       highlights,
-      longDescription: `${lead}${bulletText}`
-    };
+      longDescription: fullLongDesc
+    }, rawClean, category);
   }
 
   /* ================= ADMIN ================= */
@@ -4690,65 +4888,95 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       const ai = getAiClient();
       if (ai) {
         try {
-          const prompt = `Aşağıda toptancıdan veya kullanıcının girdiği ham ürün bilgisi yer almaktadır.
+                    const promptText = `Aşağıda toptancıdan veya kullanıcının girdiği ham ürün bilgisi yer almaktadır.
 Lütfen bu metni Türkiye'nin en seçkin lüks yetişkin sağlık ve yaşam mağazası LOVE SHOP standartlarına uygun, cezbedici, net, dürüst ve profesyonel bir e-ticaret metnine dönüştür.
 
 Kategori: "${category}"
 
 HAYATİ VE MUTLAK GÜVENLİK KURALLARI (SIFIR HALÜSİNASYON):
 1. TÜKETİM VE KULLANIM GÜVENLİĞİ (EN YÜKSEK ÖNCELİK):
-   - Eğer ürün bir damla, şurup veya sıvı takviye ise ve içecekle/ağızdan tüketiliyorsa (metinde içecek, suya damlatma, dilaltı vb. geçiyorsa): Highlights listesinin İLK sırasına kesinlikle "Ağızdan İçeceğe Karıştırılarak Tüketilir" koy.
-   - Eğer ürün harici olarak cilde/bölgeye sürülen veya püskürtülen bir ürün ise (damla, krem, sprey, jel, yağ, serum): Highlights listesinin İLK sırasına mutlaka "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ" koy.
-   - Kullanım Şekli Belirsizse: Metinde nasıl kullanılacağı açıkça yazmıyorsa ASLA süre, dakika veya doz uydurma! Sadece ambalaja yönlendir veya diğer net nitelikleri yaz.
-2. TEKNİK ÖZELLİKLER VE SU GEÇİRMEZLİK:
-   - SADECE metinde açıkça "IPX..." veya "su geçirmez" yazıyorsa su koruması kartı üret. Metinde yazmıyorsa ASLA IPX veya su geçirmezlik uydurma!
-   - Motorlu olmayan ürünlere (dildo, anal plug, manken, sprey, krem, giyim, kelepçe) ASLA motor, titreşim, şarj veya IPX rozeti yazma!
-   - Malzemeyi sadece metinde varsa çıkar (Örn: "Medikal Paslanmaz Çelik", "Borosilikat Medikal Cam", "%100 Medikal Silikon", "Realistik Medikal TPE").
+   - ORGAZM DAMLALARI, KLİTORAL VE BÖLGESEL UYARICI DAMLALAR, GECİKTİRİCİLER, SPREYLER, JELLER VE YAĞLAR: Bu ürünler KESİNLİKLE HARİCEN CİLDE/BÖLGEYE SÜRÜLEN KOZMETİK ÜRÜNLERDİR. Asla ağızdan içecek damlası değildir! Metinde ASLA "içeceğe damlatın, içiniz, yutunuz, ağızdan alın" GEÇEMEZ! Highlights listesinin 1. sırasına MUTLAKA "YALNIZCA HARİCİ KULLANIM — KESİNLİKLE İÇİLMEZ" koy.
+   - Sadece ve sadece açıkça vitamin, gıda takviyesi, efervesan tablet veya kapsül ise oral gıda takviyesi olarak anlat.
+2. TEKNİK ÖZELLİKLER:
+   - Sıvı/damla/sprey ürünlere ASLA motor, şarj, titreşim, sessizlik, vantuz gibi oyuncak özellikleri YAZMA!
+   - SADECE metinde açıkça yazan gerçek özellikleri çıkar.
 
 Kurallar:
-1. Ürün Adı: Net, estetik ve profesyonel olsun.
-2. Kısa Açıklama (description): 1-2 cümlelik vurucu, öz, lüks bir tanıtım cümlesi.
-3. Öne Çıkan Özellikler (highlights): 3 ila 4 adet NET, DOĞRU ve HAYATİ rozet özelliği.
-4. Detaylı Açıklama (longDescription): Girişte akıcı ve lüks 1-2 paragraf; ardından madde imleriyle (•) toparlanmış detaylar ve güvenlik uyarısı.
+1. Ürün Adı: Toptancı kodlarını (KOD-, ST-, NO:) temizle, estetik ve lüks vitrin adı yap.
+2. Kısa Açıklama (description): 1-2 cümlelik vurucu, lüks tanıtım cümlesi.
+3. Öne Çıkan Özellikler (highlights): 3 ila 4 adet NET ve DOĞRU rozet özelliği (İlk sırada güvenlik rozeti).
+4. Detaylı Açıklama (longDescription) - ELİT MAĞAZA EDİTÖRYAL DÜZENİ:
+   Metin mutlaka aşağıdaki 4 belirgin bölüme ayrılmalı ve bölümler arasında ÇİFT SATIR BOŞLUK (\n\n) bırakılmalıdır. Asla metni tek bir blokta birleştirme!
+
+   [BÖLÜM 1: Lüks Giriş Paragrafı - Ürünün tenle buluşma anını, ipeksi dokusunu ve sunduğu konforu anlatan akıcı 1-2 cümle]
+
+   ÖNE ÇIKAN AYRINTILAR:
+   • [Kalın Vurgu]: [1 cümlelik akıcı açıklama]
+   • [Kalın Vurgu]: [1 cümlelik akıcı açıklama]
+   • [Kalın Vurgu]: [1 cümlelik akıcı açıklama]
+
+   UYGULAMA VE DENEYİM RİTÜELİ:
+   [Doğru ve zarif uygulama rehberi]
+   Önemli Not: [Ürünün yapısına uygun nazik tavsiye. Kelepçe/aksesuarlarda bileği aşırı sıkmama ve nemli bezle temizleme; kozmetiklerde harici kullanım ve içilmez uyarısı; silikon oyuncaklarda su bazlı jel tavsiyesi. ASLA 'hayati tehlike' deme, nazik ol.]
+   KESİNLİKLE HİÇBİR YERDE EMOJİ VEYA SÜS İKONU KULLANMA!
+
+   GİZLİLİK VE TESLİMAT STANDARDI:
+   Tüm siparişleriniz mahremiyet ilkelerimiz doğrultusunda, içeriği dışarıdan kesinlikle anlaşılmayacak özel korumalı gizli paketlerde teslim edilir.
 
 Girdi Bilgileri:
 Ürün Adı: ${name || 'Belirtilmedi'}
 Kategori: ${category}
 Ham İçerik:
 ${rawText || name}`;
-          const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-              systemInstruction: "Sen lüks e-ticaret markaları için kıdemli bir ürün metin yazarı ve içerik mimarısın. Toptancı metinlerini temizler, lüks ve akıcı satış diline dönüştürürsün.",
-              responseMimeType: 'application/json',
-              responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                  name: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                  highlights: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
+
+          let response: any = null;
+          // Ultra-fast call with 3.5-second timeout to avoid any spinning / 503 delay
+          try {
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI_TIMEOUT')), 3500));
+            const generatePromise = ai.models.generateContent({
+              model: 'gemini-3.5-flash',
+              contents: promptText,
+              config: {
+                systemInstruction: "Sen lüks ve prestijli e-ticaret markaları için kıdemli bir ürün editörüsün. KESİNLİKLE EMOJİ KULLANMA. 'Hayati tehlike' gibi dramatik laflar etme; nazik, seçkin, minimal bir dil kullan.",
+                responseMimeType: 'application/json',
+                responseSchema: {
+                  type: Type.OBJECT,
+                  properties: {
+                    name: { type: Type.STRING },
+                    description: { type: Type.STRING },
+                    highlights: {
+                      type: Type.ARRAY,
+                      items: { type: Type.STRING }
+                    },
+                    longDescription: { type: Type.STRING }
                   },
-                  longDescription: { type: Type.STRING }
-                },
-                required: ['name', 'description', 'highlights', 'longDescription']
+                  required: ['name', 'description', 'highlights', 'longDescription']
+                }
               }
-            }
-          });
+            });
+            response = await Promise.race([generatePromise, timeoutPromise]);
+          } catch (errM: any) {
+            console.warn('[AI Polish] Fast fallback triggered:', errM?.message || errM);
+          }
 
           const parsed = JSON.parse(response.text?.trim() || '{}');
           if (parsed && (parsed.description || parsed.longDescription)) {
+            const guarded = enforceSafetyAndGuardrails({
+              name: parsed.name || cleanProductTitle(name || rawText),
+              description: parsed.description || '',
+              highlights: Array.isArray(parsed.highlights) ? parsed.highlights : [],
+              longDescription: parsed.longDescription || ''
+            }, rawText, category);
             return json(res, 200, {
               ok: true,
               ai: true,
-              data: {
-                name: parsed.name || name,
-                description: parsed.description || '',
-                highlights: Array.isArray(parsed.highlights) ? parsed.highlights : [],
-                longDescription: parsed.longDescription || ''
-              }
+              fallback: false,
+              name: guarded.name,
+              description: guarded.description,
+              highlights: guarded.highlights,
+              longDescription: guarded.longDescription,
+              safetyCheck: guarded.safetyCheck,
+              data: guarded
             });
           }
         } catch (err) {
@@ -4756,12 +4984,17 @@ ${rawText || name}`;
         }
       }
 
-      // Smart Fallback
+      // Smart Fallback with Guaranteed Safety
       const fallback = fallbackPolishProduct(name, category, rawText);
       return json(res, 200, {
         ok: true,
         ai: false,
         fallback: true,
+        name: fallback.name,
+        description: fallback.description,
+        highlights: fallback.highlights,
+        longDescription: fallback.longDescription,
+        safetyCheck: fallback.safetyCheck,
         data: fallback
       });
     }

@@ -1772,13 +1772,15 @@
             method: 'POST',
             body: { name: nameVal, category: catVal, rawText }
           });
-          if (res.name && !nameVal) $('#pm-name', m).value = res.name;
-          if (res.description) $('#pm-desc', m).value = res.description;
-          if (Array.isArray(res.highlights) && res.highlights.length) {
-            $('#pm-highlights', m).value = res.highlights.join(', ');
+          const out = (res && res.data) ? res.data : (res || {});
+          if (out.name) $('#pm-name', m).value = out.name;
+          if (out.description) $('#pm-desc', m).value = out.description;
+          if (Array.isArray(out.highlights) && out.highlights.length) {
+            $('#pm-highlights', m).value = out.highlights.join(', ');
           }
-          if (res.longDescription) $('#pm-long', m).value = res.longDescription;
-          toast('Ürün metni ve özellikleri lüks mağaza diline dönüştürüldü');
+          if (out.longDescription) $('#pm-long', m).value = out.longDescription;
+          const safetyInfo = out.safetyCheck?.type ? ' [' + out.safetyCheck.type + ' Doğrulandı]' : '';
+          toast('Ürün metni lüks mağaza diline dönüştürüldü' + safetyInfo);
         } catch (err) {
           toast(err.message || 'Metin dönüştürülemedi', true);
         } finally {

@@ -1,14 +1,14 @@
 'use strict';
-import { initAccount, initProfile } from './modules/account.js?v=2.2.0';
-import { initCheckout, initThanks } from './modules/checkout.js?v=2.2.0';
-import { initSpatialAnimations, openSpatialCardZoom, closeSpatialCardZoom } from './modules/spatial.js?v=2.2.0';
-import { getLocalCart, setLocalCart, updateCartBadge, addToCart, initCart } from './modules/cart.js?v=2.2.0';
-import { performLogout, initAuth } from './modules/auth.js?v=2.2.0';
-import { api, getClientSid } from './modules/api.js?v=2.2.0';
-import { toast, lockBodyScroll, unlockBodyScroll } from './modules/ui.js?v=2.2.0';
-import { initCoverflow, destroyCoverflow } from './modules/coverflow.js?v=2.2.0';
-import { initContact } from './modules/contact.js?v=2.2.0';
-import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
+import { initAccount, initProfile } from './modules/account.js?v=2.2.2';
+import { initCheckout, initThanks } from './modules/checkout.js?v=2.2.2';
+import { initSpatialAnimations, openSpatialCardZoom, closeSpatialCardZoom } from './modules/spatial.js?v=2.2.2';
+import { getLocalCart, setLocalCart, updateCartBadge, addToCart, initCart } from './modules/cart.js?v=2.2.2';
+import { performLogout, initAuth } from './modules/auth.js?v=2.2.2';
+import { api, getClientSid } from './modules/api.js?v=2.2.2';
+import { toast, lockBodyScroll, unlockBodyScroll } from './modules/ui.js?v=2.2.2';
+import { initCoverflow, destroyCoverflow } from './modules/coverflow.js?v=2.2.2';
+import { initContact } from './modules/contact.js?v=2.2.2';
+import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.2';
 
 
 
@@ -1285,18 +1285,30 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       updateSortLabel();
     }
 
-    // Handle browser popstate
-    window.addEventListener('popstate', () => {
+    // Handle browser popstate (deduplicated & guarded so ?urun= modal toggles don't reload shop grid)
+    if (window.__shopPopstateHandler) {
+      window.removeEventListener('popstate', window.__shopPopstateHandler);
+    }
+    window.__shopPopstateHandler = () => {
+      if (!location.pathname.startsWith('/magaza') || !document.body.contains(root)) return;
       const up = new URLSearchParams(location.search);
-      state.cat = up.get('kat') || up.get('cat') || 'hepsi';
-      state.q = up.get('q') || '';
-      state.sort = up.get('sort') || 'onerilen';
-      state.filter = up.get('filter') || '';
+      const nextCat = up.get('kat') || up.get('cat') || 'hepsi';
+      const nextQ = up.get('q') || '';
+      const nextSort = up.get('sort') || 'onerilen';
+      const nextFilter = up.get('filter') || '';
+      if (nextCat === state.cat && nextQ === state.q && nextSort === state.sort && nextFilter === state.filter) {
+        return;
+      }
+      state.cat = nextCat;
+      state.q = nextQ;
+      state.sort = nextSort;
+      state.filter = nextFilter;
       if (sortSel) sortSel.value = state.sort;
       updateSortLabel();
       syncChipState();
       load();
-    });
+    };
+    window.addEventListener('popstate', window.__shopPopstateHandler);
 
     // If root does not have server-rendered products or empty-state, fetch from API
     const hasInitialContent = root.querySelector('.prod-grid') || root.querySelector('.empty-state');
@@ -1321,13 +1333,21 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       return;
     }
     let p;
-    try {
-      const res = await api('/api/products/' + encodeURIComponent(slug));
-      p = res.product || res;
-      if (!p || !p.id) throw new Error('notfound');
-    } catch {
-      root.innerHTML = `<div class="empty-state"><div class="big">${notFoundSvg}</div><p>${t('pd.notfound')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:16px">${t('pd.notfound.btn')}</a></div>`;
-      return;
+    const initialDataEl = $('#pd-initial-data', root);
+    if (initialDataEl && initialDataEl.textContent) {
+      try {
+        p = JSON.parse(initialDataEl.textContent);
+      } catch (e) {}
+    }
+    if (!p || !p.id) {
+      try {
+        const res = await api('/api/products/' + encodeURIComponent(slug));
+        p = res.product || res;
+        if (!p || !p.id) throw new Error('notfound');
+      } catch {
+        root.innerHTML = `<div class="empty-state"><div class="big">${notFoundSvg}</div><p>${t('pd.notfound')}</p><a class="btn btn-primary" href="/magaza" style="margin-top:16px">${t('pd.notfound.btn')}</a></div>`;
+        return;
+      }
     }
     document.title = p.name + ' — LOVE SHOP';
     const productGallery = (Array.isArray(p.gallery) && p.gallery.length) ? p.gallery : (p.image ? [p.image] : []);
@@ -2591,8 +2611,8 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       return;
     }
 
-    // Immediately close any open modal
-    closeSpatialCardZoom();
+    // Immediately close any open modal without stripping ?urun= from the current history entry
+    closeSpatialCardZoom(true);
 
     const mainEl = $('#app-main');
     if (!mainEl) {
@@ -2612,12 +2632,19 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       return;
     }
 
-    // Save current scroll position before navigating away
+    // Save current scroll position before navigating away (both with and without ?urun= param)
     if (pushState) {
       const currentY = window.scrollY || window.pageYOffset || 0;
-      scrollPositions.set(location.pathname + location.search, currentY);
+      const fullKey = location.pathname + location.search;
+      const cleanParams = new URLSearchParams(location.search);
+      cleanParams.delete('urun');
+      const cleanQs = cleanParams.toString();
+      const cleanKey = location.pathname + (cleanQs ? '?' + cleanQs : '');
+      scrollPositions.set(fullKey, currentY);
+      scrollPositions.set(cleanKey, currentY);
       try {
-        sessionStorage.setItem('ls_scr_' + location.pathname + location.search, currentY.toString());
+        sessionStorage.setItem('ls_scr_' + fullKey, currentY.toString());
+        sessionStorage.setItem('ls_scr_' + cleanKey, currentY.toString());
       } catch (e) {}
     }
 
@@ -2676,19 +2703,39 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
           sessionStorage.setItem('ls_scr_' + targetUrl.pathname + targetUrl.search, '0');
         } catch (e) {}
       } else {
-        let savedY = scrollPositions.get(targetUrl.pathname + targetUrl.search);
+        const fullKey = targetUrl.pathname + targetUrl.search;
+        const cleanParams = new URLSearchParams(targetUrl.search);
+        cleanParams.delete('urun');
+        const cleanQs = cleanParams.toString();
+        const cleanKey = targetUrl.pathname + (cleanQs ? '?' + cleanQs : '');
+
+        let savedY = scrollPositions.get(fullKey);
+        if (typeof savedY !== 'number') savedY = scrollPositions.get(cleanKey);
         if (typeof savedY !== 'number') {
           try {
-            const sy = sessionStorage.getItem('ls_scr_' + targetUrl.pathname + targetUrl.search);
+            let sy = sessionStorage.getItem('ls_scr_' + fullKey);
+            if (sy === null) sy = sessionStorage.getItem('ls_scr_' + cleanKey);
             if (sy !== null) savedY = parseInt(sy, 10);
           } catch (e) {}
         }
         
         if (typeof savedY === 'number') {
+          // Restore scroll synchronously BEFORE spa:navigated so if modal opens and locks body scroll, window.scrollY is already at savedY
+          window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
           requestAnimationFrame(() => {
-            window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
-            setTimeout(() => window.scrollTo({ top: savedY, left: 0, behavior: 'instant' }), 50);
-            setTimeout(() => window.scrollTo({ top: savedY, left: 0, behavior: 'instant' }), 120);
+            if (!document.body.classList.contains('body-scroll-locked')) {
+              window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
+            }
+            setTimeout(() => {
+              if (!document.body.classList.contains('body-scroll-locked')) {
+                window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
+              }
+            }, 50);
+            setTimeout(() => {
+              if (!document.body.classList.contains('body-scroll-locked')) {
+                window.scrollTo({ top: savedY, left: 0, behavior: 'instant' });
+              }
+            }, 120);
           });
         } else {
           window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -2793,15 +2840,13 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.0';
       const currentUrl = new URL(location.href);
       const prevUrl = new URL(lastNavUrlStr);
       
-      const currUrun = currentUrl.searchParams.get('urun');
-      const prevUrun = prevUrl.searchParams.get('urun');
-      
       currentUrl.searchParams.delete('urun');
       prevUrl.searchParams.delete('urun');
       
-      if (currentUrl.href === prevUrl.href && currUrun !== prevUrun) {
-        // Modal opened or closed, do not trigger full SPA page reload
+      if (currentUrl.href === prevUrl.href) {
+        // Same underlying page (only ?urun= modal parameter changed): sync modal without full SPA page reload
         lastNavUrlStr = location.href;
+        document.dispatchEvent(new CustomEvent('spa:navigated'));
         return;
       }
       
