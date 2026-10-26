@@ -252,13 +252,27 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.3';
     gate.classList.remove(`hidden`, `passing`);
     document.body.classList.add(`gate-active`);
     document.documentElement.classList.add(`gate-active-init`);
+    const vid = $(`#age-bg-video`, gate);
+    if (vid) {
+      vid.defaultMuted = true;
+      vid.muted = true;
+      vid.playsInline = true;
+      if (vid.paused) {
+        vid.play().catch(() => {});
+      }
+    }
   };
   const hideGate = () => {
     if (!gate) return;
     gate.classList.add(`passing`);
     document.body.classList.remove(`gate-active`);
     document.documentElement.classList.remove(`gate-active-init`);
-    setTimeout(() => { gate.classList.add(`hidden`);
+    setTimeout(() => {
+      gate.classList.add(`hidden`);
+      const vid = $(`#age-bg-video`, gate);
+      if (vid && !vid.paused) {
+        try { vid.pause(); } catch (e) {}
+      }
     }, 800);
   };
 

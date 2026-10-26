@@ -1323,7 +1323,7 @@ const CAT_EN: Record<string, string> = {
 function catNameEN(slug: string, name: string) { return CAT_EN[slug] || name; }
 
 const APP_BUILD_TIME = Date.now();
-const APP_VERSION = '2.1.2';
+const APP_VERSION = '2.1.7';
 
 function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const st = db.settings;
@@ -1600,14 +1600,24 @@ ${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID
 ${opts.noChrome ? body : `
 ${C.isBot ? '' : `
 <div id="age-gate">
+  <video id="age-bg-video" class="age-bg-video" autoplay loop muted playsinline preload="auto" poster="/videos/age-gate-poster.jpg?v=${appVersion}" src="/videos/age-gate-loop.mp4?v=${appVersion}" aria-hidden="true"></video>
   <div class="age-video-overlay"></div>
+  <div class="age-ambient-glow" aria-hidden="true"></div>
   <div class="age-content">
+    <div class="age-eyebrow"><span class="age-eyebrow-dot"></span><span>${C.lang === 'en' ? '18+ LUXURY INTIMACY BOUTIQUE' : '18+ SEÇKİN YETİŞKİN YAŞAM MAĞAZASI'}</span></div>
     <h2 class="age-brand">LOVE<span class="dot">.</span></h2>
     <div class="age-title">${tr('age.title')}</div>
     <p class="age-legal">${tr('age.legal')}</p>
     <div class="age-actions">
-      <button id="age-yes" class="btn btn-primary">${tr('age.yes')}</button>
-      <button id="age-no" class="btn btn-ghost">${tr('age.no')}</button>
+      <button id="age-yes" class="btn btn-primary age-btn-enter">
+        <span>${tr('age.yes')}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+      <button id="age-no" class="btn btn-ghost age-btn-exit">${tr('age.no')}</button>
+    </div>
+    <div class="age-trust-pills">
+      <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${C.lang === 'en' ? '100% Discreet Packaging' : '%100 Gizli Paketleme'}</span>
+      <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${C.lang === 'en' ? 'Anonymous & Private' : 'Anonim & Güvenli Deneyim'}</span>
     </div>
     <small class="age-small">${tr('age.small')}</small>
   </div>
