@@ -3,6 +3,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import zlib from 'zlib';
 import { fileURLToPath } from 'url';
 import { load, save, saveLocal, uid, nextId, hashPassword, setMemoryDb, saveAsync, resolveWorkingImageUrl, VERCEL_BLOB_MIGRATION_MAP } from './lib/db.js';
 import seed, { getSvgForSlug } from './lib/seed.js';
@@ -483,11 +484,13 @@ const hash = hashPassword;
 const now = () => Date.now();
 
 /* ---------------- token & auth engine ---------------- */
-const DEFAULT_AUTH_SECRET = 'a9f4e2b8c7103d56e8912f4b03c817d295e0a61483f912c5b704e62a1d8f90c3';
-const AUTH_SECRET = process.env.AUTH_SECRET || DEFAULT_AUTH_SECRET;
-if (!process.env.AUTH_SECRET) {
-  console.warn('[AUTH] Warning: AUTH_SECRET environment variable is missing. Using fallback secret to prevent server crash.');
-}
+const LEGACY_AUTH_SECRET = 'a9f4e2b8c7103d56e8912f4b03c817d295e0a61483f912c5b704e62a1d8f90c3';
+const DERIVED_AUTH_SECRET = crypto
+  .createHmac('sha256', LEGACY_AUTH_SECRET)
+  .update(process.env.BLOB_READ_WRITE_TOKEN || process.env.GEMINI_API_KEY || 'love-wellness-v2-kdf-salt-2026')
+  .digest('hex');
+const AUTH_SECRET = process.env.AUTH_SECRET || DERIVED_AUTH_SECRET;
+
 function createAuthToken(userId: string, role: string, tokenVersion = 1): string {
   const exp = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
   const payload = `${userId}:${role}:${tokenVersion}:${exp}`;
@@ -513,8 +516,13 @@ function verifyAuthToken(tokenStr: string): { userId: string; role: string; toke
     const tokenVersion = parseInt(versionStr, 10) || 1;
     if (isNaN(exp) || Date.now() > exp) return null;
     const expectedPayload = parts.length === 5 ? `${userId}:${role}:${versionStr}:${expStr}` : `${userId}:${role}:${expStr}`;
-    const expected = crypto.createHmac('sha256', AUTH_SECRET).update(expectedPayload).digest('hex');
-    if (sig.length === expected.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    const expectedPrimary = crypto.createHmac('sha256', AUTH_SECRET).update(expectedPayload).digest('hex');
+    if (sig.length === expectedPrimary.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedPrimary))) {
+      return { userId, role, tokenVersion };
+    }
+    // Backward-compatible transition check for active sessions prior to key derivation
+    const expectedLegacy = crypto.createHmac('sha256', LEGACY_AUTH_SECRET).update(expectedPayload).digest('hex');
+    if (sig.length === expectedLegacy.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedLegacy))) {
       return { userId, role, tokenVersion };
     }
   } catch (e) {}
@@ -641,9 +649,17 @@ const stars = (r: number) => {
 
 const catAuthLimiter = new Map<string, { count: number; reset: number }>();
 function rateLimited(req: http.IncomingMessage, key: string, max: number, windowMs: number) {
-  const ip = req.socket.remoteAddress || 'x';
+  const forwarded = req.headers['x-forwarded-for'];
+  const forwardedIp = typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : '';
+  const realIp = (req.headers['x-real-ip'] as string) || '';
+  const ip = forwardedIp || realIp || req.socket?.remoteAddress || 'x';
   const k = ip + ':' + key;
   const t = now();
+  if (catAuthLimiter.size > 5000) {
+    for (const [entryKey, val] of catAuthLimiter.entries()) {
+      if (t > val.reset) catAuthLimiter.delete(entryKey);
+    }
+  }
   const item = catAuthLimiter.get(k) || { count: 0, reset: t + windowMs };
   if (t > item.reset) { item.count = 0; item.reset = t + windowMs; }
   item.count++;
@@ -711,6 +727,7 @@ const STR: Record<string, Record<string, string>> = {
     'shop.search': 'Ürün ara…', 'shop.cat': 'Kategori', 'shop.all': 'Tümü',
     'shop.sort.def': 'Sırala: Önerilen', 'shop.sort.new': 'En Yeniler', 'shop.sort.asc': 'Fiyat: Düşükten Yükseğe',
     'shop.sort.desc': 'Fiyat: Yüksekten Düşüğe', 'shop.sort.rate': 'En Yüksek Puan',
+    'pd.tab.desc': 'Ürün Açıklaması ve Detaylar', 'pd.tab.ship': 'Kargo & Gizlilik', 'pd.tab.rev': 'Değerlendirmeler',
     'rv.title': 'Yorum Yaz', 'rv.rating': 'Puanın', 'rv.comment': 'Yorumun (en az 10 karakter)', 'rv.ph': 'Deneyimini paylaş…',
     'rv.submit': 'Gönder', 'rv.note': 'Yorumlar onay sonrası yayınlanır ·', 'rv.back': 'Ürüne dön',
     'cart.title': 'Sepetim', 'cart.crumb': 'Sepet',
@@ -812,6 +829,7 @@ const STR: Record<string, Record<string, string>> = {
     'shop.search': 'Search products…', 'shop.cat': 'Category', 'shop.all': 'All',
     'shop.sort.def': 'Sort: Recommended', 'shop.sort.new': 'Newest First', 'shop.sort.asc': 'Price: Low to High',
     'shop.sort.desc': 'Price: High to Low', 'shop.sort.rate': 'Highest Rated',
+    'pd.tab.desc': 'Product Description & Details', 'pd.tab.ship': 'Shipping & Privacy', 'pd.tab.rev': 'Reviews',
     'rv.title': 'Write a Review', 'rv.rating': 'Your rating', 'rv.comment': 'Your review (min. 10 characters)', 'rv.ph': 'Share your experience…',
     'rv.submit': 'Submit', 'rv.note': 'Reviews are published after approval ·', 'rv.back': 'Back to product',
     'cart.title': 'My Cart', 'cart.crumb': 'Cart',
@@ -873,17 +891,21 @@ function makeT(lang: string) {
 }
 
 function pageCtx(req: http.IncomingMessage, res?: http.ServerResponse) {
-  const lang = getCookieValue(req, 'ls_lang') === 'en' ? 'en' : 'tr';
+  let reqPath = '/';
+  let qLang: string | null = null;
+  try {
+    const u = new URL(req.url || '/', 'http://localhost');
+    reqPath = u.pathname.replace(/\/+$/, '') || '/';
+    const lParam = (u.searchParams.get('lang') || '').toLowerCase().trim();
+    if (lParam === 'en' || lParam === 'tr') qLang = lParam;
+  } catch {}
+  const cookieLang = getCookieValue(req, 'ls_lang') === 'en' ? 'en' : 'tr';
+  const lang = qLang || cookieLang;
   const theme = getCookieValue(req, 'ls_theme') === 'dark' ? 'dark' : 'light';
   const sess = getSession(req, res);
   const cartCount = (sess && Array.isArray(sess.cart)) ? sess.cart.reduce((a: number, i: any) => a + (parseInt(i.qty, 10) || 1), 0) : 0;
   const ua = (req.headers['user-agent'] || '').toLowerCase();
   const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|headless/i.test(ua);
-  let reqPath = '/';
-  try {
-    const u = new URL(req.url || '/', 'http://localhost');
-    reqPath = u.pathname.replace(/\/+$/, '') || '/';
-  } catch {}
   return { lang, theme, path: reqPath, t: makeT(lang), num: (n: number) => n.toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'), cartCount, isBot };
 }
 
@@ -1301,7 +1323,7 @@ const CAT_EN: Record<string, string> = {
 function catNameEN(slug: string, name: string) { return CAT_EN[slug] || name; }
 
 const APP_BUILD_TIME = Date.now();
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.1.2';
 
 function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const st = db.settings;
@@ -1400,17 +1422,29 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   if (opts.product) {
     const prod = opts.product;
     const rawProdDesc = String(prod.description || prod.longDescription || prod.desc || prod.name || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    const prodImgUrl = prod.image
-      ? (String(prod.image).startsWith('http://') || String(prod.image).startsWith('https://')
-          ? String(prod.image)
-          : `https://loveeroticshop.com${String(prod.image).startsWith('/') ? '' : '/'}${prod.image}`)
-      : '';
-    schemaGraph.push({
+    const toFullUrl = (u: string) => {
+      if (!u) return '';
+      const s = String(u).trim();
+      return (s.startsWith('http://') || s.startsWith('https://')) ? s : `https://loveeroticshop.com${s.startsWith('/') ? '' : '/'}${s}`;
+    };
+    const galleryList = (Array.isArray(prod.gallery) && prod.gallery.length > 0)
+      ? prod.gallery.map(toFullUrl).filter(Boolean)
+      : (prod.image ? [toFullUrl(prod.image)] : []);
+
+    const approvedReviews = Array.isArray(db?.reviews)
+      ? db.reviews.filter((r: any) => r && r.productId === prod.id && r.approved)
+      : [];
+    const realRevCount = Number(prod.reviewCount) || approvedReviews.length;
+    const realRatingVal = Number(prod.rating) || (approvedReviews.length > 0
+      ? Math.round((approvedReviews.reduce((a: number, r: any) => a + (Number(r.rating) || 5), 0) / approvedReviews.length) * 10) / 10
+      : 0);
+
+    const productSchemaObj: any = {
       "@type": "Product",
       "@id": `https://loveeroticshop.com/urun/${prod.slug || prod.id}#product`,
       "name": prod.name,
       "description": rawProdDesc || prod.name,
-      "image": prodImgUrl ? [prodImgUrl] : [],
+      "image": galleryList,
       "sku": prod.id,
       "brand": {
         "@type": "Brand",
@@ -1430,13 +1464,27 @@ function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
           "@type": "Organization",
           "name": "Love Erotik Shop Eskişehir"
         }
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": prod.rating || 5.0,
-        "reviewCount": prod.reviewCount || 12
       }
-    });
+    };
+
+    if (realRevCount > 0 && realRatingVal > 0) {
+      productSchemaObj.aggregateRating = {
+        "@type": "AggregateRating",
+        "ratingValue": realRatingVal,
+        "reviewCount": realRevCount
+      };
+    }
+    if (approvedReviews.length > 0) {
+      productSchemaObj.review = approvedReviews.slice(0, 5).map((r: any) => ({
+        "@type": "Review",
+        "author": { "@type": "Person", "name": r.userName || "Müşteri" },
+        "datePublished": String(r.createdAt || '').split('T')[0] || new Date().toISOString().split('T')[0],
+        "reviewBody": r.text,
+        "reviewRating": { "@type": "Rating", "ratingValue": Number(r.rating) || 5, "bestRating": 5 }
+      }));
+    }
+
+    schemaGraph.push(productSchemaObj);
 
     schemaGraph.push({
       "@type": "BreadcrumbList",
@@ -1521,6 +1569,9 @@ ${opts.noindex ? '<meta name="robots" content="noindex, nofollow">' : '<meta nam
 <meta name="twitter:description" content="${esc(desc)}">
 <meta name="twitter:image" content="${esc(ogImage)}">
 <link rel="canonical" href="${esc(canonicalUrl)}">
+<link rel="alternate" hreflang="tr" href="${esc(canonicalUrl)}">
+<link rel="alternate" hreflang="en" href="${esc(canonicalUrl.includes('?') ? canonicalUrl + '&lang=en' : canonicalUrl + '?lang=en')}">
+<link rel="alternate" hreflang="x-default" href="${esc(canonicalUrl)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&display=swap">
@@ -2270,6 +2321,7 @@ function buildOrderWhatsAppText(order: any, lang = 'tr'): string {
   const pickup = !!(order.address && String(order.address.full).startsWith('MAĞAZADAN'));
   const cityStr = order.address?.city || '';
   const isEskisehir = !pickup && (cityStr.toLowerCase().includes('eskişehir') || cityStr.toLowerCase().includes('eskisehir'));
+  const useCourier = isEskisehir && order.deliveryMode !== 'cargo';
   const lines: string[] = [];
 
   if (en) {
@@ -2279,10 +2331,11 @@ function buildOrderWhatsAppText(order: any, lang = 'tr'): string {
       '────────────────────────'
     );
     for (const i of (order.items || [])) {
-      lines.push(`• ${i.qty}x ${i.name} — ${fmt(i.price * i.qty)}`);
+      const varStr = i.variant && String(i.variant).toLowerCase() !== 'standart' ? ` (${i.variant})` : '';
+      lines.push(`• ${i.qty}x ${i.name}${varStr} — ${fmt(i.price * i.qty)}`);
     }
     lines.push('────────────────────────');
-    lines.push(`Delivery: ${pickup ? 'In-Store Pickup' : (isEskisehir ? `Eskişehir Express Courier (${fmt(order.shipping || 0)})` : `Standard Discreet Shipping (${fmt(order.shipping || 0)})`)}`);
+    lines.push(`Delivery: ${pickup ? 'In-Store Pickup' : (useCourier ? `Eskişehir Express Courier (~2h) (${fmt(order.shipping || 0)})` : `Standard Discreet Shipping (${fmt(order.shipping || 0)})`)}`);
     if (order.discount) {
       lines.push(`Discount: -${fmt(order.discount)}${order.coupon ? ` (${order.coupon})` : ''}`);
     }
@@ -2304,10 +2357,11 @@ function buildOrderWhatsAppText(order: any, lang = 'tr'): string {
       '────────────────────────'
     );
     for (const i of (order.items || [])) {
-      lines.push(`• ${i.qty}x ${i.name} — ${fmt(i.price * i.qty)}`);
+      const varStr = i.variant && String(i.variant).toLowerCase() !== 'standart' ? ` (${i.variant})` : '';
+      lines.push(`• ${i.qty}x ${i.name}${varStr} — ${fmt(i.price * i.qty)}`);
     }
     lines.push('────────────────────────');
-    lines.push(`Teslimat: ${pickup ? 'Mağazadan Teslim' : (isEskisehir ? `Eskişehir İçi Özel Kurye (~2 Saat) (${fmt(order.shipping || 0)})` : `Gizli Kargo (${fmt(order.shipping || 0)})`)}`);
+    lines.push(`Teslimat: ${pickup ? 'Mağazadan Teslim' : (useCourier ? `Eskişehir İçi Özel Kurye (~2 Saat) (${fmt(order.shipping || 0)})` : `Gizli Kargo (${fmt(order.shipping || 0)})`)}`);
     if (order.discount) {
       lines.push(`İndirim: -${fmt(order.discount)}${order.coupon ? ` (Kupon: ${order.coupon})` : ''}`);
     }
@@ -3519,6 +3573,21 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse, pathna
 
     fs.readFile(p, (err, buf) => {
       if (err) { return sendSvgFallback(); }
+      const acceptEncoding = String(req.headers['accept-encoding'] || '');
+      const compressible = ext === '.css' || ext === '.js' || ext === '.svg' || ext === '.json';
+      if (compressible && acceptEncoding.includes('gzip') && buf.length > 1024) {
+        try {
+          const gz = zlib.gzipSync(buf, { level: 6 });
+          res.writeHead(200, {
+            'Content-Length': gz.length,
+            'Content-Type': type,
+            'Content-Encoding': 'gzip',
+            'Vary': 'Accept-Encoding',
+            'Cache-Control': cacheControl
+          });
+          return res.end(gz);
+        } catch {}
+      }
       res.writeHead(200, {
         'Content-Length': buf.length,
         'Content-Type': type,
@@ -3900,7 +3969,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     if (!p) return sendError(res, 404, E('err.noProd'));
     if (method === 'GET') return json(res, 200, { ok: true, reviews: db.reviews.filter((r: any) => r.productId === p.id && r.approved).sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt)) });
     if (method === 'POST') {
+      if (rateLimited(req, 'review', 5, 60000)) return sendError(res, 429, E('err.rate'));
       const b = await readBody(req);
+      if (b.website || b.company_url) return json(res, 200, { ok: true });
       const text = String(b.text || '').trim();
       if (text.length < 10) return sendError(res, 400, E('err.revShort'));
       const rating = Math.min(5, Math.max(1, parseInt(b.rating, 10) || 5));
@@ -3912,7 +3983,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   }
 
   if (pathname === '/api/stock-notify' && method === 'POST') {
+    if (rateLimited(req, 'stocknotify', 8, 60000)) return sendError(res, 429, E('err.rate'));
     const b = await readBody(req);
+    if (b.website || b.company_url) return json(res, 200, { ok: true });
     const email = String(b.email || '').trim().toLowerCase();
     const productId = String(b.productId || '').trim();
     if (!email || !email.includes('@') || !email.includes('.')) {
@@ -4006,8 +4079,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
   /* --- checkout --- */
   if (pathname === '/api/checkout' && method === 'POST') {
+    if (rateLimited(req, 'checkout', 6, 60000)) return sendError(res, 429, E('err.rate'));
     const st = db.settings;
     const b = await readBody(req);
+    if (b.website || b.company_url) return json(res, 200, { ok: true, orderId: 'LS-0000', total: 0, pickup: false });
     const clientItems = Array.isArray(b.items) ? b.items : null;
     const clientCoupon = typeof b.coupon === 'string' ? b.coupon : (typeof b.coupon === 'object' ? b.coupon?.code : undefined);
     const c = clientItems ? cartCalc(clientItems, clientCoupon) : cartCalc(sess);
@@ -4021,6 +4096,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const address = String(b.address || '').trim();
     const city = String(b.city || '').trim();
     if (!pickup && (!address || !city)) return sendError(res, 400, E('err.address'));
+    const isEskisehir = !pickup && (city.toLowerCase().includes('eskişehir') || city.toLowerCase().includes('eskisehir'));
+    const deliveryMode = pickup ? 'pickup' : (b.deliveryMode === 'cargo' ? 'cargo' : (isEskisehir ? 'courier' : 'cargo'));
     const shipping = pickup ? 0 : c.shipping;
     const total = Math.round((c.subtotal - c.discount + shipping) * 100) / 100;
     const nextSeq = nextId('order');
@@ -4028,9 +4105,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     const email = user ? user.email : String(b.email || '').trim().toLowerCase() || sess.lastGuestEmail || '';
     const order = {
       id: orderId, userId: user ? user.id : null, userEmail: email, customerName: name,
-      items: c.items.map((i: any) => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty, image: i.image })),
+      items: c.items.map((i: any) => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty, variant: i.variant || 'standart', image: i.image })),
       subtotal: c.subtotal, shipping, discount: c.discount, total,
       coupon: c.coupon ? c.coupon.code : null, status: 'processing', payment: PAY[payKey],
+      deliveryMode,
       discreet: pickup ? false : !!b.discreet, phone,
       address: pickup ? { full: 'MAĞAZADAN TESLİM — ' + (st.address || ''), city: 'Eskişehir', zip: '26170' } : { full: address, city, zip: String(b.zip || '').trim() },
       createdAt: new Date().toISOString(), note: String(b.note || '').trim()
@@ -4097,7 +4175,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
   /* --- newsletter & contact --- */
   if (pathname === '/api/newsletter' && method === 'POST') {
+    if (rateLimited(req, 'newsletter', 6, 60000)) return sendError(res, 429, E('err.rate'));
     const b = await readBody(req);
+    if (b.website || b.company_url) return json(res, 200, { ok: true });
     const email = String(b.email || '').trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(email)) return sendError(res, 400, E('err.email'));
     if (db.newsletter.some((n: any) => n.email === email)) return sendError(res, 409, E('err.emailUsed'));
@@ -4105,7 +4185,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     return json(res, 200, { ok: true });
   }
   if (pathname === '/api/contact' && method === 'POST') {
+    if (rateLimited(req, 'contact', 5, 60000)) return sendError(res, 429, E('err.rate'));
     const b = await readBody(req);
+    if (b.website || b.company_url) return json(res, 200, { ok: true });
     const email = String(b.email || '').trim().toLowerCase();
     const message = String(b.message || '').trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) return sendError(res, 400, E('err.email'));
@@ -4255,8 +4337,18 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   function cleanProductTitle(rawTitle: string): string {
     let t = String(rawTitle || '').trim();
     t = t.replace(/\b(?:kod|st|art|ref|sku|model)[:\-\s]*[a-z0-9\-]+\b/gi, '').trim();
-    t = t.replace(/^(?:yeni|süper|fırsat|indirim|orijinal)\s*[-:]*\s*/i, '').trim();
+    t = t.replace(/^(?:yeni(?!\s+(?:nesil|model|seri|sezon|tasarım))|süper|fırsat|indirim|orijinal|kampanya)\s*[-:!]+/i, '').trim();
     t = t.replace(/\s{2,}/g, ' ');
+    // Deduplicate if the entire title was pasted twice consecutively
+    const words = t.split(' ');
+    if (words.length >= 4 && words.length % 2 === 0) {
+      const half = words.length / 2;
+      const firstHalf = words.slice(0, half).join(' ');
+      const secondHalf = words.slice(half).join(' ');
+      if (firstHalf.toLocaleLowerCase('tr-TR') === secondHalf.toLocaleLowerCase('tr-TR')) {
+        t = firstHalf;
+      }
+    }
     if (t.length > 5 && t === t.toUpperCase()) {
       t = t.toLocaleLowerCase('tr-TR').replace(/(?:^|\s)\S/g, a => a.toLocaleUpperCase('tr-TR'));
     }
@@ -4390,10 +4482,92 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
   }
 
   function fallbackPolishProduct(name: string, category: string, rawText: string) {
-    const rawClean = (rawText || name || '').trim();
-    const cleanTitle = cleanProductTitle(name || rawClean.split('\n')[0] || 'Özel Ürün');
-    const classification = detectProductClassification(`${cleanTitle} ${rawClean}`, category);
-    const highlights = extractProductHighlights({ name: cleanTitle, category, description: rawClean, longDescription: rawClean });
+    // Strip previously appended boilerplate sections so repeated clicks remain clean & idempotent
+    let cleanedSource = String(rawText || name || '')
+      .replace(/\n*UYGULAMA VE DENEYİM RİTÜELİ:[\s\S]*$/i, '')
+      .replace(/\n*GİZLİLİK VE TESLİMAT STANDARDI:[\s\S]*$/i, '')
+      .replace(/\n*ÖNE ÇIKAN AYRINTILAR:\s*\n(?:•\s*Öne Çıkan Özellikler:?\s*\n?)+/gi, '\n')
+      .trim();
+
+    const cleanTitle = cleanProductTitle(name || cleanedSource.split('\n')[0] || 'Özel Ürün');
+
+    // Deduplicate consecutive repeated title inside raw text (e.g. "Title Title, kullanıcılarına...")
+    if (cleanTitle.length > 8) {
+      const escTitle = cleanTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const dupRegex = new RegExp(`(${escTitle})\\s+\\1`, 'gi');
+      cleanedSource = cleanedSource.replace(dupRegex, '$1');
+    }
+
+    const classification = detectProductClassification(`${cleanTitle} ${cleanedSource}`, category);
+    const highlights = extractProductHighlights({ name: cleanTitle, category, description: cleanedSource, longDescription: cleanedSource });
+
+    // Normalize section header noise like "Öne Çıkan Özellikler:" or "Ürün Özellikleri:"
+    const headerNoiseRegex = /^(?:öne\s+çıkan\s+özellikler|öne\s+çıkan\s+ayrıntılar|ürün\s+özellikleri|teknik\s+özellikler|özellikler|açıklama|ürün\s+açıklaması|paket\s+içeriği)\s*[:：-]?\s*$/i;
+    const inlineHeaderRegex = /\b(?:Öne\s+Çıkan\s+Özellikler|ÖNE\s+ÇIKAN\s+AYRINTILAR|Ürün\s+Özellikleri|Teknik\s+Özellikler|Özellikler)\s*[:：]\s*/gi;
+
+    const textWithoutSectionHeaders = cleanedSource
+      .split('\n')
+      .map(l => l.replace(/^[•\-*]+\s*/, '').trim())
+      .filter(l => l && !headerNoiseRegex.test(l))
+      .join('\n')
+      .replace(inlineHeaderRegex, '\n');
+
+    // 1. Extract inline or multiline "Başlık: Açıklama" pairs (e.g. "Çift Taraflı Kullanım: ...", "Ürün Ağırlığı: 430 GR")
+    const kvBullets: string[] = [];
+    const kvRegex = /(?:^|[.!?]\s+|\n+|•\s*)([A-ZÇĞİÖŞÜ][A-Za-zÇĞİÖŞÜçğıöşü0-9\s/&()+-]{2,36}?)\s*:\s*([^\n]+)/g;
+    const fullFlat = textWithoutSectionHeaders.replace(/\n+/g, '. ').replace(/\.\s*\./g, '.');
+
+    const keyMatches: Array<{ label: string; start: number; valueStart: number }> = [];
+    const scanRegex = /(?:^|[.!?]\s+|•\s*)([A-ZÇĞİÖŞÜ][A-Za-zÇĞİÖŞÜçğıöşü0-9\s/&()+-]{2,36}?)\s*:\s*/g;
+    let m: RegExpExecArray | null;
+    while ((m = scanRegex.exec(fullFlat)) !== null) {
+      const lbl = m[1].trim();
+      if (headerNoiseRegex.test(lbl) || /^neden\s/i.test(lbl) || /^not$/i.test(lbl) || /^önemli\s+not$/i.test(lbl)) continue;
+      const leadLen = m[0].indexOf(m[1]);
+      keyMatches.push({
+        label: lbl,
+        start: m.index + leadLen,
+        valueStart: m.index + m[0].length
+      });
+    }
+
+    for (let i = 0; i < keyMatches.length; i++) {
+      const cur = keyMatches[i];
+      const nextStart = i + 1 < keyMatches.length ? keyMatches[i + 1].start : fullFlat.length;
+      let val = fullFlat.slice(cur.valueStart, nextStart).trim();
+      // Strip trailing "Neden ...?" marketing blocks from a feature value
+      val = val.replace(/\s*Neden\s+[^?]+\?[\s\S]*$/i, '').trim();
+      val = val.replace(/^[•\-*.\s]+|[•\-*\s]+$/g, '').trim();
+      if (val && val.length >= 2 && val.length <= 260) {
+        // Format unit casing nicely (e.g. "430 GR" -> "430 gr")
+        val = val.replace(/\b(\d+)\s*GR\b/g, '$1 gr').replace(/\b(\d+)\s*ML\b/g, '$1 ml').replace(/\b(\d+)\s*CM\b/g, '$1 cm');
+        if (!/[.!?]$/.test(val) && val.length > 25) val += '.';
+        const formatted = `${cur.label}: ${val}`;
+        if (!kvBullets.includes(formatted)) kvBullets.push(formatted);
+      }
+    }
+
+    // 2. Extract genuine narrative sentences (before the first KV pair or standalone sentences)
+    const narrativeSource = keyMatches.length > 0
+      ? fullFlat.slice(0, keyMatches[0].start)
+      : textWithoutSectionHeaders;
+
+    const rawSentences = narrativeSource
+      .split(/(?<=[.!?])\s+|\n+/)
+      .map(s => s.replace(/^[•\-*.\s]+/, '').trim())
+      .filter(s => {
+        if (s.length < 20 || s.length > 320) return false;
+        if (headerNoiseRegex.test(s)) return false;
+        if (/^neden\s+/i.test(s)) return false;
+        if (s.includes('beklentileri aşan lüks bir deneyim sunar')) return false;
+        if (s.includes('beklentilerinizi karşılamak üzere tasarlanmıştır')) return false;
+        return true;
+      });
+
+    // Check whether the product actually has a motor/vibration vs non-motorized anatomy/textured design
+    const lowerAll = `${cleanTitle} ${cleanedSource}`.toLocaleLowerCase('tr-TR');
+    const isMasturbatorOrDildo = lowerAll.includes('mastürbatör') || lowerAll.includes('masturbator') || lowerAll.includes('suni vajina') || lowerAll.includes('realistik') || lowerAll.includes('dildo') || lowerAll.includes('yapay vajina');
+    const hasExplicitMotor = lowerAll.includes('titreşim') || lowerAll.includes('vibratör') || lowerAll.includes('frekans') || lowerAll.includes('şarj') || lowerAll.includes('pilli') || (lowerAll.includes('motor') && !lowerAll.includes('beklentileri aşan lüks bir deneyim sunar'));
 
     let leadDesc = '';
     let introPara = '';
@@ -4401,55 +4575,78 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
 
     if (classification.isAccessory) {
       leadDesc = `${cleanTitle}, zarif tasarımı ve güvenli kilit mekanizmasıyla fantezi dünyanıza sofistike bir dokunuş katar.`;
-      introPara = `${cleanTitle}, teninize temas eden yumuşak dokusu ve dayanıklı metal konstrüksiyonu ile konfor ve heyecanı mükemmel bir dengede sunar. Ayarlanabilir kademeli yapısı sayesinde bilek ölçünüze kolayca uyum sağlar.`;
+      introPara = rawSentences.length >= 1
+        ? rawSentences.slice(0, 2).join(' ')
+        : `${cleanTitle}, teninize temas eden yumuşak dokusu ve dayanıklı metal konstrüksiyonu ile konfor ve heyecanı mükemmel bir dengede sunar. Ayarlanabilir kademeli yapısı sayesinde bilek ölçünüze kolayca uyum sağlar.`;
       ritualText = `Kelepçeyi bileğe rahatça oturacak kademede kilitleyiniz; kullanım sırasında aşırı sıkmamaya özen gösteriniz.\nÖnemli Not: Temizliğini nemli bir bezle silerek gerçekleştiriniz; doğrudan suya daldırmaktan kaçınınız.`;
     } else if (classification.isTopical) {
-      const isDelay = rawClean.toLowerCase().includes('geciktir') || rawClean.toLowerCase().includes('delay') || rawClean.toLowerCase().includes('stag');
-      const isArousal = rawClean.toLowerCase().includes('uyarıcı') || rawClean.toLowerCase().includes('orgazm') || rawClean.toLowerCase().includes('istek');
+      const isDelay = lowerAll.includes('geciktir') || lowerAll.includes('delay') || lowerAll.includes('stag') || lowerAll.includes('proling') || lowerAll.includes('birliktelik süresi');
+      const isArousal = lowerAll.includes('uyarıcı') || lowerAll.includes('orgazm') || lowerAll.includes('istek');
       
       if (isDelay) {
         leadDesc = `${cleanTitle}, erkeklere özel geliştirilmiş formülüyle birliktelik süresini ve konforunu desteklemeye yardımcı olur.`;
-        introPara = `${cleanTitle}, birliktelik deneyiminizi daha dengeli, kontrollü ve uzun soluklu yaşamanız için özenle formüle edilmiştir. Cilt tarafından hızla emilen hafif yapısı sayesinde yapışkanlık hissi bırakmaz; pratik kullanımıyla anında konfor sunar.`;
-        ritualText = `Birliktelikten 10-15 dakika önce hedef bölgeye 2-3 fıs püskürterek hafifçe masajla yediriniz.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya yutulmaz.`;
+        introPara = rawSentences.length >= 1
+          ? rawSentences.slice(0, 2).join(' ')
+          : `${cleanTitle}, birliktelik deneyiminizi daha dengeli, kontrollü ve uzun soluklu yaşamanız için özenle formüle edilmiştir. Cilt tarafından hızla emilen hafif yapısı sayesinde yapışkanlık hissi bırakmaz; pratik kullanımıyla anında konfor sunar.`;
+        ritualText = `Birliktelikten 10-15 dakika önce hedef bölgeye yeterli miktarda uygulayarak hafifçe masajla yediriniz.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya yutulmaz.`;
       } else if (isArousal) {
-        leadDesc = `${cleanTitle}, bölgesel duyarlılığı ve uyarımı desteklemek üzere özel olarak formüle edilmiş konsantre masaj damlasıdır.`;
-        introPara = `${cleanTitle}, kadınlara özel zengin içeriğiyle hassas bölgelerdeki duyarlılığı ve doğal uyarılma hissini artırmaya yardımcı olur. Masaj eşliğinde uygulandığında hızlı emilim gösterir ve yoğun bir ten konforu sağlar.`;
-        ritualText = `Temiz cilde ihtiyaç duyulan miktarda (3-5 damla) nazik masaj hareketleriyle uygulayınız.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya içeceklere karıştırılmaz.`;
+        leadDesc = `${cleanTitle}, bölgesel duyarlılığı ve uyarımı desteklemek üzere özel olarak formüle edilmiş konsantre bakım ürünüdür.`;
+        introPara = rawSentences.length >= 1
+          ? rawSentences.slice(0, 2).join(' ')
+          : `${cleanTitle}, kadınlara özel zengin içeriğiyle hassas bölgelerdeki duyarlılığı ve doğal uyarılma hissini artırmaya yardımcı olur. Masaj eşliğinde uygulandığında hızlı emilim gösterir ve yoğun bir ten konforu sağlar.`;
+        ritualText = `Temiz cilde ihtiyaç duyulan miktarda nazik masaj hareketleriyle haricen uygulayınız.\nÖnemli Not: Yalnızca haricen cilt kullanımına uygundur; kesinlikle içilmez veya içeceklere karıştırılmaz.`;
       } else {
         leadDesc = `${cleanTitle}, özel geliştirilmiş formülüyle teninizde pürüzsüz, ipeksi ve ferahlatıcı bir bakım deneyimi sunar.`;
-        introPara = `${cleanTitle}, hassas cilt dengesi gözetilerek formüle edilmiş premium bakım ürünüdür. Cilde kolayca uygulanır, gerginlik hissini azaltır ve uzun süreli rahatlık sağlar.`;
+        introPara = rawSentences.length >= 1
+          ? rawSentences.slice(0, 2).join(' ')
+          : `${cleanTitle}, hassas cilt dengesi gözetilerek formüle edilmiş premium bakım ürünüdür. Cilde kolayca uygulanır, gerginlik hissini azaltır ve uzun süreli rahatlık sağlar.`;
         ritualText = `Temiz cilde hafif masajla uygulayınız.\nÖnemli Not: Haricen kullanılır; gözle temasından kaçınınız.`;
       }
     } else if (classification.isToy) {
-      leadDesc = `${cleanTitle}, ergonomik yapısı ve gelişmiş motor teknolojisiyle benzersiz bir kişisel masaj ve uyarım deneyimi sunar.`;
-      introPara = `${cleanTitle}, vücut anatomisine kusursuz uyum sağlayan pürüzsüz medikal silikon dokusu ve çok yönlü fonksiyonlarıyla beklentilerinizi karşılamak üzere tasarlanmıştır. Sessiz çalışma prensibi ve konforlu tutuşuyla lüks bir standart vadeder.`;
-      ritualText = `Kullanım öncesinde ve sonrasında ılık su ve antibakteriyel sabun ile nazikçe temizleyiniz.\nÖnemli Not: Yüzey dokusunun ömrünü korumak için yalnızca su bazlı kayganlaştırıcılar ile kullanılması önerilir.`;
+      if (isMasturbatorOrDildo && !hasExplicitMotor) {
+        leadDesc = `${cleanTitle}, anatomik kıvrımlara sadık gerçekçi dokusu ve esnek gövde yapısıyla doğal, konforlu bir kişisel deneyim sunar.`;
+        introPara = rawSentences.length >= 1
+          ? rawSentences.slice(0, 3).join(' ')
+          : `${cleanTitle}, ten hissiyatına yakın yumuşak dokusu ve ergonomik iç kanal mimarisiyle maksimum gerçekçilik ve konfor sunmak üzere tasarlanmıştır. Esnek, dayanıklı ve su geçirmez gövdesi sayesinde her kullanımda formunu korur.`;
+      } else {
+        leadDesc = `${cleanTitle}, ergonomik yapısı ve gelişmiş uyarım teknolojisiyle benzersiz bir kişisel masaj deneyimi sunar.`;
+        introPara = rawSentences.length >= 1
+          ? rawSentences.slice(0, 3).join(' ')
+          : `${cleanTitle}, vücut anatomisine kusursuz uyum sağlayan pürüzsüz medikal silikon dokusu ve çok yönlü fonksiyonlarıyla beklentilerinizi karşılamak üzere tasarlanmıştır. Sessiz çalışma prensibi ve konforlu tutuşuyla lüks bir standart vadeder.`;
+      }
+      ritualText = `Kullanım öncesinde ve sonrasında ılık su ve antibakteriyel sabun ile nazikçe temizleyiniz.\nÖnemli Not: Yüzey dokusunun ömrünü korumak ve pürüzsüz bir deneyim elde etmek için yalnızca su bazlı kayganlaştırıcılar ile kullanılması önerilir.`;
     } else if (classification.isLingerie) {
       leadDesc = `${cleanTitle}, zarif dokusu ve modern kesimiyle vücut hatlarınızı kusursuz şekilde vurgular.`;
-      introPara = `${cleanTitle}, teninizle uyum sağlayan yumuşak kumaş kalitesi ve incelikle işlenmiş detaylarıyla hem özel anlarda hem de kendinizi iyi hissetmek istediğiniz her an şıklık vadeder.`;
+      introPara = rawSentences.length >= 1
+        ? rawSentences.slice(0, 2).join(' ')
+        : `${cleanTitle}, teninizle uyum sağlayan yumuşak kumaş kalitesi ve incelikle işlenmiş detaylarıyla hem özel anlarda hem de kendinizi iyi hissetmek istediğiniz her an şıklık vadeder.`;
       ritualText = `Hassas dantel ve tül dokunun formunu koruması için 30°C'de elde veya çamaşır torbasında hassas yıkama önerilir.`;
     } else {
       leadDesc = `${cleanTitle}, özel tasarımı ve yüksek kalite standartlarıyla beklentilerinizi karşılayan lüks bir deneyim sunar.`;
-      introPara = `${cleanTitle}, markamızın özenle seçilmiş koleksiyonunda yer alan, kalite ve müşteri memnuniyeti odaklı premium bir üründür.`;
+      introPara = rawSentences.length >= 1
+        ? rawSentences.slice(0, 2).join(' ')
+        : `${cleanTitle}, markamızın özenle seçilmiş koleksiyonunda yer alan, kalite ve müşteri memnuniyeti odaklı premium bir üründür.`;
       ritualText = `Kullanım talimatlarına uygun olarak güvenle kullanabilirsiniz.`;
     }
 
-    // Extract genuine bullet highlights
-    const rawLines = rawClean.split('\n')
-      .map(l => l.trim())
-      .filter(l => l.length > 5 && !l.startsWith('http') && !l.toLowerCase().includes('toptan') && !l.toLowerCase().includes('fiyat'));
-    
-    let bullets: string[] = [];
-    for (const line of rawLines) {
-      const cleanLine = line.replace(/^[-•*:\d.]+\s*/, '').trim();
-      if (cleanLine.length > 8 && cleanLine.length < 120 && !bullets.includes(cleanLine)) {
-        bullets.push(cleanLine);
+    // Build final bullets list: prioritize structured KV features from the text
+    let bullets: string[] = [...kvBullets];
+    if (bullets.length === 0) {
+      const rawLines = textWithoutSectionHeaders.split('\n')
+        .map(l => l.replace(/^[-•*:\d.]+\s*/, '').trim())
+        .filter(l => l.length > 10 && l.length < 180 && !headerNoiseRegex.test(l) && !l.startsWith('http') && !l.toLowerCase().includes('toptan'));
+      for (const line of rawLines) {
+        if (!bullets.includes(line) && line !== introPara) {
+          bullets.push(line);
+        }
+        if (bullets.length >= 5) break;
       }
-      if (bullets.length >= 3) break;
     }
 
     if (bullets.length === 0) {
-      bullets = highlights.slice(0, 3);
+      bullets = highlights.slice(0, 4);
+    } else {
+      bullets = bullets.slice(0, 6);
     }
 
     const bulletSection = bullets.length > 0
@@ -4469,7 +4666,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       description: leadDesc,
       highlights,
       longDescription: fullLongDesc
-    }, rawClean, category);
+    }, cleanedSource, category);
   }
 
   /* ================= ADMIN ================= */
@@ -4635,28 +4832,30 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       return json(res, 200, { ok: true, orders });
     }
     const oUp = pathname.match(/^\/api\/admin\/orders\/([^/]+)$/);
-    if (oUp && method === 'POST') {
+    if (oUp && (method === 'POST' || method === 'PUT')) {
       const o = db.orders.find((x: any) => x.id === decodeURIComponent(oUp[1]));
       if (!o) return sendError(res, 404, E('err.noOrder'));
       const b = await readBody(req);
       if (['processing', 'shipped', 'delivered', 'cancelled'].includes(b.status)) {
         if (o.status !== b.status) {
-          if (b.status === 'cancelled') {
-            for (const item of o.items) {
+          if (b.status === 'cancelled' && !o.stockRestored) {
+            for (const item of (o.items || [])) {
               const p = db.products.find((x: any) => x.id === item.productId);
               if (p) {
-                p.stock += item.qty;
+                p.stock = (Number(p.stock) || 0) + (Number(item.qty) || 1);
                 saveProductToCloud(p).catch(() => {});
               }
             }
-          } else if (o.status === 'cancelled') {
-            for (const item of o.items) {
+            o.stockRestored = true;
+          } else if (o.status === 'cancelled' && b.status !== 'cancelled') {
+            for (const item of (o.items || [])) {
               const p = db.products.find((x: any) => x.id === item.productId);
               if (p) {
-                p.stock = Math.max(0, p.stock - item.qty);
+                p.stock = Math.max(0, (Number(p.stock) || 0) - (Number(item.qty) || 1));
                 saveProductToCloud(p).catch(() => {});
               }
             }
+            o.stockRestored = false;
           }
           o.status = b.status;
         }
@@ -4706,7 +4905,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
       if (id === 'clear-all') return sendError(res, 400, E('err.badReq'));
       const idx = db.orders.findIndex((x: any) => x.id === id);
       const removedOrder = idx !== -1 ? db.orders[idx] : null;
-      if (removedOrder && removedOrder.status !== 'cancelled' && Array.isArray(removedOrder.items)) {
+      if (removedOrder && removedOrder.status !== 'cancelled' && !removedOrder.stockRestored && Array.isArray(removedOrder.items)) {
         for (const item of removedOrder.items) {
           const p = db.products.find((x: any) => x.id === item.productId);
           if (p) {
@@ -4935,7 +5134,7 @@ ${rawText || name}`;
           try {
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI_TIMEOUT')), 3500));
             const generatePromise = ai.models.generateContent({
-              model: 'gemini-3.5-flash',
+              model: 'gemini-2.5-flash',
               contents: promptText,
               config: {
                 systemInstruction: "Sen lüks ve prestijli e-ticaret markaları için kıdemli bir ürün editörüsün. KESİNLİKLE EMOJİ KULLANMA. 'Hayati tehlike' gibi dramatik laflar etme; nazik, seçkin, minimal bir dil kullan.",
@@ -5407,6 +5606,9 @@ export const handler = async (req: http.IncomingMessage, res: http.ServerRespons
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=()');
+  if (isProd) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
 
   let url: URL;
   let pathname = '/';
@@ -5538,6 +5740,7 @@ Allow: /urun/
 Allow: /rehber
 Allow: /rehber/
 Allow: /kargo-ve-teslimat
+Allow: /sehir/
 Allow: /sehir/eskisehir
 Allow: /hakkimizda
 Allow: /iletisim
@@ -5594,14 +5797,21 @@ Sitemap: ${baseUrl}/sitemap.xml
           lastmod: g.date
         }));
 
-        const cityUrls = [
-          {
-            loc: `${baseUrl}/sehir/eskisehir`,
-            priority: '0.85',
-            changefreq: 'weekly',
-            lastmod: '2026-03-15'
-          }
-        ];
+        const cityUrls = (Array.isArray(CITIES) && CITIES.length > 0)
+          ? CITIES.map((c: any) => ({
+              loc: `${baseUrl}/sehir/${esc(c.slug)}`,
+              priority: c.isHeadquarters ? '0.90' : '0.80',
+              changefreq: 'weekly',
+              lastmod: '2026-03-15'
+            }))
+          : [
+              {
+                loc: `${baseUrl}/sehir/eskisehir`,
+                priority: '0.85',
+                changefreq: 'weekly',
+                lastmod: '2026-03-15'
+              }
+            ];
 
         const prodUrls = (db.products || []).map((p: any) => {
           let fullImg = p.image || '';

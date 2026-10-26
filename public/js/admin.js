@@ -119,25 +119,28 @@
           r.readAsDataURL(file);
           return;
         }
+        ctx.clearRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
         
         // Try WebP first for optimal compression with transparency support
+        const fallbackMime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
         let dataUrl = canvas.toDataURL('image/webp', quality);
         if (!dataUrl.startsWith('data:image/webp')) {
-          dataUrl = canvas.toDataURL('image/jpeg', quality);
+          dataUrl = canvas.toDataURL(fallbackMime, quality);
         }
 
-        // If still larger than 450KB base64, scale down to 900px
-        if (dataUrl.length > 450000 && (w > 800 || h > 800)) {
+        // If still larger than 400KB base64, scale down to 900px
+        if (dataUrl.length > 400000 && (w > 800 || h > 800)) {
           const c2 = document.createElement('canvas');
           c2.width = Math.round(w * 0.75);
           c2.height = Math.round(h * 0.75);
           const ctx2 = c2.getContext('2d');
           if (ctx2) {
+            ctx2.clearRect(0, 0, c2.width, c2.height);
             ctx2.drawImage(canvas, 0, 0, c2.width, c2.height);
             dataUrl = c2.toDataURL('image/webp', 0.78);
             if (!dataUrl.startsWith('data:image/webp')) {
-              dataUrl = c2.toDataURL('image/jpeg', 0.78);
+              dataUrl = c2.toDataURL(fallbackMime, 0.78);
             }
           }
         }
@@ -1815,7 +1818,7 @@
       toast(`${fileArr.length} fotoğraf işleniyor...`);
       for (const file of fileArr) {
         try {
-          const optimizedDataUrl = await optimizeImage(file, 1600, 0.88);
+          const optimizedDataUrl = await optimizeImage(file, 1200, 0.85);
           gallery.push(optimizedDataUrl);
           if (!coverImage) coverImage = optimizedDataUrl;
           renderGallery();
@@ -2081,7 +2084,7 @@
       if (!file) return;
       try {
         toast('Kapak görseli işleniyor...');
-        const optimized = await optimizeImage(file, 1600, 0.88);
+        const optimized = await optimizeImage(file, 1200, 0.85);
         hidden.value = optimized;
         prev.innerHTML = `<img src="${optimized}">`;
         toast('Kapak görseli hazırlandı');

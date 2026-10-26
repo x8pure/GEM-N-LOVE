@@ -62,6 +62,14 @@ export async function initCheckout() {
             <div class="field"><label>${window.LS.t('ck.city')}</label><input id="ck-city" value="${addr && addr.city ? addr.city : 'Eskişehir'}" placeholder="${window.LS.t('ck.city').replace(' *', '')}"></div>
             <div class="field"><label>${window.LS.t('ck.zip')}</label><input id="ck-zip" value="${addr && addr.zip ? addr.zip : '26100'}" placeholder="26000"></div>
           </div>
+          <div id="ck-eskisehir-mode-wrap" style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+            <label style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">${window.LS.lang === 'en' ? 'Eskişehir Delivery Preference' : 'Eskişehir Teslimat Tercihi'}</label>
+            <div class="pay-options" style="gap:8px">
+              <label class="pay-option" style="padding:10px 12px;font-size:13px"><input type="radio" name="ck_deliv_mode" value="courier" checked> ${window.LS.lang === 'en' ? 'Eskişehir Express Courier (~2 Hours)' : 'Eskişehir İçi Özel Kurye (~2 Saat)'} <span class="muted" style="margin-left:auto;font-size:11.5px">${window.LS.lang === 'en' ? 'Direct discreet delivery' : 'İsimsiz kapıda teslim'}</span></label>
+              <label class="pay-option" style="padding:10px 12px;font-size:13px"><input type="radio" name="ck_deliv_mode" value="cargo"> ${window.LS.lang === 'en' ? 'Standard Discreet Cargo' : 'Standart Gizli Kargo'} <span class="muted" style="margin-left:auto;font-size:11.5px">${window.LS.lang === 'en' ? 'Same-day dispatch' : 'Kargo firması ile teslim'}</span></label>
+            </div>
+          </div>
+          <input type="text" id="ck-website" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
           <div id="ck-delivery-notice" style="margin-top:10px;padding:10px 14px;border-radius:var(--r-sm,8px);background:rgba(255,255,255,0.03);border:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--text);display:flex;align-items:center;gap:10px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span id="ck-delivery-notice-text">Eskişehir İçi Adres: <strong>Ortalama 2 saatte</strong> isimsiz ve gizli özel kurye ile teslim edilir.</span>
@@ -71,7 +79,7 @@ export async function initCheckout() {
     </div>
     <div class="summary">
       <h3>${window.LS.t('ck.summary')}</h3>
-      ${c.items.map((i) => `<div class="sum-row"><span>${i.name} ×${i.qty}</span><span>${window.LS.fmt(i.price * i.qty)}</span></div>`).join('')}
+      ${c.items.map((i) => `<div class="sum-row"><span>${i.name}${i.variant && String(i.variant).toLowerCase() !== 'standart' ? ` (${i.variant})` : ''} ×${i.qty}</span><span>${window.LS.fmt(i.price * i.qty)}</span></div>`).join('')}
       <div class="sum-row"><span>${window.LS.t('ck.shipping')}</span><span id="pay-ship">${c.shipping ? window.LS.fmt(c.shipping) : window.LS.t('ck.free')}</span></div>
       ${c.discount ? `<div class="sum-row" style="color:var(--ok)"><span>${c.coupon ? c.coupon.code : ''}</span><span>-${window.LS.fmt(c.discount)}</span></div>` : ''}
       <div class="sum-row total"><span>${window.LS.t('ck.summary.total')}</span><span id="pay-total">${window.LS.fmt(c.total)}</span></div>
@@ -92,16 +100,21 @@ export async function initCheckout() {
     const cityInput = $('#ck-city');
     const noticeEl = $('#ck-delivery-notice');
     const noticeText = $('#ck-delivery-notice-text');
+    const eskModeWrap = $('#ck-eskisehir-mode-wrap');
     if (!cityInput || !noticeEl || !noticeText) return;
     const val = cityInput.value.trim().toLowerCase();
-    if (val.includes('eskişehir') || val.includes('eskisehir') || !val) {
+    const isEsk = val.includes('eskişehir') || val.includes('eskisehir') || !val;
+    if (eskModeWrap) eskModeWrap.style.display = isEsk ? '' : 'none';
+    const delivMode = document.querySelector('input[name=ck_deliv_mode]:checked')?.value || 'courier';
+    if (isEsk && delivMode === 'courier') {
       noticeText.innerHTML = 'Eskişehir İçi Adres: <strong>Ortalama 2 saatte</strong> isimsiz ve gizli özel kurye ile kapınızda.';
     } else {
-      noticeText.innerHTML = 'Türkiye Geneli: <strong>16:30\'a kadar aynı gün</strong> çift mühürlü nötr kutuda kargoda.';
+      noticeText.innerHTML = 'Türkiye Geneli / Kargo: <strong>16:30\'a kadar aynı gün</strong> çift mühürlü nötr kutuda kargoda.';
     }
   }
 
   $$('input[name=pay]').forEach((r) => r.addEventListener('change', refreshPay));
+  $$('input[name=ck_deliv_mode]').forEach((r) => r.addEventListener('change', updateCityNotice));
   $('#ck-city')?.addEventListener('input', updateCityNotice);
   refreshPay();
   
@@ -112,6 +125,7 @@ export async function initCheckout() {
       name: $('#ck-name').value.trim(), phone: $('#ck-phone').value.trim(),
       payment: method, note: $('#ck-note').value.trim(),
       discreet: $('#ck-discreet').checked,
+      website: $('#ck-website')?.value || '',
       items: (curLocal && Array.isArray(curLocal.items)) ? curLocal.items : [],
       coupon: curLocal?.coupon?.code || (typeof curLocal?.coupon === 'string' ? curLocal.coupon : undefined)
     };
@@ -119,6 +133,11 @@ export async function initCheckout() {
       body.address = $('#ck-address').value.trim();
       body.city = $('#ck-city').value.trim();
       body.zip = $('#ck-zip').value.trim();
+      const cityLow = body.city.toLowerCase();
+      const isEsk = cityLow.includes('eskişehir') || cityLow.includes('eskisehir');
+      body.deliveryMode = isEsk ? (document.querySelector('input[name=ck_deliv_mode]:checked')?.value || 'courier') : 'cargo';
+    } else {
+      body.deliveryMode = 'pickup';
     }
     if (!body.name || !body.phone) return toast(window.LS.t('ck.required'));
     if (method === 'whatsapp' && (!body.address || !body.city)) return toast(window.LS.t('ck.addrreq'));

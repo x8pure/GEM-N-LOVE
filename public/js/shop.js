@@ -1,14 +1,14 @@
 'use strict';
-import { initAccount, initProfile } from './modules/account.js?v=2.2.2';
-import { initCheckout, initThanks } from './modules/checkout.js?v=2.2.2';
-import { initSpatialAnimations, openSpatialCardZoom, closeSpatialCardZoom } from './modules/spatial.js?v=2.2.2';
-import { getLocalCart, setLocalCart, updateCartBadge, addToCart, initCart } from './modules/cart.js?v=2.2.2';
-import { performLogout, initAuth } from './modules/auth.js?v=2.2.2';
-import { api, getClientSid } from './modules/api.js?v=2.2.2';
-import { toast, lockBodyScroll, unlockBodyScroll } from './modules/ui.js?v=2.2.2';
-import { initCoverflow, destroyCoverflow } from './modules/coverflow.js?v=2.2.2';
-import { initContact } from './modules/contact.js?v=2.2.2';
-import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.2';
+import { initAccount, initProfile } from './modules/account.js?v=2.2.3';
+import { initCheckout, initThanks } from './modules/checkout.js?v=2.2.3';
+import { initSpatialAnimations, openSpatialCardZoom, closeSpatialCardZoom } from './modules/spatial.js?v=2.2.3';
+import { getLocalCart, setLocalCart, updateCartBadge, addToCart, initCart } from './modules/cart.js?v=2.2.3';
+import { performLogout, initAuth } from './modules/auth.js?v=2.2.3';
+import { api, getClientSid } from './modules/api.js?v=2.2.3';
+import { toast, lockBodyScroll, unlockBodyScroll } from './modules/ui.js?v=2.2.3';
+import { initCoverflow, destroyCoverflow } from './modules/coverflow.js?v=2.2.3';
+import { initContact } from './modules/contact.js?v=2.2.3';
+import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.3';
 
 
 
@@ -2033,20 +2033,20 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.2';
         <div class="pd-delivery-card">
           <div class="pd-delivery-primary">
             <span class="pd-delivery-dot ${p.stock < 5 ? 'is-low' : ''}"></span>
-            <span>${p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : (LANG === 'en' ? 'In Stock — <strong>Eskişehir: ~2 Hours Courier</strong>' : 'Stokta Mevcut — <strong>Eskişehir İçi: ~2 Saatte Özel Kurye</strong>')}</span>
+            <span>${p.stock < 5 ? t('pd.stock.low', { n: p.stock }) : (LANG === 'en' ? 'In Stock — <strong>Same-Day Discreet Shipping & Fast Delivery</strong>' : 'Stokta Mevcut — <strong>Aynı Gün Gizli Kargo & Hızlı Teslimat</strong>')}</span>
           </div>
           <div class="pd-delivery-details">
             <span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              ${LANG === 'en' ? 'Direct courier delivery by district' : 'Semtinize göre doğrudan kapıda teslimat'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              ${LANG === 'en' ? '<strong>Nationwide (Turkey):</strong> Same-day dispatch before 16:30 in a double-sealed neutral box' : '<strong>Türkiye Geneli:</strong> 16:30\'a kadar aynı gün çift mühürlü gizli kargo'}
             </span>
             <span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-              ${LANG === 'en' ? 'Turkey: Same-Day Dispatch' : 'Türkiye Geneli: Aynı Gün Kargo'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ${LANG === 'en' ? '<strong>Eskişehir Local:</strong> ~2 hours private courier or in-store pickup' : '<strong>Eskişehir İçi:</strong> ~2 saatte özel kurye veya mağazadan teslim'}
             </span>
             <span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              ${LANG === 'en' ? '100% Discreet Packaging' : '%100 İsimsiz Gizli Paket'}
+              ${LANG === 'en' ? '<strong>100% Privacy:</strong> Unbranded package, contents never visible from outside' : '<strong>%100 Gizlilik:</strong> Logosuz, içeriği dışarıdan anlaşılmayan paket'}
             </span>
           </div>
         </div>
@@ -2140,7 +2140,21 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.2';
         <a href="/magaza?kat=${p.category}" class="link-more">${t('pd.all')}</a>
       </div>
       <div class="prod-grid" id="related-grid"></div>
-    </section>`;
+    </section>
+    ${inStock ? `
+    <div class="pd-mobile-sticky-bar" id="pd-mobile-sticky-bar" aria-hidden="true">
+      <div class="pd-sticky-meta">
+        <img src="${esc(imgSrc(p.image))}" alt="${esc(p.name)}" class="pd-sticky-thumb">
+        <div class="pd-sticky-text">
+          <div class="pd-sticky-title">${esc(p.name)}</div>
+          <div class="pd-sticky-price">${fmt(p.price)}</div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary pd-sticky-btn" id="pd-sticky-add">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+        <span>${t('pd.add')}</span>
+      </button>
+    </div>` : ''}`;
 
     // Gallery controller: switcher, swipe gestures, arrow navigation & fullscreen lightbox
     let activeImgIdx = 0;
@@ -2348,6 +2362,20 @@ import { initAutoCropNormalizer } from './modules/autocrop.js?v=2.2.2';
     if (qMinus) qMinus.addEventListener('click', () => { qty = Math.max(1, qty - 1); if (qv) qv.value = qty; });
     if (qPlus) qPlus.addEventListener('click', () => { qty = Math.min(p.stock || 1, qty + 1); if (qv) qv.value = qty; });
     if (pdAdd) pdAdd.addEventListener('click', (e) => addToCart(p.id, qty, 'standart', e.currentTarget));
+    const pdStickyAdd = $('#pd-sticky-add', root);
+    const pdStickyBar = $('#pd-mobile-sticky-bar', root);
+    const pdActionsRow = $('.pd-actions-row', root);
+    if (pdStickyAdd) pdStickyAdd.addEventListener('click', (e) => addToCart(p.id, qty, 'standart', e.currentTarget));
+    if (pdStickyBar && pdActionsRow && 'IntersectionObserver' in window) {
+      const stickyObs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const showSticky = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+          pdStickyBar.classList.toggle('is-visible', showSticky);
+          pdStickyBar.setAttribute('aria-hidden', showSticky ? 'false' : 'true');
+        });
+      }, { threshold: 0 });
+      stickyObs.observe(pdActionsRow);
+    }
     if (pdBuy) pdBuy.addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       if (btn.disabled) return;
