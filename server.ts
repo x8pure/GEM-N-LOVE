@@ -4267,6 +4267,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, pa
     isTopical: boolean;
     isOral: boolean;
     isToy: boolean;
+    isAccessory: boolean;
     isLingerie: boolean;
     typeLabel: string;
   } {
