@@ -297,26 +297,17 @@ html.dark em.em-rose,
 }
 
 .age-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 1.8px;
+  display: block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3.6px;
   text-transform: uppercase;
-  color: #D8B48A;
-  margin-bottom: 18px;
-}
-.age-eyebrow-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #D51A2A;
-  box-shadow: 0 0 10px rgba(213, 26, 42, 0.85);
+  color: rgba(216, 180, 138, 0.85);
+  margin: -4px 0 26px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
 }
 
 .age-brand,
@@ -330,7 +321,7 @@ html.dark .age-content .age-brand,
   font-weight: 600;
   letter-spacing: -2.2px !important;
   color: #FFFFFF !important;
-  margin: 0 0 14px;
+  margin: 0 0 8px;
   display: flex;
   align-items: baseline;
   justify-content: center;

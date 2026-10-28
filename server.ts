@@ -1323,7 +1323,7 @@ const CAT_EN: Record<string, string> = {
 function catNameEN(slug: string, name: string) { return CAT_EN[slug] || name; }
 
 const APP_BUILD_TIME = Date.now();
-const APP_VERSION = '2.1.7';
+const APP_VERSION = '2.1.8';
 
 function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const st = db.settings;
@@ -1604,8 +1604,8 @@ ${C.isBot ? '' : `
   <div class="age-video-overlay"></div>
   <div class="age-ambient-glow" aria-hidden="true"></div>
   <div class="age-content">
-    <div class="age-eyebrow"><span class="age-eyebrow-dot"></span><span>${C.lang === 'en' ? '18+ LUXURY INTIMACY BOUTIQUE' : '18+ SEÇKİN YETİŞKİN YAŞAM MAĞAZASI'}</span></div>
     <h2 class="age-brand">LOVE<span class="dot">.</span></h2>
+    <div class="age-eyebrow">${C.lang === 'en' ? '18+ LUXURY INTIMACY BOUTIQUE' : '18+ SEÇKİN YETİŞKİN YAŞAM MAĞAZASI'}</div>
     <div class="age-title">${tr('age.title')}</div>
     <p class="age-legal">${tr('age.legal')}</p>
     <div class="age-actions">
