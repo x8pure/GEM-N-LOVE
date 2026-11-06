@@ -1323,7 +1323,7 @@ const CAT_EN: Record<string, string> = {
 function catNameEN(slug: string, name: string) { return CAT_EN[slug] || name; }
 
 const APP_BUILD_TIME = Date.now();
-const APP_VERSION = '2.1.8';
+const APP_VERSION = '2.2.3';
 
 function layout(title: string, body: string, opts: any = {}, ctx: any = null) {
   const st = db.settings;
@@ -1600,8 +1600,6 @@ ${GOOGLE_CLIENT_ID ? `<script>window.__LS_GOOGLE_CLIENT_ID__='${GOOGLE_CLIENT_ID
 ${opts.noChrome ? body : `
 ${C.isBot ? '' : `
 <div id="age-gate">
-  <video id="age-bg-video" class="age-bg-video" autoplay loop muted playsinline preload="auto" poster="/videos/age-gate-poster.jpg?v=${appVersion}" src="/videos/age-gate-loop.mp4?v=${appVersion}" aria-hidden="true"></video>
-  <div class="age-video-overlay"></div>
   <div class="age-ambient-glow" aria-hidden="true"></div>
   <div class="age-content">
     <h2 class="age-brand">LOVE<span class="dot">.</span></h2>
